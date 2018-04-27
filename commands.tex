@@ -1,0 +1,227 @@
+\newif\ifdraft
+\drafttrue
+\ifdraft
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\renewcommand{\ttdefault}{pcr}
+
+
+
+\usepackage[numbers,super,sort&compress]{natbib}
+\usepackage{hypernat}
+\bibpunct{}{}{,}{s}{,}{,}
+%% Remove brackets from numbering in List of References
+\makeatletter
+\renewcommand{\@biblabel}[1]{\quad#1.}
+\makeatother
+%% no space
+\setlength{\bibsep}{0pt}
+
+% Python for inline
+\newcommand{\pythoninline[1]}{{\pythonstyle\lstinline!#1!}}
+
+% Python style for highlighting
+\newcommand\pythonstyle{\lstset{
+    language=Python,
+    basicstyle=\scriptsize\ttfamily,
+    otherkeywords={self},             % Add keywords here
+    keywordstyle=\bfseries\color{blue},
+    emph={MyClass,__init__},          % Custom highlighting
+    emphstyle=\ttfamily\bfseries\color{deepred},    % Custom highlighting style
+    stringstyle=\color{mauve},
+    commentstyle=\color{gray}\textit,      
+    frame=tb,                         % Any extra options here
+    showstringspaces=false,           %
+    breaklines=true,
+    prebreak=\carriagereturn,
+    numberstyle=\tiny\color{gray},
+    numbers=left,
+    stepnumber=1
+}}
+
+\usepackage{xspace}
+\newcommand{\NaH}{Na$^{+}$/H$^{+}$\xspace}
+\newcommand{\Na}{Na$^{+}$\xspace}
+\newcommand{\Hp}{H$^{+}$\xspace}
+\newcommand{\pKa}{\ensuremath{\mathrm{p}K_{\mathrm{a}}}\xspace}
+\newcommand{\pK}{\ensuremath{\mathrm{p}K}}
+\newcommand{\kon}{\ensuremath{k_{\text{on}}}}
+\newcommand{\koff}{\ensuremath{k_{\text{off}}}}
+\newcommand{\Aim}[1]{\textsc{Aim #1}\xspace}
+
+\newcommand{\AIM}[2]{\paragraph{\Aim{#1}: #2}}
+
+\newcommand{\PDB}[1]{PDB ID \textsc{#1}\xspace}
+
+
+\newcommand{\nuvec}[1]{\boldsymbol{\nu}_{#1}}
+
+\newcommand{\mus}{\ensuremath{\mu\text{s}}\xspace}
+
+\newcommand{\package}[1]{\textsl{#1}}
+\newcommand{\class}[1]{\textrm{#1}}
+
+\newcommand{\tcomp}{\ensuremath{{t}_{\text{compute\_final}}}\xspace}
+\newcommand{\tIO}{\ensuremath{{t}_{\text{IO\_final}}}\xspace}
+\newcommand{\tcomm}{\ensuremath{t_{\text{comm}}}\xspace}
+\newcommand{\toverhead}{\ensuremath{t_{\text{overhead}}}\xspace}
+%-------------------------------------------------------------------------------------------------------
+\definecolor{ocolor}{rgb}{1,0,0.4}
+\newcommand{\terminology}[1]{ {\textcolor{red} {(Terminology used: \textbf{#1}) }}}
+\newcommand{\owave}[1]{ {\cyanuwave{#1}}}
+\newcommand{\jwave}[1]{ {\reduwave{#1}}}
+\newcommand{\alwave}[1]{ {\blueuwave{#1}}}
+\newcommand{\jhanote}[1]{ {\textcolor{red} { ***shantenu: #1 }}}
+\newcommand{\alnote}[1]{ {\textcolor{blue} { ***andreL: #1 }}}
+\newcommand{\todo}[1]{ {\textcolor{brown} { TODO #1 }}}
+\newcommand{\obnote}[1]{ {\textcolor{cyan} { ***oliver: #1 }}}
+\newcommand{\rthreenote}[1]{ {\textcolor{cyan} { Reviewer 2: #1 }}}
+\definecolor{orange}{rgb}{1,.5,0}
+\definecolor{dandelion}{cmyk}{0,0.29,0.84,0}
+\newcommand{\mknote}[1]{ {\textcolor{dandelion} { ***mahzad: #1 }}}
+\newcommand{\rtwonote}[1]{ {\textcolor{dandelion} { ***Reviewer 2: #1 }}}
+\newcommand{\gpnote}[1]{{\textcolor{green} {***giannis: #1}}}
+\newcommand{\note}[1]{ {\textcolor{magenta} { ***Note: #1 }}}
+\newcommand{\rfournote}[1]{ {\textcolor{orange} { ***Reviewer 4: #1 }}}
+\else
+\newcommand{\terminology}[1]{}
+\newcommand{\jwave}[1]{#1}
+\newcommand{\alnote}[1]{}
+\newcommand{\mknote}[1]{}
+\newcommand{\obnote}[1]{}
+\newcommand{\rthreenote}[1]{}
+\newcommand{\rfournote}[1]{}
+\newcommand{\todo}[1]{}
+\newcommand{\jhanote}[1]{}
+\newcommand{\rtwonote}[1]{}
+\newcommand{\gpnote}[1]{}
+\newcommand{\note}[1]{}
+\fi
+
+\newcommand{\yarn}{YARN\xspace}
+\newcommand{\rp}{RADICAL-Pilot\xspace}
+\newcommand{\cloud}{cloud\xspace}
+\newcommand{\clouds}{clouds\xspace}
+\newcommand{\pilot}{Pilot\xspace}
+\newcommand{\pilots}{Pilots\xspace}
+\newcommand{\pilotjob}{Pilot-Job\xspace}
+\newcommand{\pilotjobs}{Pilot-Jobs\xspace}
+\newcommand{\pilotcompute}{Pilot-Compute\xspace}
+\newcommand{\pilotcomputedescription}{Pilot-Compute Description\xspace}
+\newcommand{\pilotdescription}{Pilot-Description\xspace}
+\newcommand{\pilotcomputes}{Pilot-Computes\xspace}
+\newcommand{\pilotdata}{Pilot-Data\xspace}
+\newcommand{\pilotdatainmem}{Pilot-Data Memory\xspace}
+\newcommand{\pilotdatadescription}{Pilot-Data Description\xspace}
+\newcommand{\pilotdataservice}{Pilot-Data Service\xspace}
+\newcommand{\pilotcomputeservice}{Pilot-Compute Service\xspace}
+\newcommand{\computedataservice}{Compute-Data Service\xspace}
+\newcommand{\computedatamanager}{Compute-Data Manager\xspace}
+\newcommand{\computeunitdescription}{Compute-Unit Description\xspace}
+\newcommand{\dataunitdescription}{Data-Unit Description\xspace}
+\newcommand{\pilotmapreduce}{PilotMapReduce\xspace}
+\newcommand{\mrmg}{MR-Manager\xspace}
+\newcommand{\pstar}{P*\xspace}
+\newcommand{\pd}{PD\xspace}
+\newcommand{\pc}{PC\xspace}
+\newcommand{\pcs}{PCs\xspace}
+\newcommand{\pj}{PJ\xspace}
+\newcommand{\pjs}{PJs\xspace}
+\newcommand{\pds}{Pilot Data Service\xspace}
+\newcommand{\computeunit}{Compute-Unit\xspace}
+\newcommand{\computeunits}{Compute-Units\xspace}
+\newcommand{\dataunit}{Data-Unit\xspace}
+\newcommand{\dataunits}{Data-Units\xspace}
+\newcommand{\du}{DU\xspace}
+\newcommand{\dus}{DUs\xspace}
+\newcommand{\dud}{DUD\xspace}
+\newcommand{\cu}{CU\xspace}
+\newcommand{\cus}{CUs\xspace}
+\newcommand{\cud}{CUD\xspace}
+\newcommand{\su}{SU\xspace}
+\newcommand{\sus}{SUs\xspace}
+\newcommand{\schedulableunit}{Schedulable Unit\xspace}
+\newcommand{\schedulableunits}{Schedulable Units\xspace}
+\newcommand{\cc}{c\&c\xspace}
+\newcommand{\CC}{C\&C\xspace}
+
+\newcommand{\numrep}{8 }
+\newcommand{\samplenum}{4 }
+\newcommand{\tmax}{$T_{max}$ }
+\newcommand{\tc}{$T_{C}$ }
+\newcommand{\tcnsp}{$T_{C}$}
+\newcommand{\bj}{BigJob\xspace}
+\newcommand{\irods}{iRODS\xspace}
+
+\newcommand{\I}[1]{\textit{#1}\xspace}
+\newcommand{\B}[1]{\textbf{#1}\xspace}
+\newcommand{\T}[1]{\texttt{#1}\xspace}
+%\newcommand{\C}[1]{\textsc{#1}\xspace}
+
+% define a new float, with style `ruled`
+\floatstyle{ruled}
+\newfloat{scheme}{htbp}{lok}
+\floatname{scheme}{Scheme}
+
+%\lstdefinestyle{myListing}{
+%    frame=single,
+%    backgroundcolor=\color{listinggray},
+    %float=t,
+%    language=C,
+%    basicstyle=\ttfamily \footnotesize,
+%    breakautoindent=true,
+%    breaklines=true
+%    tabsize=2,
+%    captionpos=b,
+%    aboveskip=0em,
+%    belowskip=-2em,
+    %numbers=left,
+    %numberstyle=\tiny
+%}
+
+%\lstdefinestyle{myPythonListing}{
+%    frame=single,
+%    backgroundcolor=\color{listinggray},
+    %float=t,
+%    language=Python,
+%    basicstyle=\ttfamily \scriptsize,
+%    breakautoindent=true,
+%    breaklines=true
+%    tabsize=2,
+%    captionpos=b,
+    %numbers=left,
+    %numberstyle=\tiny
+%}
+
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.ps,  .eps, .jpg}
+\fi
+
+\tolerance=1000
+\hyphenpenalty=10
+
+
+%\usepackage{listings}
+%\usepackage{paralist}
+% Python environment
+%\lstnewenvironment{code}[1][]%
+%{
+%    \noindent
+    %\minipage{0.98 \linewidth}
+%    \minipage{1.0 \linewidth}
+%    \vspace{0.5\baselineskip}
+%   \lstset{
+%        language=Python,
+%       frame=single,
+%        captionpos=b,
+%        stringstyle=\ttfamily,
+%        basicstyle=\scriptsize\ttfamily,
+%        showstringspaces=false,#1}
+%}
+%{\endminipage}
+
+\defaultleftmargin{1em}{}{}{}

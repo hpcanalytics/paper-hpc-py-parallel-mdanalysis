@@ -1,0 +1,136 @@
+\label{use_cases}
+
+\subsection{MDAnalysis}
+Simulation data exist in trajectories in the form of three dimensional time series (atom positions and velocities), and these come in a plethora of different and idiosyncratic file formats. 
+MDAnalysis is a widely used open source Python library to analyze these trajectory files with an object oriented interface. 
+The package is written in Python (compatible with version 2.7 and 3.4+), with time critical code in C/Cython. 
+\label{sec:mda}
+
+\subsubsection{Root Mean Square Distance (RMSD)}
+The calculation of the root mean square distance (\textbf{RMSD}) for C$_{\alpha}$ atoms after
+optimal superposition with the QCPROT algorithm \citep{Liu:2010kx,Theobald:2005vn} is commonly required in the analysis of molecular dynamics simulations (Algorithm \ref{alg:RMSD}). 
+The task used for the purpose of our benchmark is the MDAnalysis.analysis.rms.rmsd() function from the MDAnalysis.analysis.rms module (implemented in Cython \citep{Gowers:2016aa}).  
+This function computes the coordinate root mean square distance between two sets of coordinates using the fast QCPROT algorithm to optimally superimpose two structures and then calculates the RMSD. 
+RMSD values show how rigid the domains in a protein structure, are during the transition. 
+
+To this, the protein structure (selected C$_{\alpha}$ atoms) in the initial frame will be considered as the reference and as the mobile group at other time steps. 
+RMSD calculation as a function of time are then performed by spatially aligning the mobile group to reference by doing a RMSD fit on selected atoms.
+The superposition is done in the following way:
+First, the mobile group is translated so that its center of mass coincides with the one of reference. 
+Second, a rotation matrix is computed that minimizes the RMSD between the coordinates of selected atoms of the mobile group and reference structure. 
+Finally, all atoms in Universe that contains mobile group are shifted and rotated.
+For each frame, a non-negative floating point number is calculated and the final result is a time-series of the RMSD. 
+The order of complexity for RMSD algorithm \ref{alg:RMSD} is $T \times N^{2}$ where T is the number of frames in the trajectory and N the number of particles in a frame.
+
+\begin{algorithm}[t]
+	\scriptsize
+    \caption{RMSD Algorithm}
+    \label{alg:RMSD}
+    \hspace*{\algorithmicindent} \textbf{Input:} \emph{mobile}: the desired atom groups to perform RMSD on them \\ 
+    \hspace*{\algorithmicindent} \emph{bsize}: Total number of frames assigned to each rank \\
+    \hspace*{\algorithmicindent} \emph{xref0}: mobile group in the initial frame which will be considered as rerference \\
+    \hspace*{\algorithmicindent} \emph{start \& stop}: that tell which block of trajectory (frames) is assigned to each rank \\
+    \hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
+    \hspace*{\algorithmicindent} \textbf{Output:} Calculated RMSD arrays
+    \begin{algorithmic}[1]
+        \Procedure{$Block\_RMSD$}{index, topology, trajectory, $xref0$, start=None, stop=None, step=None}                       
+        \State \texttt{start00 = time.time()}
+        \State \texttt{u = Universe(topology, trajectory)}
+        \State \texttt{g = u.atoms[index]}
+        \\
+        \State \texttt{start1 = time.time()}
+        \State \texttt{start0 = start1}
+        \For{$\forall iframe, ts$ in $enumerate(u.trajectory[start:stop:step])$}
+        \State \texttt{start2 = time.time()}
+        \State \texttt{results[iframe, :] = ts.time, MDAnalysis.analysis.rms.rmsd(g.positions, xref0, center=True, superposition=True)}
+        \State \texttt{t\_comp[iframe] = time.time()-start2}\Comment{Compute per frame}
+        \State \texttt{t\_IO[iframe] = start2-start1}\Comment{I/O per frame}
+        \State \texttt{start1 = time.time()}
+        \EndFor
+        
+        \State \texttt{start3 = time.time()}
+        \State \Return \texttt{results}
+        \EndProcedure
+        \\        
+        \State \texttt{start4 = time.time()}
+        \State \texttt{mobile =  Select C$_{\alpha}$ atoms}
+        \State \texttt{index = indices of mobile atom group}
+        \State \texttt{xref0 = mobile.positions-mobile.center\_of\_mass()}
+	\State \texttt{out = Block\_RMSD(index, topology, trajectory, xref0, start=start, stop=stop, step=1)}
+	\\
+	\State \texttt{start5 = time.time()}
+	\If{rank == 0}
+   	     \State \texttt{data1 = np.zeros([size*bsize,2], dtype=float)}
+	\Else
+   	     \State \texttt{data1 = None}
+              \State \texttt{comm.Gather(out[0], data1, root=0)}
+        \EndIf
+         \\
+         \State \texttt{start6 = time.time()}
+    \end{algorithmic}
+\end{algorithm}
+
+
+\subsubsection{Dihedral Featurization}
+As a real-world compute-bound task we investigated \textbf{Dihedral featurization} \citep{Sittel:2014aa} (Algorithm \ref{alg:Dihedral}) whereby a time series of
+feature vectors consisting of the two backbone dihedral angles per residue ($\phi_{i}$ and $\psi_{i}$) is calculated for all 212
+non-terminal residues. For each frame, an array of dihedral angles is calculated where for later convenience, an angle $\theta_{i}$ is
+actually represented as $(\cos\theta_{i}, \sin\theta_{i})$. 
+The order of complexity for Dihedral featurization algorithm \ref{alg:Dihedral} is $T \times N$. 
+
+\begin{algorithm}[t]
+	\scriptsize
+    \caption{Dihedral Featurization}
+    \label{alg:Dihedral}
+    \hspace*{\algorithmicindent} \textbf{Input:} \emph{mobile}: the desired atom groups to perform RMSD on them \\ 
+    \hspace*{\algorithmicindent} \emph{start \& stop}: that tell which block of trajectory (frames) is assigned to each rank \\
+    \hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
+    \hspace*{\algorithmicindent} \textbf{Output:} Calculated Dihedral Angles
+    \begin{algorithmic}[1]
+        \Procedure{$angle2sincos$}{x}     
+        \State \Return \texttt{[np.cos(x), np.sin(x)]}
+        \EndProcedure
+        \\
+        \Procedure{$residues\_to\_dihedrals$}{residues}     
+        \For{$\forall res$ in $residues$}
+        \State \texttt{list($\phi (res)$, $\psi (res)$)}
+        \EndFor
+        \EndProcedure
+        \\
+        \Procedure{$featurize\_dihedrals$}{dihedrals}     
+        \State \texttt{angles = [dihedral.value() for dihedral in dihedrals]}
+        \State \Return \texttt{angle2sincos(angles)}
+        \EndProcedure
+        \\
+        \Procedure{$Block\_Dihedral$}{index, topology, trajectory, $xref0$, start=None, stop=None, step=None}                       
+        \State \texttt{start00 = time.time()}
+        \State \texttt{clone = mda.Universe(topology, trajectory)}
+        \State \texttt{g = clone.atoms[index]}
+        \\
+        \State \texttt{start1 = time.time()}
+        \State \texttt{start0 = start1}
+        \For{$\forall iframe, ts$ in $enumerate(clone.trajectory[start:stop:step])$}
+        \State \texttt{start2 = time.time()}
+        \State \texttt{Append in $results$ $featurize\_dihedrals(dihedrals)$}
+        \State \texttt{t\_comp[iframe] = time.time()-start2}\Comment{Compute per frame}
+        \State \texttt{t\_IO[iframe] = start2-start1}\Comment{I/O per frame}
+        \State \texttt{start1 = time.time()}
+        \EndFor
+        
+        \State \texttt{start3 = time.time()}
+        \EndProcedure
+        \\        
+        \State \texttt{start4 = time.time()}
+	\State \texttt{out = Block\_Dihedral(index, topology, trajectory, xref0, start=start, stop=stop, step=1)}
+	\\
+	\State \texttt{start5 = time.time()}
+	\If{rank == 0}
+   	     \State \texttt{data1 = np.zeros([size*bsize,np.shape(out)[1]], dtype=float)}
+	\Else
+   	     \State \texttt{data1 = None}
+             \State \texttt{comm.Gather(out[0], data1, root=0)}
+        \EndIf
+         \\
+         \State \texttt{start6 = time.time()}
+    \end{algorithmic}
+\end{algorithm}

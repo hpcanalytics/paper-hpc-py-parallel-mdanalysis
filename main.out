@@ -1,0 +1,23 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Molecular Dynamics Analysis Applications}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{MDAnalysis}{section.2}% 3
+\BOOKMARK [3][-]{subsubsection.2.1.1}{Root Mean Square Distance \(RMSD\)}{subsection.2.1}% 4
+\BOOKMARK [3][-]{subsubsection.2.1.2}{Dihedral Featurization}{subsection.2.1}% 5
+\BOOKMARK [1][-]{section.3}{Background}{}% 6
+\BOOKMARK [2][-]{subsection.3.1}{MPI for Python}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.2}{Applications of Global Array}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.3}{MPI and Parallel HDF5}{section.3}% 9
+\BOOKMARK [3][-]{subsubsection.3.3.1}{Collective Versus Independent Operations}{subsection.3.3}% 10
+\BOOKMARK [1][-]{section.4}{Method}{}% 11
+\BOOKMARK [1][-]{section.5}{Performance Study}{}% 12
+\BOOKMARK [2][-]{subsubsection.5.0.1}{RMSD Benchmarks}{section.5}% 13
+\BOOKMARK [2][-]{subsection.5.1}{Dihedral Featurization Benchmarks}{section.5}% 14
+\BOOKMARK [2][-]{subsection.5.2}{Effect of tcompute\137final/tIO\137final on Performance}{section.5}% 15
+\BOOKMARK [3][-]{subsubsection.5.2.1}{Increased workload \(RMSD\)}{subsection.5.2}% 16
+\BOOKMARK [2][-]{subsection.5.3}{Communication Cost and Application of Global Array}{section.5}% 17
+\BOOKMARK [2][-]{subsection.5.4}{I/O Cost}{section.5}% 18
+\BOOKMARK [3][-]{subsubsection.5.4.1}{Splitting the Trajectories}{subsection.5.4}% 19
+\BOOKMARK [3][-]{subsubsection.5.4.2}{MPI-based Parallel HDF5}{subsection.5.4}% 20
+\BOOKMARK [1][-]{section.6}{Guidelines on the Parallel Analysis of Three Dimensional Time Series}{}% 21
+\BOOKMARK [1][-]{section.7}{Conclusion}{}% 22
+\BOOKMARK [1][-]{appendix.A}{Appendix}{}% 23

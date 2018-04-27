@@ -1,0 +1,74 @@
+\label{methods}
+The test system contained the protein adenylate kinase with 214 amino acid residues and 3341 atoms in total \citep{Seyler:2014il}. 
+The trajectory was in Gromacs XTC format trajectory (``600x'' in \citet{Khoshlessan:2017ab}) with a size of about 30 GB and 2,512,200
+time frames (corresponding to 602.4~µs simulated time) which represents a typical medium per-frame size but is very long for
+current standards.
+
+The experiments were executed on the XSEDE Supercomputers: \emph{SDSC Comet}. 
+SDSC Comet is a 2.7 PFlop/s cluster with 6,400 nodes in total.
+The standard compute nodes consist of Intel Xeon E5-2680v3 processors, 128 GB DDR4 DRAM (64 GB per socket), and 320 GB of SSD local scratch memory. 
+The large memory nodes contain 1.5 TB of DRAM and four Haswell processors each and the network topology is 56 Gbps FDR Infini-Band.
+All the experiments in the present study are performed using compute nodes.
+
+\subsection*{Timing observables}
+We model MPI performance based on the RMSD algorithm (\ref{alg:RMSD}) and Dihedral Featurization algorithm (\ref{alg:Dihedral}). 
+The notation for our models is summarized in Table \ref{tab:notation}.
+We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``compute'' time per
+trajectory frame to perform the computation \tcomp (\texttt{t\_comp} in the code) and the ``I/O'' time for
+ingesting the data from the file system into memory, \tIO (\texttt{t\_IO}). 
+$t_{comp\_final}$ is the summation of ``compute'' time per frame and $t_{IO\_final}$ is the summation of ``I/O'' time per frame for all the frames assigned to each rank. 
+$t_{end\_loop}$ is the time delay between the end of the last iteration and exiting the for loop.
+$t_{opening\_trajectory}$ is the time for where data structures are initialized and topology and trajectory files are opened.
+
+Outside the \texttt{block\_rmsd()} function, relevant probs were taken and stored as variables \texttt{start4},
+\texttt{start5}, and \texttt{start6}, which we will abbreviate in the following as $t_{4}$ (after setting up the problem
+and before entering \texttt{block\_rmsd()} to \emph{ingest} and \emph{compute}), $ t_{5}$, (before communicating back results with
+\texttt{MPI.COMM\_WORLD.Gather()}), and $t_{6}$ (after all work has been done but before timing statistics are computed).  
+The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMSD}} = t_{5} - t_{4}$. 
+The ``Shuffle'' time to gather (``reduce'') all data from all processor ranks is $\tcomm = t_{6} - t_{5}$.
+
+There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO. 
+To measure the un-accounted time we define the ``overheads''.
+$t_{Overhead1}$ and $t_{Overhead2}$ are the overhead of the calculations and they should be ideally very small.  
+The total time to completion for a single process on $N$ cores is $t_{N}$, which is mathematically equivalent to
+$t_{N} \equiv t_{RMSD} + \tcomm$.
+
+We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
+$t_{\text{total}}(N) \approx \max t_{N}$). 
+Strong scaling was quantified by calculating the speed-up relative to performance on a single core (using MPI).
+
+\begin{gather}
+  \label{eq:speedup}
+  S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
+\end{gather}
+
+\begin{table}
+\centering
+\begin{tabular}{c c}
+  \toprule
+            \thead{Item} & \thead{Definition}\\
+  \midrule
+    $t_{end\_loop}$ & $t_{3}-t_{1}$\\
+    $t_{opening\_trajectory}$ &  $t_{0}-t_{00}$ \\
+    $t_{comp\_final}$ &  $np.sum(t_{comp})$\\
+    $t_{IO\_final}$ & $np.sum(t_{IO})$\\
+    $t_{all\_frame}$ & $t_{3}-t_{0}$  \\
+    $t_{RMSD}$ &  $t_{5}-t_{4}$ \\
+    $t_{Communication_{MPI}}$ &  $t_{6}-t_{5}$  \\
+    $t_{Communication_{GA}}$ &  $(t_{6}-t_{5})$+$(t_{7}-t_{6})$  \\
+    $t_{Overhead1}$ & $t_{all\_frame}-t_{IO\_final}-t_{comp\_final}-t_{end\_loop}$  \\
+    $t_{Overhead2}$ & $t_{RMSD}-t_{all\_frame}-t_{opening\_trajectory}$  \\
+    $t_{N}$ & $t_{RMSD}+t_{Communication}$ \\
+    $t_{total}$ & $\max t_{N}$ \\
+  \bottomrule
+\end{tabular}
+\caption[Notation of our performance modeling]
+{Notation of our performance modeling (relevant probes in the codes are stored as variables \texttt{start*},
+which we will abbreviate in here as $t_{*}$)}
+\label{tab:notation}
+\end{table}
+
+
+
+
+

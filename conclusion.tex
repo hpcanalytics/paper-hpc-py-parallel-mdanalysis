@@ -1,0 +1,31 @@
+\label{concl}
+
+We have been able to identify the root cause for stragglers in our MPI test case and our data suggest a \textbf{new specific hypothesis}. 
+We tested our benchmark on RMSD (I/O bound) and Dihedral featurization (compute bound) algorithms in \package{MDAnalysis}.
+Both communication and I/O appeared to be the scalability bottleneck for our RMSD benchmark test case.
+
+In fact, for I/O-bound workload, \emph{stragglers are due to the competition between MPI and the Lustre file system on the shared Infini-band interconnect}. 
+This hypothesis appears to be consistent with the observation that for larger number of MPI ranks, communication is primarily a problem in
+the presence of (nearly continuous) I/O as produced by I/O-bound workloads.
+
+The ratio between compute load and I/O load appeared to be crucial. 
+For sufficiently large per-frame workloads, close to ideal scaling was achievable (Figure \ref{fig:MPI-dihedral-comm}). 
+Additionally, the effect of communication was less pronounced when the work became more compute-bound.
+We could also achieve much better performance in our RMSD benchmark taking advantage of global array toolkit. 
+Using global array for our communication, we did not observe any delayed task due to communication (Figure \ref{fig:MPIwithIO-ga4py}) and 
+it we were able to reduce the communication cost. 
+
+More importantly, we had observed that I/O appeared to be important as demonstrated by close to ideal scaling through splitting the trajectories and parallel I/O (Figures
+\ref{fig:MPIwithIO-split} and \ref{fig:MPIwithIO-hdf5}). 
+The communication time \tcomm, i.e., the \texttt{mpi4py.MPI.COMM\_WORLD.Gather()} step, could take
+much longer for stragglers than for ``normal'' MPI ranks when I/O has to be performed (Figure \ref{fig:MPIranks}) through a shared trajectory file. 
+
+With splitting the trajectories, effect of communication is still apparent on the performance; however this problem can be tackled using 
+global array toolkit (Compare Figure \ref{fig:MPIwithIO-split} to Figure \ref{fig:MPIwithIO-split-ga}).
+
+There are currently many freely available libraries for the analysis and processing of three-dimensional time series.
+However, dramatic increases in the size of trajectories combined with the serial nature of these libraries necessitates 
+use of state of the art high performance computing tools for rapid analysis of these time series. 
+All the above strategies, provides the bio-molecular simulation community the means to perform a wide variety of parallel analyses on data generated from computational simulations.
+The guidelines provided in the present study, help people on how to tackle their problem depending on the workload being I/O bound or compute bound. 
+The analysis indicates that the splitting the trajectories or parallel I/O in combination with global array will make it feasible to run a I/O bound task on scalable computers up to 8 nodes and get near ideal scaling behavior.
