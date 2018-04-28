@@ -77,13 +77,14 @@ featurization on \emph{Comet} with Infiniband and Lustre file system.
 The system scales linearly and close to ideal (Figure \ref{fig:MPI-dihedral-comm}). Although, there is communication of large
 result arrays, which is costly for multiple ranks, the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPI-dihedral-comm-speedup}
 demonstrates very good scaling with the number of cores (up to 72 cores on 3 nodes).  The reason is that the communication cost (for
-$MPI.Gather()$-lines 25-30 in \ref{alg:RMSD}) decreases with increasing the number of cores because the result array size that has to be
+$MPI.Gather()$-lines 36-44 in \ref{alg:Dihedral}) decreases with increasing the number of cores because the result array size that has to be
 communicated also decreases (Figure \ref{fig:comparison-t_comm-dihedral}).  Based on Figure \ref{fig:comparison-t_comm-dihedral}, communication scales fairly well
 with the number of processes. This can be attributed to larger array sizes compared to the RMSD task and according to \citet{Dalcin:2011aa}
 the overhead of the \package{mpi4py} package decreases as the array size to be communicated increases. The dihedral featurization workload
 has larger array size for all processor sizes (per task, a time series of feature vectors of size $N_{b} \times (213 \times 2 \times 2$) when
 compared to the RMSD workload (per task a float array of length $N_{b}$) and therefore we are hypothesizing that the higher
-performance of \package{mpi4py} for larger array sizes has lead to better overall scaling.
+performance of \package{mpi4py} for larger array sizes has lead to better overall scaling. 
+In addition, for higher computational workloads the competition over accessing the file is less severe as compared to lower computational workloads. 
  
 \begin{figure}[tbp]
 \centering
@@ -144,14 +145,6 @@ performance of \package{mpi4py} for larger array sizes has lead to better overal
 
 Overall, increasing the computational workload over I/O improves scaling. For large compute-bound workloads such as the dihedral
 featurization task, stragglers are eliminated and nearly ideal strong scaling is achieved. 
-
-Achieving ideal scaling for large per frame workloads is also dependent on the size of the array to be communicated.  Our results
-show that with dihedral featurization workload, nearly ideal scaling is possible. However, the performance of $40\times$ and $20\times$
-RMSD workload, although greatly improved, is still affected by slow processes due to communication and overhead. The processes with large
-communication time can be attributed to the overhead of \package{mpi4py} package with respect to pure C code for smaller array
-size communication.  Additionally, comparison of dihedral featurization workload, and $40\times$ and $20\times$ RMSD workload
-shows that overhead is less pronounced when the work becomes more compute bound.
-
 The fact that linear scaling is possible, even with expensive communications, makes parallelization a valuable strategy to reduce
 the total time to solution for large computational workloads. In a real-world application to one of our existing data sets on local
 workstations with Gigabit interconnect and Network File System (NFS) (using the Dask parallel library instead of MPI), analysis time was reduced from more
@@ -165,15 +158,17 @@ The RMSD task turned out to be I/O bound, i.e.,
   \frac{\tcomp}{\tIO} \ll 1.
 \end{gather*}
 
-We hypothesized that decreasing the relative I/O load with respect to compute load would also reduce the stragglers. 
-We therefore increased the computational load so that the work became compute bound.
+and we were not able to achieve good scaling above a single node. 
+However, Dihedral featurization turned out to be compute bound and we were able to achieve near ideal scaling. 
+We therefore, hypothesized that decreasing the relative I/O load with respect to compute load would also reduce the stragglers. 
+We therefore increased the computational load so that the work became compute bound, i.e.,
 
 \begin{gather*}
   \frac{\tcomp}{\tIO} \gg 1.
 \end{gather*}
 
 i.e., now processes are not constantly performing I/O and instead, I/O is interleaved with longer periods of computation.
-In order to artificially increase the computational load we also repeated the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop respectively.
+In order to artificially increase the computational load we repeated the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop respectively.
 
 \subsubsection{Increased workload (RMSD)}
 The RMSD workload was artificially increased forrty-fold, seventy-fold, and hundred-fold and we measured performance as before. 
@@ -183,11 +178,11 @@ number of frames per trajectory block, i.e., the number of frames
 processed by each MPI rank for $N$ processes) for I/O,
 $X \times N_{b} \times \tcomp$ for the $X\times$ RMSD computation.
 
-As the $\tcomp/\tIO$ ratio increases the speed-up and performance improves and 
-shows overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure \ref{fig:S1_tcomp_tIO_effect}).
+As the $\tcomp/\tIO$ ratio increases, speed-up and performance improves and 
+show overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure \ref{fig:S1_tcomp_tIO_effect}).
 When $\tcomp/\tIO$ ratio increases, the RMSD calculation consistently scales up to larger numbers of cores ($N=56$ for $70\times$ RMSD).
 Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} shows the improvment in performance more clearly.
-In fact as the $\tcomp/\tIO$ ratio increases the values of speed-up and efficiency get closer to their ideal value for each number of processor counts.  
+In fact, as the $\tcomp/\tIO$ ratio increases, the values of speed-up and efficiency get closer to their ideal value for each number of processor counts.  
 
 \begin{figure}
 \centering
@@ -214,21 +209,18 @@ which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\t
 \label{fig:tcomp_tIO_effect}
 \end{figure}
 
-The measured average execution times of different communication strategies . 
+Even for moderately compute-bound workloads such
+as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even
+though they still contribute to large variations in timing across different ranks and thus to somewhat erratic scaling. 
 
 Given the results for Dihedral featurization and RMSD algorithms (Algorithms \ref{alg:Dihedral}, and \ref{alg:RMSD}) and $X\times$ RMSD (Figure \ref{fig:tcomp_tIO_effect})
-\textbf{We hypothesize that MPI competes with Lustre on the same network interface, which would explain why communication appears to
+\textbf{we hypothesize that MPI competes with Lustre on the same network interface, which would explain why communication appears to
   be primarily a problem in the presence of I/O when \tcomp/\tIO is small.}
 In fact, decreasing the I/O load relative to the compute load should open up the network for communication. 
 
-Even for moderately compute-bound workloads such
-as the $20\times$ and $40\times$ RMSD tasks, increasing the computational workload over I/O reduces the impact of stragglers even
-though they still contribute to large variations and thus to somewhat erratic scaling.
-
-
 \subsection{Communication Cost and Application of Global Array}
 \label{Global-Array}
-As discussed in the RMSD calculation, \ref{fig:MPIranks}, communication acted as the scalability bottleneck. 
+As discussed in the previous sections, \ref{fig:MPIranks}, for small \tcomp/\tIO communication acts as the scalability bottleneck. 
 In fact, when the processes communicate result arrays back to the master (rank 0) process, some processes take much longer as compared to other processes. 
 Now we want to know what strategies can be used to avoid communication cost. 
 
