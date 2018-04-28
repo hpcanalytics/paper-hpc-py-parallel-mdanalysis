@@ -1,18 +1,14 @@
-\label{frameworks}
+\label{background}
 
-\subsection{MPI for Python}
-MPI for Python is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to employ multiple processors \citep{Dalcin:2011aa, Dalcin:2005aa}.
+\subsection{MPI for Python \package{mpi4py}}
+MPI for Python (\package{mpi4py}) is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to employ multiple processors \citep{Dalcin:2011aa, Dalcin:2005aa}.
 Python has several advantages that makes it a very attractive language including rapid development of small scripts and code prototypes as well as large applications and highly portable and reusable modules and libraries.
-MPI for Python\textquotesingle s interface is designed to be as conforming as possible with standard MPI for C++, saving users from learning a new interface specification. 
+\package{mpi4py}\textquotesingle s interface is designed to be as conforming as possible with standard MPI for C++, saving users from learning a new interface specification []. 
 In addition, Python\textquotesingle s interactive nature, and other factors like lines of codes (LOC), number of function invocation, and development time adds to its attractiveness and clarifies why it is a good investment to extend Python use to message-passing parallel programming applications.
-Based on the efficiency tests, the performance degradation due to using MPI for Python is not prohibitive and the overhead introduced by MPI for Python is far smaller than the overhead associated to the use of interpreted versus compiled languages [].
+Based on the efficiency tests, the performance degradation due to using \package{mpi4py} is not prohibitive and the overhead introduced by \package{mpi4py} is far smaller than the overhead associated to the use of interpreted versus compiled languages [].
 In addition, there are works on improving the communication performance in \package{mpi4py} and it shows minimal overheads compared to C code if efficient raw memory buffers are used for communication \citep{Dalcin:2011aa}.
 
 \subsection{Applications of Global Array}
-Global array (GA) toolkit offers the best features of both shared and distributed programming models and allows manipulating physically distributed dense multi-dimensional arrays without the need for explicit cooperation by other processes.
-The primary mechanisms provided by GA for accessing data are block copy operations that transfer data between layers of memory hierarchy, i.e. global memory (distributed array) and local memory. 
-GA compliments message passing programming model and is compatible with MPI which allows the users to take advantage of existing MPI software/libraries.
-
 The classic message-passing paradigm of parallel programming not only transfers data but also synchronizes the sender and receiver. 
 Asynchronous (nonblocking) send/receive operations can be used to avoid synchronization, but cooperation between sender and receiver is still required. 
 The synchronization effect is beneficial in certain classes of algorithms, such as parallel linear algebra algorithms.
@@ -21,20 +17,22 @@ In the shared-memory programming model, data is located either in \textbf{\texti
 
 In shared-memory systems, regardless of the implementation, the shared-memory paradigm eliminates the synchronization that is required when message-passing is used to access shared data. 
 A disadvantage of many shared-memory models is that they do not expose the none-uniform memory access (\textbf{\textit{NUMA}}) hierarchy of the underlying distributed-memory hardware. 
+
+Global array (GA) toolkit offers the best features of both shared and distributed programming models and allows manipulating physically distributed dense multi-dimensional arrays without the need for explicit cooperation by other processes.
+The primary mechanisms provided by GA for accessing data are block copy operations that transfer data between layers of memory hierarchy, i.e. global memory (distributed array) and local memory. 
+GA compliments message passing programming model and is compatible with MPI which allows the users to take advantage of existing MPI software/libraries.
+
 The shared memory model based on Global Arrays combines the advantages of a distributed memory model with the ease of use of shared memory. 
 This is achieved by function calls that provide information on which portion of the distributed data is held locally and the use of explicit calls to functions that transfer data between a shared address space and local storage. 
-The combination of these functions allows users to make use of the fact that remote data is slower to access than local data and to optimize data reuse and minimize communication in their algorithms.
+The combination of these functions allows users to make use of the fact that remote data is slower to access than local data and to optimize data reuse and \emph{minimize communication in their algorithms}.
 
-The basic components of the Global Arrays toolkit are function calls to create global arrays ($ga\_create$), copy data to ($ga\_put$), from ($ga\_get$), and between global arrays, and identify and access the portions of the global array data that are held locally ($ga\_access$). 
+The basic components of the Global Arrays toolkit are function calls to create global arrays ($ga\_create$), copy data to ($ga\_put$), from ($ga\_get$), and between global arrays ($ga\_distribution$, $ga\_scatter$), and identify and access the portions of the global array data that are held locally ($ga\_access$). 
 In addition, there are also functions to destroy arrays ($ga\_destroy$) and free up the memory originally allocated to them.
 
-Another study by [Thesis] extends GAiN to a pure Python extension module.
-Even though a compiled extension module generally performs faster than its pure Python counterpart having a Python extension modules have several benefits:
-First and foremost it would require very little to be installed by the end user. 
-Second, it leverages Python?s strengths such as its readability, maintainability, and the elimination of the need to compile machine code [Thesis]. 
-
+Another study by [Thesis] extends GA to python through Numpy. This library is called Global Arrays in NumPy (GAiN).
 NumPy is inherently serial and although NumPy\textquotesingle s computational capabilities are efficient, it is still not enough for larger problem sizes. 
-GA library attempts to leverage the substantial work that is Global Arrays in support of large parallel array computation within the NumPy framework.
+GAiN library attempts to extend the substantial work in Global Arrays to large parallel array computation within the NumPy framework.
+This extension module to python provides users with access to global arrays which makes GA implementation much easier and faster [Thesis]. 
 
 \subsection{MPI and Parallel HDF5}
 MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
@@ -46,6 +44,6 @@ In addition,  MPI communicator should be supplied as well and the users also nee
 \subsubsection{Collective Versus Independent Operations} 
 MPI has two flavors of operation: collective, which means that all processes have to participate in the same order, and independent, which means each process can perform the operation or not and the order also does not matter  [Python- HDF5 Book].
 With HDF5, modifications to file metadata must be done collectively. 
-In contrast, Opening or closing a file, Creating or deleting new datasets, groups, attributes, or named types, Changing a datasets shape, and Moving or copying objects in the file or any type of data operations can be performed independently by processes.
+In contrast, opening or closing a file, creating or deleting new datasets, groups, attributes, or named types, changing a datasets shape, and moving or copying objects in the file or any type of data operations can be performed independently by processes.
 It should be noted that collective does not mean synchronized.
 Although in collective I/O all processes perform the same task, but they do not wait until the others catch up [Python- HDF5 Book]. 
