@@ -1,12 +1,65 @@
-\documentclass[10pt]{article}
+\documentclass[review]{elsarticle}
+
+\usepackage{lineno,hyperref}
+\modulolinenumbers[5]
+
+\journal{Journal of \LaTeX\ Templates}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%% Elsevier bibliography styles
+%%%%%%%%%%%%%%%%%%%%%%%
+%% To change the style, put a % in front of the second line of the current style and
+%% remove the % from the second line of the style you would like to use.
+%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Numbered
+%\bibliographystyle{model1-num-names}
+
+%% Numbered without titles
+%\bibliographystyle{model1a-num-names}
+
+%% Harvard
+%\bibliographystyle{model2-names.bst}\biboptions{authoryear}
+
+%% Vancouver numbered
+%\usepackage{numcompress}\bibliographystyle{model3-num-names}
+
+%% Vancouver name/year
+%\usepackage{numcompress}\bibliographystyle{model4-names}\biboptions{authoryear}
+
+%% APA style
+%\bibliographystyle{model5-names}\biboptions{authoryear}
+
+%% AMA style
+%\usepackage{numcompress}\bibliographystyle{model6-num-names}
+
 \input{preamble.tex}
 
 \input{commands.tex}
 
 
 \begin{document}
-    
+\begin{frontmatter}    
+
 \title{Applications and Performance of HPC Resources for Parallel Analysis of Molecular Dynamics Trajectories with Python}
+\tnotetext[mytitlenote]{Fully documented templates are available in the elsarticle package on \href{http://www.ctan.org/tex-archive/macros/latex/contrib/elsarticle}{CTAN}.}
+
+%% Group authors per affiliation:
+\author{Mahzad Khoshlessan}
+\address{Tempe, Arizona, 85281}
+\fntext[myfootnote]{Arizona State University.}
+
+%% or include affiliations in footnotes:
+\author[mymainaddress,mysecondaryaddress]{Elsevier Inc}
+\ead[url]{www.elsevier.com}
+
+\author[mysecondaryaddress]{Global Customer Service\corref{mycorrespondingauthor}}
+\cortext[mycorrespondingauthor]{Corresponding author}
+\ead{support@elsevier.com}
+
+\address[mymainaddress]{1600 John F Kennedy Boulevard, Philadelphia}
+\address[mysecondaryaddress]{360 Park Avenue South, New York}
+
 
 %\author{Mahzad Khoshlessan}
 %\affiliation{%
@@ -50,8 +103,16 @@
 
 %\renewcommand{\shortauthors}{M. Khoshlessan et al.}
     
-\maketitle
 \input{abstract.tex}
+
+\begin{keyword}
+\texttt{elsarticle.cls}\sep \LaTeX\sep Elsevier \sep template
+\MSC[2010] 00-01\sep  99-00
+\end{keyword}
+
+\end{frontmatter}
+
+\linenumbers
 
 \section{Introduction}
 \input{introduction.tex}
@@ -74,6 +135,12 @@
 \section{Conclusion}
 \input{conclusion.tex}
 
+\section*{References}
+%% `Elsevier LaTeX' style
+\bibliographystyle{elsarticle-num}
+%%%%%%%%%%%%%%%%%%%%%%%
+\bibliography{journals,becksteinlab}
+
 \clearpage
 
 \appendix
@@ -84,10 +151,6 @@
 %\footnotesize{{\it Acknowledgements} We thank Andre Merzky and Thomas Cheatham
 %for useful discussions. This work is funded by NSF 1443054 and 1440677. Computational resources were provided by NSF XRAC awards
 %TG-MCB090174 and TG-MCB130177.
-
-\bibliographystyle{physbiol-natbib}
-\bibliography{journals,becksteinlab}
-% {\scriptsize
 
 
 \end{document}

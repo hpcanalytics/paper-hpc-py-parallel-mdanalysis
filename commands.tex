@@ -6,9 +6,8 @@
 \usepackage{amsmath}
 \renewcommand{\ttdefault}{pcr}
 
-
-
-\usepackage[numbers,super,sort&compress]{natbib}
+\usepackage{natbib}
+\setcitestyle{square, comma, numbers,sort&compress, super}
 \usepackage{hypernat}
 \bibpunct{}{}{,}{s}{,}{,}
 %% Remove brackets from numbering in List of References
@@ -63,7 +62,7 @@
 \newcommand{\class}[1]{\textrm{#1}}
 
 \newcommand{\tcomp}{\ensuremath{{t}_{\text{compute\_final}}}\xspace}
-\newcommand{\tIO}{\ensuremath{{t}_{\text{IO\_final}}}\xspace}
+\newcommand{\tIO}{\ensuremath{{t}_{\text{I/O\_final}}}\xspace}
 \newcommand{\tcomm}{\ensuremath{t_{\text{comm}}}\xspace}
 \newcommand{\toverhead}{\ensuremath{t_{\text{overhead}}}\xspace}
 %-------------------------------------------------------------------------------------------------------
