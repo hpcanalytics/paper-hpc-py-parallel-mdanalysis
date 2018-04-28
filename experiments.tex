@@ -1,29 +1,25 @@
 \label{impl_exp}
 
-We did not discern any specific patterns that could be traced to the underlying hardware. Stragglers were observed on \emph{SDSC Comet},
-\emph{TACC Stampede} and \emph{TACC Data Analytics System Wrangler} (data not shown). There was also no clear pattern in which certain MPI
-ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not
-reveal an obvious pattern). Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the underlying hardware.
-
 \subsubsection{RMSD Benchmarks}
 \label{sec:RMSD}
+RMSD algorithm for the present test case, represents a task for which computational workload per frame is smaller than I/O workload per frame ($t_{compute_{per-frame}}$ = 0.09 ms, $t_{IO_{per-frame}}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$). 
 We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet} (and similarly also only on a
 single node on other machines), using either dask or MPI \citep{Khoshlessan:2017ab}. 
-Although it is not clear that the root cause is the same for dask and MPI, here we focus on the MPI
+Although, it is not clear that the root cause is the same for dask and MPI, here we focus on the MPI
 implementation (via \package{mpi4py} \citep{Dalcin:2011aa, Dalcin:2005aa}) for its greater simplicity than dask, in order to
 better understand the cause for the poor scaling across nodes.
 
 For both dask and MPI we observed stragglers, individual workers or
-MPI ranks, that much longer to complete than mean execution time of all other workers or ranks. 
+MPI ranks, that take much longer to complete than mean execution time of all other workers or ranks. 
 Waiting for these stragglers destroys strong scaling performance, as shown in Figure \ref{fig:MPIscaling}, \ref{fig:MPIspeedup} for MPI. 
 
 In the example run in Figure \ref{fig:MPIranks}, ten ranks out of 72 take almost 65~s whereas the
 remaining ranks only take about 40~s. The detailed breakdown of the time spent on each rank (Figure \ref{fig:MPIranks}) shows that time
 for the actual computation, \tcomp, is fairly constant across ranks. 
 The time spent on reading data from the shared trajectory file on the Lustre file system into memory, \tIO, shows variability across different ranks. 
-Stragglers, however, appear to be defined by occasional much larger \emph{communication} times, \tcomm, that are on the order of 30~s in this example. 
+Stragglers, however, appear to be defined by occasional much larger \emph{communication} times, \tcomm (lines 25-30 in \ref{alg:RMSD}), that are on the order of 30~s in this example. 
 For other ranks, \tcomm varies across different ranks and for a few ranks $\tcomm < 10$~s or is barely measurable. 
-\tcomm is the time to perform \texttt{comm.Gather()} (lines 25-30 in \ref{alg:RMSD}).
+This initial analysis (especially Figure \ref{fig:MPIranks}) indicates that communication is a major issue. 
 
 \begin{figure}
 \centering
@@ -55,9 +51,9 @@ Data are read from the file system (I/O included) and results are communicated b
 
 \subsubsection*{Identification of Scalability Bottleneck}
 
-This initial analysis (especially Figure \ref{fig:MPIranks}) indicates that communication is a major issue. 
 Figure \ref{fig:ScalingComputeIO} shows the scaling of \tcomp and \tIO individulally. 
-As shown, \tcomp scales very well; however, \tIO does not show good scaling and that explains why we are seeing these variations in \tIO across different ranks (Figure \ref{fig:MPIranks}). 
+As shown, \tcomp scales very well; however, \tIO does not show good scaling beyond a single node (24 cores) and that explains why we are seeing these variations in \tIO across different ranks (Figure \ref{fig:MPIranks}). 
+Considering the results in Figures \ref{fig:MPIwithIO} and \ref{fig:ScalingComputeIO}, we can conclude that communication and I/O are the root causes for stragglers. 
 
 \begin{figure}
 \centering
@@ -66,33 +62,28 @@ As shown, \tcomp scales very well; however, \tIO does not show good scaling and 
 \label{fig:ScalingComputeIO}
 \end{figure}
 
+\subsubsection*{Hardware}
+
+We did not discern any specific patterns that could be traced to the underlying hardware. Stragglers were observed on \emph{SDSC Comet},
+\emph{TACC Stampede} and \emph{TACC Data Analytics System Wrangler} (data not shown). There was also no clear pattern in which certain MPI
+ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not
+reveal an obvious pattern). Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the underlying hardware.
+
 \subsection{Dihedral Featurization Benchmarks}
 \label{DF}
-We briefly tested a much larger computational workload (\tcomp = 40
-ms, \tIO = 0.4 ms, thus $\tcomp/\tIO \approx 100$), namely dihedral
+We briefly tested a much larger computational workload ($t_{compute_{per-frame}}$ = 40 ms, $t_{IO_{per-frame}}$ = 0.4 ms, thus $\tcomp/\tIO \approx 100$), namely dihedral
 featurization on \emph{Comet} with Infiniband and Lustre file system.
 
-The system scales linearly and close to ideal (Figure
-\ref{fig:MPI-dihedral-comm}). Although there is communication of large
-result arrays, which is costly for multiple ranks, the speed-up curve
-(Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPI-dihedral-comm-speedup}
-demonstrates very good scaling with the number of cores (up to 72
-cores on 3 nodes).  The reason is that the communication cost (for
-$MPI-COMM\_WORLD-Gather()$) decreases with increasing the
-number of cores because the result array size that has to be
-communicated also decreases (Figure
-\ref{fig:comparison-t_comm-dihedral}).  Based on Figure
-\ref{fig:comparison-t_comm-dihedral}, communication scales fairly well
-with the number of processes. This can be attributed to larger array
-sizes compared to the RMSD task and according to \citet{Dalcin:2011aa}
-the overhead of the \package{mpi4py} package decreases as the array
-size to be communicated increases. The dihedral featurization workload
-has larger array size for all processor sizes (per task, a time series
-of feature vectors of size $N_{b} \times (213 \times 2 \times 2$) when
-compared to the RMSD workload (per task a float array of length
-$N_{b}$) and therefore we are hypothesizing that the higher
-performance of \package{mpi4py} for larger array sizes has lead to
-better overall scaling.
+The system scales linearly and close to ideal (Figure \ref{fig:MPI-dihedral-comm}). Although, there is communication of large
+result arrays, which is costly for multiple ranks, the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPI-dihedral-comm-speedup}
+demonstrates very good scaling with the number of cores (up to 72 cores on 3 nodes).  The reason is that the communication cost (for
+$MPI.Gather()$-lines 25-30 in \ref{alg:RMSD}) decreases with increasing the number of cores because the result array size that has to be
+communicated also decreases (Figure \ref{fig:comparison-t_comm-dihedral}).  Based on Figure \ref{fig:comparison-t_comm-dihedral}, communication scales fairly well
+with the number of processes. This can be attributed to larger array sizes compared to the RMSD task and according to \citet{Dalcin:2011aa}
+the overhead of the \package{mpi4py} package decreases as the array size to be communicated increases. The dihedral featurization workload
+has larger array size for all processor sizes (per task, a time series of feature vectors of size $N_{b} \times (213 \times 2 \times 2$) when
+compared to the RMSD workload (per task a float array of length $N_{b}$) and therefore we are hypothesizing that the higher
+performance of \package{mpi4py} for larger array sizes has lead to better overall scaling.
  
 \begin{figure}[tbp]
 \centering
@@ -151,34 +142,19 @@ better overall scaling.
 \label{fig:comparison-t_comm-dihedral}
 \end{figure}
 
-Overall, increasing the computational workload over I/O improves
-scaling. For large compute-bound workloads such as the dihedral
-featurization task, stragglers are eliminated and nearly ideal strong
-scaling is achieved. Even for moderately compute-bound workloads such
-as the $20\times$ and $40\times$ RMSD tasks, increasing the
-computational workload over I/O reduces the impact of stragglers even
-though they still contribute to large variations and thus to somewhat
-erratic scaling.
+Overall, increasing the computational workload over I/O improves scaling. For large compute-bound workloads such as the dihedral
+featurization task, stragglers are eliminated and nearly ideal strong scaling is achieved. 
 
-Achieving ideal scaling for large per frame workloads is also
-dependent on the size of the array to be communicated.  Our results
-show that with dihedral featurization workload, nearly ideal scaling
-is possible. However, the performance of $40\times$ and $20\times$
-RMSD workload, although greatly improved, is still affected by slow
-processes due to communication and overhead. The processes with large
-communication time can be attributed to the overhead of
-\package{mpi4py} package with respect to pure C code for smaller array
-size communication.  Additionally, comparison of dihedral
-featurization workload, and $40\times$ and $20\times$ RMSD workload
-shows that overhead is less pronounced when the work becomes more
-compute bound.
+Achieving ideal scaling for large per frame workloads is also dependent on the size of the array to be communicated.  Our results
+show that with dihedral featurization workload, nearly ideal scaling is possible. However, the performance of $40\times$ and $20\times$
+RMSD workload, although greatly improved, is still affected by slow processes due to communication and overhead. The processes with large
+communication time can be attributed to the overhead of \package{mpi4py} package with respect to pure C code for smaller array
+size communication.  Additionally, comparison of dihedral featurization workload, and $40\times$ and $20\times$ RMSD workload
+shows that overhead is less pronounced when the work becomes more compute bound.
 
-The fact that linear scaling is possible, even with expensive
-communications, makes parallelization a valuable strategy to reduce
-the total time to solution for large computational workloads.  In a
-real-world application to one of our existing data sets on local
-workstations with Gigabit interconnect and Network File System (NFS) (using the Dask
-parallel library instead of MPI), analysis time was reduced from more
+The fact that linear scaling is possible, even with expensive communications, makes parallelization a valuable strategy to reduce
+the total time to solution for large computational workloads. In a real-world application to one of our existing data sets on local
+workstations with Gigabit interconnect and Network File System (NFS) (using the Dask parallel library instead of MPI), analysis time was reduced from more
 than a week to a few hours (data not shown).
 
 \subsection{Effect of \tcomp/\tIO on Performance}
@@ -244,6 +220,11 @@ Given the results for Dihedral featurization and RMSD algorithms (Algorithms \re
 \textbf{We hypothesize that MPI competes with Lustre on the same network interface, which would explain why communication appears to
   be primarily a problem in the presence of I/O when \tcomp/\tIO is small.}
 In fact, decreasing the I/O load relative to the compute load should open up the network for communication. 
+
+Even for moderately compute-bound workloads such
+as the $20\times$ and $40\times$ RMSD tasks, increasing the computational workload over I/O reduces the impact of stragglers even
+though they still contribute to large variations and thus to somewhat erratic scaling.
+
 
 \subsection{Communication Cost and Application of Global Array}
 \label{Global-Array}
