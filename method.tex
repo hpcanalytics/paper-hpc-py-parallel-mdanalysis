@@ -14,11 +14,11 @@ All the experiments in the present study are performed using compute nodes.
 We model MPI performance based on the RMSD algorithm (\ref{alg:RMSD}) and Dihedral Featurization algorithm (\ref{alg:Dihedral}). 
 The notation for our models is summarized in Table \ref{tab:notation}.
 We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``compute'' time per
-trajectory frame to perform the computation \tcomp (\texttt{t\_comp} in the code) and the ``I/O'' time for
-ingesting the data from the file system into memory, \tIO (\texttt{t\_IO}). 
+trajectory frame to perform the computation (\texttt{t\_comp} in the code) and the ``I/O'' time for
+ingesting the data from the file system into memory, (\texttt{t\_IO}). 
 $t_{comp\_final}$ is the summation of ``compute'' time per frame and $t_{IO\_final}$ is the summation of ``I/O'' time per frame for all the frames assigned to each rank. 
 $t_{end\_loop}$ is the time delay between the end of the last iteration and exiting the for loop.
-$t_{opening\_trajectory}$ is the time for where data structures are initialized and topology and trajectory files are opened.
+$t_{opening\_trajectory}$ is the time which data structures are initialized and topology and trajectory files are opened.
 
 Outside the \texttt{block\_rmsd()} function, relevant probs were taken and stored as variables \texttt{start4},
 \texttt{start5}, and \texttt{start6}, which we will abbreviate in the following as $t_{4}$ (after setting up the problem
