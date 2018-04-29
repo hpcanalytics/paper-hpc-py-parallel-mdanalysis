@@ -10,7 +10,7 @@ The standard compute nodes consist of Intel Xeon E5-2680v3 processors, 128 GB DD
 The large memory nodes contain 1.5 TB of DRAM and four Haswell processors each and the network topology is 56 Gbps FDR Infini-Band.
 All the experiments in the present study are performed using compute nodes.
 
-\subsection*{Timing observables}
+\subsection{Timing observables}
 We model MPI performance based on the RMSD algorithm (\ref{alg:RMSD}) and Dihedral Featurization algorithm (\ref{alg:Dihedral}). 
 The notation for our models is summarized in Table \ref{tab:notation}.
 We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``compute'' time per
@@ -50,8 +50,8 @@ Strong scaling was quantified by calculating the speed-up relative to performanc
   \midrule
     $t_{end\_loop}$ & $t_{3}-t_{1}$\\
     $t_{opening\_trajectory}$ &  $t_{0}-t_{00}$ \\
-    $t_{comp\_final}$ &  $np.sum(t_{comp})$\\
-    $t_{IO\_final}$ & $np.sum(t_{IO})$\\
+    $t_{comp\_final}$ &  $sum(t_{comp})$\\
+    $t_{IO\_final}$ & $sum(t_{IO})$\\
     $t_{all\_frame}$ & $t_{3}-t_{0}$  \\
     $t_{RMSD}$ &  $t_{5}-t_{4}$ \\
     $t_{Communication_{MPI}}$ &  $t_{6}-t_{5}$  \\
