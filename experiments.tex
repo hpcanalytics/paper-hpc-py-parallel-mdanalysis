@@ -4,9 +4,9 @@
 \label{sec:RMSD}
 RMSD algorithm for the present test case, represents a task for which computational workload per frame is smaller than I/O workload per frame ($t_{compute_{per-frame}}$ = 0.09 ms, $t_{IO_{per-frame}}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$). 
 We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet} (and similarly also only on a
-single node on other machines), using either dask or MPI \citep{Khoshlessan:2017ab}. 
+single node on other machines), using either dask or MPI \cite{Khoshlessan:2017ab}. 
 Although, it is not clear that the root cause is the same for dask and MPI, here we focus on the MPI
-implementation (via \package{mpi4py} \citep{Dalcin:2011aa, Dalcin:2005aa}) for its greater simplicity than dask, in order to
+implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}) for its greater simplicity than dask, in order to
 better understand the cause for the poor scaling across nodes.
 
 For both dask and MPI we observed stragglers, individual workers or
@@ -127,7 +127,7 @@ In addition, for higher computational workloads the competition over accessing t
   \centering
   \includegraphics[width=\linewidth]{figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf}
   \caption{Communication time distribution for different number of
-    processes (shown as violin plots \protect\citep{Hintze:1998tw}
+    processes (shown as violin plots \protect\cite{Hintze:1998tw}
     with kernel density estimates as implemented in
     \package{seaborn}); the white dot indicates the median.}
 \end{subfigure}
@@ -300,7 +300,7 @@ Data are read from the file system (I/O included). All ranks update the global a
 
 \subsection{I/O Cost}
 \label{I/O}
-We showed previously that the I/O system can have a large effect on the parallel performance of the RMSD task \citep{Khoshlessan:2017ab},
+We showed previously that the I/O system can have a large effect on the parallel performance of the RMSD task \cite{Khoshlessan:2017ab},
 especially because the average time to perform the computation \tcomp (about 0.09 ms) is about three times smaller than the I/O time \tIO (about 0.3 ms) (Figures \ref{fig:ScalingComputeIO} and \ref{fig:MPIwithIO}). 
 In fact, poor I/O performance is responsible for the stragglers, and the question is ``are stragglers waiting for file access?". 
 Due to the large file size and memory limit, processes are not able to load the whole trajectory into memory at once and as a result each process is only allowed to load one frame into memory at a time.

@@ -1,11 +1,9 @@
 \newif\ifdraft
-\drafttrue
-\ifdraft
-\usepackage{textcomp}
-\usepackage{xcolor}
+%\drafttrue
+
 \usepackage{amsmath}
 \renewcommand{\ttdefault}{pcr}
-
+\usepackage{textcomp}
 \usepackage{natbib}
 \setcitestyle{square, comma, numbers,sort&compress, super}
 \usepackage{hypernat}
@@ -66,6 +64,9 @@
 \newcommand{\tcomm}{\ensuremath{t_{\text{comm}}}\xspace}
 \newcommand{\toverhead}{\ensuremath{t_{\text{overhead}}}\xspace}
 %-------------------------------------------------------------------------------------------------------
+\ifdraft
+%\usepackage{textcomp}
+\usepackage{xcolor}
 \definecolor{ocolor}{rgb}{1,0,0.4}
 \newcommand{\terminology}[1]{ {\textcolor{red} {(Terminology used: \textbf{#1}) }}}
 \newcommand{\owave}[1]{ {\cyanuwave{#1}}}

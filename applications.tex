@@ -8,8 +8,8 @@ The package is written in Python (compatible with version 2.7 and 3.4+), with ti
 
 \subsubsection{Root Mean Square Distance (RMSD)}
 The calculation of the root mean square distance (\textbf{RMSD}) for C$_{\alpha}$ atoms after
-optimal superposition with the QCPROT algorithm \citep{Liu:2010kx,Theobald:2005vn} is commonly required in the analysis of molecular dynamics simulations (Algorithm \ref{alg:RMSD}). 
-The task used for the purpose of our benchmark is the MDAnalysis.analysis.rms.rmsd() function from the MDAnalysis.analysis.rms module (implemented in Cython \citep{Gowers:2016aa}).  
+optimal superposition with the QCPROT algorithm \cite{Liu:2010kx,Theobald:2005vn} is commonly required in the analysis of molecular dynamics simulations (Algorithm \ref{alg:RMSD}). 
+The task used for the purpose of our benchmark is the MDAnalysis.analysis.rms.rmsd() function from the MDAnalysis.analysis.rms module (implemented in Cython \cite{Gowers:2016aa}).  
 This function computes the RMSD between two sets of coordinates using the fast QCPROT algorithm to optimally superimpose two structures and then calculates the RMSD. 
 
 To this, the protein structure (selected C$_{\alpha}$ atoms) in the initial frame will be considered as the reference and as the mobile group at other time steps. 
@@ -71,7 +71,7 @@ The order of complexity for RMSD algorithm \ref{alg:RMSD} is $T \times N^{2}$ wh
 
 
 \subsubsection{Dihedral Featurization}
-As a real-world compute-bound task we investigated \textbf{Dihedral featurization} \citep{Sittel:2014aa} (Algorithm \ref{alg:Dihedral}) whereby a time series of
+As a real-world compute-bound task we investigated \textbf{Dihedral featurization} \cite{Sittel:2014aa} (Algorithm \ref{alg:Dihedral}) whereby a time series of
 feature vectors consisting of the two backbone dihedral angles per residue ($\phi_{i}$ and $\psi_{i}$) is calculated for all 212
 non-terminal residues. For each frame, an array of dihedral angles is calculated where for later convenience, an angle $\theta_{i}$ is
 actually represented as $(\cos\theta_{i}, \sin\theta_{i})$. 
