@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  30 APR 2018 16:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  30 APR 2018 16:55
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1368,12 +1368,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 290--290
 al ar-ray
  []
 
-<figures/RMSD-ga4py-time_comp_IO_comparison.pdf, id=843, 722.7pt x 289.08pt>
-File: figures/RMSD-ga4py-time_comp_IO_comparison.pdf Graphic file (type pdf)
+<figures/RMSD-ga4py-time_IO_comparison.pdf, id=843, 722.7pt x 289.08pt>
+File: figures/RMSD-ga4py-time_IO_comparison.pdf Graphic file (type pdf)
 
-<use figures/RMSD-ga4py-time_comp_IO_comparison.pdf>
-Package pdftex.def Info: figures/RMSD-ga4py-time_comp_IO_comparison.pdf used on
- input line 296.
+<use figures/RMSD-ga4py-time_IO_comparison.pdf>
+Package pdftex.def Info: figures/RMSD-ga4py-time_IO_comparison.pdf used on inpu
+t line 296.
 (pdftex.def)             Requested size: 345.0pt x 137.99812pt.
 
 
@@ -1403,13 +1403,13 @@ File: figures/split-speed_up.pdf Graphic file (type pdf)
 Package pdftex.def Info: figures/split-speed_up.pdf used on input line 338.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/split-BarPlot-rank-comparison_72_3.pdf, id=996, 424.36674pt x 297.5682
-8pt>
-File: figures/split-BarPlot-rank-comparison_72_3.pdf Graphic file (type pdf)
- <use figures/split-BarPlot-rank-comparison_72_3.pdf>
-Package pdftex.def Info: figures/split-BarPlot-rank-comparison_72_3.pdf used on
- input line 345.
-(pdftex.def)             Requested size: 276.00105pt x 193.53967pt.
+<figures/split-BarPlot-rank-comparison_192_5.pdf, id=996, 422.98206pt x 297.568
+28pt>
+File: figures/split-BarPlot-rank-comparison_192_5.pdf Graphic file (type pdf)
+ <use figures/split-BarPlot-rank-comparison_192_5.pdf>
+Package pdftex.def Info: figures/split-BarPlot-rank-comparison_192_5.pdf used o
+n input line 345.
+(pdftex.def)             Requested size: 276.00105pt x 194.1708pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 352--352
 []\OT1/cmr/m/n/8 Figure 8: |Per-for-mance of the RMSD task with MPI us-ing glob
@@ -1423,37 +1423,37 @@ File: figures/split-time_comp_IO_comparison.pdf Graphic file (type pdf)
 Package pdftex.def Info: figures/split-time_comp_IO_comparison.pdf used on inpu
 t line 358.
 (pdftex.def)             Requested size: 345.0pt x 137.99812pt.
- [21 <./figures/RMSD-ga4py-time_comp_IO_comparison.pdf>] [22 <./figures/split-t
-_total.pdf> <./figures/split-speed_up.pdf
+ [21 <./figures/RMSD-ga4py-time_IO_comparison.pdf>] [22 <./figures/split-t_tota
+l.pdf> <./figures/split-speed_up.pdf
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/split-speed_up.pdf
 ): PDF inclusion: multiple pdfs with page group included in a single page
-> <./figures/split-BarPlot-rank-comparison_72_3.pdf
+> <./figures/split-BarPlot-rank-comparison_192_5.pdf
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/split-BarPlot-rank
--comparison_72_3.pdf): PDF inclusion: multiple pdfs with page group included in
- a single page
->] <figures/split-ga-t_total.pdf, id=1179, 289.08pt x 289.08pt>
+-comparison_192_5.pdf): PDF inclusion: multiple pdfs with page group included i
+n a single page
+>] <figures/split-ga-t_total.pdf, id=1177, 289.08pt x 289.08pt>
 File: figures/split-ga-t_total.pdf Graphic file (type pdf)
 
 <use figures/split-ga-t_total.pdf>
 Package pdftex.def Info: figures/split-ga-t_total.pdf used on input line 373.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/split-ga-speed_up.pdf, id=1180, 289.08pt x 289.08pt>
+<figures/split-ga-speed_up.pdf, id=1178, 289.08pt x 289.08pt>
 File: figures/split-ga-speed_up.pdf Graphic file (type pdf)
 
 <use figures/split-ga-speed_up.pdf>
 Package pdftex.def Info: figures/split-ga-speed_up.pdf used on input line 379.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/split-ga-BarPlot-rank-comparison_72_5.pdf, id=1181, 474.69846pt x 279.
-34946pt>
-File: figures/split-ga-BarPlot-rank-comparison_72_5.pdf Graphic file (type pdf)
-
- <use figures/split-ga-BarPlot-rank-comparison_72_5.pdf>
-Package pdftex.def Info: figures/split-ga-BarPlot-rank-comparison_72_5.pdf used
- on input line 386.
+<figures/split-ga-BarPlot-rank-comparison_192_5.pdf, id=1179, 474.69846pt x 279
+.34946pt>
+File: figures/split-ga-BarPlot-rank-comparison_192_5.pdf Graphic file (type pdf
+)
+ <use figures/split-ga-BarPlot-rank-comparison_192_5.pdf>
+Package pdftex.def Info: figures/split-ga-BarPlot-rank-comparison_192_5.pdf use
+d on input line 386.
 (pdftex.def)             Requested size: 276.00105pt x 162.42346pt.
 
 Underfull \hbox (badness 10000) in paragraph at lines 393--393
@@ -1461,7 +1461,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 393--393
 bal ar-ray
  []
 
-<figures/split-ga-time_IO_comparison.pdf, id=1182, 722.7pt x 289.08pt>
+<figures/split-ga-time_IO_comparison.pdf, id=1180, 722.7pt x 289.08pt>
 File: figures/split-ga-time_IO_comparison.pdf Graphic file (type pdf)
 
 <use figures/split-ga-time_IO_comparison.pdf>
@@ -1469,21 +1469,21 @@ Package pdftex.def Info: figures/split-ga-time_IO_comparison.pdf used on input
 line 399.
 (pdftex.def)             Requested size: 345.0pt x 137.99812pt.
 
-<figures/hdf5-t_total.pdf, id=1188, 289.08pt x 289.08pt>
+<figures/hdf5-t_total.pdf, id=1186, 289.08pt x 289.08pt>
 File: figures/hdf5-t_total.pdf Graphic file (type pdf)
 
 <use figures/hdf5-t_total.pdf>
 Package pdftex.def Info: figures/hdf5-t_total.pdf used on input line 416.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/hdf5-speed_up.pdf, id=1189, 289.08pt x 289.08pt>
+<figures/hdf5-speed_up.pdf, id=1187, 289.08pt x 289.08pt>
 File: figures/hdf5-speed_up.pdf Graphic file (type pdf)
 
 <use figures/hdf5-speed_up.pdf>
 Package pdftex.def Info: figures/hdf5-speed_up.pdf used on input line 422.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/hdf5-BarPlot-rank-comparison_192_4.pdf, id=1190, 418.47278pt x 297.568
+<figures/hdf5-BarPlot-rank-comparison_192_4.pdf, id=1188, 418.47278pt x 297.568
 28pt>
 File: figures/hdf5-BarPlot-rank-comparison_192_4.pdf Graphic file (type pdf)
  <use figures/hdf5-BarPlot-rank-comparison_192_4.pdf>
@@ -1496,7 +1496,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 436--436
 al-lel HDF5
  []
 
-<figures/hdf5-time_IO_comparison.pdf, id=1191, 722.7pt x 289.08pt>
+<figures/hdf5-time_IO_comparison.pdf, id=1189, 722.7pt x 289.08pt>
 File: figures/hdf5-time_IO_comparison.pdf Graphic file (type pdf)
 
 <use figures/hdf5-time_IO_comparison.pdf>
@@ -1508,11 +1508,11 @@ gures/split-ga-t_total.pdf> <./figures/split-ga-speed_up.pdf
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/split-ga-speed_up.
 pdf): PDF inclusion: multiple pdfs with page group included in a single page
-> <./figures/split-ga-BarPlot-rank-comparison_72_5.pdf
+> <./figures/split-ga-BarPlot-rank-comparison_192_5.pdf
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/split-ga-BarPlot-r
-ank-comparison_72_5.pdf): PDF inclusion: multiple pdfs with page group included
- in a single page
+ank-comparison_192_5.pdf): PDF inclusion: multiple pdfs with page group include
+d in a single page
 >] [25 <./figures/split-ga-time_IO_comparison.pdf>] [26 <./figures/hdf5-t_total
 .pdf> <./figures/hdf5-speed_up.pdf
 
@@ -1543,8 +1543,8 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 157.
  ) 
 Here is how much of TeX's memory you used:
  11797 strings out of 493089
- 173908 string characters out of 6134842
- 279968 words of memory out of 5000000
+ 173893 string characters out of 6134842
+ 279967 words of memory out of 5000000
  14907 multiletter control sequences out of 15000+600000
  18759 words of font info for 69 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1582,9 +1582,9 @@ cm/cmti7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm
 /cmti8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symb
 ols/msam10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/courier/ucrr
 8a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (32 pages, 933473 bytes).
+Output written on main.pdf (32 pages, 1000689 bytes).
 PDF statistics:
- 1759 PDF objects out of 2073 (max. 8388607)
+ 1755 PDF objects out of 2073 (max. 8388607)
  734 compressed objects within 8 object streams
  89 named destinations out of 1000 (max. 500000)
  338 words of extra memory for PDF output out of 10000 (max. 10000000)
