@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  27 APR 2018 19:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  30 APR 2018 13:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1001,7 +1001,7 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 10.
 (/usr/local/texlive/2015/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ))
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 109.
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 113.
 
 
 (/usr/local/texlive/2015/texmf-dist/tex/latex/psnfss/ot1pcr.fd
@@ -1076,30 +1076,31 @@ Underfull \hbox (badness 10000) in paragraph at lines 58--60
 art, stop=stop,
  []
 
+[5]
 
-Package natbib Warning: Citation `Sittel:2014aa' on page 5 undefined on input l
+Package natbib Warning: Citation `Sittel:2014aa' on page 6 undefined on input l
 ine 74.
 
-[5]
+
 Underfull \hbox (badness 10000) in paragraph at lines 123--125
 []\OT1/pcr/m/n/7 out = Block[]Dihedral(index, topology, trajectory, xref0, star
 t=start,
  []
 
-) (./background.tex
+) (./background.tex [6]
 
-Package natbib Warning: Citation `Dalcin:2011aa' on page 6 undefined on input l
+Package natbib Warning: Citation `Dalcin:2011aa' on page 7 undefined on input l
 ine 4.
 
 
-Package natbib Warning: Citation `Dalcin:2005aa' on page 6 undefined on input l
+Package natbib Warning: Citation `Dalcin:2005aa' on page 7 undefined on input l
 ine 4.
 
 
-Package natbib Warning: Citation `Dalcin:2011aa' on page 6 undefined on input l
+Package natbib Warning: Citation `Dalcin:2011aa' on page 7 undefined on input l
 ine 9.
 
-[6] [7] [8]) (./method.tex
+[7] [8]) (./method.tex
 
 Package natbib Warning: Citation `Seyler:2014il' on page 9 undefined on input l
 ine 2.
@@ -1111,54 +1112,61 @@ put line 3.
 [9] [10]) (./experiments.tex
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 8.
+(hyperref)                than one, level fixed on input line 3.
 
 
 Package natbib Warning: Citation `Khoshlessan:2017ab' on page 11 undefined on i
-nput line 11.
+nput line 7.
 
 
 Package natbib Warning: Citation `Dalcin:2011aa' on page 11 undefined on input 
-line 13.
+line 9.
 
 
 Package natbib Warning: Citation `Dalcin:2005aa' on page 11 undefined on input 
-line 13.
+line 9.
 
-[11] <figures/main-RMSD-t_total.pdf, id=189, 289.08pt x 289.08pt>
+
+Overfull \hbox (0.38055pt too wide) in paragraph at lines 5--11
+\OT1/cmr/m/n/10 ($\OML/cmm/m/it/10 t[]$ \OT1/cmr/m/n/10 = 0.09 ms, $\OML/cmm/m/
+it/10 t[]$ \OT1/cmr/m/n/10 = 0.3 ms, thus $\OML/cmm/m/it/10 t[]=t[] \OMS/cmsy/m
+/n/10 ^^Y
+ []
+
+[11] <figures/main-RMSD-t_total.pdf, id=194, 289.08pt x 289.08pt>
 File: figures/main-RMSD-t_total.pdf Graphic file (type pdf)
 
 <use figures/main-RMSD-t_total.pdf>
-Package pdftex.def Info: figures/main-RMSD-t_total.pdf used on input line 31.
+Package pdftex.def Info: figures/main-RMSD-t_total.pdf used on input line 27.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/main-RMSD-speed_up.pdf, id=190, 289.08pt x 289.08pt>
+<figures/main-RMSD-speed_up.pdf, id=195, 289.08pt x 289.08pt>
 File: figures/main-RMSD-speed_up.pdf Graphic file (type pdf)
 
 <use figures/main-RMSD-speed_up.pdf>
-Package pdftex.def Info: figures/main-RMSD-speed_up.pdf used on input line 37.
+Package pdftex.def Info: figures/main-RMSD-speed_up.pdf used on input line 33.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/main-RMSD-BarPlot-rank-comparison_72_4.pdf, id=191, 424.36674pt x 297.
+<figures/main-RMSD-BarPlot-rank-comparison_72_4.pdf, id=196, 424.36674pt x 297.
 56828pt>
 File: figures/main-RMSD-BarPlot-rank-comparison_72_4.pdf Graphic file (type pdf
 )
  <use figures/main-RMSD-BarPlot-rank-comparison_72_4.pdf>
 Package pdftex.def Info: figures/main-RMSD-BarPlot-rank-comparison_72_4.pdf use
-d on input line 44.
+d on input line 40.
 (pdftex.def)             Requested size: 276.00105pt x 193.53967pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 52--52
+Underfull \hbox (badness 10000) in paragraph at lines 48--48
 []\OT1/cmr/m/n/8 Figure 1: |Per-for-mance of the RMSD task with MPI which is I/
 O-bound
  []
 
-<figures/main-RMSD-time_comp_IO_comparison.pdf, id=195, 722.7pt x 289.08pt>
+<figures/main-RMSD-time_comp_IO_comparison.pdf, id=201, 722.7pt x 289.08pt>
 File: figures/main-RMSD-time_comp_IO_comparison.pdf Graphic file (type pdf)
 
 <use figures/main-RMSD-time_comp_IO_comparison.pdf>
 Package pdftex.def Info: figures/main-RMSD-time_comp_IO_comparison.pdf used on 
-input line 64.
+input line 60.
 (pdftex.def)             Requested size: 345.0pt x 137.99812pt.
  [12] [13 <./figures/main-RMSD-t_total.pdf> <./figures/main-RMSD-speed_up.pdf
 
@@ -1172,75 +1180,75 @@ d in a single page
 >]
 
 Package natbib Warning: Citation `Dalcin:2011aa' on page 14 undefined on input 
-line 87.
+line 82.
 
-<figs/t_total-dihedral-comm.pdf, id=342, 289.08pt x 289.08pt>
+[14 <./figures/main-RMSD-time_comp_IO_comparison.pdf>]
+<figs/t_total-dihedral-comm.pdf, id=398, 289.08pt x 289.08pt>
 File: figs/t_total-dihedral-comm.pdf Graphic file (type pdf)
 
 <use figs/t_total-dihedral-comm.pdf>
-Package pdftex.def Info: figs/t_total-dihedral-comm.pdf used on input line 101.
-
+Package pdftex.def Info: figs/t_total-dihedral-comm.pdf used on input line 93.
 (pdftex.def)             Requested size: 120.7521pt x 120.75111pt.
 
-<figs/total_time_boxplot-dihedral-comm.pdf, id=343, 433.62pt x 289.08pt>
+<figs/total_time_boxplot-dihedral-comm.pdf, id=399, 433.62pt x 289.08pt>
 File: figs/total_time_boxplot-dihedral-comm.pdf Graphic file (type pdf)
 
 <use figs/total_time_boxplot-dihedral-comm.pdf>
 Package pdftex.def Info: figs/total_time_boxplot-dihedral-comm.pdf used on inpu
-t line 107.
+t line 99.
 (pdftex.def)             Requested size: 172.5pt x 114.99918pt.
 
-<figs/speed_up-dihedral-comm.pdf, id=344, 289.08pt x 289.08pt>
+<figs/speed_up-dihedral-comm.pdf, id=400, 289.08pt x 289.08pt>
 File: figs/speed_up-dihedral-comm.pdf Graphic file (type pdf)
 
 <use figs/speed_up-dihedral-comm.pdf>
-Package pdftex.def Info: figs/speed_up-dihedral-comm.pdf used on input line 115
+Package pdftex.def Info: figs/speed_up-dihedral-comm.pdf used on input line 107
 .
 (pdftex.def)             Requested size: 120.7521pt x 120.75111pt.
 
-<figs/BarPlot-rank-comparison-dihedral-comm.pdf, id=345, 433.62pt x 289.08pt>
+<figs/BarPlot-rank-comparison-dihedral-comm.pdf, id=401, 433.62pt x 289.08pt>
 File: figs/BarPlot-rank-comparison-dihedral-comm.pdf Graphic file (type pdf)
 
 <use figs/BarPlot-rank-comparison-dihedral-comm.pdf>
 Package pdftex.def Info: figs/BarPlot-rank-comparison-dihedral-comm.pdf used on
- input line 122.
+ input line 114.
 (pdftex.def)             Requested size: 172.5pt x 114.99918pt.
 
-<figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf, id=346, 433.62pt x 289.08
+<figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf, id=402, 433.62pt x 289.08
 pt>
 File: figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf Graphic file (type pd
 f)
  <use figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf>
 Package pdftex.def Info: figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf us
-ed on input line 136.
+ed on input line 128.
 (pdftex.def)             Requested size: 189.75105pt x 126.50305pt.
 
 
-Package natbib Warning: Citation `Hintze:1998tw' on page 14 undefined on input 
-line 140.
+Package natbib Warning: Citation `Hintze:1998tw' on page 15 undefined on input 
+line 132.
 
 
-Package natbib Warning: Citation `Hintze:1998tw' on page 14 undefined on input 
-line 140.
+Package natbib Warning: Citation `Hintze:1998tw' on page 15 undefined on input 
+line 132.
 
-<figs/t_comm-mean-dihedral.pdf, id=347, 289.08pt x 289.08pt>
+<figs/t_comm-mean-dihedral.pdf, id=403, 289.08pt x 289.08pt>
 File: figs/t_comm-mean-dihedral.pdf Graphic file (type pdf)
 
 <use figs/t_comm-mean-dihedral.pdf>
-Package pdftex.def Info: figs/t_comm-mean-dihedral.pdf used on input line 145.
+Package pdftex.def Info: figs/t_comm-mean-dihedral.pdf used on input line 137.
 (pdftex.def)             Requested size: 120.7521pt x 120.75111pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 146--146
+Underfull \hbox (badness 10000) in paragraph at lines 138--138
 []\OT1/cmr/m/n/9 (b) |Scal-ing com-munca-tion
  []
 
 
-Underfull \hbox (badness 5787) in paragraph at lines 146--146
+Underfull \hbox (badness 5787) in paragraph at lines 138--138
 \OT1/cmr/m/n/9 time (mean and stan-dard
  []
 
-[14 <./figures/main-RMSD-time_comp_IO_comparison.pdf>] [15 <./figs/t_total-dihe
-dral-comm.pdf> <./figs/total_time_boxplot-dihedral-comm.pdf
+[15 <./figs/t_total-dihedral-comm.pdf> <./figs/total_time_boxplot-dihedral-comm
+.pdf
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/total_time_boxplot-di
 hedral-comm.pdf): PDF inclusion: multiple pdfs with page group included in a si
@@ -1254,85 +1262,85 @@ m.pdf): PDF inclusion: multiple pdfs with page group included in a single page
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/BarPlot-rank-comparis
 on-dihedral-comm.pdf): PDF inclusion: multiple pdfs with page group included in
  a single page
->] [16 <./figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf> <./figs/t_comm-m
-ean-dihedral.pdf
+>]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 153.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 153.
+
+[16 <./figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf> <./figs/t_comm-mean
+-dihedral.pdf
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/t_comm-mean-dihedral.
 pdf): PDF inclusion: multiple pdfs with page group included in a single page
 >]
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 184.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 184.
-
-[17]
-<figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf, id=677, 282.98221pt x 3
+<figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf, id=680, 282.98221pt x 3
 13.21141pt>
 File: figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf Graphic file (type 
 pdf)
  <use figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf>
 Package pdftex.def Info: figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf 
-used on input line 219.
+used on input line 190.
 (pdftex.def)             Requested size: 103.50105pt x 114.55779pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 220--220
+Underfull \hbox (badness 10000) in paragraph at lines 191--191
 []\OT1/cmr/m/n/9 (a) |Ef-fect of
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 220--220
+Underfull \hbox (badness 10000) in paragraph at lines 191--191
 \OML/cmm/m/it/9 t[]$\OT1/cmr/m/n/9 /$\OML/cmm/m/it/9 t[]$
  []
 
 
-<figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pdf, id=678, 282.98221pt x
+<figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pdf, id=681, 282.98221pt x
  325.11652pt>
 File: figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pdf Graphic file (typ
 e pdf)
  <use figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pdf>
 Package pdftex.def Info: figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pd
-f used on input line 225.
+f used on input line 196.
 (pdftex.def)             Requested size: 103.50105pt x 118.9121pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 226--226
+Underfull \hbox (badness 10000) in paragraph at lines 197--197
 \OT1/cmr/m/n/9 Up with re-spect to
  []
 
 
-Underfull \hbox (badness 2478) in paragraph at lines 226--226
+Underfull \hbox (badness 2478) in paragraph at lines 197--197
 \OML/cmm/m/it/9 t[]$\OT1/cmr/m/n/9 /$\OML/cmm/m/it/9 t[]$ \OT1/cmr/m/n/9 for
  []
 
 
-<figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pdf, id=679, 282.7501pt x 
+<figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pdf, id=682, 282.7501pt x 
 325.11652pt>
 File: figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pdf Graphic file (typ
 e pdf)
  <use figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pdf>
 Package pdftex.def Info: figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pd
-f used on input line 231.
+f used on input line 202.
 (pdftex.def)             Requested size: 103.50105pt x 119.0113pt.
 
-Underfull \hbox (badness 2894) in paragraph at lines 232--232
+Underfull \hbox (badness 2894) in paragraph at lines 203--203
 []\OT1/cmr/m/n/9 (c) |Change in the ef-
  []
 
 
-Underfull \hbox (badness 2478) in paragraph at lines 232--232
+Underfull \hbox (badness 2478) in paragraph at lines 203--203
 \OML/cmm/m/it/9 t[]$\OT1/cmr/m/n/9 /$\OML/cmm/m/it/9 t[]$ \OT1/cmr/m/n/9 for
  []
 
 
-Underfull \hbox (badness 7256) in paragraph at lines 237--237
+Underfull \hbox (badness 7256) in paragraph at lines 208--208
 []\OT1/cmr/m/n/8 Figure 5: |Per-for-mance change of the RMSD task with MPI with
  dif-fer-ent
  []
 
-[18 <./figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf> <./figures/Comput
-e_to_IO_ratio_on_performance_2d_2_v17.pdf
+[17] [18 <./figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf> <./figures/C
+ompute_to_IO_ratio_on_performance_2d_2_v17.pdf
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/Compute_to_IO_rati
 o_on_performance_2d_2_v17.pdf): PDF inclusion: multiple pdfs with page group in
@@ -1343,56 +1351,52 @@ pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/Compute_to_IO_rati
 o_on_performance_2d_3_v17.pdf): PDF inclusion: multiple pdfs with page group in
 cluded in a single page
 >]
-Underfull \hbox (badness 10000) in paragraph at lines 279--280
+Underfull \hbox (badness 10000) in paragraph at lines 253--254
 []\OT1/pcr/m/n/7 out = Block[]RMSD(index, topology, trajectory, xref0, start=st
 art, stop=stop,
  []
 
-<figures/RMSD-ga4py-t_total.pdf, id=828, 289.08pt x 289.08pt>
+<figures/RMSD-ga4py-t_total.pdf, id=840, 289.08pt x 289.08pt>
 File: figures/RMSD-ga4py-t_total.pdf Graphic file (type pdf)
 
 <use figures/RMSD-ga4py-t_total.pdf>
-Package pdftex.def Info: figures/RMSD-ga4py-t_total.pdf used on input line 296.
+Package pdftex.def Info: figures/RMSD-ga4py-t_total.pdf used on input line 270.
 
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/RMSD-ga4py-speed_up.pdf, id=829, 289.08pt x 289.08pt>
+<figures/RMSD-ga4py-speed_up.pdf, id=841, 289.08pt x 289.08pt>
 File: figures/RMSD-ga4py-speed_up.pdf Graphic file (type pdf)
 
 <use figures/RMSD-ga4py-speed_up.pdf>
-Package pdftex.def Info: figures/RMSD-ga4py-speed_up.pdf used on input line 302
+Package pdftex.def Info: figures/RMSD-ga4py-speed_up.pdf used on input line 276
 .
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf, id=830, 474.69846pt x 279
+<figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf, id=842, 474.69846pt x 279
 .34946pt>
 File: figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf Graphic file (type pd
 f)
  <use figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf>
 Package pdftex.def Info: figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf us
-ed on input line 309.
+ed on input line 283.
 (pdftex.def)             Requested size: 276.00105pt x 162.42346pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 316--316
+Underfull \hbox (badness 10000) in paragraph at lines 290--290
 []\OT1/cmr/m/n/8 Figure 6: |Per-for-mance of the RMSD task with MPI us-ing glob
 al ar-ray
  []
 
-<figures/RMSD-ga4py-time_comp_IO_comparison.pdf, id=831, 722.7pt x 289.08pt>
+<figures/RMSD-ga4py-time_comp_IO_comparison.pdf, id=843, 722.7pt x 289.08pt>
 File: figures/RMSD-ga4py-time_comp_IO_comparison.pdf Graphic file (type pdf)
 
 <use figures/RMSD-ga4py-time_comp_IO_comparison.pdf>
 Package pdftex.def Info: figures/RMSD-ga4py-time_comp_IO_comparison.pdf used on
- input line 322.
+ input line 296.
 (pdftex.def)             Requested size: 345.0pt x 137.99812pt.
 
 
 Package natbib Warning: Citation `Khoshlessan:2017ab' on page 19 undefined on i
-nput line 329.
-
-
-Package natbib Warning: Citation `Sehrish:2009aa' on page 19 undefined on input
- line 335.
+nput line 303.
 
 [19] [20 <./figures/RMSD-ga4py-t_total.pdf> <./figures/RMSD-ga4py-speed_up.pdf
 
@@ -1403,39 +1407,39 @@ p.pdf): PDF inclusion: multiple pdfs with page group included in a single page
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/RMSD-ga4py-BarPlot
 -rank-comparison_72_1.pdf): PDF inclusion: multiple pdfs with page group includ
 ed in a single page
->] <figures/split-t_total.pdf, id=983, 289.08pt x 289.08pt>
+>] <figures/split-t_total.pdf, id=994, 289.08pt x 289.08pt>
 File: figures/split-t_total.pdf Graphic file (type pdf)
 
 <use figures/split-t_total.pdf>
-Package pdftex.def Info: figures/split-t_total.pdf used on input line 359.
+Package pdftex.def Info: figures/split-t_total.pdf used on input line 332.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/split-speed_up.pdf, id=984, 289.08pt x 289.08pt>
+<figures/split-speed_up.pdf, id=995, 289.08pt x 289.08pt>
 File: figures/split-speed_up.pdf Graphic file (type pdf)
 
 <use figures/split-speed_up.pdf>
-Package pdftex.def Info: figures/split-speed_up.pdf used on input line 365.
+Package pdftex.def Info: figures/split-speed_up.pdf used on input line 338.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/split-BarPlot-rank-comparison_72_3.pdf, id=985, 424.36674pt x 297.5682
+<figures/split-BarPlot-rank-comparison_72_3.pdf, id=996, 424.36674pt x 297.5682
 8pt>
 File: figures/split-BarPlot-rank-comparison_72_3.pdf Graphic file (type pdf)
  <use figures/split-BarPlot-rank-comparison_72_3.pdf>
 Package pdftex.def Info: figures/split-BarPlot-rank-comparison_72_3.pdf used on
- input line 372.
+ input line 345.
 (pdftex.def)             Requested size: 276.00105pt x 193.53967pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 379--379
+Underfull \hbox (badness 10000) in paragraph at lines 352--352
 []\OT1/cmr/m/n/8 Figure 8: |Per-for-mance of the RMSD task with MPI us-ing glob
 al ar-ray
  []
 
-<figures/split-time_comp_IO_comparison.pdf, id=986, 722.7pt x 289.08pt>
+<figures/split-time_comp_IO_comparison.pdf, id=997, 722.7pt x 289.08pt>
 File: figures/split-time_comp_IO_comparison.pdf Graphic file (type pdf)
 
 <use figures/split-time_comp_IO_comparison.pdf>
 Package pdftex.def Info: figures/split-time_comp_IO_comparison.pdf used on inpu
-t line 385.
+t line 358.
 (pdftex.def)             Requested size: 345.0pt x 137.99812pt.
  [21 <./figures/RMSD-ga4py-time_comp_IO_comparison.pdf>] [22 <./figures/split-t
 _total.pdf> <./figures/split-speed_up.pdf
@@ -1447,75 +1451,75 @@ pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/split-speed_up.pdf
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/split-BarPlot-rank
 -comparison_72_3.pdf): PDF inclusion: multiple pdfs with page group included in
  a single page
->] <figures/split-ga-t_total.pdf, id=1170, 289.08pt x 289.08pt>
+>] <figures/split-ga-t_total.pdf, id=1179, 289.08pt x 289.08pt>
 File: figures/split-ga-t_total.pdf Graphic file (type pdf)
 
 <use figures/split-ga-t_total.pdf>
-Package pdftex.def Info: figures/split-ga-t_total.pdf used on input line 400.
+Package pdftex.def Info: figures/split-ga-t_total.pdf used on input line 373.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/split-ga-speed_up.pdf, id=1171, 289.08pt x 289.08pt>
+<figures/split-ga-speed_up.pdf, id=1180, 289.08pt x 289.08pt>
 File: figures/split-ga-speed_up.pdf Graphic file (type pdf)
 
 <use figures/split-ga-speed_up.pdf>
-Package pdftex.def Info: figures/split-ga-speed_up.pdf used on input line 406.
+Package pdftex.def Info: figures/split-ga-speed_up.pdf used on input line 379.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/split-ga-BarPlot-rank-comparison_72_5.pdf, id=1172, 474.69846pt x 279.
+<figures/split-ga-BarPlot-rank-comparison_72_5.pdf, id=1181, 474.69846pt x 279.
 34946pt>
 File: figures/split-ga-BarPlot-rank-comparison_72_5.pdf Graphic file (type pdf)
 
  <use figures/split-ga-BarPlot-rank-comparison_72_5.pdf>
 Package pdftex.def Info: figures/split-ga-BarPlot-rank-comparison_72_5.pdf used
- on input line 413.
+ on input line 386.
 (pdftex.def)             Requested size: 276.00105pt x 162.42346pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 420--420
+Underfull \hbox (badness 10000) in paragraph at lines 393--393
 []\OT1/cmr/m/n/8 Figure 10: |Per-for-mance of the RMSD task with MPI us-ing glo
 bal ar-ray
  []
 
-<figures/split-ga-time_IO_comparison.pdf, id=1173, 722.7pt x 289.08pt>
+<figures/split-ga-time_IO_comparison.pdf, id=1182, 722.7pt x 289.08pt>
 File: figures/split-ga-time_IO_comparison.pdf Graphic file (type pdf)
 
 <use figures/split-ga-time_IO_comparison.pdf>
 Package pdftex.def Info: figures/split-ga-time_IO_comparison.pdf used on input 
-line 426.
+line 399.
 (pdftex.def)             Requested size: 345.0pt x 137.99812pt.
 
-<figures/hdf5-t_total.pdf, id=1177, 289.08pt x 289.08pt>
+<figures/hdf5-t_total.pdf, id=1188, 289.08pt x 289.08pt>
 File: figures/hdf5-t_total.pdf Graphic file (type pdf)
 
 <use figures/hdf5-t_total.pdf>
-Package pdftex.def Info: figures/hdf5-t_total.pdf used on input line 441.
+Package pdftex.def Info: figures/hdf5-t_total.pdf used on input line 416.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/hdf5-speed_up.pdf, id=1178, 289.08pt x 289.08pt>
+<figures/hdf5-speed_up.pdf, id=1189, 289.08pt x 289.08pt>
 File: figures/hdf5-speed_up.pdf Graphic file (type pdf)
 
 <use figures/hdf5-speed_up.pdf>
-Package pdftex.def Info: figures/hdf5-speed_up.pdf used on input line 447.
+Package pdftex.def Info: figures/hdf5-speed_up.pdf used on input line 422.
 (pdftex.def)             Requested size: 137.9979pt x 137.99812pt.
 
-<figures/hdf5-BarPlot-rank-comparison_192_4.pdf, id=1179, 418.47278pt x 297.568
+<figures/hdf5-BarPlot-rank-comparison_192_4.pdf, id=1190, 418.47278pt x 297.568
 28pt>
 File: figures/hdf5-BarPlot-rank-comparison_192_4.pdf Graphic file (type pdf)
  <use figures/hdf5-BarPlot-rank-comparison_192_4.pdf>
 Package pdftex.def Info: figures/hdf5-BarPlot-rank-comparison_192_4.pdf used on
- input line 454.
+ input line 429.
 (pdftex.def)             Requested size: 276.00105pt x 196.25945pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 461--461
+Underfull \hbox (badness 10000) in paragraph at lines 436--436
 []\OT1/cmr/m/n/8 Figure 12: |Per-for-mance of the RMSD task with MPI-based par-
 al-lel HDF5
  []
 
-<figures/hdf5-time_IO_comparison.pdf, id=1180, 722.7pt x 289.08pt>
+<figures/hdf5-time_IO_comparison.pdf, id=1191, 722.7pt x 289.08pt>
 File: figures/hdf5-time_IO_comparison.pdf Graphic file (type pdf)
 
 <use figures/hdf5-time_IO_comparison.pdf>
 Package pdftex.def Info: figures/hdf5-time_IO_comparison.pdf used on input line
- 467.
+ 442.
 (pdftex.def)             Requested size: 345.0pt x 137.99812pt.
 ) (./guideline.tex [23 <./figures/split-time_comp_IO_comparison.pdf>] [24 <./fi
 gures/split-ga-t_total.pdf> <./figures/split-ga-speed_up.pdf
@@ -1537,9 +1541,9 @@ pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/hdf5-speed_up.pdf)
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figures/hdf5-BarPlot-rank-
 comparison_192_4.pdf): PDF inclusion: multiple pdfs with page group included in
  a single page
->]) (./conclusion.tex [27 <./figures/hdf5-time_IO_comparison.pdf>])
+>]) (./conclusion.tex [27 <./figures/hdf5-time_IO_comparison.pdf>]) [28]
 No file main.bbl.
-[28] [29] [30] [31] (./splitting.tex)
+[29] [30] [31] (./splitting.tex)
 
 Package natbib Warning: There were undefined citations.
 
@@ -1552,17 +1556,17 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 156.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 156.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 156.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 0A7A7107EE9F5CCFE3A37A0664A94527;1680.
+(rerunfilecheck)             Checksum: 5826F91C1950CBB783CF95C5D2AE0EAC;1748.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 156.
  ) 
 Here is how much of TeX's memory you used:
- 12204 strings out of 493089
- 178571 string characters out of 6134842
- 288608 words of memory out of 5000000
- 15309 multiletter control sequences out of 15000+600000
+ 12207 strings out of 493089
+ 178614 string characters out of 6134842
+ 289690 words of memory out of 5000000
+ 15310 multiletter control sequences out of 15000+600000
  18793 words of font info for 69 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 38i,18n,46p,854b,606s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,18n,46p,944b,606s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }{/usr/local/texlive/2015/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/te
 xlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/tex
@@ -1587,19 +1591,20 @@ blic/amsfonts/cm/cmsl10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/pub
 lic/amsfonts/cm/cmsl9.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/publi
 c/amsfonts/cm/cmss8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmsy10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmsy6.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmsy7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmsy8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
-/cm/cmti7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmti8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/sym
-bols/msam10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super
-/sfrm1000.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/courier/ucrr8
-a.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (32 pages, 924049 bytes).
+msfonts/cm/cmsy5.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmsy6.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmsy7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmsy8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmti7.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmti8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbo
+ls/msam10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/cm-super/s
+frm1000.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/courier/ucrr8a.
+pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/urw/zapfding/uzdr.pfb>
+Output written on main.pdf (32 pages, 933823 bytes).
 PDF statistics:
- 1746 PDF objects out of 2073 (max. 8388607)
- 717 compressed objects within 8 object streams
- 87 named destinations out of 1000 (max. 500000)
- 330 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1760 PDF objects out of 2073 (max. 8388607)
+ 735 compressed objects within 8 object streams
+ 89 named destinations out of 1000 (max. 500000)
+ 338 words of extra memory for PDF output out of 10000 (max. 10000000)
 

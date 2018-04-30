@@ -35,30 +35,30 @@
 \citation{Dalcin:2011aa,Dalcin:2005aa}
 \citation{Dalcin:2011aa}
 \citation{Dalcin:2005aa}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Molecular Dynamics Analysis Applications}{4}{section.2}}
-\newlabel{use_cases}{{2}{4}{Molecular Dynamics Analysis Applications}{section.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}MDAnalysis}{4}{subsection.2.1}}
 \citation{Liu:2010kx,Theobald:2005vn}
 \citation{Liu:2010kx}
 \citation{Theobald:2005vn}
 \citation{Gowers:2016aa}
 \citation{Gowers:2016aa}
-\citation{Sittel:2014aa}
-\citation{Sittel:2014aa}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Molecular Dynamics Analysis Applications}{5}{section.2}}
+\newlabel{use_cases}{{2}{5}{Molecular Dynamics Analysis Applications}{section.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}MDAnalysis}{5}{subsection.2.1}}
 \newlabel{sec:mda}{{2.1}{5}{MDAnalysis}{subsection.2.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.1}Root Mean Square Distance (RMSD)}{5}{subsubsection.2.1.1}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.2}Dihedral Featurization}{5}{subsubsection.2.1.2}}
+\citation{Sittel:2014aa}
+\citation{Sittel:2014aa}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces RMSD Algorithm\relax }}{6}{algorithm.1}}
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{alg:RMSD}{{1}{6}{RMSD Algorithm\relax }{algorithm.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.1.2}Dihedral Featurization}{6}{subsubsection.2.1.2}}
 \citation{Dalcin:2011aa,Dalcin:2005aa}
 \citation{Dalcin:2011aa}
 \citation{Dalcin:2005aa}
 \citation{Dalcin:2011aa}
 \citation{Dalcin:2011aa}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces RMSD Algorithm\relax }}{6}{algorithm.1}}
-\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{alg:RMSD}{{1}{6}{RMSD Algorithm\relax }{algorithm.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Background}{6}{section.3}}
-\newlabel{background}{{3}{6}{Background}{section.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}MPI for Python \textsl  {mpi4py}}{6}{subsection.3.1}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Background}{7}{section.3}}
+\newlabel{background}{{3}{7}{Background}{section.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}MPI for Python \textsl  {mpi4py}}{7}{subsection.3.1}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Applications of Global Array}{7}{subsection.3.2}}
 \citation{Seyler:2014il}
 \citation{Seyler:2014il}
@@ -68,44 +68,45 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {3.3.1}Collective Versus Independent Operations}{9}{subsubsection.3.3.1}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Method}{9}{section.4}}
 \newlabel{methods}{{4}{9}{Method}{section.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Timing observables}{10}{subsection.4.1}}
 \citation{Khoshlessan:2017ab}
 \citation{Khoshlessan:2017ab}
 \citation{Dalcin:2011aa,Dalcin:2005aa}
 \citation{Dalcin:2011aa}
 \citation{Dalcin:2005aa}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Notation of our performance modeling}}{11}{table.caption.2}}
-\newlabel{tab:notation}{{1}{11}{Notation of our performance modeling}{table.caption.2}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Notation of our performance modeling}}{11}{table.caption.1}}
+\newlabel{tab:notation}{{1}{11}{Notation of our performance modeling}{table.caption.1}{}}
 \newlabel{eq:speedup}{{1}{11}{Timing observables}{equation.4.1}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {5}Performance Study}{11}{section.5}}
 \newlabel{impl_exp}{{5}{11}{Performance Study}{section.5}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.0.1}RMSD Benchmarks}{12}{subsubsection.5.0.1}}
-\newlabel{sec:RMSD}{{5.0.1}{12}{RMSD Benchmarks}{subsubsection.5.0.1}{}}
-\newlabel{fig:MPIscaling}{{1a}{13}{Scaling total\relax }{figure.caption.3}{}}
-\newlabel{sub@fig:MPIscaling}{{a}{13}{Scaling total\relax }{figure.caption.3}{}}
-\newlabel{fig:MPIspeedup}{{1b}{13}{Speed-up\relax }{figure.caption.3}{}}
-\newlabel{sub@fig:MPIspeedup}{{b}{13}{Speed-up\relax }{figure.caption.3}{}}
-\newlabel{fig:MPIranks}{{1c}{13}{Compute \tcomp , IO \tIO , communication \tcomm , ending the for loop $t_{end\_loop}$, opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$, $t_{Overhead2}$ per MPI rank (as described in methods).\relax }{figure.caption.3}{}}
-\newlabel{sub@fig:MPIranks}{{c}{13}{Compute \tcomp , IO \tIO , communication \tcomm , ending the for loop $t_{end\_loop}$, opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$, $t_{Overhead2}$ per MPI rank (as described in methods).\relax }{figure.caption.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Performance of the RMSD task with MPI which is I/O-bound $\ensuremath  {{t}_{\text  {compute\_final}}}\xspace  /\ensuremath  {{t}_{\text  {I/O\_final}}}\xspace  \approx 0.3$. Data are read from the file system (I/O included) and results are communicated back to rank 0 (communications included).\relax }}{13}{figure.caption.3}}
-\newlabel{fig:MPIwithIO}{{1}{13}{Performance of the RMSD task with MPI which is I/O-bound $\tcomp /\tIO \approx 0.3$. Data are read from the file system (I/O included) and results are communicated back to rank 0 (communications included).\relax }{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.0.1}RMSD Benchmarks}{11}{subsubsection.5.0.1}}
+\newlabel{sec:RMSD}{{5.0.1}{11}{RMSD Benchmarks}{subsubsection.5.0.1}{}}
+\newlabel{fig:MPIscaling}{{1a}{13}{Scaling total\relax }{figure.caption.2}{}}
+\newlabel{sub@fig:MPIscaling}{{a}{13}{Scaling total\relax }{figure.caption.2}{}}
+\newlabel{fig:MPIspeedup}{{1b}{13}{Speed-up\relax }{figure.caption.2}{}}
+\newlabel{sub@fig:MPIspeedup}{{b}{13}{Speed-up\relax }{figure.caption.2}{}}
+\newlabel{fig:MPIranks}{{1c}{13}{Compute \tcomp , IO \tIO , communication \tcomm , ending the for loop $t_{end\_loop}$, opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$, $t_{Overhead2}$ per MPI rank (as described in methods).\relax }{figure.caption.2}{}}
+\newlabel{sub@fig:MPIranks}{{c}{13}{Compute \tcomp , IO \tIO , communication \tcomm , ending the for loop $t_{end\_loop}$, opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$, $t_{Overhead2}$ per MPI rank (as described in methods).\relax }{figure.caption.2}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Performance of the RMSD task with MPI which is I/O-bound $\ensuremath  {{t}_{\text  {compute\_final}}}\xspace  /\ensuremath  {{t}_{\text  {I/O\_final}}}\xspace  \approx 0.3$. Data are read from the file system (I/O included) and results are communicated back to rank 0 (communications included).\relax }}{13}{figure.caption.2}}
+\newlabel{fig:MPIwithIO}{{1}{13}{Performance of the RMSD task with MPI which is I/O-bound $\tcomp /\tIO \approx 0.3$. Data are read from the file system (I/O included) and results are communicated back to rank 0 (communications included).\relax }{figure.caption.2}{}}
 \citation{Dalcin:2011aa}
 \citation{Dalcin:2011aa}
-\citation{Hintze:1998tw}
-\citation{Hintze:1998tw}
-\citation{Hintze:1998tw}
-\citation{Hintze:1998tw}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Scaling of the \ensuremath  {{t}_{\text  {compute\_final}}}\xspace  and \ensuremath  {{t}_{\text  {I/O\_final}}}\xspace  of the RMSD task with MPI.\relax }}{14}{figure.caption.5}}
-\newlabel{fig:ScalingComputeIO}{{2}{14}{Scaling of the \tcomp and \tIO of the RMSD task with MPI.\relax }{figure.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Scaling of the \ensuremath  {{t}_{\text  {compute\_final}}}\xspace  and \ensuremath  {{t}_{\text  {I/O\_final}}}\xspace  of the RMSD task with MPI.\relax }}{14}{figure.caption.4}}
+\newlabel{fig:ScalingComputeIO}{{2}{14}{Scaling of the \tcomp and \tIO of the RMSD task with MPI.\relax }{figure.caption.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Dihedral Featurization Benchmarks}{14}{subsection.5.1}}
 \newlabel{DF}{{5.1}{14}{Dihedral Featurization Benchmarks}{subsection.5.1}{}}
+\citation{Hintze:1998tw}
+\citation{Hintze:1998tw}
+\citation{Hintze:1998tw}
+\citation{Hintze:1998tw}
 \newlabel{fig:MPI-dihedral-comm-speedup}{{3c}{15}{Speed-up\relax }{figure.caption.6}{}}
 \newlabel{sub@fig:MPI-dihedral-comm-speedup}{{c}{15}{Speed-up\relax }{figure.caption.6}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Performance for the \textbf  {dihedral featurization} workload, which is compute-bound $\ensuremath  {{t}_{\text  {compute\_final}}}\xspace  /\ensuremath  {{t}_{\text  {I/O\_final}}}\xspace  \approx 100$, when \emph  {communications are included}.\relax }}{15}{figure.caption.6}}
 \newlabel{fig:MPI-dihedral-comm}{{3}{15}{Performance for the \textbf {dihedral featurization} workload, which is compute-bound $\tcomp /\tIO \approx 100$, when \emph {communications are included}.\relax }{figure.caption.6}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Comparison of communication cost for different number of processes over 5 repeats for the \textbf  {dihedral featurization} workload (with \emph  {communications included}).\relax }}{16}{figure.caption.7}}
 \newlabel{fig:comparison-t_comm-dihedral}{{4}{16}{Comparison of communication cost for different number of processes over 5 repeats for the \textbf {dihedral featurization} workload (with \emph {communications included}).\relax }{figure.caption.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Effect of \ensuremath  {{t}_{\text  {compute\_final}}}\xspace  /\ensuremath  {{t}_{\text  {I/O\_final}}}\xspace  on Performance}{17}{subsection.5.2}}
-\newlabel{bound}{{5.2}{17}{Effect of \tcomp /\tIO on Performance}{subsection.5.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Effect of \ensuremath  {{t}_{\text  {compute\_final}}}\xspace  /\ensuremath  {{t}_{\text  {I/O\_final}}}\xspace  on Performance}{16}{subsection.5.2}}
+\newlabel{bound}{{5.2}{16}{Effect of \tcomp /\tIO on Performance}{subsection.5.2}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.1}Increased workload (RMSD)}{17}{subsubsection.5.2.1}}
 \newlabel{fig:S1_tcomp_tIO_effect}{{5a}{18}{Effect of \tcomp /\tIO on the Speed-Up\relax }{figure.caption.8}{}}
 \newlabel{sub@fig:S1_tcomp_tIO_effect}{{a}{18}{Effect of \tcomp /\tIO on the Speed-Up\relax }{figure.caption.8}{}}
@@ -119,10 +120,10 @@
 \newlabel{Global-Array}{{5.3}{18}{Communication Cost and Application of Global Array}{subsection.5.3}{}}
 \citation{Khoshlessan:2017ab}
 \citation{Khoshlessan:2017ab}
-\citation{Sehrish:2009aa}
-\citation{Sehrish:2009aa}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.4}I/O Cost}{19}{subsection.5.4}}
 \newlabel{I/O}{{5.4}{19}{I/O Cost}{subsection.5.4}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.1}Splitting the Trajectories}{19}{subsubsection.5.4.1}}
+\newlabel{Splitting}{{5.4.1}{19}{Splitting the Trajectories}{subsubsection.5.4.1}{}}
 \newlabel{fig:MPIscaling-ga4py}{{6a}{20}{Scaling total\relax }{figure.caption.9}{}}
 \newlabel{sub@fig:MPIscaling-ga4py}{{a}{20}{Scaling total\relax }{figure.caption.9}{}}
 \newlabel{fig:MPIspeedup-ga4py}{{6b}{20}{Speed-up\relax }{figure.caption.9}{}}
@@ -133,8 +134,6 @@
 \newlabel{fig:MPIwithIO-ga4py}{{6}{20}{Performance of the RMSD task with MPI using global array ($\tcomp /\tIO \approx 0.3$). Data are read from the file system (I/O included). All ranks update the global array and rank 0 accesses the whole RMSD array through the global memory address.\relax }{figure.caption.9}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Scaling of the \ensuremath  {{t}_{\text  {compute\_final}}}\xspace  and \ensuremath  {{t}_{\text  {I/O\_final}}}\xspace  of the RMSD task with Global Array.\relax }}{21}{figure.caption.10}}
 \newlabel{fig:ScalingComputeIO-ga4py}{{7}{21}{Scaling of the \tcomp and \tIO of the RMSD task with Global Array.\relax }{figure.caption.10}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.1}Splitting the Trajectories}{21}{subsubsection.5.4.1}}
-\newlabel{Splitting}{{5.4.1}{21}{Splitting the Trajectories}{subsubsection.5.4.1}{}}
 \newlabel{fig:MPIscaling-split}{{8a}{22}{Scaling total\relax }{figure.caption.12}{}}
 \newlabel{sub@fig:MPIscaling-split}{{a}{22}{Scaling total\relax }{figure.caption.12}{}}
 \newlabel{fig:MPIspeedup-split}{{8b}{22}{Speed-up\relax }{figure.caption.12}{}}
@@ -147,6 +146,8 @@
 \newlabel{fig:ScalingComputeIO-split}{{9}{23}{Scaling of the \tcomp and \tIO of the RMSD task with Global Array.\relax }{figure.caption.13}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {5.4.2}MPI-based Parallel HDF5}{23}{subsubsection.5.4.2}}
 \newlabel{HDF5}{{5.4.2}{23}{MPI-based Parallel HDF5}{subsubsection.5.4.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Guidelines on the Parallel Analysis of Three Dimensional Time Series}{23}{section.6}}
+\newlabel{guideline}{{6}{23}{Guidelines on the Parallel Analysis of Three Dimensional Time Series}{section.6}{}}
 \newlabel{fig:MPIscaling-split-ga}{{10a}{24}{Scaling total\relax }{figure.caption.15}{}}
 \newlabel{sub@fig:MPIscaling-split-ga}{{a}{24}{Scaling total\relax }{figure.caption.15}{}}
 \newlabel{fig:MPIspeedup-split-ga}{{10b}{24}{Speed-up\relax }{figure.caption.15}{}}
@@ -157,8 +158,6 @@
 \newlabel{fig:MPIwithIO-split-ga}{{10}{24}{Performance of the RMSD task with MPI using global array ($\tcomp /\tIO \approx 0.3$). Data are read from the file system (I/O included). All ranks update the global array and rank 0 accesses the whole RMSD array through the global memory address.\relax }{figure.caption.15}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Scaling of the \ensuremath  {{t}_{\text  {compute\_final}}}\xspace  and \ensuremath  {{t}_{\text  {I/O\_final}}}\xspace  of the RMSD task with Global Array.\relax }}{25}{figure.caption.16}}
 \newlabel{fig:ScalingComputeIO-split-ga}{{11}{25}{Scaling of the \tcomp and \tIO of the RMSD task with Global Array.\relax }{figure.caption.16}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Guidelines on the Parallel Analysis of Three Dimensional Time Series}{25}{section.6}}
-\newlabel{guideline}{{6}{25}{Guidelines on the Parallel Analysis of Three Dimensional Time Series}{section.6}{}}
 \newlabel{fig:MPIscaling-hdf5}{{12a}{26}{Scaling total\relax }{figure.caption.17}{}}
 \newlabel{sub@fig:MPIscaling-hdf5}{{a}{26}{Scaling total\relax }{figure.caption.17}{}}
 \newlabel{fig:MPIspeedup-hdf5}{{12b}{26}{Speed-up\relax }{figure.caption.17}{}}
@@ -179,7 +178,9 @@
 \newlabel{alg:GA}{{3}{31}{Global Array instead of Message-Passing Paradigm\relax }{algorithm.3}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {A.2}{\ignorespaces Time necessary for writing the trajectory segments}}{32}{table.caption.21}}
 \newlabel{tab:timing-splitting}{{A.2}{32}{Time necessary for writing the trajectory segments}{table.caption.21}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {A.3}{\ignorespaces Version of the packages used in the present study}}{32}{table.caption.23}}
+\newlabel{tab:version}{{A.3}{32}{Version of the packages used in the present study}{table.caption.23}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {Appendix A}Appendix}{32}{appendix.A}}
 \newlabel{sec:splitting-timing}{{Appendix A}{32}{Appendix}{appendix.A}{}}
 \@writefile{toc}{\contentsline {paragraph}{Detailed timing for splitting the trajectories}{32}{table.caption.21}}
-\@writefile{toc}{\contentsline {paragraph}{Version of the libraries used for the present study}{32}{section*.22}}
+\@writefile{toc}{\contentsline {paragraph}{Version of the libraries used for the present study}{32}{table.caption.23}}
