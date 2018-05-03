@@ -3,7 +3,7 @@
 \usepackage{lineno,hyperref}
 \modulolinenumbers[5]
 
-\journal{Journal of \LaTeX\ Templates}
+\journal{Computer Physics Communications}
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Elsevier bibliography styles
@@ -45,24 +45,32 @@
 \begin{frontmatter}    
 
 \title{Applications and Performance of HPC Resources for Parallel Analysis of Molecular Dynamics Trajectories with Python}
-\tnotetext[mytitlenote]{Fully documented templates are available in the elsarticle package on \href{http://www.ctan.org/tex-archive/macros/latex/contrib/elsarticle}{CTAN}.}
 
 %% Group authors per affiliation:
-\author{Mahzad Khoshlessan}
-\address{Tempe, Arizona, 85281}
-\fntext[myfootnote]{Arizona State University.}
+\author[ASUphysics]{Mahzad Khoshlessan}
+\ead{mkhoshle@asu.edu}
 
-%% or include affiliations in footnotes:
-\author[mymainaddress,mysecondaryaddress]{Elsevier Inc}
-\ead[url]{www.elsevier.com}
+\author[Rutgers]{Ioannis Paraskevakos}
+\ead{i.paraskev@rutgers.edu}
 
-\author[mysecondaryaddress]{Global Customer Service\corref{mycorrespondingauthor}}
-\cortext[mycorrespondingauthor]{Corresponding author}
-\ead{support@elsevier.com}
+\author[IndianaDSC]{Geoffrey C. Fox}
+\ead{gcf@indiana.edu}
 
-\address[mymainaddress]{1600 John F Kennedy Boulevard, Philadelphia}
-\address[mysecondaryaddress]{360 Park Avenue South, New York}
+\author[Rutgers]{Shantenu Jha}
+\ead{shantenu.jha@rutgers.edu}
 
+\author[ASUphysics,ASUCBP]{Oliver Beckstein\corref{correspondingauthor}}
+\cortext[correspondingauthor]{Corresponding author}
+\ead{oliver.beckstein@asu.edu}
+
+\address[ASUphysics]{Department of Physics, Arizona State University,
+  Tempe, AZ 85281, USA}
+\address[ASUCBP]{Center for Biological Physics, Arizona State University,
+  Tempe, AZ 85281, USA}
+\address[Rutgers]{Department of Electrical \& Computer Engineering,
+  Rutgers University, Piscataway, NJ 08854, USA}
+\address[IndianaDSC]{Digital Science Center, Indiana University,
+  Bloomington, IN 47405}
 
 %\author{Mahzad Khoshlessan}
 %\affiliation{%
@@ -138,6 +146,11 @@ Python\sep MPI\sep HPC\sep MDAnalysis\sep Global Array\sep MPI I/O\sep Straggler
 \section{Conclusion}
 \input{conclusion.tex}
 
+\footnotesize{{\it Acknowledgements} Funding: This work was supported
+  by the National Science Foundation [grant numbers
+  1443054,1440677]. Computational resources were provided by NSF XRAC
+  awards TG-MCB090174 and TG-MCB130177.
+
 \section*{References}
 
 \bibliography{journals,becksteinlab,sp}
@@ -149,9 +162,6 @@ Python\sep MPI\sep HPC\sep MDAnalysis\sep Global Array\sep MPI I/O\sep Straggler
 \input{splitting.tex}
 %\input{versions.tex}
 
-%\footnotesize{{\it Acknowledgements} We thank Andre Merzky and Thomas Cheatham
-%for useful discussions. This work is funded by NSF 1443054 and 1440677. Computational resources were provided by NSF XRAC awards
-%TG-MCB090174 and TG-MCB130177.
 
 
 \end{document}
