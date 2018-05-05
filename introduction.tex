@@ -1,6 +1,6 @@
 \label{sec:introduction}
 The increase in computational power coupled with sophisticated algorithms has lead rapid increase in the amount of data produced by MD simulations. 
-Typical trajectory sizes from MD simulations range from gigabytes to terabytes. 
+Typical trajectory sizes from MD simulations range from Gigabytes to Terabytes~\gpnote{Should we add the same citation as the task-parallel paper here?}. 
 Therefore, analyzing these trajectories has become a very tedious process in many workflows and as a result people are trying to look for state of the art HPC tools (MPI and OpenMP) or Big Data ecosystem to tackle this problem.
 The need for parallel programming and running these programs on parallel architectures is obvious, however, efficiently programming for a parallel environment can be a very daunting task. 
 
@@ -31,7 +31,7 @@ We show this behavior using RMSD and dihedral featurization algorithms.
 If $t_{Compute}$/$t_{IO}$  $\gg 1$, the algorithm scales very well, otherwise it does not scale beyond one node. 
 For the algorithms with small $t_{Compute}$/$t_{IO}$, we need to come up with strategies to improve scaling and overcome straggler problems.
 Looking at the timing distribution across all ranks we noticed that communication and I/O are the two main scalability bottlenecks.
-Taking advantage of Global Array toolkit \cite{GA}, each rank places its data in shared memory which allows direct access using the global address space rather than through a message-passing protocol. 
+Taking advantage of Global Array toolkit \cite{GA}, each rank places its data in shared memory which allows direct access using the global address space rather than through a message-passing protocol.\gpnote{I am not sure this is an entirely correct statement. Processes have their own address space and by definition cannot access any other part of the memory. Can we try to make it a bit clear?}
 This reduces communication cost noticeably.
 Although Global Array toolkit is very helpful for improving the performance it is still not enough because I/O remains a bottleneck.
 Our data shows that I/O time does not scale beyond one node. 
