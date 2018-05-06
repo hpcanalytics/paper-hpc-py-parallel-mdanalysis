@@ -19,11 +19,42 @@ Second, a rotation matrix is computed that spatially aligns the mobile group to 
 Finally, all atoms in mobile group are shifted and rotated.
 For each frame, a non-negative floating point number is calculated and the final result is a time-series of the RMSD. 
 RMSD values show how rigid the domains in a protein structure are, during the transition. 
-The order of complexity for RMSD algorithm \ref{alg:RMSD} is $T \times N^{2}$ \cite{rmsd} where T is the number of frames in the trajectory and N the number of particles in a frame.
+The order of complexity for RMSD algorithm \ref{alg:RMSD} is $T \times N^{2}$ \cite{rmsd} where T is the number of frames in the trajectory and N the number of particles in a 
+frame.
 
-\begin{algorithm}[t]
+\begin{algorithm}[ht]
 	\scriptsize
-    \caption{RMSD Algorithm}
+	\caption{MPI-parallel Multiframe RMSD Algorithm\gpnote{This is my suggestion. I believe some of the comments are very naive for the BioSim community. Please remove them}}
+	\label{alg:RMSD_sug}
+	\hspace*{\algorithmicindent} \textbf{Input:} \emph{size}: Total number of frames \\
+	\hspace*{\algorithmicindent} \emph{ref}: mobile group in the initial frame which will be considered as reference \\
+	\hspace*{\algorithmicindent} \emph{start \& stop}: Starting and stopping frame index\\
+	\hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
+	\hspace*{\algorithmicindent} \textbf{Output:} Calculated RMSD arrays
+	\begin{algorithmic}[1]
+		\Procedure{$Block\_RMSD$}{topology, trajectory, $ref$, start, stop}                       
+		\State u = Universe(topology, trajectory)\Comment{u hold all the information of the physical system}
+		\State $g$ = u.frames[start:stop]\Comment{The selected frames}
+		\For{$\forall iframe$ in $g$}
+		\State $results[iframe] = RMSD(g, ref)$
+		\EndFor
+		\State \Return results
+		\EndProcedure
+		\\        
+		\State MPI Init
+		\State rank = MPI\_WORLD.rank
+		\State index = indices of mobile atom group
+		\State xref0 = mobile.positions-mobile.center\_of\_mass()
+		\State out = Block\_RMSD(topology, trajectory, xref0, start=start, stop=stop)
+		\\
+		\State Gather(out, RMSD\_data, root=0)\Comment{Gather all data to rank 0}
+		\State MPI Finalize
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[ht]
+	\scriptsize
+    \caption{RMSD Algorithm\gpnote{I agree with Oliver. This is a bit difficult to read. I would suggest to take out the Python specifics like MDAnalysis.analysis.rms.rmsd. I can fix it if you want.}}
     \label{alg:RMSD}
     \hspace*{\algorithmicindent} \textbf{Input:} \emph{mobile}: the desired atom groups to perform RMSD on them \\ 
     \hspace*{\algorithmicindent} \emph{bsize}: Total number of frames assigned to each rank \\
@@ -77,7 +108,54 @@ non-terminal residues. For each frame, an array of dihedral angles is calculated
 actually represented as $(\cos\theta_{i}, \sin\theta_{i})$. 
 The order of complexity for Dihedral featurization algorithm (Algorithm \ref{alg:Dihedral}) is $T \times N$. 
 
-\begin{algorithm}[t]
+\begin{algorithm}[ht!]
+	\scriptsize
+	\caption{Dihedral Featurization\gpnote{This is my suggestion}}
+	\label{alg:Dihedral}
+	\hspace*{\algorithmicindent} \textbf{Input:} \emph{mobile}: the desired atom groups to perform RMSD on them \\ 
+	\hspace*{\algorithmicindent} \emph{start \& stop}: that tell which block of trajectory (frames) is assigned to each rank \\
+	\hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
+	\hspace*{\algorithmicindent} \textbf{Output:} Calculated Dihedral Angles
+	\begin{algorithmic}[1]
+		\Procedure{$angle2sincos$}{x}     
+		\State \Return $\cos{x},\: \sin{x}$
+		\EndProcedure
+		\\
+		\Procedure{$residues\_to\_dihedrals$}{residues}\gpnote{This is not called anywhere. It should either be removed or connected to the rest of the listing}
+		\State List angles
+		\For{$\forall res$ in $residues$}
+		\State Append $(\phi (res),\: \psi (res))$ in angles
+		\EndFor
+		\State \Return angles
+		\EndProcedure
+		\\
+		\Procedure{$featurize\_dihedrals$}{dihedrals}     
+		\State \texttt{angles = [dihedral.value() for dihedral in dihedrals]}
+		\State \Return \texttt{angle2sincos(angles)}
+		\EndProcedure
+		\\
+		\Procedure{$Block\_Dihedral$}{topology, trajectory, $ref$, start, stop}                       
+		\State u = Universe(topology, trajectory)
+		\State $g$ = u.frames[start:stop]\Comment{The selected frames} 
+		\State List $results$
+		\For{$\forall frame$ in $g$}
+		\State $D_{angles}=featurize\_dihedrals(dihedrals)$
+		\State Append $D_{angles}$ in $results$ 
+		\EndFor
+		\EndProcedure
+		\\      
+		\State MPI Init 
+		\State rank = MPI\_WORLD.rank
+		\State index = indices of mobile atom group
+		\State xref0 = mobile.positions-mobile.center\_of\_mass()
+		\State out = Block\_Dihedral(topology, trajectory, xref0, start=start, stop=stop)
+		\\
+		\State Gather(out, RMSD\_data, root=0)\Comment{Gather all data to rank 0}
+		\State MPI Finalize
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[ht!]
 	\scriptsize
     \caption{Dihedral Featurization}
     \label{alg:Dihedral}
