@@ -232,7 +232,7 @@ the existing variation in the dominant I/O part of the calculation would still p
 In fact, although communications were performed using global arrays, scaling is still far from ideal as a result of slow processes due to I/O variation.
 These slow processes take about 50~s, which are slower than the mean execution time of all ranks, i.e. 17~s. 
 
-\begin{algorithm}[t]
+\begin{algorithm}[t]\mknote{Giannis Could you please check this algorithm too?}
 	\scriptsize
     \caption{Global Array instead of Message-Passing Paradigm}
     \label{alg:GA}
