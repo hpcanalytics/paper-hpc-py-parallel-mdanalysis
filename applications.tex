@@ -24,8 +24,8 @@ frame.
 
 \begin{algorithm}[ht]
 	\scriptsize
-	\caption{MPI-parallel Multi-frame RMSD Algorithm\gpnote{This is my suggestion. I believe some of the comments are very naive for the BioSim community. Please remove them}}
-	\label{alg:RMSD_sug}
+	\caption{MPI-parallel Multi-frame RMSD Algorithm}
+	\label{alg:RMSD}
 	\hspace*{\algorithmicindent} \textbf{Input:} \emph{size}: Total number of frames \\
 	\hspace*{\algorithmicindent} \emph{ref}: mobile group in the initial frame which will be considered as reference \\
 	\hspace*{\algorithmicindent} \emph{start \& stop}: Starting and stopping frame index\\
@@ -61,7 +61,7 @@ The order of complexity for Dihedral featurization algorithm (Algorithm \ref{alg
 
 \begin{algorithm}[ht!]
 	\scriptsize
-	\caption{Dihedral Featurization\gpnote{This is my suggestion}}
+	\caption{Dihedral Featurization}
 	\label{alg:Dihedral}
 	\hspace*{\algorithmicindent} \textbf{Input:} \emph{mobile}: the desired atom groups to perform RMSD on them \\ 
 	\hspace*{\algorithmicindent} \emph{start \& stop}: that tell which block of trajectory (frames) is assigned to each rank \\
@@ -72,7 +72,7 @@ The order of complexity for Dihedral featurization algorithm (Algorithm \ref{alg
 		\State \Return $\cos{x},\: \sin{x}$
 		\EndProcedure
 		\\
-		\Procedure{$residues\_to\_dihedrals$}{residues}\gpnote{This is not called anywhere. It should either be removed or connected to the rest of the listing}\mknote{I added it}
+		\Procedure{$residues\_to\_dihedrals$}{residues}
 		\State List angles
 		\For{$\forall res$ in $residues$}
 		\State Append $(\phi (res),\: \psi (res))$ in angles
