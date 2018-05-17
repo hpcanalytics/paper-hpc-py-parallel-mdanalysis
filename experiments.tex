@@ -232,9 +232,9 @@ the existing variation in the dominant I/O part of the calculation would still p
 In fact, although communications were performed using global arrays, scaling is still far from ideal as a result of slow processes due to I/O variation.
 These slow processes take about 50~s, which are slower than the mean execution time of all ranks, i.e. 17~s. 
 
-\begin{algorithm}[t]\mknote{Giannis Could you please check this algorithm too?}
+\begin{algorithm}[ht!]\mknote{Giannis Could you please check this algorithm too?}
 	\scriptsize
-    \caption{Global Array instead of Message-Passing Paradigm}
+    \caption{RMSD using Global Arrays}
     \label{alg:GA}
     \hspace*{\algorithmicindent} \textbf{Input:} \emph{mobile}: the desired atom groups to perform RMSD on them \\ 
     \hspace*{\algorithmicindent} \emph{bsize}: Total number of frames assigned to each rank $N_{b}$\\
@@ -262,6 +262,30 @@ These slow processes take about 50~s, which are slower than the mean execution t
          \\
          \State \texttt{start7 = time.time()}        
     \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[ht!]\gpnote{This is my suggestion.}
+	\scriptsize
+	\caption{RMSD using Global Arrays}
+	\label{alg:GA}
+	\hspace*{\algorithmicindent} \textbf{Input:}\emph{size}: Total number of frames assigned to each rank $N_{b}$\\
+	\hspace*{\algorithmicindent} \emph{g\_a}: Initialized global array \\
+	\hspace*{\algorithmicindent} \emph{xref0}: mobile group in the initial frame which will be considered as rerference \\
+	\hspace*{\algorithmicindent} \emph{start \& stop}: that tell which block of trajectory (frames) is assigned to each rank \\
+	\hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
+	\hspace*{\algorithmicindent} \textbf{Output:} Calculated RMSD arrays\gpnote{There is no return. Unless you add one there should not be any output}\\
+	\hspace*{\algorithmicindent}\textbf{Include:} $Block\_RMSD$ from Algorithm \ref{alg:RMSD}
+	\begin{algorithmic}[1]
+		
+		\State bsize = ceil(trajectory.number\_frames / size)
+		\State g\_a = ga.create(ga.C\_DBL, [bsize*size,2], "RMSD")
+		\State buf = np.zeros([bsize*size,2], dtype=float)
+		\State out = Block\_RMSD(topology, trajectory, xref0, start=start, stop=stop)
+		\State ga.put(g\_a, out, (start,0), (stop,2))
+		\If{rank == 0}
+		\State buf = ga.get(g\_a, lo=None, hi=None)
+		\EndIf
+	\end{algorithmic}
 \end{algorithm}
 
 \begin{figure}
