@@ -9,7 +9,7 @@ The package is written in Python (compatible with version 2.7 and 3.4+), with ti
 \subsubsection{Root Mean Square Distance (RMSD)}
 The calculation of the root mean square distance (\textbf{RMSD}) for C$_{\alpha}$ atoms after
 optimal superposition with the QCPROT algorithm \cite{Liu:2010kx,Theobald:2005vn} is commonly required in the analysis of molecular dynamics simulations (Algorithm \ref{alg:RMSD}). 
-The task used for the purpose of our benchmark is the MDAnalysis.analysis.rms.rmsd() function from the MDAnalysis.analysis.rms module (implemented in Cython \cite{Gowers:2016aa}).  
+The task used for the purpose of our benchmark is the $RMSD=\sqrt{\frac{1}{N}\sum_{i=1}^{N}\delta_{i}^{2}}$ implemented in MDAnalysis.analysis.rms module where $\delta_{i}$ is the distance between atom i and a reference structure (implemented in Cython \cite{Gowers:2016aa}).  
 This function computes the RMSD between two sets of coordinates using the fast QCPROT algorithm to optimally superimpose two structures and then calculates the RMSD. 
 
 To this, the protein structure (selected C$_{\alpha}$ atoms) in the initial frame will be considered as the reference and as the mobile group at other time steps. 
@@ -21,6 +21,8 @@ For each frame, a non-negative floating point number is calculated and the final
 RMSD values show how rigid the domains in a protein structure are, during the transition. 
 The order of complexity for RMSD algorithm \ref{alg:RMSD} is $T \times N^{2}$ \cite{rmsd} where T is the number of frames in the trajectory and N the number of particles in a 
 frame.
+\obnote{I suggest we put the actual python code with line numbers and without timing probes into an Appendix.}
+\mknote{Will be added to appendix}
 
 \begin{algorithm}[ht!]
 	\scriptsize
@@ -34,7 +36,7 @@ frame.
 	\begin{algorithmic}[1]
 		\Procedure{$Block\_RMSD$}{topology, trajectory, $ref$, start, stop}                       
 		\State u = Universe(topology, trajectory)\Comment{u hold all the information of the physical system}
-		\State $g$ = u.frames[start:stop]\Comment{The selected frames}
+		\State $g$ = u.frames[start:stop]
 		\For{$\forall iframe$ in $g$}
 		\State $results[iframe] = RMSD(g, ref)$
 		\EndFor
@@ -47,7 +49,7 @@ frame.
 		\State xref0 = mobile.positions-mobile.center\_of\_mass()
 		\State out = Block\_RMSD(topology, trajectory, xref0, start=start, stop=stop)
 		\\
-		\State Gather(out, RMSD\_data, root=0)\Comment{Gather all data to rank 0}
+		\State Gather(out, RMSD\_data, root=0)
 		\State MPI Finalize
 	\end{algorithmic}
 \end{algorithm}
@@ -58,6 +60,8 @@ feature vectors consisting of the two backbone dihedral angles per residue ($\ph
 non-terminal residues. For each frame, an array of dihedral angles is calculated where for later convenience, an angle $\theta_{i}$ is
 actually represented as $(\cos\theta_{i}, \sin\theta_{i})$. 
 The order of complexity for Dihedral featurization algorithm (Algorithm \ref{alg:Dihedral}) is $T \times N$. 
+\obnote{Write out the calculation, based on the 4 atoms}
+\mknote{What calculations? how residues are converted to dihedrals? or the procedure we perform in the algorithm? that one is explained in algorithm 2}
 
 \begin{algorithm}[ht!]
 	\scriptsize
