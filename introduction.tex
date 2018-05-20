@@ -11,8 +11,7 @@ In our previous study, we used a parallel map-reduce approach to study the perfo
 We previously looked at the \package{Dask} library \cite{Rocklin:2015aa}, which splits a computation in tasks and generates directed acyclic graphs (DAG) of these tasks that can be executed on a range of schedulers. 
 We also implemented the parallel analysis scheme with MPI, using the \package{mpi4py} package \cite{Dalcin:2011aa, Dalcin:2005aa}. 
 For both Dask and MPI we found that our benchmark task, the calculation of the minimum C$_{\alpha}$ RMSD for a
-subset of the residues in the enzyme adenylate kinase from a long MD simulation, only showed good strong scaling within a single node (up
-to 24 cores on \emph{SDSC Comet}).
+subset of the residues in the enzyme adenylate kinase from a long MD simulation, only showed good strong scaling within a single node (up to 24 cores on \emph{SDSC Comet}).
 However, with a single compute node we are limited by the resources for executing a given problem.
 Distributed computing, allows parallelizing our problems for larger problem sizes and lead to performance gains.
 But, as soon as we extend the computation beyond a single node, performance drops due to \emph{stragglers} tasks, a subset of Dask worker processes or MPI ranks that are significantly slower than the mean execution time of all tasks, increasing the total time to solution.
@@ -22,22 +21,18 @@ MPI should have, in principle, close to ideal scaling for a pleasingly parallel 
 Therefore, in the present study, we analyze the MPI case in more detail to better understand the origin of the stragglers.
 
 We want to provide simple and robust parallelization approaches to analyzing molecular dynamics (MD) trajectories, in order to remove a narrowing bottle neck in the bio-molecular simulation field. 
-We have selected two of the most common map-reduce algorithms in \package{MDAnalysis} one of which is I/O bound and the other is compute bound.
+We have selected two of the algorithms in \package{MDAnalysis} one of which is I/O bound (RMSD) and the other is compute bound (Dihedral Featurization).
 We use SPMD paradigm to parallelize theses two algorithms on HPC resources.
 With SPMD, each process executes essentially the same code but on a different part of the data. 
 We use Python, a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in HPC parallel environments \cite{GAiN}. 
-Based on our initial analysis there is an important performance parameter,  $t_{Compute}$/$t_{IO}$, that determines whether we observe stragglers.
+Based on our initial analysis there is an important performance parameter,  $t_{Compute}$/$t_{IO}$ which is the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, that determines whether we observe stragglers.
 We show this behavior using RMSD and dihedral featurization algorithms.
 If $t_{Compute}$/$t_{IO}$  $\gg 1$, the algorithm scales very well, otherwise it does not scale beyond one node. 
 For the algorithms with small $t_{Compute}$/$t_{IO}$, we need to come up with strategies to improve scaling and overcome straggler problems.
 Looking at the timing distribution across all ranks we noticed that communication and I/O are the two main scalability bottlenecks.
-Taking advantage of Global Array toolkit \cite{GA}, each rank places its data in shared memory which allows direct access using the global address space rather than through a message-passing protocol.\gpnote{I am not sure this is an entirely correct statement. Processes have their own address space and by definition cannot access any other part of the memory. Can we try to make it a bit clear?}
-This reduces communication cost noticeably.
-Although Global Array toolkit is very helpful for improving the performance it is still not enough because I/O remains a bottleneck.
-Our data shows that I/O time does not scale beyond one node. 
-Due to the large file size and memory limit, processes are not able to load the whole trajectory into memory at once, and as a result each process is only allowed to load one frame into memory at a time.
-Therefore, with large number of frames, there will be a lot of file access requests and when the compute time is small with respect to I/O, then I/O can be a major issue.
-Hence, we needed to find ways to improve I/O scaling beyond a single compute node.
+
+Taking advantage of Global Array toolkit we were able to reduce communication cost noticeably.
+In addition, our data shows that I/O time does not scale beyond one node. 
 In order to improve I/O scaling, we came up with two approaches: MPI-based approach using Parallel HDF5 \cite{pythonhdf5}, and splitting our trajectory to as many trajectory segments as the number of processes. 
 We provide the detail on these approaches on the following sections.
 But, both approaches significantly improved the performance and we were able to achieve near ideal scaling.
