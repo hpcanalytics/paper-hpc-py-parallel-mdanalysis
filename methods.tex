@@ -1,0 +1,98 @@
+\label{methods}
+\subsection{Timing observables}
+We model MPI performance based on the RMSD algorithm (\ref{alg:RMSD}) and Dihedral Featurization algorithm (\ref{alg:Dihedral}). 
+The notation for our models is summarized in Table \ref{tab:notation}.
+We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``compute'' time per
+trajectory frame to perform the computation (\texttt{t\_comp} in the code) and the ``I/O'' time for
+ingesting the data from the file system into memory, (\texttt{t\_IO}). 
+$t_{comp\_final}$ is the summation of ``compute'' time per frame and $t_{IO\_final}$ is the summation of ``I/O'' time per frame for all the frames assigned to each rank. 
+$t_{end\_loop}$ is the time delay between the end of the last iteration and exiting the for loop.
+$t_{opening\_trajectory}$ is the time which data structures are initialized and topology and trajectory files are opened.
+
+Outside the \texttt{block\_rmsd()} function, relevant probs were taken and stored as variables \texttt{start4},
+\texttt{start5}, and \texttt{start6}, which we will abbreviate in the following as $t_{4}$ (after setting up the problem
+and before entering \texttt{block\_rmsd()} to \emph{ingest} and \emph{compute}), $ t_{5}$, (before communicating back results with
+\texttt{MPI.COMM\_WORLD.Gather()}), and $t_{6}$ (after all work has been done but before timing statistics are computed).  
+The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMSD}} = t_{5} - t_{4}$. 
+The ``Shuffle'' time to gather (``reduce'') all data from all processor ranks is $\tcomm = t_{6} - t_{5}$.
+
+There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO. 
+To measure the un-accounted time we define the ``overheads''.
+$t_{Overhead1}$ and $t_{Overhead2}$ are the overhead of the calculations and they should be ideally very small.  
+The total time to completion for a single process on $N$ cores is $t_{N}$, which is mathematically equivalent to
+$t_{N} \equiv t_{RMSD} + \tcomm$.
+
+We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
+$t_{\text{total}}(N) \approx \max t_{N}$). 
+Strong scaling was quantified by calculating the speed-up relative to performance on a single core (using MPI).
+
+\begin{gather}
+  \label{eq:speedup}
+  S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
+\end{gather}
+
+\begin{table}
+\centering
+\begin{tabular}{c c}
+  \toprule
+            \thead{Item} & \thead{Definition}\\
+  \midrule
+    $t_{end\_loop}$ & $t_{3}-t_{1}$\\
+    $t_{opening\_trajectory}$ &  $t_{0}-t_{00}$ \\
+    $t_{comp\_final}$ &  $sum(t_{comp})$\\
+    $t_{IO\_final}$ & $sum(t_{IO})$\\
+    $t_{all\_frame}$ & $t_{3}-t_{0}$  \\
+    $t_{RMSD}$ &  $t_{5}-t_{4}$ \\
+    $t_{Communication_{MPI}}$ &  $t_{6}-t_{5}$  \\
+    $t_{Communication_{GA}}$ &  $(t_{6}-t_{5})$+$(t_{7}-t_{6})$  \\
+    $t_{Overhead1}$ & $t_{all\_frame}-t_{IO\_final}-t_{comp\_final}-t_{end\_loop}$  \\
+    $t_{Overhead2}$ & $t_{RMSD}-t_{all\_frame}-t_{opening\_trajectory}$  \\
+    $t_{N}$ & $t_{RMSD}+t_{Communication}$ \\
+    $t_{total}$ & $\max t_{N}$ \\
+  \bottomrule
+\end{tabular}
+\caption[Notation of our performance modeling]
+{Notation of our performance modeling (relevant probes in the codes are stored as variables \texttt{start*},
+which we will abbreviate in here as $t_{*}$)}
+\label{tab:notation}
+\end{table}
+
+\subsection{MPI for Python \package{mpi4py}}
+MPI for Python (\package{mpi4py}) is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to employ multiple processors \cite{Dalcin:2011aa, Dalcin:2005aa}.
+Python has several advantages that makes it a very attractive language including rapid development of small scripts and code prototypes as well as large applications and highly portable and reusable modules and libraries.
+In addition, Python\textsc{\char13}s interactive nature, and other factors like lines of codes (LOC), number of function invocation, and development time adds to its attractiveness and clarifies why it is a good investment to extend Python use to message-passing parallel programming applications.
+Based on the efficiency tests \cite{Dalcin:2011aa, Dalcin:2005aa}, the performance degradation due to using \package{mpi4py} is not prohibitive and the overhead introduced by \package{mpi4py} is far smaller than the overhead associated to the use of interpreted versus compiled languages \cite{GAiN}.
+In addition, there are works on improving the communication performance in \package{mpi4py} and it shows minimal overheads compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}.
+
+\subsection{Applications of Global Array}
+In shared-memory systems, regardless of the implementation, the shared-memory paradigm eliminates the synchronization that is required when message-passing is used to access shared data. 
+A disadvantage of many shared-memory models is that they do not expose the none-uniform memory access (\textbf{\textit{NUMA}}) hierarchy of the underlying distributed-memory hardware. 
+
+Global array (GA) toolkit allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
+Global Arrays in NumPy (GAiN) extends GA to python through Numpy \cite{GAiN}. 
+The basic components of the Global Arrays toolkit are function calls to create global arrays ($ga\_create$), copy data to ($ga\_put$), from ($ga\_get$), and between global arrays ($ga\_distribution$, $ga\_scatter$), and identify and access the portions of the global array data that are held locally ($ga\_access$). 
+In addition, there are also functions to destroy arrays ($ga\_destroy$) and free up the memory originally allocated to them \cite{GAiN}.
+
+The global array itself is physically located in the local memory space of each process \cite{GA}. 
+User can get a pointer to this memory by using ga\_access function or one of its variants.
+Using this pointer it is possible to directly modify the data that is local to each process. 
+The GA library keeps track of all these memory locations by recording a list of them when a global array is created. 
+When a process tries to access a block of data, it first does a decomposition of the request into individual blocks representing the contribution to the total request from the data held locally on each processor [cite-new]. 
+The requesting processor then makes individual requests to each of the remote processors. 
+The requests are implemented using the native one-sided semantics inside the the infini-band Verbs library. 
+OpenIB/infiniband uses sys5 shmem within the node and will use the infiniband network card to communicate between nodes.
+
+\subsection{MPI and Parallel HDF5}
+MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
+HDF5 itself handles nearly all the details involved with coordinating file access through MPI library.
+This is advantageous to avoid multiple processes to compete over accessing the same file on disk. 
+In fact in python, MPI-IO opens shared files with a mpio driver. 
+In addition,  MPI communicator should be supplied as well and the users also need to follow some constraints for data consistency \cite{pythonhdf5}.
+
+\subsubsection{Collective Versus Independent Operations} 
+MPI has two flavors of operation: collective, which means that all processes have to participate in the same order, and independent, which means each process can perform the operation or not and the order also does not matter  \cite{pythonhdf5}.
+With HDF5, modifications to file metadata must be done collectively and although all processes perform the same task, they do not wait until the others catch up \cite{pythonhdf5}. 
+Other tasks and any type of data operations can be performed independently by processes.
+
+
+

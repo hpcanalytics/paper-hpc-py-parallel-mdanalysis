@@ -46,7 +46,7 @@ frame.
 		\State MPI Init
 		\State rank = MPI\_WORLD.rank
 		\State index = indices of mobile atom group
-		\State xref0 = mobile.positions-mobile.center\_of\_mass()
+		\State xref0 = Reference atom group\textsc{\char13}s position
 		\State out = Block\_RMSD(topology, trajectory, xref0, start=start, stop=stop)
 		\\
 		\State Gather(out, RMSD\_data, root=0)
@@ -94,7 +94,7 @@ The order of complexity for Dihedral featurization algorithm (Algorithm \ref{alg
 		\\
 		\Procedure{$Block\_Dihedral$}{topology, trajectory, $ref$, start, stop}                       
 		\State u = Universe(topology, trajectory)
-		\State $g$ = u.frames[start:stop]\Comment{The selected frames} 
+		\State $g$ = u.frames[start:stop]
 		\State List $results$
 		\For{$\forall frame$ in $g$}
 		\State $D_{angles}=featurize\_dihedrals(dihedrals)$
@@ -105,12 +105,12 @@ The order of complexity for Dihedral featurization algorithm (Algorithm \ref{alg
 		\State MPI Init 
 		\State residues = residues of mobile atom group
 		\State dihedrals = residues\_to\_dihedrals(residues)
-		\State rank = MPI\_WORLD.rank
+		\State rank = rank ID
 		\State index = indices of mobile atom group
-		\State xref0 = mobile.positions-mobile.center\_of\_mass()
+		\State xref0 = Reference atom group\textsc{\char13}s position
 		\State out = Block\_Dihedral(topology, trajectory, xref0, start=start, stop=stop)
 		\\
-		\State Gather(out, RMSD\_data, root=0)\Comment{Gather all data to rank 0}
+		\State Gather(out, RMSD\_data, rank\_ID=0)
 		\State MPI Finalize
 	\end{algorithmic}
 \end{algorithm}
