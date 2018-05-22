@@ -44,12 +44,12 @@ frame.
 		\EndProcedure
 		\\        
 		\State MPI Init
-		\State rank = MPI\_WORLD.rank
+		\State rank = rank ID
 		\State index = indices of mobile atom group
 		\State xref0 = Reference atom group\textsc{\char13}s position
 		\State out = Block\_RMSD(topology, trajectory, xref0, start=start, stop=stop)
 		\\
-		\State Gather(out, RMSD\_data, root=0)
+		\State Gather(out, RMSD\_data, rank\_ID=0)
 		\State MPI Finalize
 	\end{algorithmic}
 \end{algorithm}

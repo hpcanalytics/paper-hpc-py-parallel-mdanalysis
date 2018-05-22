@@ -93,6 +93,7 @@ In addition,  MPI communicator should be supplied as well and the users also nee
 MPI has two flavors of operation: collective, which means that all processes have to participate in the same order, and independent, which means each process can perform the operation or not and the order also does not matter  \cite{pythonhdf5}.
 With HDF5, modifications to file metadata must be done collectively and although all processes perform the same task, they do not wait until the others catch up \cite{pythonhdf5}. 
 Other tasks and any type of data operations can be performed independently by processes.
+In the present study, we use independent operations.
 
 
 
