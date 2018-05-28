@@ -1,74 +1,4 @@
 \label{methods}
-\subsection{Timing observables}
-\obnote{Rewrite so that you define timing variables with respect to line numbers in the code (where t\_Ln means the time for that line included).}
-\mknote{I do not agree with this method especially because the line numbers differs for different algorithms but the current way is more general}
-We model MPI performance based on the RMSD algorithm (\ref{alg:RMSD}) and Dihedral Featurization algorithm (\ref{alg:Dihedral}). 
-The notation for our models is summarized in Table \ref{tab:notation}.
-We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``compute'' time per
-trajectory frame to perform the computation (\texttt{t\_comp} in the code) and the ``I/O'' time for
-ingesting the data from the file system into memory, (\texttt{t\_IO}). 
-$t_{comp\_final}$ is the summation of ``compute'' time per frame and $t_{IO\_final}$ is the summation of ``I/O'' time per frame for all the frames assigned to each rank. 
-$t_{end\_loop}$ is the time delay between the end of the last iteration and exiting the for loop.
-$t_{opening\_trajectory}$ is the time which data structures are initialized and topology and trajectory files are opened.
-
-Outside the \texttt{block\_rmsd()} function, relevant probs were taken and stored as variables \texttt{start4},
-\texttt{start5}, and \texttt{start6}, which we will abbreviate in the following as $t_{4}$ (after setting up the problem
-and before entering \texttt{block\_rmsd()} to \emph{ingest} and \emph{compute}), $ t_{5}$, (before communicating back results with
-\texttt{MPI.COMM\_WORLD.Gather()}), and $t_{6}$ (after all work has been done but before timing statistics are computed).  
-The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMSD}} = t_{5} - t_{4}$. 
-The ``Shuffle'' time to gather (``reduce'') all data from all processor ranks is $\tcomm = t_{6} - t_{5}$.
-
-There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO. 
-To measure the un-accounted time we define the ``overheads''.
-$t_{Overhead1}$ and $t_{Overhead2}$ are the overhead of the calculations and they should be ideally very small.  
-The total time to completion for a single process on $N$ cores is $t_{N}$, which is mathematically equivalent to
-$t_{N} \equiv t_{RMSD} + \tcomm$.
-
-\subsection{Performance Measurement}
-We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
-$t_{\text{total}}(N) \approx \max t_{N}$). 
-Strong scaling was quantified by calculating the speed-up relative to performance on a single core (using MPI).
-
-\begin{gather}
-  \label{eq:speedup}
-  S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
-\end{gather}
-
-Additionally, we introduce another important performance parameter that determines whether we observe stragglers.
-We define this parameter as the ratio of compute time to I/O time:
-
-\begin{gather}
-  \label{eq:Compute-I/O}
-    \frac{t_{comp}^{frame}}{t_{IO}^{frame}}=\frac{\tcomp}{\tIO} 
- \end{gather}
-
-\begin{table}[t!]
-\centering
-\begin{tabular}{c c}
-  \toprule
-           \bfseries\thead{Item} & \bfseries\thead{Definition}\\
-  \midrule
-    $t_{end\_loop}$ & $t_{3}-t_{1}$\\
-    $t_{opening\_trajectory}$ &  $t_{0}-t_{00}$ \\
-    $t_{comp}$ &  $sum(t_{comp}^{frame})$\\
-    $t_{IO}$ & $sum(t_{IO}^{frame})$\\
-    $t_{all\_frame}$ & $t_{3}-t_{0}$  \\
-    $t_{RMSD}$ &  $t_{5}-t_{4}$ \\
-    $t_{Communication_{MPI}}$ &  $t_{6}-t_{5}$  \\
-    $t_{Communication_{GA}}$ &  $(t_{6}-t_{5})$+$(t_{7}-t_{6})$  \\
-    $t_{Overhead1}$ & $t_{all\_frame}-t_{IO\_final}-t_{comp\_final}-t_{end\_loop}$  \\
-    $t_{Overhead2}$ & $t_{RMSD}-t_{all\_frame}-t_{opening\_trajectory}$  \\
-    $t_{N}$ & $t_{RMSD}+t_{Communication}$ \\
-    $t_{total}$ & $\max t_{N}$ \\
-  \bottomrule
-\end{tabular}
-\caption[Notation of our performance modeling]
-{Notation of our performance modeling (relevant probes in the codes are stored as variables \texttt{start*},
-which we will abbreviate in here as $t_{*}$). $t_{comp}^{frame}$ and $t_{IO}^{frame}$ are compute time per frame
-and I/O time per frame respectively. $t_{Communication_{MPI}}$ and $t_{Communication_{GA}}$ are both referred to $t_{Communication}$ in the text}
-\label{tab:notation}
-\end{table}
-
 \subsection{MPI for Python \package{mpi4py}}
 MPI for Python (\package{mpi4py}) is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to employ multiple processors \cite{Dalcin:2011aa, Dalcin:2005aa}.
 Python has several advantages that makes it a very attractive language including rapid development of small scripts and code prototypes as well as large applications and highly portable and reusable modules and libraries.
@@ -94,6 +24,31 @@ When a process tries to access a block of data, it first does a decomposition of
 The requesting processor then makes individual requests to each of the remote processors. 
 The requests are implemented using the native one-sided semantics inside the the infini-band Verbs library. 
 OpenIB/infiniband uses sys5 shmem within the node and will use the infiniband network card to communicate between nodes.
+Algorithm \ref{alg:GA} describes RMSD algorithm in combination with the global array.
+In this algorithm, we use global array instead of message passage paradigm to see if we can reduce communication cost. 
+
+\begin{algorithm}[ht!]
+	\scriptsize
+	\caption{RMSD using Global Arrays}
+	\label{alg:GA}
+	\hspace*{\algorithmicindent} \textbf{Input:}\emph{size}: Total number of frames assigned to each rank $N_{b}$\\
+	\hspace*{\algorithmicindent} \emph{g\_a}: Initialized global array \\
+	\hspace*{\algorithmicindent} \emph{xref0}: mobile group in the initial frame which will be considered as rerference \\
+	\hspace*{\algorithmicindent} \emph{start \& stop}: that tell which block of trajectory (frames) is assigned to each rank \\
+	\hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
+	\hspace*{\algorithmicindent}\textbf{Include:} $Block\_RMSD$ from Algorithm \ref{alg:RMSD}
+	\begin{algorithmic}[1]
+		
+		\State bsize = ceil(trajectory.number\_frames / size)
+		\State g\_a = ga.create(ga.C\_DBL, [bsize*size,2], "RMSD")
+		\State buf = np.zeros([bsize*size,2], dtype=float)
+		\State out = Block\_RMSD(topology, trajectory, xref0, start=start, stop=stop)
+		\State ga.put(g\_a, out, (start,0), (stop,2))
+		\If{rank == 0}
+		\State buf = ga.get(g\_a, lo=None, hi=None)
+		\EndIf
+	\end{algorithmic}
+\end{algorithm}
 
 \subsection{MPI and Parallel HDF5}
 MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
@@ -108,5 +63,71 @@ With HDF5, modifications to file metadata must be done collectively and although
 Other tasks and any type of data operations can be performed independently by processes.
 In the present study, we use independent operations.
 
+\subsection{Timing observables}
+We model MPI performance based on the RMSD algorithm (\ref{alg:RMSD}) and Dihedral Featurization algorithm (\ref{alg:Dihedral}). 
+The notation for our models is summarized in Table \ref{tab:notation}.
+Inside the code, relevant probs were taken and stored. 
+We will abbreviate the timings in the following as variables $t_{Ln}$ where $Ln$ refers to the line number in algorithm \ref{alg:RMSD}.
+Similar calculations can be used for all other algorithms.
 
+We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``I/O'' time for
+ingesting the data from the file system into memory, ($t_{I/O}^{frame} = t_{L4}$) and the ``compute'' time per
+trajectory frame to perform the computation ($t_{comp}^{frame} = t_{L5}$). 
+ \tIO is the summation of ``I/O'' time per frame and \tcomp is the summation of ``compute'' time per frame for all the frames assigned to each rank ($N_{frames}$). 
+$t_{end\_loop} = t_{L6}+t_{L7}$ is the time delay between the end of the last iteration and exiting the for loop.
+$t_{opening\_trajectory} = t_{L2}+t_{L3}$ is the time which data structures are initialized and topology and trajectory files are opened (problem setup).
+
+$t_{Communication_{MPI}} = t_{L16}$ is the time ``Shuffle'' time to gather (``reduce'') all data from all processor ranks to rank zero.
+The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMSD}} = t_{L1} + ...+ t_{L8}$. 
+There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO. 
+To measure the un-accounted time we define the ``overheads''.
+$t_{Overhead1}$ and $t_{Overhead2}$ are the overhead of the calculations and they should be ideally very small.  
+The total time to completion for a single process on $N$ cores is $t_{N}$, which is mathematically equivalent to
+$t_{N} \equiv t_{RMSD} + \tcomm$.
+
+\subsection{Performance Measurement}
+We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
+$t_{\text{total}}(N) \approx \max t_{N}$). 
+Strong scaling was quantified by calculating the speed-up relative to performance on a single core (using MPI).
+
+\begin{gather}
+  \label{eq:speedup}
+  S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
+\end{gather}
+
+Additionally, we introduce another important performance parameter that determines whether we observe stragglers.
+We define this parameter as the ratio of compute time to I/O time:
+
+\begin{gather}
+  \label{eq:Compute-I/O}
+    \frac{t_{comp}^{frame}}{t_{IO}^{frame}} \approx \frac{\tcomp}{\tIO} 
+ \end{gather}
+
+\begin{table}[t!]
+\centering
+\begin{tabular}{c c}
+  \toprule
+           \bfseries\thead{Item} & \bfseries\thead{Definition}\\
+  \midrule
+    $N_{frames}$ & $N_{frames}^{total}/N$\\  
+    $t_{end\_loop}$ & $t_{L6}+t_{L7}$\\
+    $t_{opening\_trajectory}$ &  $t_{L2}+t_{L3}$ \\
+    $t_{comp}$ &  $sum(t_{comp}^{frame}) \approx N_{frames} \times t_{comp}^{frame}$\\
+    $t_{IO}$ & $sum(t_{IO}^{frame}) \approx N_{frames} \times t_{I/O}^{frame}$\\
+    $t_{all\_frame}$ & $t_{L4}+t_{L5}+t_{L6}$  \\
+    $t_{RMSD}$ &  $t_{L1} + ...+ t_{L8}$ \\
+    $t_{Communication_{MPI}}$ &  $t_{L16}$  \\
+    $t_{Communication_{GA}}$ &  $t_{L5}+t_{L6}+t_{L7}+t_{L8}$  \\
+    $t_{Overhead1}$ & $t_{all\_frame}-t_{IO\_final}-t_{comp\_final}-t_{end\_loop}$  \\
+    $t_{Overhead2}$ & $t_{RMSD}-t_{all\_frame}-t_{opening\_trajectory}$  \\
+    $t_{N}$ & $t_{RMSD}+t_{Communication}$ \\
+    $t_{total}$ & $\max t_{N}$ \\
+  \bottomrule
+\end{tabular}
+\caption[Notation of our performance modeling]
+{Notation of our performance modeling. Relevant probes in the codes are taken and stored,
+which we will abbreviate in here as $t_{Ln}$ where {Ln} refers to the line number in the algorithm. 
+$t_{Communication_{MPI}}$ and $t_{Communication_{GA}}$ are both referred to $t_{Communication}$ in the text}
+\label{tab:notation}
+\end{table}
 

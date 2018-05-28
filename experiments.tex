@@ -2,7 +2,7 @@
 
 \subsection{RMSD Benchmarks}
 \label{sec:RMSD}
-RMSD algorithm for the present test case, represents a task for which computational workload per frame is smaller than I/O workload per frame ($t_{compute_{per-frame}}$ = 0.09 ms, $t_{IO_{per-frame}}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$). 
+RMSD algorithm for the present test case, represents a task for which computational workload per frame is smaller than I/O workload per frame ($t_{compute}^{frame}$ = 0.09 ms, $t_{IO}^{frame}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$). 
 We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet} (and similarly also only on a
 single node on other machines), using either dask or MPI \cite{Khoshlessan:2017ab}. 
 Although, it is not clear that the root cause is the same for dask and MPI, here we focus on the MPI
@@ -224,69 +224,11 @@ As discussed in the previous sections, \ref{fig:MPIranks}, for small \tcomp/\tIO
 In fact, when the processes communicate result arrays back to the master (rank 0) process, some processes take much longer as compared to other processes. 
 Now we want to know what strategies can be used to avoid communication cost. 
 
-Algorithm \ref{alg:GA} describes RMSD algorithm in combination with the global array.
-In this algorithm, we use global array instead of message passage paradigm to see if we can reduce communication cost. 
 Given the speed up plots (Figure \ref{fig:MPIspeedup-ga4py}) and total time scaling (Figure \ref{fig:MPIscaling-ga4py}) global array improves strong scaling performance.
 Although communication time has significantly decreased using global array (compare Figure \ref{fig:MPIranks-ga4py} to Figure \ref{fig:MPIranks}),
 the existing variation in the dominant I/O part of the calculation would still prevent ideal scaling (Figure \ref{fig:ScalingComputeIO-ga4py}).
 In fact, although communications were performed using global arrays, scaling is still far from ideal as a result of slow processes due to I/O variation.
 These slow processes take about 50~s, which are slower than the mean execution time of all ranks, i.e. 17~s. 
-
-\begin{algorithm}[ht!]\mknote{Giannis Could you please check this algorithm too?}
-	\scriptsize
-    \caption{RMSD using Global Arrays}
-    \label{alg:GA}
-    \hspace*{\algorithmicindent} \textbf{Input:} \emph{mobile}: the desired atom groups to perform RMSD on them \\ 
-    \hspace*{\algorithmicindent} \emph{bsize}: Total number of frames assigned to each rank $N_{b}$\\
-    \hspace*{\algorithmicindent} \emph{g\_a}: Initialized global array of $($ $bsize*size,2$ $)$  \\
-    \hspace*{\algorithmicindent} \emph{buf}: Initialized buffer to store final calculated RMSD results of size $($ $bsize*size,2$ $)$  \\
-    \hspace*{\algorithmicindent} \emph{xref0}: mobile group in the initial frame which will be considered as rerference \\
-    \hspace*{\algorithmicindent} \emph{start \& stop}: that tell which block of trajectory (frames) is assigned to each rank \\
-    \hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
-    \hspace*{\algorithmicindent} \textbf{Output:} Calculated RMSD arrays
-    \begin{algorithmic}[1]
-        \State \texttt{bsize = int(np.ceil(mobile.universe.trajectory.n\_frames / float(size)))}
-        \State \texttt{g\_a = ga.create(ga.C\_DBL, [bsize*size,2], "RMSD")}
-        \State \texttt{buf = np.zeros([bsize*size,2], dtype=float)}
-        \\
-        \State \texttt{start4 = time.time()}
-	\State \texttt{out = Block\_RMSD(index, topology, trajectory, xref0, start=start, stop=stop, step=1)}
-	\State \texttt{start5 = time.time()}
-	\\
-	\State \texttt{ga.put(g\_a, out[:,:], (start,0), (stop,2))}
-	\\
-	\State \texttt{start6 = time.time()}
-	\If{rank == 0}
-   	     \State \texttt{buf = ga.get(g\_a, lo=None, hi=None)}
-        \EndIf
-         \\
-         \State \texttt{start7 = time.time()}        
-    \end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[ht!]\gpnote{This is my suggestion.}
-	\scriptsize
-	\caption{RMSD using Global Arrays}
-	\label{alg:GA}
-	\hspace*{\algorithmicindent} \textbf{Input:}\emph{size}: Total number of frames assigned to each rank $N_{b}$\\
-	\hspace*{\algorithmicindent} \emph{g\_a}: Initialized global array \\
-	\hspace*{\algorithmicindent} \emph{xref0}: mobile group in the initial frame which will be considered as rerference \\
-	\hspace*{\algorithmicindent} \emph{start \& stop}: that tell which block of trajectory (frames) is assigned to each rank \\
-	\hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
-	\hspace*{\algorithmicindent} \textbf{Output:} Calculated RMSD arrays\gpnote{There is no return. Unless you add one there should not be any output}\\
-	\hspace*{\algorithmicindent}\textbf{Include:} $Block\_RMSD$ from Algorithm \ref{alg:RMSD}
-	\begin{algorithmic}[1]
-		
-		\State bsize = ceil(trajectory.number\_frames / size)
-		\State g\_a = ga.create(ga.C\_DBL, [bsize*size,2], "RMSD")
-		\State buf = np.zeros([bsize*size,2], dtype=float)
-		\State out = Block\_RMSD(topology, trajectory, xref0, start=start, stop=stop)
-		\State ga.put(g\_a, out, (start,0), (stop,2))
-		\If{rank == 0}
-		\State buf = ga.get(g\_a, lo=None, hi=None)
-		\EndIf
-	\end{algorithmic}
-\end{algorithm}
 
 \begin{figure}
 \centering
