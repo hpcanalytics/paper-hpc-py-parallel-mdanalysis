@@ -1,5 +1,7 @@
 \label{methods}
 \subsection{Timing observables}
+\obnote{Rewrite so that you define timing variables with respect to line numbers in the code (where t\_Ln means the time for that line included).}
+\mknote{I do not agree with this method especially because the line numbers differs for different algorithms but the current way is more general}
 We model MPI performance based on the RMSD algorithm (\ref{alg:RMSD}) and Dihedral Featurization algorithm (\ref{alg:Dihedral}). 
 The notation for our models is summarized in Table \ref{tab:notation}.
 We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``compute'' time per
@@ -22,6 +24,7 @@ $t_{Overhead1}$ and $t_{Overhead2}$ are the overhead of the calculations and the
 The total time to completion for a single process on $N$ cores is $t_{N}$, which is mathematically equivalent to
 $t_{N} \equiv t_{RMSD} + \tcomm$.
 
+\subsection{Performance Measurement}
 We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
 $t_{\text{total}}(N) \approx \max t_{N}$). 
 Strong scaling was quantified by calculating the speed-up relative to performance on a single core (using MPI).
@@ -31,16 +34,24 @@ Strong scaling was quantified by calculating the speed-up relative to performanc
   S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
 \end{gather}
 
-\begin{table}
+Additionally, we introduce another important performance parameter that determines whether we observe stragglers.
+We define this parameter as the ratio of compute time to I/O time:
+
+\begin{gather}
+  \label{eq:Compute-I/O}
+    \frac{t_{comp}^{frame}}{t_{IO}^{frame}}=\frac{\tcomp}{\tIO} 
+ \end{gather}
+
+\begin{table}[t!]
 \centering
 \begin{tabular}{c c}
   \toprule
-            \thead{Item} & \thead{Definition}\\
+           \bfseries\thead{Item} & \bfseries\thead{Definition}\\
   \midrule
     $t_{end\_loop}$ & $t_{3}-t_{1}$\\
     $t_{opening\_trajectory}$ &  $t_{0}-t_{00}$ \\
-    $t_{comp\_final}$ &  $sum(t_{comp})$\\
-    $t_{IO\_final}$ & $sum(t_{IO})$\\
+    $t_{comp}$ &  $sum(t_{comp}^{frame})$\\
+    $t_{IO}$ & $sum(t_{IO}^{frame})$\\
     $t_{all\_frame}$ & $t_{3}-t_{0}$  \\
     $t_{RMSD}$ &  $t_{5}-t_{4}$ \\
     $t_{Communication_{MPI}}$ &  $t_{6}-t_{5}$  \\
@@ -53,7 +64,8 @@ Strong scaling was quantified by calculating the speed-up relative to performanc
 \end{tabular}
 \caption[Notation of our performance modeling]
 {Notation of our performance modeling (relevant probes in the codes are stored as variables \texttt{start*},
-which we will abbreviate in here as $t_{*}$)}
+which we will abbreviate in here as $t_{*}$). $t_{comp}^{frame}$ and $t_{IO}^{frame}$ are compute time per frame
+and I/O time per frame respectively. $t_{Communication_{MPI}}$ and $t_{Communication_{GA}}$ are both referred to $t_{Communication}$ in the text}
 \label{tab:notation}
 \end{table}
 
