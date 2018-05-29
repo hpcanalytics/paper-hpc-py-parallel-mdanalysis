@@ -250,13 +250,21 @@ In fact, decreasing the I/O load relative to the compute load should open up the
 \subsection{Communication Cost and Application of Global Array}
 \label{Global-Array}
 As discussed in the previous sections, Figure \ref{fig:MPIranks}, for small \tcomp/\tIO communication acts as the scalability bottleneck. 
-In fact, when the processes communicate result arrays back to the master (rank 0) process, some processes take much longer as compared to other processes. 
+In fact, when the processes communicate result arrays back to the master process (rank 0), some processes take much longer as compared to other processes. 
 Now we want to know what strategies can be used to avoid communication cost. 
 
+We used global array instead of collective communication in MPI and examined the change in the performance. 
+In global array, we define one large RMSD array, and each MPI rank updates its associated block in the global RMSD array using $ga\_put$. 
+At the end, when all the processes exit \texttt{block\_rmsd()} function and update their local block in the global array, rank 0 will access the whole global array using $ga\_access$.
+In fact, in global arrays the time for communication is $t_{ga\_put}+t_{ga\_access}$.
 Given the speed up plots (Figure \ref{fig:MPIspeedup-ga4py}) and total time scaling (Figure \ref{fig:MPIscaling-ga4py}) global array improves strong scaling performance.
 Although communication time has significantly decreased using global array (compare Figure \ref{fig:MPIranks-ga4py} to Figure \ref{fig:MPIranks}),
-the existing variation in the dominant I/O part of the calculation would still prevent ideal scaling (Figure \ref{fig:ScalingComputeIO-ga4py}).
-In fact, although communications were performed using global arrays, scaling is still far from ideal as a result of slow processes due to I/O variation.
+the existing variation in the dominant I/O part of the calculation plus two delayed MPI ranks due to the delay in opening the trajectory would still prevent ideal scaling (Figure \ref{fig:ScalingComputeIO-ga4py}).
+This figure shows only one repeat out of 5 we performed for our benchmark study. 
+Opening the trajectory was not a problem in other repeats.
+In fact, although communications were performed using global arrays, scaling is still far from ideal as a result of slow processes due to I/O variation and the delay in opening the trajectory.
+\obnote{In Fig 8c it is the trajectory opening step that creates stragglers. This was not a problem before. Is this now ALWAYS the problem when using GA? Needs to be discussed. }
+\mknote{no only happened in one repeat. Does not seem to me to be a problem with GA}
 These slow processes take about 50~s, which are slower than the mean execution time of all ranks, i.e. 17~s. 
 
 \begin{figure}
@@ -277,12 +285,15 @@ These slow processes take about 50~s, which are slower than the mean execution t
 \begin{subfigure} {.8\textwidth}
   \includegraphics[width=\linewidth]{figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf}
   \caption{Compute \tcomp, IO \tIO, communication \tcomm , ending the for loop $t_{end\_loop}$,
-  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).}
+  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
+  This is typical data from one run of the 5 repeats}
   \label{fig:MPIranks-ga4py}
 \end{subfigure}
 %
 \caption{Performance of the RMSD task with MPI using global array ($\tcomp/\tIO \approx 0.3$).
-Data are read from the file system (I/O included). All ranks update the global array and rank 0 accesses the whole RMSD array through the global memory address.}
+Data are read from the file system (I/O included). All ranks update the global array and rank 0 accesses the whole RMSD array.
+Five repeats are performed to collect statistics. The error bars show standard deviation with respect to mean. 
+MPI ranks 20 and 56 are stragglers, i.e., their total time far exceeds the mean of the majority of ranks.}
 \label{fig:MPIwithIO-ga4py}
 \end{figure}
 
