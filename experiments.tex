@@ -180,18 +180,38 @@ i.e., now processes are not constantly performing I/O and instead, I/O is interl
 In order to artificially increase the computational load we repeated the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop respectively.
 
 \subsubsection{Increased workload (RMSD)}
-The RMSD workload was artificially increased forrty-fold, seventy-fold, and hundred-fold and we measured performance as before. 
-Figure \ref{fig:tcomp_tIO_effect} shows the effect of $\tcomp/\tIO$ ratio on performance.
-On average, each rank took $N_{b} \times \tIO $ (where $N_{b}=N_{\text{frames}}/N$ is the
+The RMSD workload was artificially increased forrty-fold (``$40\times$'' ), seventy-fold (``$70\times$'' ), and hundred-fold (``$100\times$'' ) and we measured performance as before. 
+These workloads correspond to \tcomp/\tIO ratio of 12, 21, 30 respectively as shown in Table \ref{tab:load-ratio}.
+We performed this experiment to show the effect of $\tcomp/\tIO$ ratio on performance (Figure \ref{fig:tcomp_tIO_effect}).
+On average, each rank\textsc{\char13}s workload is $N_{frames} \times \tIO $ (where $N_{frames}=N_{frames}^{total}/N$ is the
 number of frames per trajectory block, i.e., the number of frames
-processed by each MPI rank for $N$ processes) for I/O,
-$X \times N_{b} \times \tcomp$ for the $X\times$ RMSD computation.
+processed by each MPI rank for $N$ processes) for I/O, and
+$X \times N_{frames} \times \tcomp$ for the RMSD calculation. 
+$X$ is the factor by which we increase the RMSD compute workload in our experiment.
+
+\begin{table}[tbp]
+\centering
+\begin{tabular}{c c}
+  \toprule
+           \bfseries\thead{Workload} & \bfseries\thead{$\tcomp/\tIO$ ratio}\\
+  \midrule
+    RMSD 1X & 0.3\\  
+    RMSD 40X & 12\\    
+    RMSD 70X & 21\\  
+    RMSD 100X & 30\\  
+  \bottomrule
+\end{tabular}
+\caption[Change in load-ratio with RMSD workload]
+{Change in \tcomp/\tIO ratio with change in the RMSD workload. We artificially increased the RMSD workload in order to
+examine the effect of compute to I/O ratio on the performance.}
+\label{tab:load-ratio}
+\end{table}
 
 As the $\tcomp/\tIO$ ratio increases, speed-up and performance improves and 
 show overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure \ref{fig:S1_tcomp_tIO_effect}).
 When $\tcomp/\tIO$ ratio increases, the RMSD calculation consistently scales up to larger numbers of cores ($N=56$ for $70\times$ RMSD).
 Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} shows the improvment in performance more clearly.
-In fact, as the $\tcomp/\tIO$ ratio increases, the values of speed-up and efficiency get closer to their ideal value for each number of processor counts.  
+In fact, as the $\tcomp/\tIO$ ratio increases, the values of speed-up and efficiency get closer to their ideal value for each number of processor count.  
 
 \begin{figure}
 \centering
@@ -223,8 +243,8 @@ as the $40\times$ and $70\times$ RMSD tasks, increasing the computational worklo
 though they still contribute to large variations in timing across different ranks and thus to somewhat erratic scaling. 
 
 Given the results for Dihedral featurization and RMSD algorithms (Algorithms \ref{alg:Dihedral}, and \ref{alg:RMSD}) and $X\times$ RMSD (Figure \ref{fig:tcomp_tIO_effect})
-\textbf{we hypothesize that MPI competes with Lustre on the same network interface, which would explain why communication appears to
-  be primarily a problem in the presence of I/O when \tcomp/\tIO is small.}
+we hypothesize that MPI competes with Lustre on the same network interface, which would explain why communication appears to
+be primarily a problem in the presence of I/O when \tcomp/\tIO is small.
 In fact, decreasing the I/O load relative to the compute load should open up the network for communication. 
 
 \subsection{Communication Cost and Application of Global Array}
