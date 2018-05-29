@@ -17,7 +17,7 @@ In the example run in Figure \ref{fig:MPIranks}, ten ranks out of 72 take almost
 remaining ranks only take about 40~s. The detailed breakdown of the time spent on each rank (Figure \ref{fig:MPIranks}) shows that time
 for the actual computation, \tcomp, is fairly constant across ranks. 
 The time spent on reading data from the shared trajectory file on the Lustre file system into memory, \tIO, shows variability across different ranks. 
-Stragglers, however, appear to be defined by occasional much larger \emph{communication} times, \tcomm (lines 25-30 in \ref{alg:RMSD}), that are on the order of 30~s in this example. 
+Stragglers, however, appear to be defined by occasional much larger \emph{communication} times, \tcomm (line 16 in \ref{alg:RMSD}), that are on the order of 30~s in this example. 
 For other ranks, \tcomm varies across different ranks and for a few ranks $\tcomm < 10$~s or is barely measurable. 
 This initial analysis (especially Figure \ref{fig:MPIranks}) indicates that communication is a major issue. 
 
@@ -84,7 +84,7 @@ featurization on \emph{Comet} with Infiniband and Lustre file system.
 The system scales linearly and close to ideal (Figure \ref{fig:comparison-t_comm-dihedral}). Although, there is communication of large
 result arrays, which is costly for multiple ranks, the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPIspeedup-dihed}
 demonstrates very good scaling with the number of cores (up to 72 cores on 3 nodes).  The reason is that the communication cost (for
-$MPI.Gather()$-lines 36-44 in \ref{alg:Dihedral}) decreases with increasing the number of cores because the result array size that has to be
+$MPI.Gather()$-line 39 in \ref{alg:Dihedral}) decreases with increasing the number of cores because the result array size that has to be
 communicated also decreases (Figure \ref{fig:comparison-t_comm-dihedral}).  Based on Figure \ref{fig:comparison-t_comm-dihedral}, communication scales fairly well
 with the number of processes. This can be attributed to larger array sizes compared to the RMSD task and according to \cite{Dalcin:2011aa}
 the overhead of the \package{mpi4py} package decreases as the array size to be communicated increases. The dihedral featurization workload
@@ -134,7 +134,7 @@ The error bars show standard deviation with respect to mean. No straggler is obs
 \begin{figure}[tbp]
 \begin{subfigure} {.55\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf}
+  \includegraphics[width=\linewidth]{figures/ViolinPlot-Ncores-comparison-comm-dihedral.pdf}
   \caption{Communication time distribution for different number of
     processes (shown as violin plots \protect\cite{Hintze:1998tw}
     with kernel density estimates as implemented in
@@ -143,7 +143,7 @@ The error bars show standard deviation with respect to mean. No straggler is obs
 \hfill
 \begin{subfigure}{.35\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{figs/t_comm-mean-dihedral.pdf}
+  \includegraphics[width=\linewidth]{figures/t_comm_mean-dihedral.pdf}
   \caption{Scaling communcation time (mean and standard deviation)}
 \end{subfigure}
 \caption{Comparison of communication cost for different number of
@@ -249,7 +249,7 @@ In fact, decreasing the I/O load relative to the compute load should open up the
 
 \subsection{Communication Cost and Application of Global Array}
 \label{Global-Array}
-As discussed in the previous sections, \ref{fig:MPIranks}, for small \tcomp/\tIO communication acts as the scalability bottleneck. 
+As discussed in the previous sections, Figure \ref{fig:MPIranks}, for small \tcomp/\tIO communication acts as the scalability bottleneck. 
 In fact, when the processes communicate result arrays back to the master (rank 0) process, some processes take much longer as compared to other processes. 
 Now we want to know what strategies can be used to avoid communication cost. 
 
