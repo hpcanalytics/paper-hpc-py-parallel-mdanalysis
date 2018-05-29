@@ -38,16 +38,22 @@ This initial analysis (especially Figure \ref{fig:MPIranks}) indicates that comm
 
 \begin{subfigure} {.8\textwidth}
   \includegraphics[width=\linewidth]{figures/main-RMSD-BarPlot-rank-comparison_72_4.pdf}
-  \caption{Compute \tcomp, IO \tIO, communication \tcomm , ending the for loop $t_{end\_loop}$,
-  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).}
+  \caption{Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
+  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
+  This is typical data from one run of the 5 repeats}
   \label{fig:MPIranks}
 \end{subfigure}
 %
 \caption{Performance of the RMSD task with MPI which is I/O-bound $\tcomp/\tIO \approx 0.3$.
 Data are read from the file system (I/O included) and results are communicated back to
-  rank 0 (communications included).}
+rank 0 (communications included). Five repeats are performed to collect statistics. The error bars show
+standard deviation with respect to mean. MPI ranks 0 and 63 to 72 are stragglers, i.e., their total time 
+far exceeds the mean of the majority of ranks.}
+  
+\obnote{This does not look like t\_comp/t\_IO = 0.3 ? looks more like 2/30 = 0.06; the next page says 4/26=0.16. Please make sure that all numbers are consistent!}
+\mknote{because t\_comp/t\_IO is per frame and it is also average, what I have reported is only average.}
 \label{fig:MPIwithIO}
-\end{figure}
+\end{figure} 
 
 \subsubsection*{Identification of Scalability Bottleneck}
 
@@ -60,6 +66,7 @@ Considering the results in Figures \ref{fig:MPIwithIO} and \ref{fig:ScalingCompu
   \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison.pdf}
 \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI.}
 \label{fig:ScalingComputeIO}
+\mknote{I should remove the bar plots}
 \end{figure}
 
 \subsubsection*{Hardware}
@@ -74,55 +81,57 @@ reveal an obvious pattern). Therefore, the phenomenon of stragglers in the RMSD 
 We briefly tested a much larger computational workload ($t_{compute_{per-frame}}$ = 40 ms, $t_{IO_{per-frame}}$ = 0.4 ms, thus $\tcomp/\tIO \approx 100$), namely dihedral
 featurization on \emph{Comet} with Infiniband and Lustre file system.
 
-The system scales linearly and close to ideal (Figure \ref{fig:MPI-dihedral-comm}). Although, there is communication of large
-result arrays, which is costly for multiple ranks, the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPI-dihedral-comm-speedup}
+The system scales linearly and close to ideal (Figure \ref{fig:comparison-t_comm-dihedral}). Although, there is communication of large
+result arrays, which is costly for multiple ranks, the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPIspeedup-dihed}
 demonstrates very good scaling with the number of cores (up to 72 cores on 3 nodes).  The reason is that the communication cost (for
 $MPI.Gather()$-lines 36-44 in \ref{alg:Dihedral}) decreases with increasing the number of cores because the result array size that has to be
 communicated also decreases (Figure \ref{fig:comparison-t_comm-dihedral}).  Based on Figure \ref{fig:comparison-t_comm-dihedral}, communication scales fairly well
-with the number of processes. This can be attributed to larger array sizes compared to the RMSD task and according to \citet{Dalcin:2011aa}
+with the number of processes. This can be attributed to larger array sizes compared to the RMSD task and according to \cite{Dalcin:2011aa}
 the overhead of the \package{mpi4py} package decreases as the array size to be communicated increases. The dihedral featurization workload
-has larger array size for all processor sizes (per task, a time series of feature vectors of size $N_{b} \times (213 \times 2 \times 2$) when
-compared to the RMSD workload (per task a float array of length $N_{b}$) and therefore we are hypothesizing that the higher
+has larger array size for all processor sizes (per task, a time series of feature vectors of size $N_{frames} \times (213 \times 2 \times 2$) when
+compared to the RMSD workload (per task a float array of length $N_{frames}$) and therefore we are hypothesizing that the higher
 performance of \package{mpi4py} for larger array sizes has lead to better overall scaling. 
 In addition, for higher computational workloads the competition over accessing the file is less severe as compared to lower computational workloads. 
  
-\begin{figure}[tbp]
+\begin{figure}
 \centering
-\begin{subfigure}{.35\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{figs/t_total-dihedral-comm.pdf}
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/main-dihedral-t_total.pdf}
   \caption{Scaling total}
+  \label{fig:MPIscaling-dihed}
 \end{subfigure}
 \hfill
-\begin{subfigure}{.5\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{figs/total_time_boxplot-dihedral-comm.pdf}
-  \caption{Total job execution time along with the mean and standard
-    deviations across 5 repeats.}
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/main-dihedral-speed_up.pdf}
+  \caption{Speed-up}
+  \label{fig:MPIspeedup-dihed}
 \end{subfigure}
 \bigskip
 
-\begin{subfigure} {.35\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{figs/speed_up-dihedral-comm.pdf}
-  \caption{Speed-up}
-  \label{fig:MPI-dihedral-comm-speedup}
+\begin{subfigure} {.8\textwidth}
+  \includegraphics[width=\linewidth]{figures/main-dihedral-BarPlot-rank-comparison_72_5.pdf}
+  \caption{Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
+  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
+  This is typical data from one run of the 5 repeats}
+  \label{fig:MPIranks-dihed}
 \end{subfigure}
-\hfill
-\begin{subfigure} {.5\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{figs/BarPlot-rank-comparison-dihedral-comm.pdf}
-  \caption{time per MPI rank for a typical run (note, IO is almost too
-    small to be visible)}
-\end{subfigure}
+%
 \caption{Performance for the \textbf{dihedral featurization} workload,
-  which is compute-bound $\tcomp/\tIO \approx 100$, when
-  \emph{communications are included}.}
-\label{fig:MPI-dihedral-comm}
+which is compute-bound $\tcomp/\tIO \approx 100$. Data are read from the file system (I/O included) 
+and results are communicated back to rank 0 (communications included). Five repeats are performed to collect statistics. 
+The error bars show standard deviation with respect to mean. No straggler is observed.} 
+\label{fig:MPIwithIO-dihed}
+\end{figure} 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.4\linewidth]{figures/main-dihed-time_comp_IO_comparison.pdf}
+\caption{Scaling of the \tcomp and \tIO of the Dihedral Featurization task with MPI.}
+\label{fig:ScalingComputeIO-dihed}
+\mknote{refer this figure in the text}
 \end{figure}
 
 \begin{figure}[tbp]
-\centering
 \begin{subfigure} {.55\textwidth}
   \centering
   \includegraphics[width=\linewidth]{figs/ViolinPlot-Ncores-comparison-comm-dihedral.pdf}
@@ -410,4 +419,30 @@ Data are read from the file system from a shared HDF5 file instead of XTC format
 \label{fig:ScalingComputeIO-hdf5}
 \end{figure}
 
+
+\begin{table}[t!]
+\centering
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{c c c c c c c c c c c c c}
+  \toprule
+           \bfseries\thead{Cluster} & \bfseries\thead{Calculation} & \bfseries\thead{Load Ratio} & \bfseries\thead{Gather} & \bfseries\thead{File Access} & \bfseries\thead{Time} & 1 & 24 & 48 & 72 & 96 & 144 & 192\\
+  \midrule
+    Comet & RMSD 1X & 0.03 & MPI & Single & \begin{tabular}{c} \tIO \\ \tcomp  \end{tabular} & \begin{tabular}{c} 799 \\ 225 \end{tabular} & \begin{tabular}{c} 49 \\ 11 \end{tabular} & \begin{tabular}{c} 29 \\ 6 \end{tabular} & \begin{tabular}{c} 26 \\ 4 \end{tabular} & -- & -- & --\\  
+    Comet & RMSD 1X & 0.03 & GA & Single & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} 820 \\ 219 \end{tabular} & \begin{tabular}{c} 41 \\ 10 \end{tabular} & \begin{tabular}{c} 23 \\ 5 \end{tabular} & \begin{tabular}{c} 15 \\ 3 \end{tabular} & -- & -- & --\\
+    Comet & RMSD 1X & 0.03 & MPI & Splitting & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} 799 \\ 225 \end{tabular} & \begin{tabular}{c} 37 \\ 11 \end{tabular} & \begin{tabular}{c} 18 \\ 5 \end{tabular} & \begin{tabular}{c} 12 \\ 3 \end{tabular} & \begin{tabular}{c} 9 \\ 3 \end{tabular} & \begin{tabular}{c} 6 \\ 2 \end{tabular} & \begin{tabular}{c} 4 \\ 1 \end{tabular}\\
+    Comet & RMSD 1X & 0.03 & GA & Splitting & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} 820 \\ 219 \end{tabular} & \begin{tabular}{c} 36 \\ 9 \end{tabular} & \begin{tabular}{c} 17 \\ 4 \end{tabular} & \begin{tabular}{c} 11 \\ 3 \end{tabular} & \begin{tabular}{c} 10 \\ 2 \end{tabular} & \begin{tabular}{c} 5 \\ 1 \end{tabular} & \begin{tabular}{c} 4 \\ 1 \end{tabular}\\
+    Comet & RMSD 1X & 0.03 & MPI & PHDF5 & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} 423 \\ 225 \end{tabular} & \begin{tabular}{c} 19 \\ 10 \end{tabular} & \begin{tabular}{c} 9 \\ 5 \end{tabular} & \begin{tabular}{c} 6 \\ 3 \end{tabular} & \begin{tabular}{c} 5 \\ 2 \end{tabular} & \begin{tabular}{c} 3\\ 1 \end{tabular} & \begin{tabular}{c} 2 \\ 1 \end{tabular}\\
+    Comet & \makecell{Dihedral \\Featurization} & 100 & MPI & Single & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} $2880 \pm 0$ \\ $272000 \pm 0$ \end{tabular} & \begin{tabular}{c} $40 \pm 1.63$ \\ $12440 \pm 200.78$ \end{tabular} & \begin{tabular}{c} $20 \pm 1.22$ \\ $6305 \pm 38.13$ \end{tabular} & \begin{tabular}{c} $15 \pm 3.91$ \\ $4225 \pm 83.41$ \end{tabular} & -- & -- & --\\ 
+    Bridges & RMSD 1X & 0.03 & MPI & PHDF5 & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c}  \\  \end{tabular}\\
+    SuperMIC & RMSD 1X & 0.03 & MPI & Splitting & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c}  \\  \end{tabular}\\
+    SuperMIC & RMSD 1X & 0.03 & GA & Splitting & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c}  \\   \end{tabular}\\
+    SuperMIC & RMSD 1X & 0.03 & MPI & PHDF5 & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c}  \\  \end{tabular}\\
+  \bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption[Notation of our performance modeling]
+{Comparison of the compute and I/O scaling for different test cases and number of processes.}
+\mknote{Need to add stds later}
+\label{tab:notation}
+\end{table}
 
