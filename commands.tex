@@ -18,8 +18,15 @@
 %% no space
 \setlength{\bibsep}{0pt}
 
-% Python for inline
-\newcommand{\pythoninline[1]}{{\pythonstyle\lstinline!#1!}}
+%% use \carriagereturn from dingbats 
+% fix LaTeX Error: Command \checkmark already defined.
+\let\checkmark\undefined
+\usepackage{dingbat}
+\usepackage{color}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\renewcommand{\ttdefault}{pcr}
+\usepackage{listings}
 
 % Python style for highlighting
 \newcommand\pythonstyle{\lstset{
@@ -39,6 +46,17 @@
     numbers=left,
     stepnumber=1
 }}
+
+% Python environment
+\lstnewenvironment{python}[1][]
+{
+\pythonstyle
+\lstset{#1}
+}
+{}
+
+% Python for inline
+\newcommand{\pythoninline[1]}{{\pythonstyle\lstinline!#1!}}
 
 \usepackage{xspace}
 \newcommand{\NaH}{Na$^{+}$/H$^{+}$\xspace}
