@@ -100,7 +100,7 @@ We define this parameter as the ratio of compute time to I/O time:
 
 \begin{gather}
   \label{eq:Compute-I/O}
-    \frac{t_{comp}^{frame}}{t_{IO}^{frame}} \approx \frac{\tcomp}{\tIO} 
+    \frac{\bar{t}_{comp}^{frame}}{\bar{t}_{IO}^{frame}} \approx \frac{\tcomp}{\tIO} 
  \end{gather}
 
 \begin{table}[t!]
@@ -112,8 +112,8 @@ We define this parameter as the ratio of compute time to I/O time:
     $N_{frames}$ & $N_{frames}^{total}/N$\\  
     $t_{end\_loop}$ & $t_{L6}+t_{L7}$\\
     $t_{opening\_trajectory}$ &  $t_{L2}+t_{L3}$ \\
-    $t_{comp}$ &  $sum(t_{comp}^{frame}) \approx N_{frames} \times t_{comp}^{frame}$\\
-    $t_{IO}$ & $sum(t_{IO}^{frame}) \approx N_{frames} \times t_{I/O}^{frame}$\\
+    $t_{comp}$ & $\sum_{1}^{N_{frames}}t_{comp}^{frame}$\\
+    $t_{IO}$ & $\sum_{1}^{N_{frames}}t_{I/O}^{frame}$\\
     $t_{all\_frame}$ & $t_{L4}+t_{L5}+t_{L6}$  \\
     $t_{RMSD}$ &  $t_{L1} + ...+ t_{L8}$ \\
     $t_{Communication_{MPI}}$ &  $t_{L16}$  \\

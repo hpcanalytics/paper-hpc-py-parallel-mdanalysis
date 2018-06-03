@@ -193,12 +193,12 @@ $X$ is the factor by which we increase the RMSD compute workload in our experime
 \centering
 \begin{tabular}{c c}
   \toprule
-           \bfseries\thead{Workload} & \bfseries\thead{$\tcomp/\tIO$ ratio}\\
+           \bfseries\thead{Workload} & \bfseries\thead{$\tcomp/\tIO$}\\
   \midrule
-    RMSD 1X & 0.3\\  
-    RMSD 40X & 12\\    
-    RMSD 70X & 21\\  
-    RMSD 100X & 30\\  
+    RMSD $1\times$ & 0.3\\  
+    RMSD $40\times$ & 12\\    
+    RMSD $70\times$ & 21\\  
+    RMSD $100\times$ & 30\\  
   \bottomrule
 \end{tabular}
 \caption[Change in load-ratio with RMSD workload]
@@ -299,7 +299,7 @@ MPI ranks 20 and 56 are stragglers, i.e., their total time far exceeds the mean 
 
 \begin{figure}
 \centering
-  \includegraphics[width=\linewidth]{figures/RMSD-ga4py-time_IO_comparison.pdf}
+  \includegraphics[width=0.4\linewidth]{figures/RMSD-ga4py-time_IO_comparison.pdf}
 \caption{Scaling of the \tcomp and \tIO of the RMSD task with Global Array.}
 \label{fig:ScalingComputeIO-ga4py}
 \end{figure}
@@ -313,6 +313,7 @@ Due to the large file size and memory limit, processes are not able to load the 
 The test trajectory has about $2,512,200$ frames in total and as a result there will be $2,512,200$ file access requests. 
 Thus, when the compute time is small with respect to I/O, then I/O can be a major issue as we also see in our results (Figures \ref{fig:ScalingComputeIO} and \ref{fig:MPIwithIO}).    
 Read throughput might be limited by the available bandwidth on the Infini-band network interface that serves the Lustre file system and access to files might be throttled.
+We show that depending on the cluster and its capabilities the throughput might become a problem for achieving good performance and we also show ways to overcome this problem and improve performance.
 In fact, we need to come up with ways and strategies to avoid the competition over file access across different ranks when \tcomp/\tIO ratio is small.
 To this aim, we experimented two different ways for reducing I/O cost and examined their effect on the performance.
 These two ways include: Splitting the trajectory file into as many segments as number of processes and MPI-based Parallel HDF5.
@@ -335,77 +336,52 @@ These delayed tasks impact performance as well and hence the speed-up is not sti
 \begin{figure}
 \centering
 \begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/split-t_total.pdf}
+  \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting.pdf}
   \caption{Scaling total}
   \label{fig:MPIscaling-split}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/split-speed_up.pdf}
+  \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting.pdf}
   \caption{Speed-up}
   \label{fig:MPIspeedup-split}
 \end{subfigure}
 \bigskip
 
-\begin{subfigure} {.8\textwidth}
+\begin{subfigure} {.6\textwidth}
   \includegraphics[width=\linewidth]{figures/split-BarPlot-rank-comparison_192_5.pdf}
-  \caption{Compute \tcomp, IO \tIO, communication \tcomm , ending the for loop $t_{end\_loop}$,
-  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).}
+   \caption{Examples of timing per MPI rank without global array}
   \label{fig:MPIranks-split}
 \end{subfigure}
-%
-\caption{Performance of the RMSD task with MPI using global array ($\tcomp/\tIO \approx 0.3$).
-Data are read from the file system (I/O included). All ranks update the global array and rank 0 accesses the whole RMSD array through the global memory address.}
+\hfill
+\begin{subfigure} {.6\textwidth}
+  \includegraphics[width=\linewidth]{figures/split-ga-BarPlot-rank-comparison_192_5.pdf}
+  \caption{Examples of timing per MPI rank using global array}
+  \label{fig:MPIranks-split-ga}
+\end{subfigure}
+
+\caption{Comparison on the performance of the RMSD task with MPI when the trajectories are splitted using global array and without global array ($\tcomp/\tIO \approx 0.3$).
+Data are read from the file system (I/O included). In case of global array, all ranks update the global array ($ga_{put}$) and rank 0 accesses the whole RMSD array through the global memory address ($ga_{get}$).}
 \label{fig:MPIwithIO-split}
+\obnote{The compute/IO ratio is about 1:4 judging from the graph, i.e., ~0.25 ? or did you calculate the ratio for the serial version?}
+\mknote{Yes, this is based on serial version}
 \end{figure}
 
 \begin{figure}
 \centering
-  \includegraphics[width=\linewidth]{figures/split-time_comp_IO_comparison.pdf}
-\caption{Scaling of the \tcomp and \tIO of the RMSD task with Global Array.}
+  \includegraphics[width=0.4\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
+\caption{Comparison on the scaling of the \tcomp and \tIO of the RMSD task when the trajectories are splitted with global array and without global array.}
 \label{fig:ScalingComputeIO-split}
 \end{figure}
 
 \subsubsection*{Performance using Global Array}
 Previously, we showed that global array significantly reduces the communication cost (Section \ref{Global-Array}). 
-We want to see how the performance looks like if we split our trajectory file and take advantage of global array.
-Again, we ran our benchmark up to 8 nodes (192 cores) and, we observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split-ga} and \ref{fig:MPIspeedup-split-ga}) with no straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
+We want to see how the performance looks like if we split our trajectory file and take advantage of global array as well.
+Again, we ran our benchmark up to 8 nodes (192 cores) and, we observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with no straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
 The present results show that contention for a file impacts the performance. 
-The initial results with splitting the trajectory file suggests that there is in fact an effect, which possibly also interfers with the communications when $\tcomp/\tIO \ll 1$ (i.e. with a I/O bound workload).
+The initial results with splitting the trajectory file suggests that there is in fact an effect, which possibly also interferes with the communications when $\tcomp/\tIO \ll 1$ (i.e. with a I/O bound workload).
 
-\begin{figure}
-\centering
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/split-ga-t_total.pdf}
-  \caption{Scaling total}
-  \label{fig:MPIscaling-split-ga}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/split-ga-speed_up.pdf}
-  \caption{Speed-up}
-  \label{fig:MPIspeedup-split-ga}
-\end{subfigure}
-\bigskip
-
-\begin{subfigure} {.8\textwidth}
-  \includegraphics[width=\linewidth]{figures/split-ga-BarPlot-rank-comparison_192_5.pdf}
-  \caption{Compute \tcomp, IO \tIO, communication \tcomm , ending the for loop $t_{end\_loop}$,
-  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).}
-  \label{fig:MPIranks-split-ga}
-\end{subfigure}
-%
-\caption{Performance of the RMSD task with MPI using global array ($\tcomp/\tIO \approx 0.3$).
-Data are read from the file system (I/O included). All ranks update the global array and rank 0 accesses the whole RMSD array through the global memory address.}
-\label{fig:MPIwithIO-split-ga}
-\end{figure}
-
-\begin{figure}
-\centering
-  \includegraphics[width=\linewidth]{figures/split-ga-time_IO_comparison.pdf}
-\caption{Scaling of the \tcomp and \tIO of the RMSD task with Global Array.}
-\label{fig:ScalingComputeIO-split-ga}
-\end{figure}
+\subsubsection{Chain-Reader}
 
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
@@ -460,8 +436,10 @@ Data are read from the file system from a shared HDF5 file instead of XTC format
   \midrule
     Comet & RMSD 1X & 0.03 & MPI & Single & \begin{tabular}{c} \tIO \\ \tcomp  \end{tabular} & \begin{tabular}{c} 799 \\ 225 \end{tabular} & \begin{tabular}{c} 49 \\ 11 \end{tabular} & \begin{tabular}{c} 29 \\ 6 \end{tabular} & \begin{tabular}{c} 26 \\ 4 \end{tabular} & -- & -- & --\\  
     Comet & RMSD 1X & 0.03 & GA & Single & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} 820 \\ 219 \end{tabular} & \begin{tabular}{c} 41 \\ 10 \end{tabular} & \begin{tabular}{c} 23 \\ 5 \end{tabular} & \begin{tabular}{c} 15 \\ 3 \end{tabular} & -- & -- & --\\
-    Comet & RMSD 1X & 0.03 & MPI & Splitting & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} 799 \\ 225 \end{tabular} & \begin{tabular}{c} 37 \\ 11 \end{tabular} & \begin{tabular}{c} 18 \\ 5 \end{tabular} & \begin{tabular}{c} 12 \\ 3 \end{tabular} & \begin{tabular}{c} 9 \\ 3 \end{tabular} & \begin{tabular}{c} 6 \\ 2 \end{tabular} & \begin{tabular}{c} 4 \\ 1 \end{tabular}\\
-    Comet & RMSD 1X & 0.03 & GA & Splitting & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} 820 \\ 219 \end{tabular} & \begin{tabular}{c} 36 \\ 9 \end{tabular} & \begin{tabular}{c} 17 \\ 4 \end{tabular} & \begin{tabular}{c} 11 \\ 3 \end{tabular} & \begin{tabular}{c} 10 \\ 2 \end{tabular} & \begin{tabular}{c} 5 \\ 1 \end{tabular} & \begin{tabular}{c} 4 \\ 1 \end{tabular}\\
+    
+    
+    Comet & RMSD 1X & 0.03 & MPI & Splitting & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} $799 \pm 5.22$ \\ $225 \pm 5.4$ \end{tabular} & \begin{tabular}{c} $37 \pm 1.22$ \\ $11 \pm 0.31$ \end{tabular} & \begin{tabular}{c} $18 \pm 0.18$ \\ $5 \pm 0.07$ \end{tabular} & \begin{tabular}{c} $12 \pm 0.14$ \\ $3 \pm 0.04$ \end{tabular} & \begin{tabular}{c} $9 \pm 0.3$ \\ $3 \pm 0.11$ \end{tabular} & \begin{tabular}{c} $6  \pm 0.66$ \\ $2 \pm 0.23$ \end{tabular} & \begin{tabular}{c} $4 \pm 0.23$ \\ $1 \pm 0.07$ \end{tabular}\\
+    Comet & RMSD 1X & 0.03 & GA & Splitting & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} $820 \pm 18.5$ \\ $219 \pm 9.5$ \end{tabular} & \begin{tabular}{c} $36 \pm 0.78$ \\ $9 \pm 0.22$ \end{tabular} & \begin{tabular}{c} $17 \pm 0.3$ \\ $4 \pm 0.07$ \end{tabular} & \begin{tabular}{c} $11 \pm 0.23$ \\ $3 \pm 0.04$ \end{tabular} & \begin{tabular}{c} $10 \pm 1.7$ \\ $2 \pm 0.4$ \end{tabular} & \begin{tabular}{c} $5 \pm 0.14$ \\ $1 \pm 0.05$ \end{tabular} & \begin{tabular}{c} $4 \pm 0.07$ \\ $1 \pm 0.02$ \end{tabular}\\
     Comet & RMSD 1X & 0.03 & MPI & PHDF5 & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} 423 \\ 225 \end{tabular} & \begin{tabular}{c} 19 \\ 10 \end{tabular} & \begin{tabular}{c} 9 \\ 5 \end{tabular} & \begin{tabular}{c} 6 \\ 3 \end{tabular} & \begin{tabular}{c} 5 \\ 2 \end{tabular} & \begin{tabular}{c} 3\\ 1 \end{tabular} & \begin{tabular}{c} 2 \\ 1 \end{tabular}\\
     Comet & \makecell{Dihedral \\Featurization} & 100 & MPI & Single & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} $2880 \pm 0$ \\ $272000 \pm 0$ \end{tabular} & \begin{tabular}{c} $40 \pm 1.63$ \\ $12440 \pm 200.78$ \end{tabular} & \begin{tabular}{c} $20 \pm 1.22$ \\ $6305 \pm 38.13$ \end{tabular} & \begin{tabular}{c} $15 \pm 3.91$ \\ $4225 \pm 83.41$ \end{tabular} & -- & -- & --\\ 
     Bridges & RMSD 1X & 0.03 & MPI & PHDF5 & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c}  \\  \end{tabular}\\
