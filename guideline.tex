@@ -1,24 +1,16 @@
 \label{guideline}
-Parallel implementation of the three dimensional time series is performed in the following steps:
+Here we provide practical guidelines for parallel analysis of the three dimensional time series (MD trajectories) on HPC resources.
 
 \begin{description}
-  \item[\textbf{Step 1}] Calculate the value of \tcomp/\tIO to see whether the task is compute bound ($\frac{\tcomp}{\tIO} \gg 1$) or IO bound ($\frac{\tcomp}{\tIO} \ll 1$). As discussed in Section \ref{bound} for I/O bound problems both communication and I/O will be a problem and the performance of the task will be affected by the straggler tasks which delay job completion time.  
+  \item[\textbf{Rule 1}] Calculate the value of \tcomp/\tIO to see whether the task is compute bound ($\frac{\tcomp}{\tIO} \gg 1$) or IO bound ($\frac{\tcomp}{\tIO} \ll 1$). As discussed in Section \ref{bound} for I/O bound problems both communication and I/O will be a problem and the performance of the task will be affected by the straggler tasks which delay job completion time.  
   
-  \item[\textbf{Step 2}] For $\frac{\tcomp}{\tIO} \geqslant 100$ the task is compute bound and the task will scale very well as we showed in Section \ref{DF}. However, if the size of the data to be communicated to rank 0 using the blocking collective communication ($MPI.Gather()$) is small, one might consider using global arrays to achieve near ideal scaling behavior (Section \ref{Global-Array}). In fact the overhead of \package{mpi4py} is large with respect to C for small array size. Application of Global array is useful in the sense that it replaces message-passing interface with a distributed shared array where its blocks will be updated by the associated rank in the communication domain (Algorithm \ref{alg:GA}). 
-  \item[\textbf{Step 3}] For $\frac{\tcomp}{\tIO} \leqslant 100$ the task is I/O bound and then one need to take the following steps:
+  \item[\textbf{Rule 2}] For $\frac{\tcomp}{\tIO} \geqslant 100$ the task is compute bound and the task will scale very well as we showed in Section \ref{DF}. However, if the size of the data to be communicated to rank 0 using the blocking collective communication ($MPI.Gather()$) is small, one might consider using global arrays to achieve near ideal scaling behavior (Section \ref{Global-Array}). In fact the overhead of \package{mpi4py} is large with respect to C for small array size \cite{Dalcin:2011aa}. Application of Global array is useful in the sense that it replaces message-passing interface with a distributed shared array where its blocks will be updated by the associated rank in the communication domain (Algorithm \ref{alg:GA}). 
+  \item[\textbf{Rule 3}] For $\frac{\tcomp}{\tIO} \leqslant 100$ the task is I/O bound and then one need to take the following steps:
    
 \begin{description}
-  \item[$\bullet$] If there is access to HDF5 format the recommended way will be to use MPI-based Parallel HDF5 (Section \ref{HDF5}). Since converting the XTC file to HDF5 is expensive if the trajectory file formats are not in HDF5 form then one might prefer to split the trajectories. 
+  \item[$\bullet$] If there is access to HDF5 format the recommended way will be to use MPI-based Parallel HDF5 (Section \ref{HDF5}). Since converting the XTC file to HDF5 is expensive if the trajectory file formats are not in HDF5 form then one might prefer to split the trajectories. MD trajectories are often re-analyzed and therefore we suggest to incorporate trajectory conversion into the beginning of standard workflows for MD simulations. 
+ Alternatively, it will be a good idea to keep the trajectories in smaller chunks, e.g. when running simulations on HPC using Gromacs [??], users can run their simulations with ``-noappend" option which will store the output trajectories in small chunks.
   \item[$\bullet$] If there is not access to HDF5, the trajectory file should be splitted into as many trajectory segments as the number of processes. Splitting the trajectories is fast and does not take much time (Appendix \ref{sec:splitting-timing}).
   \item[$\bullet$] The appropriate parallel implementation along with \emph{Global Array} should be used on the trajectory segments (Section \ref{Splitting}) to achieve near ideal scaling.
 \end{description}
-   
 \end{description}
-
-
-%\begin{figure}
-%\centering
-%  \includegraphics[width=\linewidth]{figures/}
-%\caption{Illustration of the steps involved in parallel analysis of three dimensional time series.}
-%\label{fig:guidelines}
-%\end{figure}
