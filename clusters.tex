@@ -25,10 +25,15 @@
 across different clusters. Data are read from the file system (I/O included) and results are communicated back to
 rank 0 (communications included). Five repeats are performed to collect statistics. The error bars show
 standard deviation with respect to mean.}
- 
 \label{fig:MPIwithIO}
 \end{figure} 
 
+\begin{figure}[ht!]
+\centering
+  \includegraphics[width=0.6\linewidth]{figures/Bridge-MPI-IO-BarPlot-rank-comparison_78_5.pdf}
+\caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 ($\tcomp/\tIO \approx 0.3$) on PSC Bridges}
+\label{fig:hdf5-bridge}
+\end{figure}
 
 \begin{table}[ht!]
 \centering
