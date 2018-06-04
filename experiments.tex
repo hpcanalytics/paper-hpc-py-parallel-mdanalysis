@@ -21,7 +21,7 @@ Stragglers, however, appear to be defined by occasional much larger \emph{commun
 For other ranks, \tcomm varies across different ranks and for a few ranks $\tcomm < 10$~s or is barely measurable. 
 This initial analysis (especially Figure \ref{fig:MPIranks}) indicates that communication is a major issue. 
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/main-RMSD-t_total.pdf}
@@ -61,7 +61,7 @@ Figure \ref{fig:ScalingComputeIO} shows the scaling of \tcomp and \tIO individul
 As shown, \tcomp scales very well; however, \tIO does not show good scaling beyond a single node (24 cores) and that explains why we are seeing these variations in \tIO across different ranks (Figure \ref{fig:MPIranks}). 
 Considering the results in Figures \ref{fig:MPIwithIO} and \ref{fig:ScalingComputeIO}, we can conclude that communication and I/O are the root causes for stragglers. 
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
   \includegraphics[width=0.4\linewidth]{figures/main-RMSD-time_comp_IO_comparison.pdf}
 \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI.}
@@ -92,7 +92,7 @@ compared to the RMSD workload (per task a float array of length $N_{frames}$) an
 performance of \package{mpi4py} for larger array sizes has lead to better overall scaling. 
 In addition, for higher computational workloads the competition over accessing the file is less severe as compared to lower computational workloads. 
  
-\begin{figure}
+\begin{figure}[ht!]
 \centering
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/main-dihedral-t_total.pdf}
@@ -122,7 +122,7 @@ The error bars show standard deviation with respect to mean. No straggler is obs
 \label{fig:MPIwithIO-dihed}
 \end{figure} 
 
-\begin{figure}
+\begin{figure}[ht!]
   \centering
   \includegraphics[width=0.4\linewidth]{figures/main-dihed-time_comp_IO_comparison.pdf}
 \caption{Scaling of the \tcomp and \tIO of the Dihedral Featurization task with MPI.}
@@ -130,7 +130,7 @@ The error bars show standard deviation with respect to mean. No straggler is obs
 \mknote{refer this figure in the text}
 \end{figure}
 
-\begin{figure}[tbp]
+\begin{figure}[ht!]
 \begin{subfigure} {.55\textwidth}
   \centering
   \includegraphics[width=\linewidth]{figures/ViolinPlot-Ncores-comparison-comm-dihedral.pdf}
@@ -188,7 +188,7 @@ processed by each MPI rank for $N$ processes) for I/O, and
 $X \times N_{frames} \times \tcomp$ for the RMSD calculation. 
 $X$ is the factor by which we increase the RMSD compute workload in our experiment.
 
-\begin{table}[tbp]
+\begin{table}[ht!]
 \centering
 \begin{tabular}{c c}
   \toprule
@@ -212,7 +212,7 @@ When $\tcomp/\tIO$ ratio increases, the RMSD calculation consistently scales up 
 Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} shows the improvment in performance more clearly.
 In fact, as the $\tcomp/\tIO$ ratio increases, the values of speed-up and efficiency get closer to their ideal value for each number of processor count.  
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
 \begin{subfigure} {.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf}
@@ -266,7 +266,7 @@ In fact, although communications were performed using global arrays, scaling is 
 \mknote{no only happened in one repeat. Does not seem to me to be a problem with GA}
 These slow processes take about 50~s, which are slower than the mean execution time of all ranks, i.e. 17~s. 
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/RMSD-ga4py-t_total.pdf}
@@ -296,7 +296,7 @@ MPI ranks 20 and 56 are stragglers, i.e., their total time far exceeds the mean 
 \label{fig:MPIwithIO-ga4py}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
   \includegraphics[width=0.4\linewidth]{figures/RMSD-ga4py-time_IO_comparison.pdf}
 \caption{Scaling of the \tcomp and \tIO of the RMSD task with Global Array.}
@@ -332,7 +332,7 @@ However, the scaling is still far from ideal due to the communication.
 Although the delay due to communication is much smaller as compared to RMSD with a shared trajectory file (Compare Figure \ref{fig:MPIranks-split} to Figure \ref{fig:MPIranks}), it is still delaying several processes and as a result leads to longer job completion time (Figure \ref{fig:MPIranks-split}). 
 These delayed tasks impact performance as well and hence the speed-up is not still close to ideal scaling (Figure \ref{fig:MPIspeedup-split}).
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting.pdf}
@@ -366,7 +366,7 @@ Data are read from the file system (I/O included). In case of global array, all 
 \mknote{Yes, this is based on serial version}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
   \includegraphics[width=0.4\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
 \caption{Comparison on the scaling of the \tcomp and \tIO of the RMSD task when the trajectories are splitted with global array and without global array.}
@@ -391,7 +391,7 @@ Again, we ran our benchmark up to 8 nodes (192 cores) and, we observed near idea
 When we split our trajectory, scaling is better as compared to that of parallel I/O (Compare Figure \ref{fig:MPIspeedup-hdf5} to Figure \ref{fig:MPIspeedup-split}). 
 However, both methods scale very well up to 8 nodes and have comparable performance.  
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/hdf5-t_total.pdf}
@@ -418,7 +418,7 @@ Data are read from the file system from a shared HDF5 file instead of XTC format
 \label{fig:MPIwithIO-hdf5}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[ht!]
 \centering
   \includegraphics[width=0.4\linewidth]{figures/hdf5-time_IO_comparison.pdf}
 \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI-based parallel HDF5 (Independent I/O).}
