@@ -4,36 +4,47 @@ The trajectory \cite{Seyler:2017aa} was in Gromacs XTC format trajectory (``600x
 time frames (corresponding to $602.4 \sim \mu s$ simulated time) which represents a typical medium per-frame size but is very long for
 current standards.
 
-The experiments were executed on the XSEDE Supercomputers: \emph{SDSC Comet}, \emph{PSC Bridges} and \emph{SuperMIC}. 
-SDSC Comet is a 2.7 PFlop/s cluster with 6,400 nodes in total.
-The standard compute nodes consist of Intel Xeon E5-2680v3 processors, 128 GB DDR4 DRAM (64 GB per socket). 
-The network topology is 56 Gbps FDR Infini-Band (IB).
+The experiments were executed on the XSEDE Supercomputers: \emph{SDSC Comet}, 
+\emph{PSC Bridges} and \emph{SuperMIC}. SDSC Comet is a 2.7 PFlop/s cluster with 
+6,400 compute nodes in total. The standard compute nodes consist of Intel Xeon 
+E5-2680v3 processors, 128 GB DDR4 DRAM (64 GB per socket). The network topology 
+is 56 Gbps FDR Infini-Band (IB).
 
-PSC Bridges is a 1.35 PFlop/s cluster with four types of computational nodes.
-Bridges computational nodes supply 1.3018 Pf/s and 274 TiB RAM.
-The Regular Shared Memory (RSM) nodes consist of Intel Haswell (E5-2695 v3) processors, 128 GB DDR4 DRAM (64 GB per socket). 
-The network topology is 12.37 Gbps Omni-Path Architecture (OPA).
+PSC Bridges is a 1.35 PFlop/s cluster with four types of computational nodes. Bridges 
+computational nodes supply 1.3018 PFlop/s and 274 TiB RAM. The Regular Shared 
+Memory (RSM) nodes consist of Intel Haswell (E5-2695 v3) processors, 128 GB DDR4 
+DRAM (64 GB per socket). The network topology is 12.37 Gbps Omni-Path Architecture 
+(OPA).
+
+LSU SuperMIC offers 360 compute nodes with Ivy Bridge Intel processors (E5-2680).
+Each node has 64 GBs DDR3 RAM. SUperMIC's nodes are connected 56 Gbps Infiniband 
+Network. In addition, it offers 20 hybrid nodes which provide an NVIDIA GPU. SuperMIC's
+peak performance is measured at 557 TFlop/s.
 \mknote{Giannis, Need some info on SuperMIC}
-All the experiments are performed using compute nodes, RSM, \mknote{Giannis, what type of nodes did you use for the runs on SuperMIC?} on Comet, PSC Bridges and SuperMIC respectively in the present study.
+All the experiments are performed using compute nodes, RSM, 
+\mknote{Giannis, what type of nodes did you use for the runs on SuperMIC?} \gpnote{The RSM nodes
+	on Bridges are compute nodes as well. I suggest you say standard compute nodes 
+	for Comet. Also, you may need to say what other types of nodes do they offer, 
+	because the naming is very specific. Otherwis, just introduce the nodes you used.}
+on Comet, PSC Bridges and SuperMIC respectively in the present study.
 
 \begin{table}[ht!]
-\centering
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{c c c c c c c}
-  \toprule
-            \bfseries\thead{Cluster} & \bfseries\thead{Nodes} & \bfseries\thead{Number} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology}\\
-  \midrule
-    \bfseries SDSC Comet & Compute & 6400 & \makecell{2 Intel Xeon (E5-2680v3) CPUs \\ 12 cores/CPU, 2.5 GHz} &128 GB DDR4 DRAM & 56 Gbps IB \\
-    \bfseries PSC Bridges & RSM & 752 & \makecell{2 Intel Haswell (E5-2695 v3) CPUs \\14 cores/CPU, 2.3 GHz} & 128 GB, DDR4-2133 & 12.37 Gbps OPA \\
-    \bfseries SuperMIC & & & & \\
-  \bottomrule
-\end{tabular}
-\end{adjustbox}
-\caption[System configuration used in the present study]
-{List of benchmarked clusters and their system configuration \mknote{Giannis, can you please add the sys config for SuperMIC}}
-\label{tab:sys-config}
+	\centering
+	\begin{adjustbox}{max width=\textwidth}
+		\begin{tabular}{c c c c c c c}
+			\toprule
+			\bfseries\thead{Cluster} & \bfseries\thead{Nodes} & \bfseries\thead{Number} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology}\\
+			\midrule
+			\bfseries SDSC Comet & Compute & 6400 & \makecell{2 Intel Xeon (E5-2680v3) CPUs \\ 12 cores/CPU, 2.5 GHz} &128 GB DDR4 DRAM & 56 Gbps IB \\
+			\bfseries PSC Bridges & RSM & 752 & \makecell{2 Intel Haswell (E5-2695 v3) CPUs \\14 cores/CPU, 2.3 GHz} & 128 GB, DDR4-2133Mhz & 12.37 Gbps OPA \\
+			\bfseries SuperMIC & Standard & 360 & \makecell{2 Intel Ivy Bridges (E5-2680) CPUs \\10 cores/CPU, 2.8GB GHz} & 64 GB, DDR3-1866Mhz  & 56Gbps IB \\
+			\bottomrule
+		\end{tabular}
+	\end{adjustbox}
+	\caption[System configuration used in the present study]
+	{List of benchmarked clusters and their system configuration \mknote{Giannis, can you please add the sys config for SuperMIC}}
+	\label{tab:sys-config}
 \end{table}
-
 
 \subsection{Installing softwares on multi-user HPC systems}
 \obnote{Include table with software and versions; add a paragraph in which you mention software, summarize how it was compiled, and reference the table.}
@@ -46,7 +57,7 @@ Therefore, the software they need should be easily accessible.
 This is not always the case, though.
 
 In fact, many domain specific packages are not available through package manager in supercomputers and as a result,
-we spent considerable amount of time getting packages dependencies to work in the process of our performance study. 
+we spent considerable amount of time getting packages dependencies to work in the process of our performance study.
 As a result, we provide detail information on how we managed to build these softwares.
 This will let future works spend least amount of time for this purpose. 
 Detailed information regarding the version of each library, its dependencies, the quality of its documentation, the time necessary for building and installing the packages are given in Table \ref{tab:version}. 
