@@ -31,18 +31,18 @@ on Comet, PSC Bridges and SuperMIC respectively in the present study.
 \begin{table}[ht!]
 	\centering
 	\begin{adjustbox}{max width=\textwidth}
-		\begin{tabular}{c c c c c c c}
+		\begin{tabular}{c c c c c c c c}
 			\toprule
-			\bfseries\thead{Cluster} & \bfseries\thead{Nodes} & \bfseries\thead{Number} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology}\\
+			\bfseries\thead{Cluster} & \bfseries\thead{Nodes} & \bfseries\thead{Number} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology} & \makecell{\bfseries\thead{Scheduler and  \\ Resource Manager}}\\
 			\midrule
-			\bfseries SDSC Comet & Compute & 6400 & \makecell{2 Intel Xeon (E5-2680v3) CPUs \\ 12 cores/CPU, 2.5 GHz} &128 GB DDR4 DRAM & 56 Gbps IB \\
-			\bfseries PSC Bridges & RSM & 752 & \makecell{2 Intel Haswell (E5-2695 v3) CPUs \\14 cores/CPU, 2.3 GHz} & 128 GB, DDR4-2133Mhz & 12.37 Gbps OPA \\
-			\bfseries SuperMIC & Standard & 360 & \makecell{2 Intel Ivy Bridges (E5-2680) CPUs \\10 cores/CPU, 2.8GB GHz} & 64 GB, DDR3-1866Mhz  & 56Gbps IB \\
+			\bfseries SDSC Comet & Compute & 6400 & \makecell{2 Intel Xeon (E5-2680v3) CPUs \\ 12 cores/CPU, 2.5 GHz} &128 GB DDR4 DRAM & 56 Gbps IB & SLURM\\
+			\bfseries PSC Bridges & RSM & 752 & \makecell{2 Intel Haswell (E5-2695 v3) CPUs \\14 cores/CPU, 2.3 GHz} & 128 GB, DDR4-2133Mhz & 12.37 Gbps OPA & SLURM\\
+			\bfseries SuperMIC & Standard & 360 & \makecell{2 Intel Ivy Bridges (E5-2680) CPUs \\10 cores/CPU, 2.8GB GHz} & 64 GB, DDR3-1866Mhz  & 56Gbps IB & PBS\\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
 	\caption[System configuration used in the present study]
-	{List of benchmarked clusters and their system configuration \mknote{Giannis, can you please add the sys config for SuperMIC}}
+	{List of benchmarked clusters and their system configuration}
 	\label{tab:sys-config}
 \end{table}
 
