@@ -92,6 +92,19 @@ The configure script supports a lot of different command line options, but the s
 \emph{Global Array}, and \emph{PHDF5} have much slower installation especially because the softwares are built from source and variable configure options 
 are required to support specific network interconnects and back-end run-time environments.
 \emph{GA4py} has only one release, and does not provide users with strong documentation and there are still room for improvement for this package. 
+
+SuperMIC's architecture is different than Comet's. Although tool installation was 
+done the same way and passed initial testing, the execution did not distribute the 
+processes to all nodes. This was due to the fact that our custom OpenMPI installation 
+did not correctly parse the node list offered by SuperMIC to our jobs. We had to 
+manually pass the node file to MPIRUN. In addition, we found that the loaded modules, 
+along with library path changes, did not propagate to all nodes from our OpenMPI 
+installation. OpenMPI's execution engine could access the correct libraries and was 
+not able to launch the processes correctly. Reinstalling OpenMPI with enabling the 
+flag to use ORTE by default and including the OpenMPI installation to BASHRC allowed 
+for correct execution.
  
-Overall, the installation was successful on all clusters and we were able to observe similar performances (will be discussed in the result section) which shows the applicability of the softwares for achieving near ideal scaling. In addition, we found that on SuperMIC we had to include the path to \textit{mpirun} in the bashrc file. That way, all the nodes have access to the correct libraries and executables.
+Overall, the installation was successful on all clusters and we were able to observe similar
+performances (will be discussed in the result section) which shows the applicability of the 
+softwares for achieving near ideal scaling. 
 
