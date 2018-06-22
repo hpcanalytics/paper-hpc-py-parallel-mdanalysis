@@ -1,6 +1,6 @@
 \label{sec:clusters}
-In this section we try to compare the performance of RMSD task on different HPC resources.
-HPC resources use for this purpose and their system configuration are given in Table \ref{tab:sys-config}.
+In this section we try to compare the performance of RMSD task on different HPC resources to examine the robustness of the methods we used for our performance study.
+HPC resources used for this purpose and their system configuration are given in Table \ref{tab:sys-config}.
 We perform these comparisons for several cases discussed previously. 
 These cases include: Splitting the trajectories with collective communications in MPI, Splitting the trajectories with GA4py for communications, and MPI-based Parallel HDF5.
 
@@ -43,6 +43,15 @@ standard deviation with respect to mean.}
 \end{figure} 
 
 \subsection{MPI-based Parallel HDF5}
+Figure \ref{fig:MPIwithIO-clusters} shows how RMSD task scales with the increase in the number of cores on different HPC resources using MPI-based parallel HDF5.  
+The scaling follows the same pattern on both Comet and SuperMIC. 
+Both Comet and SuperMIC scales very well using Global array. 
+RMSD task still scales on both clusters without global array; however, scaling is far from ideal scaling due to the communication cost (Refer to section \ref{Splitting} and Figure \ref{fig:MPIranks-split}). 
+Overal, the scaling of the RMSD task is better on SuperMIC and the performance gap increases as we increase the number of cores.
+This is expected for the following reasons:
+First, CPU speed on SuperMIC is 2.8 GHz vs 2.5 GHz on Comet. This is $\approx 12\%$ performance difference in favor of SuperMIC. 
+Second, for the same network speed the number of cores per node on SuperMIC (20 cores per node) is smaller than Comet (24 cores per node). 
+Therefore, access to memory per core should be factor of $12/10 \approx 20\%$ faster on SuperMIC.
 
 \begin{figure}[ht!]
 \centering

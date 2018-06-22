@@ -39,13 +39,13 @@ In this algorithm, we use global array instead of message passage paradigm to se
 	\hspace*{\algorithmicindent}\textbf{Include:} $Block\_RMSD$ from Algorithm \ref{alg:RMSD}
 	\begin{algorithmic}[1]
 		
-		\State bsize = ceil(trajectory.number\_frames / size)
-		\State g\_a = ga.create(ga.C\_DBL, [bsize*size,2], "RMSD")
-		\State buf = np.zeros([bsize*size,2], dtype=float)
-		\State out = Block\_RMSD(topology, trajectory, xref0, start=start, stop=stop)
+		\State bsize $\leftarrow$ ceil(trajectory.number\_frames / size)
+		\State g\_a $\leftarrow$ ga.create(ga.C\_DBL, [bsize*size,2], "RMSD")
+		\State buf $\leftarrow$ np.zeros([bsize*size,2], dtype=float)
+		\State out $\leftarrow$ Block\_RMSD(topology, trajectory, xref0, start=start, stop=stop)
 		\State ga.put(g\_a, out, (start,0), (stop,2))
 		\If{rank == 0}
-		\State buf = ga.get(g\_a, lo=None, hi=None)
+		\State buf $\leftarrow$ ga.get(g\_a, lo=None, hi=None)
 		\EndIf
 	\end{algorithmic}
 \end{algorithm}
