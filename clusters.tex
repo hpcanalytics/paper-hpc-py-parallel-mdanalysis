@@ -32,13 +32,13 @@ Therefore, access to memory per core should be factor of $12/10 \approx 20\%$ fa
 
 \begin{subfigure} {.8\textwidth}
   \includegraphics[width=\linewidth]{figures/Clusters_IO_compute_scaling_splitting.pdf}
-  \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI when the trajectories are splitted using global array and without global array ($\tcomp/\tIO \approx 0.3$).}
+  \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI when the trajectories are splitted using global array and without global array.}
   \label{fig:compute-IO-scaling-clusters-splitting}
 \end{subfigure}
 %
-\caption{Comparison of the performance of the RMSD task with MPI when the trajectories are splitted using global 
-array and without global array across different clusters. Five repeats are performed to collect statistics. The error bars show
-standard deviation with respect to mean.}
+\caption{Comparison of the performance of the RMSD task with MPI ($\tcomp/\tIO \approx 0.3$) when the trajectories are splitted using global 
+array and without global array across different clusters. Data are read from the file system. Five repeats are performed to collect statistics. 
+The error bars show standard deviation with respect to mean.}
 \label{fig:MPI-splitting-clusters}
 \end{figure} 
 
@@ -79,10 +79,10 @@ However, on Bridge the I/O time is on average about two and a half times larger 
   \label{fig:compute-IO-scaling-clusters}
 \end{subfigure}
 %
-\caption{Comparison of the performance of the RMSD task with MPI which is I/O-bound $\tcomp/\tIO \approx 0.3$
-across different clusters. Data are read from the file system (I/O included) and results are communicated back to
-rank 0 (communications included). Five repeats are performed to collect statistics. The error bars show
-standard deviation with respect to mean.}
+\caption{Comparison of the performance of the RMSD task with MPI ($\tcomp/\tIO \approx 0.3$)
+across different clusters. Data are read from a shared HDF5 file instead of XTC format (Independent I/O)
+and results are communicated back to rank 0 (communications included). Five repeats are performed to 
+collect statistics. The error bars show standard deviation with respect to mean.}
 \label{fig:MPIwithIO-clusters}
 \end{figure} 
 
@@ -100,18 +100,20 @@ standard deviation with respect to mean.}
   \label{fig:hdf5-SuperMIC}
 \end{subfigure}
 %
-\caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 ($\tcomp/\tIO \approx 0.3$) on PSC Bridge (Top) and SuperMIC (Buttomn).}
+\caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 ($\tcomp/\tIO \approx 0.3$) on PSC Bridge (Top) and SuperMIC (Buttomn).
+This is typical data from one run of the 5 repeats.}
 \label{fig:MPIwithIO-clusters-rank}
 \end{figure} 
 
 \subsection{Comparison of Compute \& I/O Scaling Across Different Clusters}
 Comparison of compute \& I/O scaling across different clusters for different test cases and algorithms is shown in Table \ref{tab:comp-IO-scaling}. 
-The corresponding plots for compute and I/O scaling are shown in related sections and Table \ref{tab:comp-IO-scaling} allows both quantitative and qualitative comparison.
+The corresponding plots for compute and I/O scaling are shown in related sections. 
+These plots together with Table \ref{tab:comp-IO-scaling} allow both quantitative and qualitative comparison of the compute and I/O time scaling.
 As can be seen in Table \ref{tab:comp-IO-scaling} for MPI-based parallel HDF5, both compute and I/O time on Bridge is larger than its corresponding value on Comet and SuperMIC.
 For example, with one core the corresponding compute and I/O time are about (387, 1318) versus (225, 423) and (273, 503) on Comet and SuperMIC respectively.
-These performance difference is more obvious as the number of cores increases.
+This performance difference becomes more obvious as the number of cores increases.
 When the trajectories are splitted and global array is used for communication both Comet and SuperMIC show similar performance at small number of cores and the their performance difference increases as the number of cores increases. 
-The reason why we see this performance differences is explained in previous sections. 
+The reason why we see these performance differences is explained in previous sections. 
 
 \begin{table}[ht!]
 \centering

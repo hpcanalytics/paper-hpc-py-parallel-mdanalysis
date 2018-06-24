@@ -7,7 +7,6 @@ Based on the efficiency tests \cite{Dalcin:2011aa, Dalcin:2005aa}, the performan
 In addition, there are works on improving the communication performance in \package{mpi4py} and it shows minimal overheads compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}.
 
 \subsection{Applications of Global Array}
-\mknote{reference more papers.}
 In shared-memory systems, regardless of the implementation, the shared-memory paradigm eliminates the synchronization that is required when message-passing is used to access shared data. 
 A disadvantage of many shared-memory models is that they do not expose the none-uniform memory access (\textbf{\textit{NUMA}}) hierarchy of the underlying distributed-memory hardware. 
 
@@ -20,7 +19,7 @@ The global array itself is physically located in the local memory space of each 
 User can get a pointer to this memory by using ga\_access function or one of its variants.
 Using this pointer it is possible to directly modify the data that is local to each process. 
 The GA library keeps track of all these memory locations by recording a list of them when a global array is created. 
-When a process tries to access a block of data, it first does a decomposition of the request into individual blocks representing the contribution to the total request from the data held locally on each processor [cite-new]. 
+When a process tries to access a block of data, it first does a decomposition of the request into individual blocks representing the contribution to the total request from the data held locally on each processor \cite{PNNL:2017}. 
 The requesting processor then makes individual requests to each of the remote processors. 
 The requests are implemented using the native one-sided semantics inside the the infini-band Verbs library. 
 OpenIB/infiniband uses sys5 shmem within the node and will use the infiniband network card to communicate between nodes.
