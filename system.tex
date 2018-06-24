@@ -94,7 +94,7 @@ are required to support specific network interconnects and back-end run-time env
 \emph{GA4py} has only one release, and does not provide users with strong documentation and there are still room for improvement for this package. 
 
 We performed our benchmark on several HPC resources and therefore, we had to install all the related packages and tools on all resources.
-However, there is always differences in the resources because their set up and architectures differ from each other. 
+However, there are always differences in the resources because their set up and architectures differ from each other. 
 For example, on SuperMIC although tool installation was done in the same way as Comet and also passed initial testing, the execution did not distribute the processes to all nodes. 
 This was due to the fact that our custom OpenMPI installation did not correctly parse the node list offered by SuperMIC to our job. 
 Thus, we had to manually pass the node lists to MPIRUN. 
