@@ -20,13 +20,12 @@ LSU SuperMIC offers 360 compute nodes with Ivy Bridge Intel processors (E5-2680)
 Each node has 64 GBs DDR3 RAM. SUperMIC's nodes are connected 56 Gbps Infiniband 
 Network. In addition, it offers 20 hybrid nodes which provide an NVIDIA GPU. SuperMIC's
 peak performance is measured at 557 TFlop/s.
-\mknote{Giannis, Need some info on SuperMIC}
-All the experiments are performed using compute nodes, RSM, 
-\mknote{Giannis, what type of nodes did you use for the runs on SuperMIC?} \gpnote{The RSM nodes
-	on Bridges are compute nodes as well. I suggest you say standard compute nodes 
-	for Comet. Also, you may need to say what other types of nodes do they offer, 
-	because the naming is very specific. Otherwis, just introduce the nodes you used.}
-on Comet, PSC Bridges and SuperMIC respectively in the present study.
+All the experiments are performed using standard compute nodes on Comet, PSC Bridges and SuperMIC respectively in the present study.
+ \gpnote{The RSM nodes on Bridges are compute nodes as well. I suggest you say standard compute nodes 
+for Comet. Also, you may need to say what other types of nodes do they offer, 
+because the naming is very specific. Otherwis, just introduce the nodes you used.}
+\mknote{Ok I used standard compute node for all clusters. I think because we have not used other types of nodes it is better to not mention them.
+Anyway they are not related.}
 
 \begin{table}[ht!]
 	\centering
@@ -46,19 +45,19 @@ on Comet, PSC Bridges and SuperMIC respectively in the present study.
 	\label{tab:sys-config}
 \end{table}
 
-\subsection{Installing softwares on multi-user HPC systems}
+\subsection{Installing libraries on multi-user HPC systems}
 \obnote{Include table with software and versions; add a paragraph in which you mention software, summarize how it was compiled, and reference the table.}
 \mknote{Are the following enough?}
 Different packages and libraries are used in the present study in order to achieve the desired performance. 
-However, getting scientific softwares installed can be a very challenging task.
-Lack of documentation and good software engineering practices, non-standard installation procedures, and lots of dependencies can contribute to the challenge of getting the software to work [???].
+However, getting scientific libraries installed can be a very challenging task.
+Lack of documentation and good software engineering practices, non-standard installation procedures, and lots of dependencies can contribute to the challenge of getting the libraries to work [???].
 Scientists mostly care about the science and they are often not software engineers or system administrators. 
-Therefore, the software they need should be easily accessible. 
+Therefore, the libraries and tools they need should be easily accessible. 
 This is not always the case, though.
 
 In fact, many domain specific packages are not available through package manager in supercomputers and as a result,
 we spent considerable amount of time getting packages dependencies to work in the process of our performance study.
-As a result, we provide detail information on how we managed to build these softwares.
+As a result, we provide detail information on how we managed to build these libraries.
 This will let future works spend least amount of time for this purpose. 
 Detailed information regarding the version of each library, its dependencies, the quality of its documentation, the time necessary for building and installing the packages are given in Table \ref{tab:version}. 
 
@@ -88,23 +87,22 @@ Detailed information regarding the version of each library, its dependencies, th
 From the libraries given in Table \ref{tab:version}, \emph{MPI4py}, \emph{H5py}, \emph{MDAnalysis} were the easiest to build. 
 Users are able to get these packages installed through the \emph{Conda} package support.
 \emph{OpenMPI}, \emph{GCC}, can be easily configured and installed.
-The configure script supports a lot of different command line options, but the support for these software is very strong, they are widely used and the excellent documentation and discussion mailing lists provide users with great resources for consult, troubleshooting and tracking issues.
-\emph{Global Array}, and \emph{PHDF5} have much slower installation especially because the softwares are built from source and variable configure options 
+The configure script supports a lot of different command line options, but the support for these libraries is very strong, they are widely used and the excellent documentation and discussion mailing lists provide users with great resources for consult, troubleshooting and tracking issues.
+
+\emph{Global Array}, and \emph{PHDF5} have much slower installation especially because the libraries are built from source and variable configure options 
 are required to support specific network interconnects and back-end run-time environments.
 \emph{GA4py} has only one release, and does not provide users with strong documentation and there are still room for improvement for this package. 
 
-SuperMIC's architecture is different than Comet's. Although tool installation was 
-done the same way and passed initial testing, the execution did not distribute the 
-processes to all nodes. This was due to the fact that our custom OpenMPI installation 
-did not correctly parse the node list offered by SuperMIC to our jobs. We had to 
-manually pass the node file to MPIRUN. In addition, we found that the loaded modules, 
-along with library path changes, did not propagate to all nodes from our OpenMPI 
-installation. OpenMPI's execution engine could access the correct libraries and was 
-not able to launch the processes correctly. Reinstalling OpenMPI with enabling the 
-flag to use ORTE by default and including the OpenMPI installation to BASHRC allowed 
-for correct execution.
+We performed our benchmark on several HPC resources and therefore, we had to install all the related packages and tools on all resources.
+However, there is always differences in the resources because their set up and architectures differ from each other. 
+For example, on SuperMIC although tool installation was done in the same way as Comet and also passed initial testing, the execution did not distribute the processes to all nodes. 
+This was due to the fact that our custom OpenMPI installation did not correctly parse the node list offered by SuperMIC to our job. 
+Thus, we had to manually pass the node lists to MPIRUN. 
+In addition, we found that the loaded modules, along with library path changes, did not propagate to all nodes from our OpenMPI installation. 
+OpenMPI's execution engine could access the correct libraries and was not able to launch the processes correctly. 
+Reinstalling OpenMPI with enabling the flag to use the Open Run-Time Environment (ORTE) by default and including the OpenMPI installation to BASHRC allowed for correct execution.
  
 Overall, the installation was successful on all clusters and we were able to observe similar
 performances (will be discussed in the result section) which shows the applicability of the 
-softwares for achieving near ideal scaling. 
+libraries for achieving near ideal scaling. 
 
