@@ -1,33 +1,49 @@
-\label{concl}
+\label{concl} \mknote{Add chain-reader later}
 There are currently many freely available libraries for the analysis and processing of three-dimensional time series.
 However, dramatic increases in the size of trajectories combined with the serial nature of these libraries necessitates 
 use of state of the art high performance computing tools for rapid analysis of these time series. 
 
-We have been able to identify the root cause for stragglers in our MPI test case and our data suggest a \textbf{new specific hypothesis}. 
-We tested our benchmark on RMSD (I/O bound) and Dihedral featurization (compute bound) algorithms in \package{MDAnalysis}.
-Both communication and I/O appeared to be the scalability bottleneck for our RMSD benchmark test case when using a shared file.
+To this aim, we tested our benchmark on RMSD (I/O bound) and Dihedral featurization (compute bound) algorithms in \package{MDAnalysis}.
+Our initial analysis showed that for sufficiently large per-frame workloads ($\tcomp/\tIO \approx 100$), close to ideal scaling was achievable (Figure \ref{fig:comparison-t_comm-dihedral}).
+However the I/O bound workload ($\tcomp/\tIO \approx 0.3$) does not scale due to the appearance of \emph{stragglers}. 
+This means that the ratio between compute load and I/O load has a crucial effect on the performance. 
 
-In fact, for I/O-bound workload, \emph{stragglers are due to the competition between MPI and the Lustre file system on the shared Infini-band interconnect}. 
-This hypothesis appears to be consistent with the observation that for larger number of process counts, communication is primarily a problem in
-the presence of many I/O requests produced by I/O-bound workloads.
-In fact, communication time \tcomm, i.e., the \texttt{mpi4py.MPI.COMM\_WORLD.Gather()} step, could take
-much longer for stragglers than for ``normal'' MPI ranks when I/O has to be performed through a shared trajectory file (Figure \ref{fig:MPIranks}). 
+Different factors like opening the trajectory file, or other sources of overheads can be responsible for observing \emph{stragglers} for I/O bound workload.
+But, for the I/O bound workload, both communication and I/O appeared to be the main scalability bottlenecks when using a shared file.
+Our data suggest that \emph{stragglers are due to the competition between MPI and the Lustre file system on the shared Infini-band interconnect}. 
+\obnote{We/I put this hypothesis forward originally but I don?t think that we really have enough evidence to corroborate it. 
+We know that we have a problem with multiple ranks accessing the same file but we don?t have this problem with splitting or parallel I/O. 
+I think that?s really all we can say right now.}\mknote{I think we have enough evidences, I tried to explain it in a better way. please have a look and let me know if it is still not clear from my reasoning} 
+\obnote{Can you look in the literature to see what is known about Lustre and accessing a single file? 
+Papers on parallel I/O should discuss this problem.}\mknote{Will have a look}
 
-The ratio between compute load and I/O load appeared to be crucial as well. 
-For sufficiently large per-frame workloads, close to ideal scaling was achievable (Figure \ref{fig:comparison-t_comm-dihedral}). 
-Additionally, the effect of communication was less pronounced when the work became more compute-bound.
-This is because with compute-bound tasks there is less competition over accessing the shared trajectory file.
+This is because when we remove I/O, communication does not appear to be the scalability bottleneck anymore (data not shown here).
+In fact, communication time, \tcomm, could take
+much longer for \emph{stragglers} than for ``normal'' MPI ranks when I/O has to be performed through a shared trajectory file (Figure \ref{fig:MPIranks}). 
 
-For I/O bound tasks we needed to come up with solution to overcome stragglers. 
+Additionally, the number of I/O requests is a function of number of frames in the trajectory. 
+For I/O bound task and compute bound task with the same number of frames per trajectory the frequency of sending the I/O requests makes a big difference.
+For sufficiently large per-frame compute workload, the I/O requests interfere much less often with communication than an I/O bound task.
+This is why both communication and I/O appear to prevent us from achieving the near ideal scaling for an I/O bound task.
+
+It should be also noted that, the effect of communication was less pronounced when the work became more compute-bound and this 
+is because with compute-bound tasks there is less competition over accessing the shared trajectory file.
+We showed this effect by changing the ratio between compute load and I/O load and studying its impact on the performance.
+
+Therefore, for I/O bound tasks we needed to come up with solution to overcome \emph{stragglers}. 
 We were able to achieve much better performance in our RMSD benchmark when we used global array toolkit instead of message-passing interface for communication. 
-Using global array, we did not observe any delayed task due to communication (Figure \ref{fig:MPIwithIO-ga4py}) and it significantly reduces the communication cost. 
+Using global array, we did not observe any delayed task due to communication (Figure \ref{fig:MPIwithIO-ga4py}) and it significantly reduced the communication cost. 
+However, reducing communication cost was not enough for achieving near ideal scaling because I/O is more dominant for an I/O bound task.
 
-However, reducing communication cost was not enough for achieving near ideal scaling.
-We were able to improve I/O through splitting the shared trajectory file and parallel I/O (Figures \ref{fig:MPIwithIO-split} and \ref{fig:MPIwithIO-hdf5}). 
+We showed several approaches to improve I/O scaling.
+We were able to improve I/O through splitting the shared trajectory file and MPI-based parallel I/O through HDF5 file (Figures \ref{fig:MPIwithIO-split} and \ref{fig:MPIwithIO-hdf5}). 
 In both cases we were able to achieve near ideal scaling.
-With splitting the trajectories, effect of communication is still apparent on the performance; however we could tackle this problem using 
-global array toolkit (Figure \ref{fig:MPIwithIO-split}).
+With splitting the trajectories, effect of communication is still apparent on the performance; however together with 
+global array toolkit we could achieve near ideal scaling (Figure \ref{fig:MPIwithIO-split}).
+\obnote{I actually do not understand why we need GA for splitting but not for parallel MPI.}
+\mknote{I mentioned before in my presentation in Spidal meeting that I myself do not have an answer for this.}
 
 All the above strategies, provides the bio-molecular simulation community the means to perform a wide variety of parallel analyses on data generated from computational simulations.
 The guidelines provided in the present study, help people to tackle their problem depending on the workload being I/O bound or compute bound. 
 The analysis indicates that splitting the trajectories in combination with global array or parallel I/O will make it feasible to run a I/O bound task on scalable computers up to 8 nodes and achieve near ideal scaling behavior.
+In addition, we have examined all these benchmarks on several HPC resources in order ensure the robustness of our approach.
