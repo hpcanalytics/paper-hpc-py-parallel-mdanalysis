@@ -1,6 +1,7 @@
 \label{guideline}
 Here we provide practical guidelines for parallel analysis of the three dimensional time series (MD trajectories) on HPC resources.
 
+\gpnote{Rule is something that needs to be followed exactly. As a result it requires a theorem and a proof. I suggest instead of rules say heuristic? From Wiki:A heuristic technique, often called simply a heuristic, is any approach to problem solving, learning, or discovery that employs a practical method, not guaranteed to be optimal, perfect, logical, or rational, but instead sufficient for reaching an immediate goal.}
 \begin{description}
   \item[\textbf{Rule 1}] Calculate the value of \tcomp/\tIO to see whether the task is compute bound ($\frac{\tcomp}{\tIO} \gg 1$) or IO bound ($\frac{\tcomp}{\tIO} \ll 1$). As discussed in Section \ref{bound} for I/O bound problems both communication and I/O will be a problem and the performance of the task will be affected by the straggler tasks which delay job completion time.  
   

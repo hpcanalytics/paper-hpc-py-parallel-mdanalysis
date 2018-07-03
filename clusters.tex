@@ -11,9 +11,9 @@ Both Comet and SuperMIC scales very well using Global array.
 RMSD task still scales on both clusters without global array; however, scaling is far from ideal scaling due to the communication cost (Refer to section \ref{Splitting} and Figure \ref{fig:MPIranks-split}). 
 Overal, the scaling of the RMSD task is better on SuperMIC and the performance gap increases as we increase the number of cores.
 This is expected for the following reasons:
-First, CPU speed on SuperMIC is 2.8 GHz vs 2.5 GHz on Comet. This is $\approx 12\%$ performance difference in favor of SuperMIC. 
+First, CPU speed on SuperMIC is 2.8 GHz vs 2.5 GHz on Comet. This is $\approx 12\%$ performance difference in favor of SuperMIC\gpnote{This type of comparing may have been correct assuming you used only 20 cores on Comet, 10 from each processor. But all of them were used, right?}. 
 Second, for the same network speed the number of cores per node on SuperMIC (20 cores per node) is smaller than Comet (24 cores per node). 
-Therefore, access to memory per core should be factor of $12/10 \approx 20\%$ faster on SuperMIC.
+Therefore, access to memory per core should be factor of $12/10 \approx 20\%$ faster on SuperMIC\gpnote{Memory access pereformance is not measured be the number of cores accessing the memory only. First, SuperMic has DDR3, and Comet has DDR4. Just that shows us that Comet memory is better. We do not have data as memory read/write times, memory organization and architecture, that is every memory address how many data can it hold? Any information on memory throughput? I would never do this type of arithmetic to compare CPUs and memory.}\gpnote{Also, I am not sure whether GA support direct memory access from the network card or not. If you have a reference that says so, please cite it here, otherwise I would remove the argument}..
 
 \begin{figure}[ht!]
 \centering
@@ -43,6 +43,7 @@ The error bars show standard deviation with respect to mean.}
 \end{figure} 
 
 \subsection{MPI-based Parallel HDF5}
+\gpnote{Same as above}
 Figure \ref{fig:MPIwithIO-clusters} shows how RMSD task scales with the increase in the number of cores on different HPC resources using MPI-based parallel HDF5.  
 The scaling follows the same pattern on both Comet and SuperMIC. 
 Both Comet and SuperMIC scales very well.
@@ -50,13 +51,13 @@ Overal, the scaling of the RMSD task is better on SuperMIC for the reasons that 
 Bridge performance is different from Comet and SuperMIC.
 Bridge has 28 cores per compute node and when we use all cores for our calculations there is no scaling.
 However, decreasing the number of cores per node and having uniform workload distributions across all nodes can lead to significant improvements in the scaling as shown in Figure \ref{fig:MPIwithIO-clusters}.
-The reason for performance difference between Comet and Bridge can be explained as below:
-First, CPU speed on Bridge is 2.3 GHz vs 2.5 GHz on Comet. This is $\approx 8.6\%$ performance difference in favor of Comet. 
+The reason for performance difference between Comet and Bridges can be explained as below:
+First, CPU speed on Bridges is 2.3 GHz vs 2.5 GHz on Comet. This is $\approx 8.6\%$ performance difference in favor of Comet. 
 Second, for the same network speed the number of cores per node on Bridge (28 cores per node) is larger than Comet (24 cores per node). 
-Therefore, access to memory per core should be factor of $14/12 \approx 16\%$ faster on Comet.
-The memory access effect is obvious on the timing distribution across different rank shown for one run of the 5 repeats (Figure \ref{fig:MPIwithIO-clusters-rank}).
+Therefore, access to memory per core should be factor of $14/12 \approx 16\%$ faster on Comet\
+The memory access effect is obvious\gpnote{Nothing is obvious. Otherwise why do we need to mention it?} on the timing distribution across different rank shown for one run of the 5 repeats (Figure \ref{fig:MPIwithIO-clusters-rank}).
 Based on Figure \ref{fig:MPIwithIO-clusters-rank} the I/O time distribution is pretty small and uniform across all ranks on Comet and SuperMIC (Figures \ref{fig:hdf5-SuperMIC} \& \ref{fig:MPIranks-hdf5}).
-However, on Bridge the I/O time is on average about two and a half times larger and the I/O time distribution is also erratic across different ranks (Figure \ref{fig:hdf5-bridge}).  
+However, on Bridges the I/O time is on average about two and a half times larger and the I/O time distribution is also erratic across different ranks (Figure \ref{fig:hdf5-bridge}).  
 
 \begin{figure}[ht!]
 \centering
@@ -139,7 +140,7 @@ The reason why we see these performance differences is explained in previous sec
 \end{adjustbox}
 \caption[Notation of our performance modeling]
 {Comparison of the compute and I/O scaling for different test cases and number of processes. Five repeats are performed to collect statistics. The mean value and the
-standard deviation with respect to mean are reported for each case.}
+standard deviation with respect to mean are reported for each case.\gpnote{The font is extremely small in this table. Also can you add lines between different experiment configurations? Haven't the number of cores per node played a role to the overall performance?}}
 \label{tab:comp-IO-scaling}
 \end{table}
 
