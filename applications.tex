@@ -19,10 +19,11 @@ Second, a rotation matrix is computed that spatially aligns the mobile group to 
 Finally, all atoms in mobile group are shifted and rotated.
 For each frame, a non-negative floating point number is calculated and the final result is a time-series of the RMSD. 
 RMSD values show how rigid the domains in a protein structure are, during the transition. 
-The order of complexity for RMSD algorithm \ref{alg:RMSD} is $T \times N^{2}$ \cite{rmsd} where T is the number of frames in the trajectory and N the number of particles in a 
+The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$ \cite{rmsd} where T is the number of frames in the trajectory and N the number of particles in a 
 frame.
 
 \mknote{Is it fine we have included MPI commands in the pseudo code? Is this how people write it?}
+\gpnote{Yes it is fine.}
 \begin{algorithm}[ht!]
 	\scriptsize
 	\caption{MPI-parallel Multi-frame RMSD Algorithm}
@@ -58,7 +59,7 @@ As a real-world compute-bound task we investigated \textbf{Dihedral featurizatio
 feature vectors consisting of the two backbone dihedral angles per residue ($\phi_{i}$ and $\psi_{i}$) is calculated for all 212
 non-terminal residues. For each frame, an array of dihedral angles is calculated where for later convenience, an angle $\theta_{i}$ is
 actually represented as $(\cos\theta_{i}, \sin\theta_{i})$. 
-The order of complexity for Dihedral featurization algorithm (Algorithm \ref{alg:Dihedral}) is $T \times N$. 
+The order of complexity for Dihedral featurization algorithm (Algorithm \ref{alg:Dihedral}) is $\mathcal{O}(T \times N)$. 
 \obnote{Write out the calculation, based on the 4 atoms}
 \mknote{What calculations? how residues are converted to dihedrals? or the procedure we perform in the algorithm? that one is explained in algorithm 2}
 

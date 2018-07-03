@@ -1,7 +1,9 @@
 \label{methods}
+\gpnote{This section is more like a presentation of the libraries used, not how they were used. The second paragraph is called applications, while the section methods.}
 \subsection{MPI for Python \package{mpi4py}}
 MPI for Python (\package{mpi4py}) is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to employ multiple processors \cite{Dalcin:2011aa, Dalcin:2005aa}.
 Python has several advantages that makes it a very attractive language including rapid development of small scripts and code prototypes as well as large applications and highly portable and reusable modules and libraries.
+\gpnote{I do not understand this sentence. What do you mean by other factors?}
 In addition, Python\textsc{\char13}s interactive nature, and other factors like lines of codes (LOC), number of function invocation, and development time adds to its attractiveness and clarifies why it is a good investment to extend Python use to message-passing parallel programming applications.
 Based on the efficiency tests \cite{Dalcin:2011aa, Dalcin:2005aa}, the performance degradation due to using \package{mpi4py} is not prohibitive and the overhead introduced by \package{mpi4py} is far smaller than the overhead associated to the use of interpreted versus compiled languages \cite{GAiN}.
 In addition, there are works on improving the communication performance in \package{mpi4py} and it shows minimal overheads compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}.
