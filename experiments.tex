@@ -3,14 +3,11 @@
 \subsection{RMSD Benchmarks}
 \label{sec:RMSD}
 RMSD algorithm for the present test case, represents a task for which computational workload per frame is smaller than I/O workload per frame ($t_{compute}^{frame}$ = 0.09 ms, $t_{IO}^{frame}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$). 
-We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet} (and similarly also only on a
-single node on other machines\gpnote{Please specify which other machines}), using either dask or MPI \cite{Khoshlessan:2017ab}. 
-Although, it is not clear that the root cause is the same for dask and MPI, here we focus on the MPI
-implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}) for its greater simplicity than dask, in order to
+We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet}, \emph{Stampede}, and \emph{ASU computing resources}, using either Dask or MPI \cite{Khoshlessan:2017ab}. 
+Here we focus on the MPI implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}), in order to
 better understand the cause for the poor scaling across nodes.
 
-For both dask and MPI we observed stragglers, individual workers or
-MPI ranks, that take much longer to complete than mean execution time of all other workers or ranks. 
+We observed stragglers, individual workers or MPI ranks, that take much longer to complete than mean execution time of all other workers or ranks. 
 Waiting for these stragglers destroys strong scaling performance, as shown in Figure \ref{fig:MPIscaling}, \ref{fig:MPIspeedup} for MPI. 
 
 In the example run in Figure \ref{fig:MPIranks}, ten ranks out of 72 take almost 65~s whereas the
@@ -68,11 +65,11 @@ As shown, \tcomp scales very well; however, \tIO does not show good scaling beyo
 Considering the results in Figures \ref{fig:MPIwithIO} and \ref{fig:ScalingComputeIO}, we can conclude that communication and I/O are the root causes for stragglers. 
 
 \subsubsection*{Hardware}
-\gpnote{Are the data in figure 2 from Comet and Stampede? Why Stampede and not SuperMic, Bridges, and Comet? Those are the system you say the experimentation was done.}
+\gpnote{Are the data in figure 2 from Comet and Stampede? Why Stampede and not SuperMic, Bridges, and Comet? Those are the system you say the experimentation was done.} \mknote{the data is on Comet. We perform everything on Comet as a baseline and then make a comparison across different clusters on the final section. We do not have any data from Stampede here}
 We did not discern any specific patterns that could be traced to the underlying hardware. Stragglers were observed on \emph{SDSC Comet},
-\emph{TACC Stampede} and \emph{TACC Data Analytics System Wrangler} (data not shown)\gpnote{I am not sure you want to say that you do not show data. You can include them in an appendix, or provide a link to a repo with all the data and figures.}. There was also no clear pattern in which certain MPI
+\emph{TACC Stampede} and \emph{TACC Data Analytics System Wrangler} (data not shown)\gpnote{I am not sure you want to say that you do not show data. You can include them in an appendix, or provide a link to a repo with all the data and figures.}. \mknote{Ok, good idea. Will do it} There was also no clear pattern in which certain MPI
 ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not
-reveal an obvious pattern). Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the underlying hardware\gpnote{I would say resource independent, not hardware. Hardware opens a can of questions which is very difficult to answer with the data we have.}.
+reveal an obvious pattern). Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the resources.\gpnote{I would say resource independent, not hardware. Hardware opens a can of questions which is very difficult to answer with the data we have.}.\mknote{Corrected}
 
 \subsection{Dihedral Featurization Benchmarks}
 \label{DF}
@@ -80,7 +77,7 @@ We briefly tested a much larger computational workload ($t_{compute_{per-frame}}
 featurization on \emph{Comet} with Infiniband and Lustre file system.
 
 The system scales linearly and close to ideal (Figure \ref{fig:MPIscaling-dihed}, \ref{fig:MPIspeedup-dihed}, \ref{fig:ScalingComputeIO-dihed}). Although, there is communication of large
-result arrays\gpnote{Can you quantify large? Anything in terms of elements, Bytes or any other metric.}, which is costly for multiple ranks (Figure \ref{fig:comparison-t_comm-dihedral})\gpnote{Please check the comment in caption}, the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPIspeedup-dihed}
+result arrays (e.g. $\approx 2GB$ with 8 processes and $\approx 0.24GB$ with 72 processes)\gpnote{Can you quantify large? Anything in terms of elements, Bytes or any other metric.}, which is costly for multiple ranks (Figure \ref{fig:comparison-t_comm-dihedral}), the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPIspeedup-dihed}
 demonstrates very good scaling with the number of cores (up to 72 cores on 3 nodes).  The reason is that the communication cost (for
 $MPI.Gather()$-line 39 in \ref{alg:Dihedral}) decreases with increasing the number of cores because the result array size that has to be
 communicated also decreases (Figure \ref{fig:comparison-t_comm-dihedral}).  Based on Figure \ref{fig:comparison-t_comm-dihedral}, communication scales fairly well
@@ -144,7 +141,7 @@ The error bars show standard deviation with respect to mean. No straggler is obs
 \end{subfigure}
 \caption{Comparison of communication cost for different number of
   processes over 5 repeats for the \textbf{dihedral featurization}
-  workload (with \emph{communications included}).\gpnote{I am really confused with this figure. How many GBs of data did you move and there was a delay of 1.5 hours? Was it more 10TBs? (Assuming you were able to use 20Gbps from IB $20Gbps*5000sec=10^{14}=12500000000000B=12500000000000/2^{40}TB\simeq11.6TB$)}}
+  workload (with \emph{communications included}).\gpnote{I am really confused with this figure. How many GBs of data did you move and there was a delay of 1.5 hours? Was it more 10TBs? (Assuming you were able to use 20Gbps from IB $20Gbps*5000sec=10^{14}=12500000000000B=12500000000000/2^{40}TB\simeq11.6TB$)}} \mknote{with 8 processes size of the data to be communicated is 2 GB per process. But communication time is not uniform across different processes and for some processes it is in the order of 1000 for another processes is 0.86 and the other is 4 s. Thus there are stragglers due to communication but because commmunication is small with respect to compute it does not affect the performance.}
 \label{fig:comparison-t_comm-dihedral}
 \end{figure}
 
@@ -156,6 +153,9 @@ workstations with Gigabit interconnect and Network File System (NFS) (using the 
 than a week to a few hours (data not shown).
 
 \subsection{Effect of \tcomp/\tIO on Performance}
+\mknote{I think in addition to tcomp/tIO I need to also introduce another variable called tcomp/tcomm and In fact we can show that this is another important performance parameter. 
+In fact the data with splitting without GA and parallel IO and Dihedral featurization shows that this can be another important factor as well.}
+
 \label{bound}
 
 The RMSD task turned out to be I/O bound, i.e.,
@@ -323,7 +323,7 @@ Through this approach, each process will have access to its own segment and ther
 For reference, the necessary time for splitting the trajectory file is given in \ref{sec:splitting-timing}.
 
 \subsubsection*{Performance without Global Array}
-We ran a benchmark up to 8 nodes (192 cores) and, we observed rather better scaling behavior with efficiencies above 0.6 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) and the delay time for stragglers has also reduced from 65 to about 23\gpnote{Is this seconds, minutes, or hours?} (Compare Figure \ref{fig:MPIranks-split} to  \ref{fig:MPIranks}). 
+We ran a benchmark up to 8 nodes (192 cores) and, we observed rather better scaling behavior with efficiencies above 0.6 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) and the delay time for stragglers has also reduced from 65s to about 23s (Compare Figure \ref{fig:MPIranks-split} to  \ref{fig:MPIranks}). 
 However, the scaling is still far from ideal due to the communication. 
 Although the delay due to communication is much smaller as compared to RMSD with a shared trajectory file (Compare Figure \ref{fig:MPIranks-split} to Figure \ref{fig:MPIranks}), it is still delaying several processes and as a result leads to longer job completion time (Figure \ref{fig:MPIranks-split}). 
 These delayed tasks impact performance as well and hence the speed-up is not still close to ideal scaling (Figure \ref{fig:MPIspeedup-split}).
