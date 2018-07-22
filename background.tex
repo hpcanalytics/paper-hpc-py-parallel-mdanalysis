@@ -9,6 +9,7 @@ differ from each other will be good to be added here as well. Could you please a
 \gpnote{First, I do not think this is the correct related work for this paper. Both frameworks here are using parallel reads and parallelize trajectory analysis. Also, I think this related work nullifies the paper. I suggest a related work closer to the workshop paper we were working.}
 \mknote{Ok maybe we can have a look. But I do not think that they nullify this paper. What are your reasonings for this? Their approach is different. Does HiMach nullify CPPTraj approach? They are both discussing parallel analysis on MD trajectories?
 Instead we can emphasize on the differences and strength of ours}
+\mknote{I have another idea. We can compare the performance of cpptraj with our approach for two cases of large and small tcomp/tIO. Especially we can see if cpptraj can be scaled when tcomp/tIo is small (i.e. I/O bound jobs)}
 
 CPPTraj~\cite{cpptraj-2013} offers three levels of parallelization. The two are through MPI and the third through OpenMP.
 The MPI types of parallelization CPPTraj supports are show in Figure~\ref{fig:cpptraj_arch}. In more detail,

@@ -206,7 +206,7 @@ examine the effect of compute to I/O ratio on the performance.}
 As the $\tcomp/\tIO$ ratio increases, speed-up and performance improves and 
 show overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure \ref{fig:S1_tcomp_tIO_effect}).
 When $\tcomp/\tIO$ ratio increases, the RMSD calculation consistently scales up to larger numbers of cores ($N=56$ for $70\times$ RMSD).
-Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} shows the improvment in performance more clearly.
+Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} shows the improvement in performance more clearly.
 In fact, as the $\tcomp/\tIO$ ratio increases, the values of speed-up and efficiency get closer to their ideal value for each number of processor count.  
 
 \begin{figure}[ht!]
@@ -236,7 +236,7 @@ which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\t
 
 Even for moderately compute-bound workloads such
 as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even
-though they still contribute to large variations in timing across different ranks and thus to somewhat erratic scaling.\gpnote{What is erratic scaling? Can you quantify it?}
+though they still contribute to large variations in timing across different ranks and thus to somewhat erratic scaling.\gpnote{What is erratic scaling? Can you quantify it?}\mknote{It just means that the scaling is not linear and goes up \& down}
 
 Given the results for Dihedral featurization and RMSD algorithms (Algorithms \ref{alg:Dihedral}, and \ref{alg:RMSD}) and $X\times$ RMSD (Figure \ref{fig:tcomp_tIO_effect})
 we hypothesize that MPI competes with Lustre on the same network interface, which would explain why communication appears to
@@ -371,6 +371,7 @@ Data are read from the file system (I/O included). In case of global array, all 
 
 \subsubsection*{Performance using Global Array}
 \gpnote{This is very confusing. In a previous paragraph you say that GA passes data over the IB network. Here you say there is no congestion? Don't they, MPI communication, MPI I/O, and GA communication, use the same network? Also, I do not think you have the data to support that clearly, unless you know how many Bytes are moved around, how many packets and their type. If that is the case include it. Or are you using the Local filesystem on the nodes and IO has nothing to do with the IB?}
+\mknote{I think there is something different in the way GA use IB that when we use GA there is no contention. That is mainly because there is no synchronization and that reduces the traffic a lot. GA uses IB but the way it uses is very different from MPI Gather. it defines a pointer and that is very different from what happens in MPI for commuinaction.}
 Previously, we showed that global array significantly reduces the communication cost (Section \ref{Global-Array}). 
 We want to see how the performance looks like if we split our trajectory file and take advantage of global array as well.
 Again, we ran our benchmark up to 8 nodes (192 cores) and, we observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with no straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
