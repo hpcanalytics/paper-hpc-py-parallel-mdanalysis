@@ -378,6 +378,28 @@ Again, we ran our benchmark up to 8 nodes (192 cores) and, we observed near idea
 The present results show that contention for a file impacts the performance. 
 The initial results with splitting the trajectory file suggests that there is in fact an effect, which possibly also interferes with the communications when $\tcomp/\tIO \ll 1$ (i.e. with a I/O bound workload).
 
+\subsection{Effect of \tcomp/\tcomm on Performance}
+
+In addition to the compute to I/O ratio we define another important performance parameter which is compute to communication ratio.
+Based on the results shown in section \label{Splitting}, although we overcame the I/O effect by splitting the trajectory the task is far from ideal scaling without global array.
+This means that the task remains communication bound.
+When the task is communication bound, i.e.,
+
+\begin{gather*}
+  \frac{\tcomp}{\tcomm} \ll 1.
+\end{gather*}
+
+we were not able to achieve near ideal scaling even when I/O is not a bottleneck anymore.
+However, Dihedral featurization turned out to be compute bound and we were able to achieve near ideal scaling even when we did not use global array in our benchmark.
+This is mainly because both communication and I/O are very small with respect to compute time. 
+Although, there are stragglers due to communication their effect on performance is not crucial due to the fact that compute to communication ratio is very large. 
+We therefore, hypothesized that decreasing the relative communication load with respect to compute load would also reduce the stragglers. 
+If the computational load is more than communication load then the work became compute bound, i.e.,
+
+\begin{gather*}
+  \frac{\tcomp}{\tcomm} \gg 1.
+\end{gather*}
+
 \subsubsection{Chain-Reader}
 
 \subsubsection{MPI-based Parallel HDF5}
