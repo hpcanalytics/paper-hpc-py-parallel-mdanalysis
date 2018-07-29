@@ -165,8 +165,9 @@ In this algorithm, we use global array instead of message passage paradigm to se
 
 \subsection{MPI and Parallel HDF5}
 MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
-HDF5\gpnote{This is a very nice oportunity to introduce HDF5. More details about HDF5 would be nice. If you assume that the reader does not know MPI4py, most probably will not know HDF5} itself handles nearly all the details involved with coordinating file access through MPI library.
-This is advantageous to avoid multiple processes to compete over accessing the same file on disk\gpnote{I am not sure what you want to say here. Are the processes accessing the file atomically, i.e. when on process access it all others are blocked? Doesn't that defeat the purpose of parallel I/O}. \mknote{Previously I had more detail in this section and Oliver suggested to summarize and avoid too much detail. What type of info do you think will be good to be added here?}
+HDF5\gpnote{This is a very nice oportunity to introduce HDF5. More details about HDF5 would be nice. If you assume that the reader does not know MPI4py, most probably will not know HDF5} \mknote{Previously I had more detail in this section and Oliver suggested to summarize and avoid too much detail. What type of info do you think will be good to be added here?}
+itself handles nearly all the details involved with coordinating file access through MPI library.
+This is advantageous to avoid multiple processes to compete over accessing the same file on disk\gpnote{I am not sure what you want to say here. Are the processes accessing the file atomically, i.e. when one process access it all others are blocked? Doesn't that defeat the purpose of parallel I/O}.\mknote{I want to say when we use parallel IO there is no simultaneous access to the same file anymore. When one process access it the others are not blocked otherwise why parallel IO should give us performance?}
 In fact in python, MPI-IO opens shared files with a mpio driver. 
 In addition,  MPI communicator should be supplied as well and the users also need to follow some constraints for data consistency \cite{pythonhdf5}.
 
