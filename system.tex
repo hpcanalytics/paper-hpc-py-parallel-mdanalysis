@@ -31,7 +31,7 @@ All the experiments are performed using standard compute nodes on Comet, PSC Bri
 			\midrule
 			\bfseries SDSC Comet & Compute & 6400 & \makecell{2 Intel Xeon (E5-2680v3) CPUs \\ 12 cores/CPU, 2.5 GHz} &128 GB DDR4 DRAM & 56 Gbps IB & SLURM\\
 			\bfseries PSC Bridges & RSM & 752 & \makecell{2 Intel Haswell (E5-2695 v3) CPUs \\14 cores/CPU, 2.3 GHz} & 128 GB, DDR4-2133Mhz & 12.37 Gbps OPA & SLURM\\
-			\bfseries SuperMIC & Standard & 360 & \makecell{2 Intel Ivy Bridges (E5-2680) CPUs \\10 cores/CPU, 2.8GB GHz} & 64 GB, DDR3-1866Mhz  & 56Gbps IB & PBS\\
+			\bfseries SuperMIC & Standard & 360 & \makecell{2 Intel Ivy Bridges (E5-2680) CPUs \\10 cores/CPU, 2.8GB GHz} & 64 GB, DDR3-1866Mhz  & 56 Gbps IB & PBS\\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
@@ -96,7 +96,7 @@ For example, on SuperMIC although tool installation was done in the same way as 
 This was due to the fact that our custom OpenMPI installation did not correctly parse the node list offered by SuperMIC to our job. 
 Thus, we had to manually pass the node lists to MPIRUN. 
 In addition, we found that the loaded modules, along with library path changes, did not propagate to all nodes from our OpenMPI installation. 
-OpenMPI's execution engine could access the correct libraries and was not able to launch the processes correctly. 
+OpenMPI's execution engine could \mknote{Giannis, could or could not?} access the correct libraries and was not able to launch the processes correctly. 
 Reinstalling OpenMPI with enabling the flag to use the Open Run-Time Environment (ORTE) by default and including the OpenMPI installation to BASHRC allowed for correct execution.
  
 Overall, the installation was successful on all clusters and we were able to observe similar

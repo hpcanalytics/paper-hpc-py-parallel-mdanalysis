@@ -33,7 +33,7 @@ Strong scaling was quantified by calculating the speed-up relative to performanc
   S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
 \end{gather}
 
-Additionally, we introduce another important performance parameter that determines whether we observe stragglers.
+Additionally, we introduce two important performance parameters that determines whether we observe stragglers.
 We define this parameter as the ratio of compute time to I/O time:
 
 \begin{gather}
@@ -41,6 +41,13 @@ We define this parameter as the ratio of compute time to I/O time:
     \frac{\bar{t}_{comp}^{frame}}{\bar{t}_{IO}^{frame}} \approx \frac{\tcomp}{\tIO} 
  \end{gather}
 
+and the ratio of compute to communication time:
+
+\begin{gather}
+  \label{eq:Compute-I/O}
+    \frac{\bar{t}_{comp}}{\bar{t}_{communication}} \approx \frac{\tcomp}{\tcomm} 
+ \end{gather}
+ 
 \begin{table}[ht!]
 \centering
 \begin{tabular}{c c}
