@@ -39,8 +39,9 @@ Therefore, access to memory per core should be factor of $12/10 \approx 20\%$ fa
 \end{subfigure}
 %
 \caption{Comparison of the performance of the RMSD task with MPI ($\tcomp/\tIO \approx 0.3$) when the trajectories are splitted using global 
-array and without global array across different clusters. Data are read from the file system. Five repeats are performed to collect statistics. 
-The error bars show standard deviation with respect to mean.}
+array and without global array across different clusters (SDSC Comet, SuperMIC). Data are read from the file system (I/O included).
+In case of global array, all ranks update the global array ($ga_{put}$) and rank 0 accesses the whole RMSD array through the global memory address ($ga_{get}$).
+Five repeats are performed to collect statistics. The error bars show standard deviation with respect to mean. }
 \label{fig:MPI-splitting-clusters}
 \end{figure} 
 
@@ -83,7 +84,7 @@ However, on Bridges the I/O time is on average about two and a half times larger
 \end{subfigure}
 %
 \caption{Comparison of the performance of the RMSD task with MPI ($\tcomp/\tIO \approx 0.3$)
-across different clusters. Data are read from a shared HDF5 file instead of XTC format (Independent I/O)
+across different clusters (SDSC Comet, PSC Bridge, SuperMIC). Data are read from a shared HDF5 file format instead of XTC format (Independent I/O)
 and results are communicated back to rank 0 (communications included). Five repeats are performed to 
 collect statistics. The error bars show standard deviation with respect to mean.}
 \label{fig:MPIwithIO-clusters}
@@ -103,8 +104,10 @@ collect statistics. The error bars show standard deviation with respect to mean.
   \label{fig:hdf5-SuperMIC}
 \end{subfigure}
 %
-\caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 ($\tcomp/\tIO \approx 0.3$) on PSC Bridge (Top) and SuperMIC (Buttomn).
-This is typical data from one run of the 5 repeats.}
+\caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 ($\tcomp/\tIO \approx 0.3$) on (a) PSC Bridge and (b) SuperMIC (Buttomn).
+Five repeats are performed to collect statistics and this is typical data from one run of the 5 repeats. Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
+opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
+This is typical data from one run of the 5 repeats. I/O distribution is non-uniform on Bridge while it is more uniform on SuperMIC and this explains why SuperMIC has better scaling as compared to PSC Bridge.}
 \label{fig:MPIwithIO-clusters-rank}
 \end{figure} 
 
