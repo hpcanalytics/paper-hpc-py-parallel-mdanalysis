@@ -384,7 +384,7 @@ The initial results with splitting the trajectory file suggests that there is in
 
 In addition to the compute to I/O ratio we define another important performance parameter which is compute to communication ratio.
 Based on the results shown in the section \ref{sec:I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without global array.
-This means that the task remains communication bound. 
+This means that the task remains communication bound (\mknote{Add same plot as \ref{fig:tcomp_tcomm_ratio_dihed} for comm bound task}). 
 Examples of the communication bound task is RMSD task with splitting the trajectories and without global array.
 When the task is communication bound, i.e.,
 
