@@ -389,7 +389,7 @@ Examples of the communication bound task is RMSD task with splitting the traject
 When the task is communication bound, i.e.,
 
 \begin{gather*}
-  \frac{\tcomp}{\tcomm} \ll 1.
+  \frac{\bar{t}_{comp}}{\bar{t}_{comm}} \ll 1.
 \end{gather*}
 
 we are not able to achieve near ideal scaling even when I/O is not a bottleneck anymore (Figure \ref{fig:MPIwithIO-split}).
@@ -400,7 +400,7 @@ We therefore, conclude that decreasing the relative communication load with resp
 If the computational load is more than communication load then the work became compute bound, i.e.,
 
 \begin{gather*}
-  \frac{\tcomp}{\tcomm} \gg 1.
+  \frac{\bar{t}_{comp}}{\bar{t}_{comm}} \gg 1.
 \end{gather*}
 
 \begin{figure}[ht!]
