@@ -45,10 +45,10 @@ All the experiments are performed using standard compute nodes on Comet, PSC Bri
 \mknote{Are the following enough?}
 Different packages and libraries are used in the present study in order to achieve the desired performance. 
 However, getting scientific libraries installed can be a very challenging task.
-\gpnote{As far as, I know compiling is the standard procedure for highly optimized libraries. Dependencies change since systems change. }\mknote{Yes, dependency can change by system change. But when a package has a lot of dependencies to other packages and libraries that can make managing all those dependices and compilation more challenging and difficult}
+\gpnote{As far as, I know compiling is the standard procedure for highly optimized libraries. Dependencies change since systems change. }\mknote{Yes, dependency can change by system change. But when a package has a lot of dependencies to other packages and libraries that can make managing all those dependices and compilation more challenging and difficult}\gpnote{Are you implying that it shouldn't be challenging? If yes in what way? When a system is engineered and documented no-one can anticipate a specific use, unless that is a use case from the beginning. All installation procedures use are the standard ones, regardless if we like them or not. There are always a lot of dependencies for highly optimized libraries. Do you have a suggestion? Do you have at least one reference to support this argument?}
 Lack of documentation and good software engineering practices, non-standard installation procedures, and lots of dependencies can contribute to the challenge of getting the libraries to work \gpnote{Citation Missing}[???].
 Scientists mostly care about the science and they are often not software engineers or system administrators. 
-\gpnote{I do not think this is a case. I remember at some point I shared a google doc to SPIDAL with all the packages that XSEDE resources offered. There is a good number of frameworks offered and preinstalled.}\mknote{Yes, but this is not necessarily the case for all libraries. For example for parallel hdf5, GA, MDAnalysis, Dask, etc there was nothing in the package manager and both of us had to build them from source. Therefore I do not think this is always the case.}
+\gpnote{I do not think this is a case. I remember at some point I shared a google doc to SPIDAL with all the packages that XSEDE resources offered. There is a good number of frameworks offered and preinstalled.}\mknote{Yes, but this is not necessarily the case for all libraries. For example for parallel hdf5, GA, MDAnalysis, Dask, etc there was nothing in the package manager and both of us had to build them from source. Therefore I do not think this is always the case.}\gpnote{So are you asking for a system administrator to anticipate what a user might need and have it there already? There is no clear message here.}
 Therefore, the libraries and tools they need should be easily accessible. 
 This is not always the case, though.
 
@@ -96,7 +96,7 @@ For example, on SuperMIC although tool installation was done in the same way as 
 This was due to the fact that our custom OpenMPI installation did not correctly parse the node list offered by SuperMIC to our job. 
 Thus, we had to manually pass the node lists to MPIRUN. 
 In addition, we found that the loaded modules, along with library path changes, did not propagate to all nodes from our OpenMPI installation. 
-OpenMPI's execution engine could \mknote{Giannis, could or could not?} access the correct libraries and was not able to launch the processes correctly. 
+OpenMPI's execution engine could not \mknote{Giannis, could or could not?}\gpnote{fixed} access the correct libraries and was not able to launch the processes correctly. 
 Reinstalling OpenMPI with enabling the flag to use the Open Run-Time Environment (ORTE) by default and including the OpenMPI installation to BASHRC allowed for correct execution.
  
 Overall, the installation was successful on all clusters and we were able to observe similar
