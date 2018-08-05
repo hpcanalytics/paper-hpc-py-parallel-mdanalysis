@@ -1,11 +1,14 @@
 \label{use_cases}
 
 \subsection{MDAnalysis}
-Simulation data exist in trajectories in the form of three dimensional time series (atoms positions and velocities), and these come in a plethora of different and idiosyncratic file formats. 
-\package{MDAnalysis} is a widely used open source Python library to analyze these trajectory files with an object oriented interface. 
-The package is written in Python (compatible with version 2.7 and 3.4+), with time critical code in C/Cython. 
 \label{sec:mda}
 
+Simulation data exist in trajectories in the form of three dimensional time series (atoms positions and velocities), and these come in a plethora of different and idiosyncratic file formats. 
+\package{MDAnalysis} is a widely used open source Python library to analyze these trajectory files with an object oriented interface. 
+The package is written in Python, with time critical code in C/Cython. 
+\package{MDAnalysis} supports many common file formats of simulation packages including CHARMM, Gromacs, Amber, and NAMD and the Protein Data Bank format and enables accessing data stored in trajectories. 
+\package{MDAnalysis} utilizes fast numeric/algebraic libraries such as ATLAS, LAPACK, or MKL to improve speed and powerful Python libraries such as NumPy and SciPy.
+ 
 \subsubsection{Root Mean Square Distance (RMSD)}
 The calculation of the root mean square distance (\textbf{RMSD}) for C$_{\alpha}$ atoms after
 optimal superposition with the QCPROT algorithm \cite{Liu:2010kx,Theobald:2005vn} is commonly required in the analysis of molecular dynamics simulations (Algorithm \ref{alg:RMSD}). 

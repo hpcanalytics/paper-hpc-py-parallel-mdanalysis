@@ -54,6 +54,7 @@ Overal, the scaling of the RMSD task is better on SuperMIC for the reasons that 
 Bridge performance is different from Comet and SuperMIC.
 Bridge has 28 cores per compute node and when we use all cores for our calculations there is no scaling.
 However, decreasing the number of cores per node and having uniform workload distributions across all nodes can lead to significant improvements in the scaling as shown in Figure \ref{fig:MPIwithIO-clusters}.
+With less than 28 cores used, each core has access to proportionally more cache space and memory bandwidth, so the higher performance is obtained. 
 The reason for performance difference between Comet and Bridges can be explained as below:
 First, CPU speed on Bridges is 2.3 GHz vs 2.5 GHz on Comet. This is $\approx 8.6\%$ performance difference in favor of Comet. 
 Second, for the same network speed the number of cores per node on Bridge (28 cores per node) is larger than Comet (24 cores per node). 
