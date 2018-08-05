@@ -9,10 +9,19 @@ The exponential growth in the computational power of these simulations has lead 
 Present work aims to provide insights, guidelines and strategies to the community on how to take advantage of the available HPC resources to gain the best possible performance inside \package{MDAnalysis}.
 We investigated a single program multiple data (SPMD) execution model where each process executes the same program, to parallelize the Map-Reduce Root Mean Square Distance (RMSD) and Dihedral Featurization algorithms for analysis of MD trajectories in the MDAnalysis library. 
 We employ the Python language because it is widely used in the bio-molecular simulation field and focus on an MPI-based implementations.  
+<<<<<<< HEAD
 We notice that straggler tasks negatively impact the performance and act as scalability bottlenecks.
 Straggler tasks are a very common problem in heterogeneous resource environments and are significantly slower ($\approx 6 \times$) than the mean execution time of all tasks, impeding job completion time.
 Our initial analysis shows that accessing a single file on the distributed file system leads to stragglers, and as a result, prevents any scaling beyond a single node.
 We introduce two important performance parameters $t_{Compute}$/$t_{IO}$ and $t_{Compute}$/$t_{Communication}$ which determines whether we observe any stragglers.
+=======
+We notice that straggler tasks negatively impact the performance and act as scalability bottlenecks.\gpnote{The HPCs used cannot be considered heterogeneous environments generally. All nodes acquired by a jod are identical. I suggest to remove heterogeneous, unless there is a reason, which needs to be included. Also, you say significantly slower. It would help to quantify it.}
+\mknote{a heterogeneous computing environment refers to the one that consists of a collection of machines and task types. The machines vary in capabilities architectures. This is the case in this study. We are using different machines with different capabilities and it is heteogeneous in that sense.}
+\gpnote{Okay, but we did not do any runs where Comet and SuperMic, for example, were used together. When I read about a hetergeneous environment, I expect the use of different systems concurrently for the same run. That is not the case with our experiments. The case of different machone is not satisfied. Furthermore, did you use in any of your runs any shared compute node? Because I did not and at least the condition of different task types in not satisfied. In a nutshell, as far as I know the experiments had no heterogeneity nor the system we used. This makes the following sentence misleading.}
+Straggler tasks are a very common problem in heterogeneous environments and are significantly slower ($\approx 6 \times$) than the mean execution time of all tasks, impeding job completion time.
+Our initial analysis shows that accessing a single file on the distributed file system leads to stragglers, and as a result, prevents any scaling beyond one node.
+We introduce an important performance parameter $t_{Compute}$/$t_{IO}$ which determines whether we observe any stragglers.
+>>>>>>> 2fa730f5f3d2510ea958bb169176fbf54b0c9792
 In addition, we show that I/O and communication lead to stragglers. 
 Taking advantage of Global Arrays (GA) toolkit we have been able to obtain significant improvement in communication cost and performance.
 In addition, we show two different approaches to overcome the I/O bottleneck and compare their performance. 
