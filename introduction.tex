@@ -39,8 +39,6 @@ Looking at the timing distribution across all ranks we noticed that communicatio
 
 Taking advantage of Global Array toolkit we were able to reduce communication cost noticeably.
 In addition, our data show that I/O time does not scale beyond one node. 
-\gpnote{I consider MPI-style IO as the standard and CPPTraj in the realted work shows that. I suggest you either clarify it a bit or say that you used them.}\mknote{Can you clarify more? What do you exactly mean here?}
-\gpnote{It is simple. Writing an MPI program that requires processes to read and write to the same file, it is required to use MPI-IO. If not write and read from different files. Also, in the related work you refer to CPPTraj, which already uses MPI-IO and HDF5 to read and write trajectories. As a result the approaches used are not necessarily something new. It might be better to rephrase the next sentence a bit.}\mknote{Sure, I did not meant to say that we invented HDF5, I just wanted to say that we have taken advantage of well known capabilities of HDF5. cpptraj use mpi-io but it is not through hdf5. Even in cpptraj it is not something new. They have used the capabilities of MPI-IO and in other words they have implemented it. But they have not developed it. We are doing the smae here for MDAnalysis}\gpnote{May I suggest saying used rather than come up?}
-In order to improve I/O scaling, we came up with two solutions: MPI-based approach using Parallel HDF5 \cite{pythonhdf5}, and splitting our trajectory to as many trajectory segments as the number of processes. 
+In order to improve I/O scaling, we used two different approaches: MPI-based approach using Parallel HDF5 \cite{pythonhdf5}, and splitting our trajectory to as many trajectory segments as the number of processes. 
 We provide the detail on these approaches on the following sections.
 But, both approaches significantly improved the performance and we were able to achieve near ideal scaling.
