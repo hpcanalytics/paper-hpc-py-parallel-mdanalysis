@@ -38,18 +38,21 @@ Strong scaling was quantified by calculating the speed-up relative to performanc
 \end{gather}
 
 Additionally, we introduce two important performance parameters that determines whether we observe stragglers.
-We define this parameter as the ratio of compute time to I/O time:
+We define ratio of compute time to I/O time. 
+In the present study, we calculated this ratio using the serial version of our algorithms.
+However, one can run the algorithm using several cores and several frames of the trajectory to get an estimation of the compute to I/O ratio. 
+This is because, ideally, compute time per frame and I/O time per frame should be the same for different runs using different processes and we have shown this on our previous study \cite{Khoshlessan:2017ab}.
 
 \begin{gather}
   \label{eq:Compute-I/O}
     \frac{\bar{t}_{comp}^{frame}}{\bar{t}_{IO}^{frame}} \approx \frac{\tcomp}{\tIO} 
  \end{gather}
 
-and the ratio of compute to communication time\mknote{This equation should be corrected}:
+and the ratio of compute to communication time:
 
 \begin{gather}
   \label{eq:Compute-comm}
-    \frac{\bar{t}_{comp}}{\bar{t}_{communication}} \approx \frac{\tcomp}{\tcomm} 
+    \frac{\sum_{1}^{N_{frames}}t_{comp}^{frame}}{\bar{t}_{communication}} \approx \frac{\tcomp}{\tcomm} 
  \end{gather}
  
 \begin{table}[ht!]
@@ -58,11 +61,12 @@ and the ratio of compute to communication time\mknote{This equation should be co
   \toprule
            \bfseries\thead{Item} & \bfseries\thead{Definition}\\
   \midrule
+  \midrule
     $N_{frames}$ & $N_{frames}^{total}/N$\\  
     $t_{end\_loop}$ & $t_{L6}+t_{L7}$\\
     $t_{opening\_trajectory}$ &  $t_{L2}+t_{L3}$ \\
     $t_{comp}$ & $\sum_{1}^{N_{frames}}t_{comp}^{frame}$\\
-    $t_{IO}$ & $\sum_{1}^{N_{frames}}t_{I/O}^{frame}$\\
+    $t_{I/O}$ & $\sum_{1}^{N_{frames}}t_{I/O}^{frame}$\\
     $t_{all\_frame}$ & $t_{L4}+t_{L5}+t_{L6}$  \\
     $t_{RMSD}$ &  $t_{L1} + ...+ t_{L8}$ \\
     $t_{Communication_{MPI}}$ &  $t_{L16}$  \\
@@ -70,13 +74,16 @@ and the ratio of compute to communication time\mknote{This equation should be co
     $t_{Overhead1}$ & $t_{all\_frame}-t_{IO\_final}-t_{comp\_final}-t_{end\_loop}$  \\
     $t_{Overhead2}$ & $t_{RMSD}-t_{all\_frame}-t_{opening\_trajectory}$  \\
     $t_{N}$ & $t_{RMSD}+t_{Communication}$ \\
+   \midrule  
+    $\bar{t}_{communication}$ & $\frac{\sum_{1}^{N}t_{communication}}{N}$ \\
     $t_{total}$ & $\max t_{N}$ \\
   \bottomrule
 \end{tabular}
 \caption[Summary of the notation of our performance modeling]
 {Summary of the notation of our performance modeling. Relevant probes in the codes are taken and stored,
 which we will abbreviate in here as $t_{Ln}$ where {Ln} refers to the line number in the corresponding algorithm. 
-$t_{Communication_{MPI}}$ and $t_{Communication_{GA}}$ are both referred to $t_{Communication}$ in the text}
+$t_{Communication_{MPI}}$ and $t_{Communication_{GA}}$ are both referred to $t_{Communication}$ in the text.
+All the timings on the first row are per rank.}
 \label{tab:notation}
 \end{table}
 

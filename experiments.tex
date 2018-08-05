@@ -414,7 +414,6 @@ Five repeats are performed to collect statistics and error bars show standard de
 \label{fig:tcomp_tcomm_ratio_dihed}
 \end{figure}
 
-
 \begin{figure}[ht!]
 \centering
 \begin{subfigure}{.47\textwidth}
@@ -430,7 +429,7 @@ Five repeats are performed to collect statistics and error bars show standard de
 \end{subfigure}
 %
 \caption{Examples of timing per MPI rank for Dihedral featurization task ($\tcomp/\tIO \approx 100$) on SDSC Comet without showing the compute portion with 8 and 72 processes.
-IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$, opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  
+I/O \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$, opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  
 $t_{Overhead2}$ per MPI rank (as described in methods).
 This task is compute bound and the compute portion is not shown here so that we can observe the variation in communication time across different ranks. 
 In fact, there are stragglers due to communication and communication time is not uniform across different ranks. 
