@@ -65,11 +65,11 @@ As shown, \tcomp scales very well; however, \tIO does not show good scaling beyo
 Considering the results in Figures \ref{fig:MPIwithIO} and \ref{fig:ScalingComputeIO}, we can conclude that communication and I/O are the root causes for stragglers. 
 
 \subsubsection*{Hardware}
-\gpnote{Are the data in figure 2 from Comet and Stampede? Why Stampede and not SuperMic, Bridges, and Comet? Those are the system you say the experimentation was done.} \mknote{the data is on Comet. We perform everything on Comet as a baseline and then make a comparison across different clusters on the final section. We do not have any data from Stampede here}
+\gpnote{Are the data in figure 2 from Comet and Stampede? Why Stampede and not SuperMic, Bridges, and Comet? Those are the system you say the experimentation was done.} \mknote{the data is on Comet. We perform everything on Comet as a baseline and then make a comparison across different clusters on the final section. We do not have any data from Stampede here}\gpnote{You say that you observed stragglers on Comet, Stampede and an ASU cluster. You do not show any data from Stampede, so I suggest to remove it. I think there are some data with stragglers from Bridges or SuperMic. Including those will make your point stronger.}
 We did not discern any specific patterns that could be traced to the underlying hardware. Stragglers were observed on \emph{SDSC Comet},
 \emph{TACC Stampede} and \emph{ASU local computing resources} \cite{Khoshlessan:2017ab}. There was also no clear pattern in which certain MPI
 ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not
-reveal an obvious pattern). Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the resources.\gpnote{I would say resource independent, not hardware. Hardware opens a can of questions which is very difficult to answer with the data we have.}.\mknote{Corrected}
+reveal an obvious pattern). Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the resources.
 
 \subsection{Dihedral Featurization Benchmarks}
 \label{DF}
@@ -77,7 +77,7 @@ We briefly tested a much larger computational workload ($t_{compute_{per-frame}}
 featurization on \emph{Comet} with Infiniband and Lustre file system.
 
 The system scales linearly and close to ideal (Figure \ref{fig:MPIscaling-dihed}, \ref{fig:MPIspeedup-dihed}, \ref{fig:ScalingComputeIO-dihed}). Although, there is communication of large
-result arrays (e.g. $\approx 2GB$ with 8 processes and $\approx 0.24GB$ with 72 processes)\gpnote{Can you quantify large? Anything in terms of elements, Bytes or any other metric.}\mknote{done!} , which is costly for multiple ranks (Figure \ref{fig:comparison-t_comm-dihedral}), the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPIspeedup-dihed}
+result arrays (e.g. $\approx 2GB$ with 8 processes and $\approx 0.24GB$ with 72 processes), which is costly for multiple ranks (Figure \ref{fig:comparison-t_comm-dihedral}), the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPIspeedup-dihed}
 demonstrates very good scaling with the number of cores (up to 72 cores on 3 nodes).  The reason is that the communication cost (for
 $MPI.Gather()$-line 39 in \ref{alg:Dihedral}) decreases with increasing the number of cores because the result array size that has to be
 communicated also decreases (Figure \ref{fig:comparison-t_comm-dihedral}).  Based on Figure \ref{fig:comparison-t_comm-dihedral}, communication scales fairly well
@@ -141,6 +141,8 @@ and results are communicated back to rank 0 (communications included). Five repe
   workload performed on SDSC Comet (a) Communication time distribution shown as violin plots \protect\cite{Hintze:1998tw}
     with kernel density estimates as implemented in \package{seaborn} for different number of processes; the white dot indicates the median. (b) Scaling communication time (mean and standard deviation).
   \gpnote{I am really confused with this figure. How many GBs of data did you move and there was a delay of 1.5 hours? Was it more 10TBs? (Assuming you were able to use 20Gbps from IB $20Gbps*5000sec=10^{14}=12500000000000B=12500000000000/2^{40}TB\simeq11.6TB$)}} \mknote{with 8 processes size of the data to be communicated is 2 GB per process. But communication time is not uniform across different processes and for some processes it is in the order of 1000 for another processes is 0.86 and the other is 4 s. Thus there are stragglers due to communication but because communication is small with respect to compute it does not affect the performance.}
+  \gpnote{This is very weird. Are you sure that the IB network was used correctly? Over 1k seconds for 2GB is way too much. I am afraid
+  that the IB network was not used correctly, either from the implementation of RMSD or from OpenMPI's custom installation. I will also ask AndreM, who has worked a bit with OpenMPI. Either way, it does not make any sense to me.}
 \label{fig:comparison-t_comm-dihedral}
 \end{figure}
 
@@ -233,7 +235,7 @@ which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\t
 
 Even for moderately compute-bound workloads such
 as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even
-though they still contribute to large variations in timing across different ranks and thus to somewhat erratic scaling.\gpnote{What is erratic scaling? Can you quantify it?}\mknote{It just means that the scaling is not linear and goes up \& down. This is because time distribution is not uniform across different ranks.}
+though they still contribute to large variations in timing across different ranks and thus to somewhat erratic scaling.\gpnote{What is erratic scaling? Can you quantify it?}\mknote{It just means that the scaling is not linear and goes up \& down. This is because time distribution is not uniform across different ranks.}\gpnote{I see. May I suggest: "... and thus to fluctuating scaling" or "...and thus irregular scaling as show by its fluctuations"}
 
 Given the results for Dihedral featurization and RMSD algorithms (Algorithms \ref{alg:Dihedral}, and \ref{alg:RMSD}) and $X\times$ RMSD (Figure \ref{fig:tcomp_tIO_effect})
 we hypothesize that MPI competes with Lustre on the same network interface, which would explain why communication appears to
@@ -374,6 +376,7 @@ communication time across different ranks. However, when global array is used co
 \subsubsection*{Performance using Global Array}
 \gpnote{This is very confusing. In a previous paragraph you say that GA passes data over the IB network. Here you say there is no congestion? Don't they, MPI communication, MPI I/O, and GA communication, use the same network? Also, I do not think you have the data to support that clearly, unless you know how many Bytes are moved around, how many packets and their type. If that is the case include it. Or are you using the Local filesystem on the nodes and IO has nothing to do with the IB?}
 \mknote{I think there is something different in the way GA use IB that when we use GA there is no contention. That is mainly because there is no synchronization and that reduces the traffic a lot. GA uses IB but the way it uses is very different from MPI Gather. it defines a pointer and that is very different from what happens in MPI for commuinaction.}
+\gpnote{So there are no similarities between GA communication and asynchronous MPI communication? Asynchronous MPI communication does not block anything and there is no need for synchronization when done correctly. It is still confusing for me at least.}
 Previously, we showed that global array significantly reduces the communication cost (Section \ref{Global-Array}). 
 We want to see how the performance looks like if we split our trajectory file and take advantage of global array as well.
 Again, we ran our benchmark up to 8 nodes (192 cores) and, we observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with no straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
