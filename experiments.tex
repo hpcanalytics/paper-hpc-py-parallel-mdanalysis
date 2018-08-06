@@ -390,7 +390,7 @@ The initial results with splitting the trajectory file suggests that there is in
 
 In addition to the compute to I/O ratio we define another important performance parameter which is compute to communication ratio.
 Based on the results shown in the section \ref{sec:I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without global array.
-This means that the task remains communication bound (\mknote{Add same plot as \ref{fig:tcomp_tcomm_ratio_dihed} for comm bound task}). 
+This means that the task remains communication bound (Figure \ref{fig:tcomp_tcomm_ratio_rmsd}). 
 Examples of the communication bound task is RMSD task with splitting the trajectories and without global array.
 When the task is communication bound, i.e.,
 
@@ -398,10 +398,10 @@ When the task is communication bound, i.e.,
   \frac{\bar{t}_{comp}}{\bar{t}_{comm}} \ll 1.
 \end{gather*}
 
-we are not able to achieve near ideal scaling even when I/O is not a bottleneck anymore (Figure \ref{fig:MPIwithIO-split}).
+We are not able to achieve near ideal scaling even when I/O is not a bottleneck anymore (Figure \ref{fig:MPIwithIO-split}).
 However, Dihedral featurization turned out to be compute bound and we were able to achieve near ideal scaling even when we did not use global array in our benchmark (Figure \ref{fig:MPIwithIO-dihed}).
 This is mainly because both communication and I/O are very small with respect to compute time ($\tcomp/\tIO \approx 100$ and Figure \ref{fig:tcomp_tcomm_ratio_dihed}). 
-Although, there are stragglers due to communication (\ref{fig:MPIwithIO-comm-dihed-rank}) their effect on performance is not crucial mainly because compute to communication ratio is very large. 
+Although, there are stragglers due to communication (Figure \ref{fig:MPIwithIO-comm-dihed-rank}) their effect on performance is not crucial mainly because compute to communication ratio is very large. 
 We therefore, conclude that decreasing the relative communication load with respect to compute load would also reduce the stragglers. 
 If the computational load is more than communication load then the work became compute bound, i.e.,
 
@@ -409,13 +409,28 @@ If the computational load is more than communication load then the work became c
   \frac{\bar{t}_{comp}}{\bar{t}_{comm}} \gg 1.
 \end{gather*}
 
+It should be noted that size of the RMSD arrays to be communicated to rank 0 is much smaller than the resulted arrays in Dihedral featurization task (0.7 MB versus 2GB with 8 processes).
+As a result communication time is very small within a single node (24 cores) for RMSD task and that is why \tcomp/\tcomm $\gg$ 1.
+However for more than a single node, communication overhead becomes a bottleneck and \tcomp/\tcomm $\ll$ 1 (Figure \ref{fig:tcomp_tcomm_ratio_rmsd}).
+
 \begin{figure}[ht!]
 \centering
-  \includegraphics[width=0.4\linewidth]{figures/tcomp_tcomm_ratio_dihed.pdf}
-\caption{Average compute to communication ratio with number of processes for Dihedral featurization task performed on SDSC Comet.
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/tcomp_tcomm_ratio_dihed.pdf}
+  \caption{Dihedral Featurization}
+  \label{fig:tcomp_tcomm_ratio_dihed}
+\end{subfigure}
+\bigskip
+\begin{subfigure} {.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/tcomp_tcomm_RMSD.pdf}
+  \caption{RMSD}
+  \label{fig:tcomp_tcomm_ratio_rmsd}
+\end{subfigure}
+%
+\caption{Average compute to communication ratio with number of processes for RMSD and Dihedral featurization tasks performed on SDSC Comet.
 Five repeats are performed to collect statistics and error bars show standard deviation with respect to mean.}
-\label{fig:tcomp_tcomm_ratio_dihed}
-\end{figure}
+\label{fig:tcomp_tcomm_ratio}
+\end{figure} 
 
 \begin{figure}[ht!]
 \centering
