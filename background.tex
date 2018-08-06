@@ -57,7 +57,7 @@ Blocked time analysis is used to measure how long each task spends blocked on a 
 These approach provides a per-task measurements and allows the understanding of straggler root-causes by correlating slow tasks with long blocked times \cite{Ousterhout2015}. 
 However, the work by \cite{Ousterhout2015} does not look at a vast range of workloads nor a wide range of cluster sizes.
 
-Intelligent scheduling [AWE-WQ] is another approach to remove stragglers. Several components of task scheduling affect the scalability.
+Intelligent scheduling \cite{AWE-WQ2014} is another approach to remove stragglers. Several components of task scheduling affect the scalability.
 The first is knowledge of a worker\textsc{\char13}s past task execution times. This allows to schedule tasks preferentially to the most performant machines. 
 The second involves task replication to remove the effect of straggling workers. 
 By monitoring the state of the workers either busy or idle ($w_{i}$) and the number of tasks waiting to be assigned a worker, task replication can be engaged when $w_{i}>0$.

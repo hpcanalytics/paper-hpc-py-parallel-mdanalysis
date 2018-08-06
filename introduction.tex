@@ -1,7 +1,7 @@
 \label{sec:introduction}
-Molecular dynamics simulations are the most powerful and fundamental tool among a wide variety of techniques that enable scientists to achieve detailed info regarding the function of bio-molecules in living cells [QwickMD].
+Molecular dynamics simulations are the most powerful and fundamental tool among a wide variety of techniques that enable scientists to achieve detailed info regarding the function of bio-molecules in living cells \cite{QwikMD2016}.
 MD is widely used to understand structure-to-function relationships of complex protein systems.
-Data analysis tools and libraries have been developed to extract the desired information from these MD simulations ~\cite{Gowers:2016aa,Michaud-Agrawal:2011fu,cpptraj-2013,himach-2008,mdtraj-2015} [VMD].
+Data analysis tools and libraries have been developed to extract the desired information from these MD simulations ~\cite{Gowers:2016aa,Michaud-Agrawal:2011fu,cpptraj-2013,himach-2008,mdtraj-2015,Mura:2010mw}.
 \package{MDAnalysis} \citep{Gowers:2016aa,Michaud-Agrawal:2011fu} is an open-source object-oriented Python library for structural and temporal analysis of molecular dynamics simulation trajectories and individual protein structures. 
 
 Development of powerful parallel supercomputers has significantly increased the physical and time scales of MD simulations.
@@ -33,12 +33,14 @@ With SPMD, each process executes essentially the same code but on a different pa
 We use Python, a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in HPC parallel environments \cite{GAiN}. 
 Based on our initial analysis, there are two important performance parameters,  $t_{Compute}$/$t_{IO}$ and $t_{Compute}$/$t_{Communication}$ which are the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, that determines whether we observe stragglers and the ratio of computational to communication load respectively.
 We show this behavior using RMSD and dihedral featurization algorithms.
-If $t_{Compute}$/$t_{IO}$  $\gg 1$, the algorithm scales very well, otherwise it does not scale beyond a single node. 
+If $t_{Compute}$/$t_{IO}$  $\gg 1$, the algorithm scales very well, otherwise it does not scale beyond a single node.  
 For the algorithms with small $t_{Compute}$/$t_{IO}$, we need to come up with strategies to improve scaling and overcome straggler problems.
+In addition, when $t_{Compute}$/$t_{Communication}$ plays an important role on scaling and performance. 
+The details on these are given in the results section. 
 Looking at the timing distribution across all ranks we noticed that communication and I/O are the two main scalability bottlenecks.
 
 Taking advantage of Global Array toolkit we were able to reduce communication cost noticeably.
-In addition, our data show that I/O time does not scale beyond one node. 
+In addition, our data show that I/O time does not scale beyond a single node. 
 In order to improve I/O scaling, we used two different approaches: MPI-based approach using Parallel HDF5 \cite{pythonhdf5}, and splitting our trajectory to as many trajectory segments as the number of processes. 
 We provide the detail on these approaches on the following sections.
 But, both approaches significantly improved the performance and we were able to achieve near ideal scaling.
