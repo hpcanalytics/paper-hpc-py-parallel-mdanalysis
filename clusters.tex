@@ -11,7 +11,7 @@ Both Comet and SuperMIC scales very well using Global array.
 RMSD task still scales on both clusters without global array; however, scaling is far from ideal scaling due to the communication cost (Refer to section \ref{Splitting} and Figure \ref{fig:MPIranks-split}). 
 Overal, the scaling of the RMSD task is better on SuperMIC and the performance gap increases as we increase the number of cores.
 In global arrays, primary mechanisms provided by GA for accessing data are block copy operations that transfer data between layers of memory hierarchy, namely global memory of the node (distributed array) and local memory. 
-Each process is able to directly access data held in a section of a Global Array that is locally assigned to that process.
+Each process is able to directly access data held in a section of a Global Array that is locally assigned to that process \cite{GA}.
 This is an advantage over MPI collective communication where direct memory access is not allowed. 
 In message passing, CPU is stopped in order to access data from the local memory; while in GA CPU would continue doing its computations and would not stop to accommodate any communication between
 nodes.
