@@ -3,14 +3,11 @@
 \subsection{RMSD Benchmarks}
 \label{sec:RMSD}
 RMSD algorithm for the present test case, represents a task for which computational workload per frame is smaller than I/O workload per frame ($t_{compute}^{frame}$ = 0.09 ms, $t_{IO}^{frame}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$). 
-We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet} (and similarly also only on a
-single node on other machines\gpnote{Please specify which other machines}), using either dask or MPI \cite{Khoshlessan:2017ab}. 
-Although, it is not clear that the root cause is the same for dask and MPI, here we focus on the MPI
-implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}) for its greater simplicity than dask, in order to
+We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet}, \emph{Stampede}, and \emph{ASU computing resources}, using either Dask or MPI \cite{Khoshlessan:2017ab}. 
+Here we focus on the MPI implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}), in order to
 better understand the cause for the poor scaling across nodes.
 
-For both dask and MPI we observed stragglers, individual workers or
-MPI ranks, that take much longer to complete than mean execution time of all other workers or ranks. 
+We observed stragglers, individual workers or MPI ranks, that take much longer to complete than mean execution time of all other workers or ranks. 
 Waiting for these stragglers destroys strong scaling performance, as shown in Figure \ref{fig:MPIscaling}, \ref{fig:MPIspeedup} for MPI. 
 
 In the example run in Figure \ref{fig:MPIranks}, ten ranks out of 72 take almost 65~s whereas the
@@ -44,16 +41,16 @@ This initial analysis (especially Figure \ref{fig:MPIranks}) indicates that comm
 \hfill
 \begin{subfigure} {.5\textwidth}
   \includegraphics[width=\linewidth]{figures/main-RMSD-BarPlot-rank-comparison_72_4.pdf}
-  \caption{Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
-  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
-  This is typical data from one run of the 5 repeats}
+  \caption{Time comparison on different parts of the calculations per MPI rank}
   \label{fig:MPIranks}
 \end{subfigure}
 
-\caption{Performance of the RMSD task with MPI which is I/O-bound $\tcomp/\tIO \approx 0.3$.
+\caption{Performance of the RMSD task with MPI which is I/O-bound $\tcomp/\tIO \approx 0.3$ on SDSC Comet.
 Data are read from the file system (I/O included) and results are communicated back to
-rank 0 (communications included). Five repeats are performed to collect statistics. The error bars show
-standard deviation with respect to mean. MPI ranks 0 and 63 to 72 are stragglers, i.e., their total time 
+rank 0 (communications included). Five repeats are performed to collect statistics. (a-c) The error bars show
+standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
+opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
+This is typical data from one run of the 5 repeats. MPI ranks 0 and 63 to 72 are stragglers, i.e., their total time 
 far exceeds the mean of the majority of ranks.}
   
 \obnote{This does not look like t\_comp/t\_IO = 0.3 ? looks more like 2/30 = 0.06; the next page says 4/26=0.16. Please make sure that all numbers are consistent!}
@@ -68,11 +65,13 @@ As shown, \tcomp scales very well; however, \tIO does not show good scaling beyo
 Considering the results in Figures \ref{fig:MPIwithIO} and \ref{fig:ScalingComputeIO}, we can conclude that communication and I/O are the root causes for stragglers. 
 
 \subsubsection*{Hardware}
-\gpnote{Are the data in figure 2 from Comet and Stampede? Why Stampede and not SuperMic, Bridges, and Comet? Those are the system you say the experimentation was done.}
+\gpnote{Are the data in figure 2 from Comet and Stampede? Why Stampede and not SuperMic, Bridges, and Comet? Those are the system you say the experimentation was done.} \mknote{the data is on Comet. We perform everything on Comet as a baseline and then make a comparison across different clusters on the final section. We do not have any data from Stampede here}\gpnote{You say that you observed stragglers on Comet, Stampede and an ASU cluster. You do not show any data from Stampede, so I suggest to remove it. I think there are some data with stragglers from Bridges or SuperMic. Including those will make your point stronger.}\mknote{but I cited scipy paper. all the data are shown in scipy paper. Why do we need to repeat it? We can just cite it.}\gpnote{Sorry, Mahzad, but we cannot cite them. They were presented and discussed. Unless they have to offer something new, a different type of analysis than the SciPy paper, they should not be included apart from showing the motivation of this paper. That is my opinion and that is what I am doing in all my papers}\mknote{I do not agree. Here we are saying that we are observing stragglers on different resources including the ones used in the present study and the ones used for scipy. Then we want to discuss ways for overcoming those stragglers.}
 We did not discern any specific patterns that could be traced to the underlying hardware. Stragglers were observed on \emph{SDSC Comet},
-\emph{TACC Stampede} and \emph{TACC Data Analytics System Wrangler} (data not shown)\gpnote{I am not sure you want to say that you do not show data. You can include them in an appendix, or provide a link to a repo with all the data and figures.}. There was also no clear pattern in which certain MPI
-ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not
-reveal an obvious pattern). Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the underlying hardware\gpnote{I would say resource independent, not hardware. Hardware opens a can of questions which is very difficult to answer with the data we have.}.
+\emph{TACC Stampede} and \emph{ASU local computing resources} \cite{Khoshlessan:2017ab}. 
+We also show in the present study that stragglers are observed on other XSEDE resources such as PSS Bridges and SuperMIC as well.
+There was also no clear pattern in which certain MPI ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not
+reveal an obvious pattern). 
+Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the resources.
 
 \subsection{Dihedral Featurization Benchmarks}
 \label{DF}
@@ -80,7 +79,7 @@ We briefly tested a much larger computational workload ($t_{compute_{per-frame}}
 featurization on \emph{Comet} with Infiniband and Lustre file system.
 
 The system scales linearly and close to ideal (Figure \ref{fig:MPIscaling-dihed}, \ref{fig:MPIspeedup-dihed}, \ref{fig:ScalingComputeIO-dihed}). Although, there is communication of large
-result arrays\gpnote{Can you quantify large? Anything in terms of elements, Bytes or any other metric.}, which is costly for multiple ranks (Figure \ref{fig:comparison-t_comm-dihedral})\gpnote{Please check the comment in caption}, the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPIspeedup-dihed}
+result arrays (e.g. $\approx 2GB$ with 8 processes and $\approx 0.24GB$ with 72 processes), which is costly for multiple ranks (Figure \ref{fig:comparison-t_comm-dihedral}), the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPIspeedup-dihed}
 demonstrates very good scaling with the number of cores (up to 72 cores on 3 nodes).  The reason is that the communication cost (for
 $MPI.Gather()$-line 39 in \ref{alg:Dihedral}) decreases with increasing the number of cores because the result array size that has to be
 communicated also decreases (Figure \ref{fig:comparison-t_comm-dihedral}).  Based on Figure \ref{fig:comparison-t_comm-dihedral}, communication scales fairly well
@@ -114,16 +113,16 @@ In addition, for higher computational workloads the competition over accessing t
 \hfill
 \begin{subfigure} {.5\textwidth}
   \includegraphics[width=\linewidth]{figures/main-dihedral-BarPlot-rank-comparison_72_5.pdf}
-  \caption{Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
-  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
-  This is typical data from one run of the 5 repeats}
+  \caption{Time comparison on different parts of the calculations per MPI rank}
   \label{fig:MPIranks-dihed}
 \end{subfigure}
 
 \caption{Performance for the \textbf{dihedral featurization} workload,
-which is compute-bound $\tcomp/\tIO \approx 100$. Data are read from the file system (I/O included) 
+which is compute-bound $\tcomp/\tIO \approx 100$ on SDSC Comet. Data are read from the file system (I/O included) 
 and results are communicated back to rank 0 (communications included). Five repeats are performed to collect statistics. 
-The error bars show standard deviation with respect to mean. No straggler is observed.} 
+(a-c) The error bars show standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
+  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
+  This is typical data from one run of the 5 repeats. No straggler is observed.} 
 \label{fig:MPIwithIO-dihed}
 \end{figure} 
 
@@ -132,19 +131,23 @@ The error bars show standard deviation with respect to mean. No straggler is obs
   \centering
   \includegraphics[width=\linewidth]{figures/ViolinPlot-Ncores-comparison-comm-dihedral.pdf}
   \caption{Communication time distribution for different number of
-    processes (shown as violin plots \protect\cite{Hintze:1998tw}
-    with kernel density estimates as implemented in
-    \package{seaborn}); the white dot indicates the median.}
+    processes}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.35\textwidth}
   \centering
   \includegraphics[width=\linewidth]{figures/t_comm_mean-dihedral.pdf}
-  \caption{Scaling communcation time (mean and standard deviation)}
+  \caption{Communication time scaling}
 \end{subfigure}
-\caption{Comparison of communication cost for different number of
-  processes over 5 repeats for the \textbf{dihedral featurization}
-  workload (with \emph{communications included}).\gpnote{I am really confused with this figure. How many GBs of data did you move and there was a delay of 1.5 hours? Was it more 10TBs? (Assuming you were able to use 20Gbps from IB $20Gbps*5000sec=10^{14}=12500000000000B=12500000000000/2^{40}TB\simeq11.6TB$)}}
+\caption{Comparison of communication cost for different number of processes over 5 repeats for the \textbf{dihedral featurization}
+  workload performed on SDSC Comet (a) Communication time distribution shown as violin plots \protect\cite{Hintze:1998tw}
+    with kernel density estimates as implemented in \package{seaborn} for different number of processes; the white dot indicates the median. (b) Scaling communication time (mean and standard deviation).
+  \gpnote{I am really confused with this figure. How many GBs of data did you move and there was a delay of 1.5 hours? Was it more 10TBs? (Assuming you were able to use 20Gbps from IB $20Gbps*5000sec=10^{14}=12500000000000B=12500000000000/2^{40}TB\simeq11.6TB$)}} \mknote{with 8 processes size of the data to be communicated is 2 GB per process. But communication time is not uniform across different processes and for some processes it is in the order of 1000 for another processes is 0.86 and the other is 4 s. Thus there are stragglers due to communication but because communication is small with respect to compute it does not affect the performance.}
+  \gpnote{This is very weird. Are you sure that the IB network was used correctly? Over 1k seconds for 2GB is way too much. I am afraid
+  that the IB network was not used correctly, either from the implementation of RMSD or from OpenMPI's custom installation. I will also ask AndreM, who has worked a bit with OpenMPI. Either way, it does not make any sense to me.}
+  \mknote{I do not think there is any problem with IB usage. I ran dihedral featurzation at two different time (one several months after the other) and every time I did five repeats. Both gave me the same pattern and results.}
+  \gpnote{Then something is very wrong with the setup of our experiments. 2GBs on a network of 56 Gbps should take a few seconds or worst case scenario minutes to transfer not hours. Are you sure these are not milliseconds?}
+  \mknote{Please refer to the email discussion for my answer to this}
 \label{fig:comparison-t_comm-dihedral}
 \end{figure}
 
@@ -206,37 +209,38 @@ examine the effect of compute to I/O ratio on the performance.}
 As the $\tcomp/\tIO$ ratio increases, speed-up and performance improves and 
 show overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure \ref{fig:S1_tcomp_tIO_effect}).
 When $\tcomp/\tIO$ ratio increases, the RMSD calculation consistently scales up to larger numbers of cores ($N=56$ for $70\times$ RMSD).
-Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} shows the improvment in performance more clearly.
+Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} shows the improvement in performance more clearly.
 In fact, as the $\tcomp/\tIO$ ratio increases, the values of speed-up and efficiency get closer to their ideal value for each number of processor count.  
 
 \begin{figure}[ht!]
 \centering
 \begin{subfigure} {.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf}
-  \caption{Effect of \tcomp/\tIO on the Speed-Up}
+  \caption{Speed-Up}
   \label{fig:S1_tcomp_tIO_effect}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pdf}
-  \caption{Change in the Speed-Up with respect to \tcomp/\tIO for different processor counts}
+  \caption{Speed-Up}
   \label{fig:S2_tcomp_tIO_effect}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pdf}
-  \caption{Change in the efficiency with respect to \tcomp/\tIO for different processor counts}
+  \caption{Efficiency}
   \label{fig:E_tcomp_tIO_effect}
 \end{subfigure}
 %
-\caption{Performance change of the RMSD task with MPI with different $\tcomp/\tIO$ ratios. We tested performance for $\tcomp/\tIO$ ratios of 0.3, 12, 21, 30
-which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively (communication is included)}
+\caption{Effect of $\tcomp/\tIO$ ratio on performance of the RMSD task with MPI performed on SDSC Comet. We tested performance for $\tcomp/\tIO$ ratios of 0.3, 12, 21, 30
+which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively (communication is included). (a) Effect of \tcomp/\tIO on the Speed-Up
+(b) Change in the Speed-Up with respect to \tcomp/\tIO for different processor counts (c) Change in the efficiency with respect to \tcomp/\tIO for different processor counts}
 \label{fig:tcomp_tIO_effect}
 \end{figure}
 
 Even for moderately compute-bound workloads such
 as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even
-though they still contribute to large variations in timing across different ranks and thus to somewhat erratic scaling.\gpnote{What is erratic scaling? Can you quantify it?}
+though they still contribute to large variations in timing across different ranks and thus irregular scaling due to the fluctuations.
 
 Given the results for Dihedral featurization and RMSD algorithms (Algorithms \ref{alg:Dihedral}, and \ref{alg:RMSD}) and $X\times$ RMSD (Figure \ref{fig:tcomp_tIO_effect})
 we hypothesize that MPI competes with Lustre on the same network interface, which would explain why communication appears to
@@ -286,16 +290,17 @@ These slow processes take about 50~s, which are slower than the mean execution t
 \hfill
 \begin{subfigure} {.5\textwidth}
   \includegraphics[width=\linewidth]{figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf}
-  \caption{Compute \tcomp, IO \tIO, communication \tcomm , ending the for loop $t_{end\_loop}$,
-  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
-  This is typical data from one run of the 5 repeats}
+  \caption{Time comparison on different parts of the calculations per MPI rank}
   \label{fig:MPIranks-ga4py}
 \end{subfigure}
 
-\caption{Performance of the RMSD task with MPI using global array ($\tcomp/\tIO \approx 0.3$).
-Data are read from the file system (I/O included). All ranks update the global array and rank 0 accesses the whole RMSD array.
-Five repeats are performed to collect statistics. The error bars show standard deviation with respect to mean. 
-MPI ranks 20 and 56 are stragglers, i.e., their total time far exceeds the mean of the majority of ranks.}
+\caption{Performance of the RMSD task with MPI using global array ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
+Data are read from the file system (I/O included). All ranks update the global array ($ga_{put}$) and rank 0 accesses the whole RMSD array through the global memory address ($ga_{get}$) (communications included).
+Five repeats are performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
+(d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0 $t_{Access\_Global\_Array}$, ending the for loop $t_{end\_loop}$, 
+opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$, 
+$t_{Overhead2}$ per MPI rank (as described in methods). This is typical data from one run of the 5 repeatsMPI ranks 20 and 56 are stragglers, i.e., 
+their total time far exceeds the mean of the majority of ranks.}
 \label{fig:MPIwithIO-ga4py}
 \end{figure}
 
@@ -315,15 +320,15 @@ These two ways include: Splitting the trajectory file into as many segments as n
 We discuss these two approaches in detail in the following sections.
 
 \subsubsection{Splitting the Trajectories}
-\label{Splitting}
+\label{splitting-traj}
 In all the previous benchmarks all processes were using a shared trajectory file.
-In order to test our hypothesis that \emph{I/O and communication compete over the network resources with small \tcomp/\tIO ratio}, we splitted our trajectory file into as many trajectory segments as the number of processes.
+In order to test whether \emph{I/O and communication compete over the network resources with small \tcomp/\tIO ratio}, we splitted our trajectory file into as many trajectory segments as the number of processes.
 This means that if we have $N$ processes, the trajectory file is splitted into $N$ segments and each segment will have $N_{b}$ frames in it. 
 Through this approach, each process will have access to its own segment and there will be no competition over file accesses. 
 For reference, the necessary time for splitting the trajectory file is given in \ref{sec:splitting-timing}.
 
 \subsubsection*{Performance without Global Array}
-We ran a benchmark up to 8 nodes (192 cores) and, we observed rather better scaling behavior with efficiencies above 0.6 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) and the delay time for stragglers has also reduced from 65 to about 23\gpnote{Is this seconds, minutes, or hours?} (Compare Figure \ref{fig:MPIranks-split} to  \ref{fig:MPIranks}). 
+We ran a benchmark up to 8 nodes (192 cores) and, we observed rather better scaling behavior with efficiencies above 0.6 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) and the delay time for stragglers has also reduced from 65s to about 10s for 72 processes. 
 However, the scaling is still far from ideal due to the communication. 
 Although the delay due to communication is much smaller as compared to RMSD with a shared trajectory file (Compare Figure \ref{fig:MPIranks-split} to Figure \ref{fig:MPIranks}), it is still delaying several processes and as a result leads to longer job completion time (Figure \ref{fig:MPIranks-split}). 
 These delayed tasks impact performance as well and hence the speed-up is not still close to ideal scaling (Figure \ref{fig:MPIspeedup-split}).
@@ -343,20 +348,24 @@ These delayed tasks impact performance as well and hence the speed-up is not sti
 \end{subfigure}
 \bigskip
 
-\begin{subfigure} {.5\textwidth}
+\begin{subfigure} {.45\textwidth}
   \includegraphics[width=\linewidth]{figures/split-BarPlot-rank-comparison_192_5.pdf}
-   \caption{Examples of timing per MPI rank without global array}
+   \caption{Time comparison on different parts of the calculations per MPI rank without global array}
   \label{fig:MPIranks-split}
 \end{subfigure}
 \hfill
-\begin{subfigure} {.5\textwidth}
+\begin{subfigure} {.45\textwidth}
   \includegraphics[width=\linewidth]{figures/split-ga-BarPlot-rank-comparison_192_5.pdf}
-  \caption{Examples of timing per MPI rank using global array}
+  \caption{Time comparison on different parts of the calculations per MPI rank using global array}
   \label{fig:MPIranks-split-ga}
 \end{subfigure}
 
-\caption{Comparison on the performance of the RMSD task with MPI when the trajectories are splitted using global array and without global array ($\tcomp/\tIO \approx 0.3$).
-Data are read from the file system (I/O included). In case of global array, all ranks update the global array ($ga_{put}$) and rank 0 accesses the whole RMSD array through the global memory address ($ga_{get}$).}
+\caption{Comparison on the performance of the RMSD task with MPI when the trajectories are splitted using global array and without global array ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
+Data are read from the file system (I/O included). In case of global array, all ranks update the global array ($ga_{put}$) and rank 0 accesses the whole RMSD array through the global memory address ($ga_{get}$).
+Five repeats are performed to collect statistics. (a-b) The error bars show standard deviation with respect to mean. 
+(c-d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0 $t_{Access\_Global\_Array}$, ending the for loop $t_{end\_loop}$, 
+opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$, $t_{Overhead2}$ per MPI rank (as described in methods). When global array is not used, the performance is affected due to the non-uniform
+communication time across different ranks. However, when global array is used communication time has significantly reduced and scaling is close to ideal.}
 \label{fig:MPIwithIO-split}
 \obnote{The compute/IO ratio is about 1:4 judging from the graph, i.e., ~0.25 ? or did you calculate the ratio for the serial version?}
 \mknote{Yes, this is based on serial version}
@@ -365,19 +374,93 @@ Data are read from the file system (I/O included). In case of global array, all 
 \begin{figure}[ht!]
 \centering
   \includegraphics[width=0.4\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
-\caption{Comparison on the scaling of the \tcomp and \tIO of the RMSD task when the trajectories are splitted with global array and without global array.}
+\caption{Comparison on the scaling of the \tcomp and \tIO of the RMSD task when the trajectories are splitted with global array and without global array performed on SDSC Comet.}
 \label{fig:ScalingComputeIO-split}
 \end{figure}
 
 \subsubsection*{Performance using Global Array}
 \gpnote{This is very confusing. In a previous paragraph you say that GA passes data over the IB network. Here you say there is no congestion? Don't they, MPI communication, MPI I/O, and GA communication, use the same network? Also, I do not think you have the data to support that clearly, unless you know how many Bytes are moved around, how many packets and their type. If that is the case include it. Or are you using the Local filesystem on the nodes and IO has nothing to do with the IB?}
+\mknote{I think there is something different in the way GA use IB that when we use GA there is no contention. That is mainly because there is no synchronization and that reduces the traffic a lot. GA uses IB but the way it uses is very different from MPI Gather. it defines a pointer and that is very different from what happens in MPI for communication.}
+\gpnote{So there are no similarities between GA communication and asynchronous MPI communication? Asynchronous MPI communication does not block anything and there is no need for synchronization when done correctly. It is still confusing for me at least.}\mknote{No,  there are no similarities. MPI.Gather is collective communication and collective communications are blocking in MPI, right?}\gpnote{For synchronous, yes you are right. I am asking about asynchronous MPI communication.}\mknote{Maybe using Isend and Ireceive can be helpful but I do not think it will be comparable with GA. DO you volunteer to give it a shot and replace mpi.Gather with asynchronous communication and run it so that we can compare with GA?}
 Previously, we showed that global array significantly reduces the communication cost (Section \ref{Global-Array}). 
 We want to see how the performance looks like if we split our trajectory file and take advantage of global array as well.
 Again, we ran our benchmark up to 8 nodes (192 cores) and, we observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with no straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
 The present results show that contention for a file impacts the performance. 
 The initial results with splitting the trajectory file suggests that there is in fact an effect, which possibly also interferes with the communications when $\tcomp/\tIO \ll 1$ (i.e. with a I/O bound workload).
 
+\subsection{Effect of \tcomp/\tcomm on Performance}
+
+In addition to the compute to I/O ratio we define another important performance parameter which is compute to communication ratio.
+Based on the results shown in the section \ref{sec:I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without global array.
+This means that the task remains communication bound (Figure \ref{fig:tcomp_tcomm_ratio_rmsd}). 
+Examples of the communication bound task is RMSD task with splitting the trajectories and without global array.
+When the task is communication bound, i.e.,
+
+\begin{gather*}
+  \frac{\bar{t}_{comp}}{\bar{t}_{comm}} \ll 1.
+\end{gather*}
+
+We are not able to achieve near ideal scaling even when I/O is not a bottleneck anymore (Figure \ref{fig:MPIwithIO-split}).
+However, Dihedral featurization turned out to be compute bound and we were able to achieve near ideal scaling even when we did not use global array in our benchmark (Figure \ref{fig:MPIwithIO-dihed}).
+This is mainly because both communication and I/O are very small with respect to compute time ($\tcomp/\tIO \approx 100$ and Figure \ref{fig:tcomp_tcomm_ratio_dihed}). 
+Although, there are stragglers due to communication (Figure \ref{fig:MPIwithIO-comm-dihed-rank}) their effect on performance is not crucial mainly because compute to communication ratio is very large. 
+We therefore, conclude that decreasing the relative communication load with respect to compute load would also reduce the stragglers. 
+If the computational load is more than communication load then the work became compute bound, i.e.,
+
+\begin{gather*}
+  \frac{\bar{t}_{comp}}{\bar{t}_{comm}} \gg 1.
+\end{gather*}
+
+It should be noted that size of the RMSD arrays to be communicated to rank 0 is much smaller than the resulted arrays in Dihedral featurization task (0.7 MB versus 2GB with 8 processes).
+As a result communication time is very small within a single node (24 cores) for RMSD task and that is why \tcomp/\tcomm $\gg$ 1.
+However for more than a single node, communication overhead becomes a bottleneck and \tcomp/\tcomm $\ll$ 1 (Figure \ref{fig:tcomp_tcomm_ratio_rmsd}).
+
+\begin{figure}[ht!]
+\centering
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/tcomp_tcomm_ratio_dihed.pdf}
+  \caption{Dihedral Featurization}
+  \label{fig:tcomp_tcomm_ratio_dihed}
+\end{subfigure}
+\bigskip
+\begin{subfigure} {.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/tcomp_tcomm_RMSD.pdf}
+  \caption{RMSD}
+  \label{fig:tcomp_tcomm_ratio_rmsd}
+\end{subfigure}
+%
+\caption{Average compute to communication ratio with number of processes for RMSD and Dihedral featurization tasks performed on SDSC Comet.
+Five repeats are performed to collect statistics and error bars show standard deviation with respect to mean.}
+\label{fig:tcomp_tcomm_ratio}
+\end{figure} 
+
+\begin{figure}[ht!]
+\centering
+\begin{subfigure}{.47\textwidth}
+  \includegraphics[width=\linewidth]{figures/main-dihedral-BarPlot-rank-comm-comparison_8_5.pdf}
+  \caption{8 Processes}
+  \label{fig:comm-rank-dihed-8}
+\end{subfigure}
+\bigskip
+\begin{subfigure} {.47\textwidth}
+  \includegraphics[width=\linewidth]{figures/main-dihedral-BarPlot-rank-comm-comparison_72_5.pdf}
+  \caption{72 Processes}
+  \label{fig:comm-rank-dihed-72}
+\end{subfigure}
+%
+\caption{Examples of timing per MPI rank for Dihedral featurization task ($\tcomp/\tIO \approx 100$) on SDSC Comet without showing the compute portion with 8 and 72 processes.
+I/O \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$, opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  
+$t_{Overhead2}$ per MPI rank (as described in methods).
+This task is compute bound and the compute portion is not shown here so that we can observe the variation in communication time across different ranks. 
+In fact, there are stragglers due to communication and communication time is not uniform across different ranks. 
+However, the performance is not affected due to stragglers caused by communication because the task is compute bound.
+Five repeats are performed to collect statistics and this is typical data from one run of the 5 repeats.}
+\label{fig:MPIwithIO-comm-dihed-rank}
+\end{figure} 
+
 \subsubsection{Chain-Reader}
+\gpnote{Never heard about a chain reader, can you add a reference? Thank you!}
+\mknote{It is the chain-reader method in mdanalysis https://www.mdanalysis.org/docs/documentation\_pages/coordinates/chain.html}
 
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
@@ -412,12 +495,14 @@ However, both methods scale very well up to 8 nodes and have comparable performa
 \hfill
 \begin{subfigure} {.5\textwidth}
   \includegraphics[width=\linewidth]{figures/hdf5-BarPlot-rank-comparison_192_4.pdf}
-  \caption{Compute \tcomp, IO \tIO, communication \tcomm , ending the for loop $t_{end\_loop}$,
-  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).}
+  \caption{Time comparison on different parts of the calculations per MPI rank}
   \label{fig:MPIranks-hdf5}
 \end{subfigure}
 %
-\caption{Performance of the RMSD task with MPI-based parallel HDF5 ($\tcomp/\tIO \approx 0.3$).
-Data are read from the file system from a shared HDF5 file instead of XTC format (Independent I/O).}
+\caption{Performance of the RMSD task with MPI-based parallel HDF5 ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
+Data are read from the file system from a shared HDF5 file format instead of XTC format (Independent I/O) and results are communicated back to rank 0 (communications included). 
+Five repeats are performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
+  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
+  This is typical data from one run of the 5 repeats. No straggler is observed.}
 \label{fig:MPIwithIO-hdf5}
 \end{figure}

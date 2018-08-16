@@ -10,12 +10,8 @@ This means that the ratio between compute load and I/O load has a crucial effect
 
 Different factors like opening the trajectory file, or other sources of overheads can be responsible for observing \emph{stragglers} for I/O bound workload.
 But, for the I/O bound workload, both communication and I/O appeared to be the main scalability bottlenecks when using a shared file.
-Our data suggest that \emph{stragglers are due to the competition between MPI and the Lustre file system on the shared Infini-band interconnect}. 
-\obnote{We/I put this hypothesis forward originally but I don?t think that we really have enough evidence to corroborate it. 
-We know that we have a problem with multiple ranks accessing the same file but we don?t have this problem with splitting or parallel I/O. 
-I think that?s really all we can say right now.}\mknote{I think we have enough evidences, I tried to explain it in a better way. please have a look and let me know if it is still not clear from my reasoning} 
-\obnote{Can you look in the literature to see what is known about Lustre and accessing a single file? 
-Papers on parallel I/O should discuss this problem.}\mknote{Will have a look}
+Our data suggest that \emph{stragglers are due to the competition between MPI and the Lustre file system on the shared Infini-band interconnect}.  
+Since I/O traffic must compete with MPI messages and other traffic it can be difficult to achieve peak single-node I/O rates for an arbitrary file when the system is fully loaded with other jobs \cite{VMD2013}. 
 
 This is because when we remove I/O, communication does not appear to be the scalability bottleneck anymore (data not shown here).
 In fact, communication time, \tcomm, could take

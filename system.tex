@@ -27,11 +27,11 @@ All the experiments are performed using standard compute nodes on Comet, PSC Bri
 	\begin{adjustbox}{max width=\textwidth}
 		\begin{tabular}{c c c c c c c c}
 			\toprule
-			\bfseries\thead{Cluster} & \bfseries\thead{Nodes} & \bfseries\thead{Number} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology} & \makecell{\bfseries\thead{Scheduler and  \\ Resource Manager}}\\
+			\bfseries\thead{Cluster} & \bfseries\thead{Nodes} & \makecell{\bfseries\thead{Number \\of Nodes}} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology} & \makecell{\bfseries\thead{Scheduler and  \\ Resource Manager}}\\
 			\midrule
 			\bfseries SDSC Comet & Compute & 6400 & \makecell{2 Intel Xeon (E5-2680v3) CPUs \\ 12 cores/CPU, 2.5 GHz} &128 GB DDR4 DRAM & 56 Gbps IB & SLURM\\
 			\bfseries PSC Bridges & RSM & 752 & \makecell{2 Intel Haswell (E5-2695 v3) CPUs \\14 cores/CPU, 2.3 GHz} & 128 GB, DDR4-2133Mhz & 12.37 Gbps OPA & SLURM\\
-			\bfseries SuperMIC & Standard & 360 & \makecell{2 Intel Ivy Bridges (E5-2680) CPUs \\10 cores/CPU, 2.8GB GHz} & 64 GB, DDR3-1866Mhz  & 56Gbps IB & PBS\\
+			\bfseries SuperMIC & Standard & 360 & \makecell{2 Intel Ivy Bridges (E5-2680) CPUs \\10 cores/CPU, 2.8GB GHz} & 64 GB, DDR3-1866Mhz  & 56 Gbps IB & PBS\\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
@@ -41,18 +41,13 @@ All the experiments are performed using standard compute nodes on Comet, PSC Bri
 \end{table}
 
 \subsection{Installing libraries on multi-user HPC systems}
-\obnote{Include table with software and versions; add a paragraph in which you mention software, summarize how it was compiled, and reference the table.}
-\mknote{Are the following enough?}
 Different packages and libraries are used in the present study in order to achieve the desired performance. 
 However, getting scientific libraries installed can be a very challenging task.
-\gpnote{As far as, I know compiling is the standard procedure for highly optimized libraries. Dependencies change since systems change. }
-Lack of documentation and good software engineering practices, non-standard installation procedures, and lots of dependencies can contribute to the challenge of getting the libraries to work \gpnote{Citation Missing}[???].
-Scientists mostly care about the science and they are often not software engineers or system administrators. 
-\gpnote{I do not think this is a case. I remember at some point I shared a google doc to SPIDAL with all the packages that XSEDE resources offered. There is a good number of frameworks offered and preinstalled.}
-Therefore, the libraries and tools they need should be easily accessible. 
-This is not always the case, though.
 
-In fact, many domain specific packages are not available through package manager in supercomputers and as a result,
+There are always a lot of dependencies for highly optimized libraries \mknote{Giaanis, Can you give references here or correct my sentences or add any if you think could be helpful to make it look better?}. 
+However, Lack of precise documentation can contribute to the challenge of getting the libraries to work.
+
+In addition, many domain specific packages are not available through package manager in super-computers and as a result,
 we spent considerable amount of time getting packages dependencies to work in the process of our performance study.
 As a result, we provide detail information on how we managed to build these libraries.
 This will let future works spend least amount of time for this purpose. 
@@ -96,7 +91,7 @@ For example, on SuperMIC although tool installation was done in the same way as 
 This was due to the fact that our custom OpenMPI installation did not correctly parse the node list offered by SuperMIC to our job. 
 Thus, we had to manually pass the node lists to MPIRUN. 
 In addition, we found that the loaded modules, along with library path changes, did not propagate to all nodes from our OpenMPI installation. 
-OpenMPI's execution engine could access the correct libraries and was not able to launch the processes correctly. 
+OpenMPI's execution engine could not access the correct libraries and was not able to launch the processes correctly. 
 Reinstalling OpenMPI with enabling the flag to use the Open Run-Time Environment (ORTE) by default and including the OpenMPI installation to BASHRC allowed for correct execution.
  
 Overall, the installation was successful on all clusters and we were able to observe similar
