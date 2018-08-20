@@ -489,13 +489,13 @@ In fact, using ChainReader each process opens all the trajectories but I/O will 
 \begin{subfigure} {.45\textwidth}
   \includegraphics[width=\linewidth]{figures/chain-reader-no-ga-BarPlot-rank-comparison_192_5.pdf}
    \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader without global array}
-  \label{fig:MPIranks-split}
+  \label{fig:MPIranks-split-chain-reader}
 \end{subfigure}
 \hfill
 \begin{subfigure} {.45\textwidth}
   \includegraphics[width=\linewidth]{figures/chain-reader-ga-BarPlot-rank-comparison_192_3.pdf}
   \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader using global array}
-  \label{fig:MPIranks-split-ga}
+  \label{fig:MPIranks-split-ga-chain-reader}
 \end{subfigure}
 
 \caption{Comparison on the performance of ChainReader for RMSD task with MPI when the trajectories are splitted using global array and without global array ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
@@ -504,7 +504,7 @@ Five repeats are performed to collect statistics. (a-c) The error bars show stan
 (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0 $t_{Access\_Global\_Array}$, ending the for loop $t_{end\_loop}$, 
 opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$, $t_{Overhead2}$ per MPI rank (as described in methods). When global array is not used, the performance is affected due to the non-uniform
 communication time across different ranks. However, when global array is used communication time has significantly reduced and scaling is close to ideal. In addition, time for ending the for loop $t_{end\_loop}$ and 
-opening the trajectory $t_{opening\_trajectory}$ is a bottleneck as opposed to our calculation without ChainReader. We obtained the results for the ChainReader with a \emph{patched version} of a MDAnalysis that avoid race condition}
+opening the trajectory $t_{opening\_trajectory}$ is a bottleneck as opposed to our calculation without ChainReader. We obtained the results for the ChainReader with a \emph{patched version} of the MDAnalysis that avoid race condition}
 \label{fig:MPIwithIO-split-chain-reader}
 \end{figure}
 
@@ -527,7 +527,7 @@ As shown in Figure \ref{fig:MPIspeedup-chain-reader} the cases with GA and witho
 The scaling is not close to ideal as opposed to what we achieved in Section \ref{splitting-traj}. 
 However, in this case I/O and compute time are scaling very well (Figure \ref{fig:MPIscaling-chain-reader} as compared to Figure \ref{fig:ScalingComputeIO-split}) and the time for ending the for loop $t_{end\_loop}$ and opening the trajectory $t_{opening\_trajectory}$ appear to be the performance bottleneck as opposed to the results shown in Section \ref{splitting-traj} (Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 
 The reason for which $t_{end\_loop}$ and $t_{opening\_trajectory}$ increases are not very well clear to us, but this will be studied in our future work in detail.
-
+ 
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
 Another approach we examined to improve I/O scaling is MPI-based Parallel HDF5. 
