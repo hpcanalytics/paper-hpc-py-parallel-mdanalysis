@@ -8,7 +8,7 @@ These cases include: Splitting the trajectories with collective communications i
 Figure \ref{fig:MPI-splitting-clusters} shows how RMSD task scales with the increase in the number of cores on different HPC resources.  
 When we split the trajectories the scaling follows the same pattern on both Comet and SuperMIC with global array and without global array.
 Both Comet and SuperMIC scales very well using Global array. 
-RMSD task still scales on both clusters without global array; however, scaling is far from ideal scaling due to the communication cost (Refer to section \ref{Splitting} and Figure \ref{fig:MPIranks-split}). 
+RMSD task still scales on both clusters without global array; however, scaling is far from ideal scaling due to the communication cost (Refer to section \ref{splitting-traj} and Figure \ref{fig:MPIranks-split}). 
 Overal, the scaling of the RMSD task is better on SuperMIC and the performance gap increases as we increase the number of cores.
 In global arrays, primary mechanisms provided by GA for accessing data are block copy operations that transfer data between layers of memory hierarchy, namely global memory of the node (distributed array) and local memory. 
 Each process is able to directly access data held in a section of a Global Array that is locally assigned to that process \cite{GA}.

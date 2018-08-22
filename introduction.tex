@@ -31,11 +31,11 @@ We have selected two of the algorithms in \package{MDAnalysis} one of which is I
 We use SPMD paradigm to parallelize theses two algorithms on HPC resources.
 With SPMD, each process executes essentially the same code but on a different part of the data. 
 We use Python, a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in HPC parallel environments \cite{GAiN}. 
-Based on our initial analysis, there are two important performance parameters,  $t_{Compute}$/$t_{IO}$ and $t_{Compute}$/$t_{Communication}$ which are the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, that determines whether we observe stragglers and the ratio of computational to communication load respectively.
+Based on our initial analysis, there are two important performance parameters,  $t_{Compute}$/$t_{IO}$ and $t_{Compute}$/$t_{Communication}$ which are the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, and the ratio of computational to communication load respectively that determines whether we observe stragglers.
 We show this behavior using RMSD and dihedral featurization algorithms.
 If $t_{Compute}$/$t_{IO}$  $\gg 1$, the algorithm scales very well, otherwise it does not scale beyond a single node.  
 For the algorithms with small $t_{Compute}$/$t_{IO}$, we need to come up with strategies to improve scaling and overcome straggler problems.
-In addition, when $t_{Compute}$/$t_{Communication}$ plays an important role on scaling and performance. 
+In addition, $t_{Compute}$/$t_{Communication}$ plays an important role on scaling and performance. 
 The details on these are given in the results section. 
 Looking at the timing distribution across all ranks we noticed that communication and I/O are the two main scalability bottlenecks.
 

@@ -335,13 +335,19 @@ These delayed tasks impact performance as well and hence the speed-up is not sti
 
 \begin{figure}[ht!]
 \centering
-\begin{subfigure}{.4\textwidth}
+\begin{subfigure}{.3\textwidth}
+  \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
+  \caption{Scaling total}
+  \label{fig:ScalingComputeIO-split}
+\end{subfigure}
+\hfill
+\begin{subfigure}{.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting.pdf}
   \caption{Scaling total}
   \label{fig:MPIscaling-split}
 \end{subfigure}
 \hfill
-\begin{subfigure}{.4\textwidth}
+\begin{subfigure}{.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting.pdf}
   \caption{Speed-up}
   \label{fig:MPIspeedup-split}
@@ -362,20 +368,13 @@ These delayed tasks impact performance as well and hence the speed-up is not sti
 
 \caption{Comparison on the performance of the RMSD task with MPI when the trajectories are splitted using global array and without global array ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
 Data are read from the file system (I/O included). In case of global array, all ranks update the global array ($ga_{put}$) and rank 0 accesses the whole RMSD array through the global memory address ($ga_{get}$).
-Five repeats are performed to collect statistics. (a-b) The error bars show standard deviation with respect to mean. 
-(c-d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0 $t_{Access\_Global\_Array}$, ending the for loop $t_{end\_loop}$, 
+Five repeats are performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
+(d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0 $t_{Access\_Global\_Array}$, ending the for loop $t_{end\_loop}$, 
 opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$, $t_{Overhead2}$ per MPI rank (as described in methods). When global array is not used, the performance is affected due to the non-uniform
 communication time across different ranks. However, when global array is used communication time has significantly reduced and scaling is close to ideal.}
 \label{fig:MPIwithIO-split}
 \obnote{The compute/IO ratio is about 1:4 judging from the graph, i.e., ~0.25 ? or did you calculate the ratio for the serial version?}
 \mknote{Yes, this is based on serial version}
-\end{figure}
-
-\begin{figure}[ht!]
-\centering
-  \includegraphics[width=0.4\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
-\caption{Comparison on the scaling of the \tcomp and \tIO of the RMSD task when the trajectories are splitted with global array and without global array performed on SDSC Comet.}
-\label{fig:ScalingComputeIO-split}
 \end{figure}
 
 \subsubsection*{Performance using Global Array}
@@ -391,7 +390,7 @@ The initial results with splitting the trajectory file suggests that there is in
 \subsection{Effect of \tcomp/\tcomm on Performance}
 
 In addition to the compute to I/O ratio we define another important performance parameter which is compute to communication ratio.
-Based on the results shown in the section \ref{sec:I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without global array.
+Based on the results shown in the section \ref{I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without global array.
 This means that the task remains communication bound (Figure \ref{fig:tcomp_tcomm_ratio_rmsd}). 
 Examples of the communication bound task is RMSD task with splitting the trajectories and without global array.
 When the task is communication bound, i.e.,
@@ -458,10 +457,77 @@ Five repeats are performed to collect statistics and this is typical data from o
 \label{fig:MPIwithIO-comm-dihed-rank}
 \end{figure} 
 
-\subsubsection{Chain-Reader}
-\gpnote{Never heard about a chain reader, can you add a reference? Thank you!}
-\mknote{It is the chain-reader method in mdanalysis https://www.mdanalysis.org/docs/documentation\_pages/coordinates/chain.html}
+\subsubsection{ChainReader}
+ChainReader is used in \package{MDAnalysis} to represent multiple trajectories as one virtual trajectory. 
+In Section \ref{splitting-traj} we showed how splitting the trajectories will help to overcome I/O and improves scaling. 
+However, the number of trajectories may not necessarily be equal to the number of processes.
+Specially, trajectories from MD simulations on HPC resources are kept in small chunks and making sure that the number of processes is equal to the number of trajectory files will not be feasible for the typical users. 
+Here, we use ChainReader in MDAnalysis to read all the trajectories by each process and we want to see how it will affect the performance. 
+In fact, using ChainReader each process opens all the trajectories but I/O will only happen from a specific block of the trajectory specific to that process only.
+ 
+ \begin{figure}[ht!]
+\centering
+\begin{subfigure}{.3\textwidth}
+  \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting-chain-reader.pdf}
+  \caption{\tcomp and \tIO scaling}
+  \label{fig:MPIscaling-chain-reader}
+\end{subfigure}
+\hfill
+\begin{subfigure}{.3\textwidth}
+  \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting-chain-reader.pdf}
+  \caption{Scaling total}
+  \label{fig:MPItottime-chain-reader}
+\end{subfigure}
+\hfill
+\begin{subfigure}{.3\textwidth}
+  \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting-chain-reader.pdf}
+  \caption{Speed-up}
+  \label{fig:MPIspeedup-chain-reader}
+\end{subfigure}
+\bigskip
 
+\begin{subfigure} {.45\textwidth}
+  \includegraphics[width=\linewidth]{figures/chain-reader-no-ga-BarPlot-rank-comparison_192_5.pdf}
+   \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader without global array}
+  \label{fig:MPIranks-split-chain-reader}
+\end{subfigure}
+\hfill
+\begin{subfigure} {.45\textwidth}
+  \includegraphics[width=\linewidth]{figures/chain-reader-ga-BarPlot-rank-comparison_192_3.pdf}
+  \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader using global array}
+  \label{fig:MPIranks-split-ga-chain-reader}
+\end{subfigure}
+
+\caption{Comparison on the performance of ChainReader for RMSD task with MPI when the trajectories are splitted using global array and without global array ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
+Data are read from the file system (I/O included). In case of global array, all ranks update the global array ($ga_{put}$) and rank 0 accesses the whole RMSD array through the global memory address ($ga_{get}$).
+Five repeats are performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
+(d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0 $t_{Access\_Global\_Array}$, ending the for loop $t_{end\_loop}$, 
+opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$, $t_{Overhead2}$ per MPI rank (as described in methods). When global array is not used, the performance is affected due to the non-uniform
+communication time across different ranks. However, when global array is used communication time has significantly reduced and scaling is close to ideal. In addition, time for ending the for loop $t_{end\_loop}$ and 
+opening the trajectory $t_{opening\_trajectory}$ is a bottleneck as opposed to our calculation without ChainReader. We obtained the results for the ChainReader with a \emph{patched version} of the MDAnalysis that avoid race condition}
+\label{fig:MPIwithIO-split-chain-reader}
+\end{figure}
+
+XDR based readers store persistent offsets on disk. 
+The offsets are used to enable access to random frames efficiently. 
+These offsets will be generated automatically the first time the trajectory is opened and are stored in hidden $\ast.xtc\_offsets.npz$ files. 
+The advantage of these offset files is that after opening the trajectory for the first time, opening the same file will be very fast afterward. 
+
+It sometimes can happen that the stored offsets get out off sync with the trajectory they refer to. 
+For this the offsets also store the number of atoms, size of the file and last modification time. 
+If any of these parameters change, the offsets are recalculated. 
+ 
+If the XTC changes and any of the number of atoms, size of the file and last modification time changes but the offset file is not updated, then the offset file can be detected as invalid.
+With ChainReader in parallel, each process opens all the trajectories; therefore in case of invalid offset file, several processes might want to recalculate these parameters and rebuild the offset file which will lead to race condition.
+In order to avoid race condition, we removed this check from MDAnalysis, but this comes at the price of not checking the validity of the offset file at all.
+ 
+We obtained the results for the ChainReader with a \emph{patched version} of \package{MDAnalysis} that eliminates the race condition by assuming that XTC index files are present and valid. 
+Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance of ChainReader for RMSD task using GA and without GA. 
+As shown in Figure \ref{fig:MPIspeedup-chain-reader} the cases with GA and without GA scale up to 144 and 92 cores respectively.
+The scaling is not close to ideal as opposed to what we achieved in Section \ref{splitting-traj}. 
+However, in this case I/O and compute time are scaling very well (Figure \ref{fig:MPIscaling-chain-reader} as compared to Figure \ref{fig:ScalingComputeIO-split}) and the time for ending the for loop $t_{end\_loop}$ and opening the trajectory $t_{opening\_trajectory}$ appear to be the performance bottleneck as opposed to the results shown in Section \ref{splitting-traj} (Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 
+The reason for which $t_{end\_loop}$ and $t_{opening\_trajectory}$ increases are not very well clear to us, but this will be studied in our future work in detail.
+ 
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
 Another approach we examined to improve I/O scaling is MPI-based Parallel HDF5. 
