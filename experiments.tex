@@ -2,8 +2,8 @@
 
 \subsection{RMSD Benchmarks}
 \label{sec:RMSD}
-RMSD algorithm for the present test case, represents a task for which computational workload per frame is smaller than I/O workload per frame ($t_{compute}^{frame}$ = 0.09 ms, $t_{IO}^{frame}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$). 
-We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet}, \emph{Stampede}, and \emph{ASU computing resources}, using either Dask or MPI \cite{Khoshlessan:2017ab}. 
+The RMSD algorithm for the present test case represents a task for which the computational workload per frame is smaller than the I/O workload per frame ($t_{compute}^{frame}$ = 0.09 ms, $t_{IO}^{frame}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$, calculated based on Equation \ref{eq:Compute-I/O}). 
+We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet}, and \emph{Stampede}, using either Dask or MPI \cite{Khoshlessan:2017ab}. 
 Here we focus on the MPI implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}), in order to
 better understand the cause for the poor scaling across nodes.
 
@@ -65,117 +65,30 @@ As shown, \tcomp scales very well; however, \tIO does not show good scaling beyo
 Considering the results in Figures \ref{fig:MPIwithIO} and \ref{fig:ScalingComputeIO}, we can conclude that communication and I/O are the root causes for stragglers. 
 
 \subsubsection*{Hardware}
-\gpnote{Are the data in figure 2 from Comet and Stampede? Why Stampede and not SuperMic, Bridges, and Comet? Those are the system you say the experimentation was done.} \mknote{the data is on Comet. We perform everything on Comet as a baseline and then make a comparison across different clusters on the final section. We do not have any data from Stampede here}\gpnote{You say that you observed stragglers on Comet, Stampede and an ASU cluster. You do not show any data from Stampede, so I suggest to remove it. I think there are some data with stragglers from Bridges or SuperMic. Including those will make your point stronger.}\mknote{but I cited scipy paper. all the data are shown in scipy paper. Why do we need to repeat it? We can just cite it.}\gpnote{Sorry, Mahzad, but we cannot cite them. They were presented and discussed. Unless they have to offer something new, a different type of analysis than the SciPy paper, they should not be included apart from showing the motivation of this paper. That is my opinion and that is what I am doing in all my papers}\mknote{I do not agree. Here we are saying that we are observing stragglers on different resources including the ones used in the present study and the ones used for scipy. Then we want to discuss ways for overcoming those stragglers.}\gpnote{Okay.}
-We did not discern any specific patterns that could be traced to the underlying hardware. Stragglers were observed on \emph{SDSC Comet},
+We did not discern any specific patterns that could be traced to the underlying hardware. 
+We previously observed stragglers on \emph{SDSC Comet},
 \emph{TACC Stampede} and \emph{ASU local computing resources} \cite{Khoshlessan:2017ab}. 
-We also show in the present study that stragglers are observed on other XSEDE resources such as PSS Bridges and SuperMIC as well.
-There was also no clear pattern in which certain MPI ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not
-reveal an obvious pattern). 
+We also show in the present study that stragglers occur on other XSEDE resources such as PSC Bridges and SuperMIC as well.
+There was no clear pattern in which certain MPI ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not reveal an obvious pattern). 
 Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the resources.
-
-\subsection{Dihedral Featurization Benchmarks}
-\label{DF}
-We briefly tested a much larger computational workload ($t_{compute_{per-frame}}$ = 40 ms, $t_{IO_{per-frame}}$ = 0.4 ms, thus $\tcomp/\tIO \approx 100$), namely dihedral
-featurization on \emph{Comet} with Infiniband and Lustre file system.
-
-The system scales linearly and close to ideal (Figure \ref{fig:MPIscaling-dihed}, \ref{fig:MPIspeedup-dihed}, \ref{fig:ScalingComputeIO-dihed}). Although, there is communication of large
-result arrays (e.g. $\approx 2GB$ with 8 processes and $\approx 0.24GB$ with 72 processes), which is costly for multiple ranks (Figure \ref{fig:comparison-t_comm-dihedral}), the speed-up curve (Eq.~\ref{eq:speedup}) in Figure \ref{fig:MPIspeedup-dihed}
-demonstrates very good scaling with the number of cores (up to 72 cores on 3 nodes).  The reason is that the communication cost (for
-$MPI.Gather()$-line 39 in \ref{alg:Dihedral}) decreases with increasing the number of cores because the result array size that has to be
-communicated also decreases (Figure \ref{fig:comparison-t_comm-dihedral}).  Based on Figure \ref{fig:comparison-t_comm-dihedral}, communication scales fairly well
-with the number of processes. This can be attributed to larger array sizes compared to the RMSD task and according to \cite{Dalcin:2011aa}
-the overhead of the \package{mpi4py} package decreases as the array size to be communicated increases. The dihedral featurization workload
-has larger array size for all processor sizes (per task, a time series of feature vectors of size $N_{frames} \times (213 \times 2 \times 2$) when
-compared to the RMSD workload (per task a float array of length $N_{frames}$) and therefore we are hypothesizing that the higher
-performance of \package{mpi4py} for larger array sizes has lead to better overall scaling. 
-In addition, for higher computational workloads the competition over accessing the file is less severe as compared to lower computational workloads. 
- 
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-dihedral-t_total.pdf}
-  \caption{Scaling total}
-  \label{fig:MPIscaling-dihed}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-dihedral-speed_up.pdf}
-  \caption{Speed-up}
-  \label{fig:MPIspeedup-dihed}
-\end{subfigure}
-\bigskip
-
-\begin{subfigure} {0.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-dihed-time_comp_IO_comparison.pdf}
-\caption{\tcomp and \tIO scaling}
-\label{fig:ScalingComputeIO-dihed}
-\end{subfigure}
-\hfill
-\begin{subfigure} {.5\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-dihedral-BarPlot-rank-comparison_72_5.pdf}
-  \caption{Time comparison on different parts of the calculations per MPI rank}
-  \label{fig:MPIranks-dihed}
-\end{subfigure}
-
-\caption{Performance for the \textbf{dihedral featurization} workload,
-which is compute-bound $\tcomp/\tIO \approx 100$ on SDSC Comet. Data are read from the file system (I/O included) 
-and results are communicated back to rank 0 (communications included). Five repeats are performed to collect statistics. 
-(a-c) The error bars show standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
-  opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
-  This is typical data from one run of the 5 repeats. No straggler is observed.} 
-\label{fig:MPIwithIO-dihed}
-\end{figure} 
-
-\begin{figure}[ht!]
-\begin{subfigure} {.55\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{figures/ViolinPlot-Ncores-comparison-comm-dihedral.pdf}
-  \caption{Communication time distribution for different number of
-    processes}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.35\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{figures/t_comm_mean-dihedral.pdf}
-  \caption{Communication time scaling}
-\end{subfigure}
-\caption{Comparison of communication cost for different number of processes over 5 repeats for the \textbf{dihedral featurization}
-  workload performed on SDSC Comet (a) Communication time distribution shown as violin plots \protect\cite{Hintze:1998tw}
-    with kernel density estimates as implemented in \package{seaborn} for different number of processes; the white dot indicates the median. (b) Scaling communication time (mean and standard deviation).
-  \gpnote{I am really confused with this figure. How many GBs of data did you move and there was a delay of 1.5 hours? Was it more 10TBs? (Assuming you were able to use 20Gbps from IB $20Gbps*5000sec=10^{14}=12500000000000B=12500000000000/2^{40}TB\simeq11.6TB$)}} \mknote{with 8 processes size of the data to be communicated is 2 GB per process. But communication time is not uniform across different processes and for some processes it is in the order of 1000 for another processes is 0.86 and the other is 4 s. Thus there are stragglers due to communication but because communication is small with respect to compute it does not affect the performance.}
-  \gpnote{This is very weird. Are you sure that the IB network was used correctly? Over 1k seconds for 2GB is way too much. I am afraid
-  that the IB network was not used correctly, either from the implementation of RMSD or from OpenMPI's custom installation. I will also ask AndreM, who has worked a bit with OpenMPI. Either way, it does not make any sense to me.}
-  \mknote{I do not think there is any problem with IB usage. I ran dihedral featurzation at two different time (one several months after the other) and every time I did five repeats. Both gave me the same pattern and results.}
-  \gpnote{Then something is very wrong with the setup of our experiments. 2GBs on a network of 56 Gbps should take a few seconds or worst case scenario minutes to transfer not hours. Are you sure these are not milliseconds?}
-  \mknote{Please refer to the email discussion for my answer to this}
-\label{fig:comparison-t_comm-dihedral}
-\end{figure}
-
-Overall, increasing the computational workload over I/O improves scaling. For large compute-bound workloads such as the dihedral
-featurization task, stragglers are eliminated and nearly ideal strong scaling is achieved. 
-The fact that linear scaling is possible, even with expensive communications, makes parallelization a valuable strategy to reduce
-the total time to solution for large computational workloads. In a real-world application to one of our existing data sets on local
-workstations with Gigabit interconnect and Network File System (NFS) (using the Dask parallel library instead of MPI), analysis time was reduced from more
-than a week to a few hours (data not shown).
 
 \subsection{Effect of \tcomp/\tIO on Performance}
 \label{bound}
 
 The RMSD task turned out to be I/O bound, i.e.,
 \begin{gather*}
-  \frac{\tcomp}{\tIO} \ll 1.
+  \frac{\tcomp}{\tIO} \ll 1
 \end{gather*}
 
 and we were not able to achieve good scaling above a single node. 
-However, Dihedral featurization turned out to be compute bound and we were able to achieve near ideal scaling. 
-We therefore, hypothesized that decreasing the relative I/O load with respect to compute load would also reduce the stragglers. 
+We hypothesized that decreasing the relative I/O load with respect to compute load would also reduce the stragglers. 
 We therefore increased the computational load so that the work became compute bound, i.e.,
 
 \begin{gather*}
-  \frac{\tcomp}{\tIO} \gg 1.
+  \frac{\tcomp}{\tIO} \gg 1
 \end{gather*}
 
-i.e., now processes are not constantly performing I/O and instead, I/O is interleaved with longer periods of computation.
+So that now processes are not constantly performing I/O and instead, I/O is interleaved with longer periods of computation.
 In order to artificially increase the computational load we repeated the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop respectively.
 
 \subsubsection{Increased workload (RMSD)}
