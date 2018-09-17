@@ -99,6 +99,7 @@ In this algorithm, we use global array instead of message passage paradigm to se
 
 \subsection{MPI and Parallel HDF5}
 HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python \cite{pythonhdf5}.
+Parallel HDF5 typically sits on top of MPI-IO layer and can use MPI-IO optimizations. 
 In parallel HDF5, all file accesses are coordinated though the MPI library; otherwise, multiple processes would compete over accessing over the same file on disk. 
 MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
 HDF5 itself handles nearly all the details involved with coordinating file access when the shared file is opened through ``mpio" driver.

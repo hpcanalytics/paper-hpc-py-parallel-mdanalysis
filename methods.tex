@@ -31,19 +31,19 @@ Additionally, we introduce two important performance parameters that determine w
 We define the ratio of compute time to I/O time \text{$t_{Compute}$/$t_{IO}$}. 
 In the present study, we calculated this ratio using the serial version of our algorithms.
 However, one can run the algorithm using several cores and several frames of the trajectory to get an estimation of the compute to I/O ratio. 
-It is possible to estimate \text{$t_{Compute}$/$t_{IO}$} serially because, ideally, compute time per frame and I/O time per frame should be the same for different runs using different processes and we have shown this on our previous study \cite{Khoshlessan:2017ab}. Equation \ref{eq:Compute-I/O} is defined for a single rank.
+It is possible to estimate \text{$t_{Compute}$/$t_{IO}$} serially because, ideally, compute time per frame and I/O time per frame should be the same for different runs using different processes and we have shown this on our previous study \cite{Khoshlessan:2017ab}. Equation \ref{eq:Compute-I/O} shows the definition of compute to I/O ratio and is defined for a single rank.
 \obnote{not clear to me what you want to say here ? do you want to say that the average ratio is approximately the ratio of the averages?} \mknote{No. compute time per frame and I/O time per frame should not change in parallel and in serial. Therefore we can say that this ratio can be estimated using serial version of the code}
 
 \begin{gather}
   \label{eq:Compute-I/O}
-    \frac{\overline{t_{\text{comp}}^{frame}}}{\overline{t_{\text{IO}}^{frame}}} = \frac{\frac{\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N_{\text{frames}}}}{\frac{\sum_{1}^{N_{\text{frames}}}t_{\text{I/O}}^{frame}}{N_{\text{frames}}}} \approx \frac{\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{\sum_{1}^{N_{\text{frames}}}t_{\text{I/O}}^{frame}} 
+    \frac{t_{\text{comp}}}{t_{\text{IO}}}=\frac{t_{\text{comp}}^{frame}}{t_{\text{IO}}^{frame}} \approx \frac{\overline{t_{\text{comp}}^{frame}}}{\overline{t_{\text{IO}}^{frame}}} \approx \frac{\frac{\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N_{\text{frames}}}}{\frac{\sum_{1}^{N_{\text{frames}}}t_{\text{I/O}}^{frame}}{N_{\text{frames}}}} 
  \end{gather}
 
-and the ratio of compute (total compute time per rank averaged across all ranks) to communication time (total communication time per rank averaged across all ranks as shown in Table \ref{tab:notation}):
+and the ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to total communication time per rank averaged across all ranks as shown in Table \ref{tab:notation}:
 
 \begin{gather}
   \label{eq:Compute-comm}
-    \frac{\frac{\sum_{1}^{N}\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N}}{\overline{t_{\text{comm}}}}  
+       \frac{t_{\text{comp}}}{t_{\text{comm}}}= \frac{\frac{\sum_{1}^{N}\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N}}{\overline{t_{\text{comm}}}}  
  \end{gather}
  
 \begin{table}[ht!]

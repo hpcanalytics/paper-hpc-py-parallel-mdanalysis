@@ -1,11 +1,11 @@
 \label{concl} 
-There are currently many freely available libraries for the analysis and processing of three-dimensional time series.
+There are currently many freely available libraries for the analysis and processing of molecular dynamics trajectories.
 However, dramatic increases in the size of trajectories combined with the serial nature of these libraries necessitates 
 use of state of the art high performance computing tools for rapid analysis of these time series. 
 
-\package{MDAnalysis} is a package for post-processing of MD trajectories; however, it does not provide parallel analysis of these trajectories.
+\package{MDAnalysis} is a package for post-processing of MD trajectories; however, it does not currently provide parallel analysis of these trajectories.
 In this study, we looked at the \emph{straggler} problem that we previously faced in an attempt for parallel analysis of these trajectories in \package{MDAnalysis} \cite{Khoshlessan:2017ab}.
-To this aim, we tested our benchmark on RMSD (I/O bound) and Dihedral featurization (compute bound) algorithms in \package{MDAnalysis}.
+To this aim, we tested our benchmark on RMSD (I/O bound) algorithm in \package{MDAnalysis}.
 
 Our initial analysis showed that the ratio between compute load to I/O load and compute load to communication load have a crucial effect on the performance. 
 For sufficiently large per-frame workloads ($\tcomp/\tIO \approx 100$), close to ideal scaling was achievable (Figure \ref{fig:comparison-t_comm-dihedral}).
@@ -13,7 +13,7 @@ However, the I/O bound workload ($\tcomp/\tIO \approx 0.3$) does not scale due t
 
 Different factors like opening the trajectory file, or other sources of overheads can be responsible for observing \emph{stragglers} for I/O bound workload.
 But, for the I/O bound workload, both communication and I/O appeared to be the main scalability bottlenecks when using a shared file.
-Our data suggest that \emph{stragglers are due to the competition between MPI and the Lustre file system on the shared Infini-band interconnect}.  
+Our data suggest that \emph{stragglers might be due to the competition between MPI and the Lustre file system on the shared Infini-band interconnect}.  
 Since I/O traffic must compete with MPI messages and other traffics, it can be difficult to achieve peak single-node I/O rates for an arbitrary file when the system is fully loaded with other jobs \cite{VMD2013, Kevin2018}. 
 
 This is because when we remove I/O, communication does not appear to be the scalability bottleneck anymore (data not shown here).
@@ -21,8 +21,9 @@ In fact, communication time, \tcomm, could take
 much longer for \emph{stragglers} than for ``normal'' MPI ranks when I/O has to be performed through a shared trajectory file (Figure \ref{fig:MPIranks}). 
 
 Additionally, the number of I/O requests is a function of number of frames in the trajectory. 
-For I/O bound task and compute bound task with the same number of frames per trajectory, the frequency of sending the I/O requests makes a big difference.
+For I/O bound task and compute bound task with the same number of frames per trajectory, the frequency of sending the I/O requests makes a difference.
 For sufficiently large per-frame compute workload, the I/O requests interfere much less often with communication than an I/O bound task.
+\obnote{citations? How can you back up this statement?}\mknote{Our results sugest. When we increse workload we see this effect right?}
 This is why both communication and I/O appeared to prevent us from achieving the near ideal scaling for an I/O bound task.
 
 It should be also noted that, for $\frac{\tcomp}{\tcomm} \gg 1$ and $\frac{\tcomp}{\tIO} \gg 1$, the effect of communication was less pronounced when the work became more compute-bound and this 
@@ -36,6 +37,7 @@ However, reducing communication cost was not enough for achieving near ideal sca
 
 We showed several approaches to improve I/O scaling.
 We were able to improve I/O through splitting the shared trajectory file (Figure \ref{fig:MPIwithIO-split}) and MPI-based parallel I/O through HDF5 file (Figure \ref{fig:MPIwithIO-hdf5}). 
+\obnote{future: adopt the mdtraj HDF5 format http://mdtraj.org/latest/hdf5\_format.html (and cite mdtraj paper)}\mknote{Which part do you mean?}
 In both cases, we were able to achieve near ideal scaling.
 With splitting the trajectories, effect of communication is still apparent on the performance which is because $\frac{\tcomp}{\tcomm} \ll 1$; however together with 
 global array toolkit we could achieve near ideal scaling (Figure \ref{fig:MPIwithIO-split}).
