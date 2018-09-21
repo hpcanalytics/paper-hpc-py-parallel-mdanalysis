@@ -16,10 +16,9 @@ Memory (RSM) nodes consist of Intel Haswell (E5-2695 v3) processors, 128 GB DDR4
 DRAM (64 GB per socket). The network topology is 12.37 Gbps Omni-Path Architecture 
 (OPA).
 
-LSU SuperMIC offers 360 compute nodes with Ivy Bridge Intel processors (E5-2680).
-Each node has 64 GBs DDR3 RAM. SUperMIC's nodes are connected 56 Gbps Infiniband 
-Network. In addition, it offers 20 hybrid nodes which provide an NVIDIA GPU. SuperMIC's
-peak performance is measured at 557 TFlop/s.
+LSU SuperMIC offers 360 standard compute nodes with Ivy Bridge Intel processors (E5-2680).
+Each node has 64 GBs DDR3 RAM. SUperMIC's nodes are connected 56 Gbps Infiniband Network. 
+SuperMIC's peak performance is measured at 557 TFlop/s.
 All the experiments are performed using standard compute nodes on Comet, PSC Bridges and SuperMIC respectively in the present study.
 
 \begin{table}[ht!]
@@ -41,34 +40,29 @@ All the experiments are performed using standard compute nodes on Comet, PSC Bri
 \end{table}
 
 \subsection{Installing libraries on multi-user HPC systems}
-Different packages and libraries are used in the present study in order to achieve the desired performance. 
-However, getting scientific libraries installed can be a very challenging task.
-
-There are always a lot of dependencies for highly optimized libraries \mknote{Gianis, Can you give references here or correct my sentences or add any if you think could be helpful to make it look better?}. 
-However, Lack of precise documentation can contribute to the challenge of getting the libraries to work.
-\gpnote{I do not think there is something we can cite on this. I propose the following: Usually, highly optimized libraries require a lot of dependencies. Sometimes the documentation does not cover a specific use case or system configuration. As a result, getting these libraries to install correctly is often challenging.}
-
-In addition, many domain specific packages are not available through package manager in super-computers and as a result,
-we spent considerable amount of time getting packages dependencies to work in the process of our performance study.
-As a result, we provide detail information on how we managed to build these libraries.
-This will let future works spend least amount of time for this purpose. 
-Detailed information regarding the version of each library, its dependencies, the quality of its documentation, the time necessary for building and installing the packages are given in Table \ref{tab:version}. 
+Usually, highly optimized libraries require a lot of dependencies. 
+Sometimes the documentation does not cover a specific use case or system configuration. 
+As a result, getting these libraries to install correctly is often challenging.
+In addition, many domain specific packages are not available through package manager in super-computers 
+Building and installing all libraries required a substantial amount of effort. 
+In order to provide insight into our process for creating our computational environment, we provide detailed information regarding the version of each library, its dependencies, the quality of its documentation, and the time necessary for building and installing the packages in Table \ref{tab:version}. 
+In addition, detailed instructions to create the environments can be found in the GitHub repository ``https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis" together with the benchmarking code.
 
 \begin{table}[ht!]
 \centering
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{c c c c c c c}
+\begin{tabular}{l c l c c l l}
   \toprule
-            \bfseries\thead{Package} & \bfseries\thead{Version} & \bfseries\thead{Description} & \bfseries\thead{Time to Result} & \bfseries\thead{Documentation} & \bfseries\thead{Installation} & \bfseries\thead{Dependencies}\\
+            \bfseries\thead{Package} & \bfseries\thead{Version} & \bfseries\thead{Description} & \bfseries\thead{Ease of Installation} & \bfseries\thead{Documentation} & \bfseries\thead{Installation} & \bfseries\thead{Dependencies}\\
   \midrule
-   \bfseries GCC & 4.9.4 & GNU Compiler Collection & Fast & Excellent & \makecell{via configuration \\files, environment \\or command line options, \\ minimal configuration \\ is required} &--\\
-   \bfseries OpenMPI & 1.10.7 & MPI Implementation & Fast & Excellent & \makecell{via configuration \\ files, environment \\or command line options, \\ minimal configuration \\ is required} &--\\
-   \bfseries Global Array & 5.6.1 & Global Array & Slow & Good & \makecell{via configuration files, environment \\or command line options, \\ several optional configuration\\ settings available} &\makecell{MPI 1.x/2.x/3.x \\ implementation like \\ MPICH or Open MPI \\ built with shared/dynamic\\ libraries, GCC}\\
-   \bfseries MPI4py & 3.0.0 & MPI for Python & Very Fast & Excellent & Conda Installation &\makecell{Python 2.7, \\or above, \\ MPI 1.x/2.x/3.x  \\ implementation like \\ MPICH or Open-MPI \\built with shared/dynamic \\libraries, Cython}\\
-   \bfseries GA4py & 1.0 & Global Array for Python & Fast & Average & Python Setuptools &\makecell{Python 2.7, \\or above, \\ MPI 1.x/2.x/3.x  \\implementation like \\ MPICH or Open-MPI \\ built with shared/dynamic \\libraries, Cython,  \\MPI4py, Numpy} \\
-   \bfseries PHDF5 & 1.10.1 & Parallel HDF5 & Slow & Excellent & \makecell{via configuration files, environment \\or command line options, \\ several optional configuration\\ settings available} &\makecell{MPI 1.x/2.x/3.x  \\ implementation like \\ MPICH or Open-MPI,  \\GNU, MPIF90,  \\MPICC, MPICXX}\\
-   \bfseries H5py &  2.7.1 & Pythonic wrapper around the HDF5 & Very Fast & Excellent & Conda Installation & \makecell{Python 2.7, or above,\\ PHDF5, Cython}\\    
-   \bfseries MDAnalysis & 0.17.0 & \makecell{Python library  \\ to analyze  \\trajectories from  \\MD simulations} & Very Fast & Excellent & Conda Installation & \makecell{Python $>=$2.7, or $<$3,\\ Cython, GNU, \\Numpy}\\
+   \bfseries GCC & 4.9.4 & GNU Compiler Collection & 0 & Excellent & \makecell[l]{via configuration \\files, environment \\or command line options, \\ minimal configuration \\ is required} &--\\
+   \bfseries OpenMPI & 1.10.7 & MPI Implementation & 0 & Excellent & \makecell[l]{via configuration \\ files, environment \\or command line options, \\ minimal configuration \\ is required} &--\\
+   \bfseries Global Array & 5.6.1 & Global Array & - & Good & \makecell[l]{via configuration files, environment \\or command line options, \\ several optional configuration\\ settings available} & \makecell[l]{MPI 1.x/2.x/3.x \\ implementation like \\ MPICH or Open MPI \\ built with shared/dynamic\\ libraries, GCC}\\
+   \bfseries MPI4py & 3.0.0 & MPI for Python & + & Excellent & Conda Installation &\makecell[l]{Python 2.7, \\or above, \\ MPI 1.x/2.x/3.x  \\ implementation like \\ MPICH or Open-MPI \\built with shared/dynamic \\libraries, Cython}\\
+   \bfseries GA4py & 1.0 & Global Array for Python & 0 & Average & Python Setuptools &\makecell[l]{Python 2.7, \\or above, \\ MPI 1.x/2.x/3.x  \\implementation like \\ MPICH or Open-MPI \\ built with shared/dynamic \\libraries, Cython,  \\MPI4py, Numpy} \\
+   \bfseries PHDF5 & 1.10.1 & Parallel HDF5 & - & Excellent & \makecell[l]{via configuration files, environment \\or command line options, \\ several optional configuration\\ settings available} &\makecell[l]{MPI 1.x/2.x/3.x  \\ implementation like \\ MPICH or Open-MPI,  \\GNU, MPIF90,  \\MPICC, MPICXX}\\
+   \bfseries H5py &  2.7.1 & Pythonic wrapper around the HDF5 & + & Excellent & Conda Installation & \makecell[l]{Python 2.7, or above,\\ PHDF5, Cython}\\    
+   \bfseries MDAnalysis & 0.17.0 & \makecell[l]{Python library to analyze  \\trajectories from MD simulations} & + & Excellent & Conda Installation & \makecell[l]{Python $>=$2.7 \\ Cython, GNU, Numpy}\\
   \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -77,25 +71,7 @@ Detailed information regarding the version of each library, its dependencies, th
 \label{tab:version}
 \end{table}
 
-From the libraries given in Table \ref{tab:version}, \emph{MPI4py}, \emph{H5py}, \emph{MDAnalysis} were the easiest to build. 
-Users are able to get these packages installed through the \emph{Conda} package support.
-\emph{OpenMPI}, \emph{GCC}, can be easily configured and installed.
-The configure script supports a lot of different command line options, but the support for these libraries is very strong, they are widely used and the excellent documentation and discussion mailing lists provide users with great resources for consult, troubleshooting and tracking issues.
-
-\emph{Global Array}, and \emph{PHDF5} have much slower installation especially because the libraries are built from source and variable configure options 
-are required to support specific network interconnects and back-end run-time environments.
-\emph{GA4py} has only one release, and does not provide users with strong documentation and there are still room for improvement for this package. 
-
-We performed our benchmark on several HPC resources and therefore, we had to install all the related packages and tools on all resources.
-However, there are always differences in the resources because their set up and architectures differ from each other. 
-For example, on SuperMIC although tool installation was done in the same way as Comet and also passed initial testing, the execution did not distribute the processes to all nodes. 
-This was due to the fact that our custom OpenMPI installation did not correctly parse the node list offered by SuperMIC to our job. 
-Thus, we had to manually pass the node lists to MPIRUN. 
-In addition, we found that the loaded modules, along with library path changes, did not propagate to all nodes from our OpenMPI installation. 
-OpenMPI's execution engine could not access the correct libraries and was not able to launch the processes correctly. 
-Reinstalling OpenMPI with enabling the flag to use the Open Run-Time Environment (ORTE) by default and including the OpenMPI installation to BASHRC allowed for correct execution.
- 
-Overall, the installation was successful on all clusters and we were able to observe similar
-performances (will be discussed in the result section) which shows the applicability of the 
-libraries for achieving near ideal scaling. 
+Overall, the installation was successful on all clusters and we were able to observe similar performances which shows the applicability of the libraries for achieving near ideal scaling.
+\obnote{not clear what you want to say here? The libraries are suitable for the intended purpose?}
+\mknote{I want to say that the results that we get using these libraries are reproduceable on all clusters} 
 

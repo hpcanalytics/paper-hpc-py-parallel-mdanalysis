@@ -1,46 +1,29 @@
 \label{sec:introduction}
-Molecular dynamics simulations are the most powerful and fundamental tool among a wide variety of techniques that enable scientists to achieve detailed info regarding the function of bio-molecules in living cells \cite{QwikMD2016}.
-MD is widely used to understand structure-to-function relationships of complex protein systems.
-Data analysis tools and libraries have been developed to extract the desired information from these MD simulations ~\cite{Gowers:2016aa,Michaud-Agrawal:2011fu,cpptraj-2013,himach-2008,mdtraj-2015,Mura:2010mw}.
+Molecular dynamics (MD) simulations are a powerful method to generate new insights into the function of bio-molecules \cite{QwikMD2016}.
+Data analysis tools and libraries have been developed to extract the desired information from these MD simulations ~\cite{Gowers:2016aa,Michaud-Agrawal:2011fu,cpptraj-2013,himach-2008,mdtraj-2015,Mura:2010mw}. \obnote{Be more to the point and make it relevant for the paper: talk about analyzing trajectories. Right now it just adds a bunch of citations}\mknote{Previously in discussion with giannis we decided to talk about straggler problem only and avoid discussing other packages. Do you mean not discussing the stragglers and talking about these papers in detail?}
 \package{MDAnalysis} \citep{Gowers:2016aa,Michaud-Agrawal:2011fu} is an open-source object-oriented Python library for structural and temporal analysis of molecular dynamics simulation trajectories and individual protein structures. 
-
-Development of powerful parallel supercomputers has significantly increased the physical and time scales of MD simulations.
-Present simulation times are close to biologically relevant ones and this has lead to rapid increase in the amount of data produced by MD simulations. 
-As a result, typical trajectory sizes from MD simulations range from Gigabytes to Terabytes~\cite{Cheatham:2015}. 
-Therefore, parallel algorithms and frameworks are the key to meeting the scalability and performance requirements for analyzing these trajectory files. 
-
-\package{MDAnalysis} does not provide parallel analysis of these trajectories.
-Thus, post-processing and analyzing these trajectories can become a very tedious process and requires great amount of time when performed serially. 
-As a result, we are trying to look for state of the art HPC tools (MPI and OpenMP) or Big Data ecosystem to speed up post processing task of MD trajectories.
-However, efficiently programming for a parallel environment and achieving near ideal scaling performance can be a very challenging task. 
+Although \package{MDAnalysis} accelerates selected algorithms with Open-MP, full scale parallel trajectory analysis that could make use of modern HPC resources such as multiple nodes on a cluster has not yet been implemented in the library. 
 
 In our previous study, we used a parallel map-reduce approach to study the performance of RMSD task \cite{Khoshlessan:2017ab, ICCP-2018}. 
-We previously looked at the \package{Dask} library \cite{Rocklin:2015aa}, which splits a computation in tasks and generates directed acyclic graphs (DAG) of these tasks that can be executed on a range of schedulers. 
-We also implemented the parallel analysis scheme with MPI, using the \package{mpi4py} package \cite{Dalcin:2011aa, Dalcin:2005aa}. 
-For both Dask and MPI we found that our benchmark task, the calculation of the minimum C$_{\alpha}$ RMSD for a
-subset of the residues in the enzyme adenylate kinase from a long MD simulation, only showed good strong scaling within a single node (up to 24 cores on \emph{SDSC Comet}).
-However, with a single compute node we are limited by the resources for executing a given problem.
+We previously looked at the performance of \package{Dask} library \cite{Rocklin:2015aa}, and MPI, using the \package{mpi4py} package \cite{Dalcin:2011aa, Dalcin:2005aa}. 
+For both Dask and MPI we found that our benchmark task only showed good strong scaling within a single node.
 Distributed computing, allows parallelizing our problems for larger problem sizes and lead to performance gains.
 But, as soon as we extend the computation beyond a single node, performance drops due to \emph{stragglers} tasks, a subset of processes that are significantly slower than the mean execution time of all tasks, increasing the total time to solution.
-
-Stragglers significantly impede job completion time and are a big challenge toward achieving improved performance.
+Stragglers significantly impede job completion time \cite{Garraghan2016} and have a high impact on performance and energy consumption on big data systems \cite{Tien-2017}.
 In the present study, we analyze the MPI case in more detail to better understand the origin of the stragglers.
-We want to provide simple and robust parallelization approaches to analyzing molecular dynamics (MD) trajectories, in order to speed-up post-processing of MD trajectories in \package{MDAnalysis} library. 
+We want to provide simple and robust parallelization approaches to analyze molecular dynamics (MD) trajectories, in order to speed-up post-processing of MD trajectories in the \package{MDAnalysis} library. 
 
-We have selected two of the algorithms in \package{MDAnalysis} one of which is I/O bound (RMSD) and the other is compute bound (Dihedral Featurization).
-We use SPMD paradigm to parallelize theses two algorithms on HPC resources.
+We have selected a commonly used algorithms in \package{MDAnalysis} RMSD.
+We use the single program multiple data (SPMD) paradigm to parallelize this algorithm on HPC resources.
 With SPMD, each process executes essentially the same code but on a different part of the data. 
 We use Python, a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in HPC parallel environments \cite{GAiN}. 
-Based on our initial analysis, there are two important performance parameters,  $t_{Compute}$/$t_{IO}$ and $t_{Compute}$/$t_{Communication}$ which are the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, and the ratio of computational to communication load respectively that determines whether we observe stragglers.
-We show this behavior using RMSD and dihedral featurization algorithms.
-If $t_{Compute}$/$t_{IO}$  $\gg 1$, the algorithm scales very well, otherwise it does not scale beyond a single node.  
-For the algorithms with small $t_{Compute}$/$t_{IO}$, we need to come up with strategies to improve scaling and overcome straggler problems.
-In addition, $t_{Compute}$/$t_{Communication}$ plays an important role on scaling and performance. 
+Based on our initial analysis, there are two important performance parameters, \text{$t_{Compute}$/$t_{IO}$} and \text{$t_{Compute}$/$t_{Communication}$} which are the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, and the ratio of computational to communication load respectively that determines whether we observe stragglers.
+If \text{$t_{Compute}$/$t_{IO}$}  $\gg 1$, the algorithm scales very well, otherwise it does not scale beyond a single node.  
+For the algorithms with small \text{$t_{Compute}$/$t_{IO}$}, we need to come up with strategies to improve scaling and overcome straggler problems.
+In addition, $t_{Compute}$/$t_{Communication}$ plays an important role on scaling and performance. \obnote{check, new} \mknote{I explained this effect in figure \ref{fig:tcomp_tcomm_ratio_rmsd}} 
 The details on these are given in the results section. 
-Looking at the timing distribution across all ranks we noticed that communication and I/O are the two main scalability bottlenecks.
+We noticed that communication and I/O are the two main scalability bottlenecks.
 
-Taking advantage of Global Array toolkit we were able to reduce communication cost noticeably.
-In addition, our data show that I/O time does not scale beyond a single node. 
-In order to improve I/O scaling, we used two different approaches: MPI-based approach using Parallel HDF5 \cite{pythonhdf5}, and splitting our trajectory to as many trajectory segments as the number of processes. 
-We provide the detail on these approaches on the following sections.
-But, both approaches significantly improved the performance and we were able to achieve near ideal scaling.
+Taking advantage of Global Array toolkit \cite{GA, GAiN}, we were able to reduce communication cost noticeably.
+In addition, our data show that I/O does not scale beyond a single node due to the contention of many requests to access the file and interference with MPI messages. 
+We examined two different approaches and both of them significantly improved the performance and lead near ideal scaling.

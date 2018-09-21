@@ -1,5 +1,5 @@
 \label{guideline}
-Here we provide practical guidelines for parallel analysis of the three dimensional time series (MD trajectories) in \package{MDAnalysis} on HPC resources.
+Based on our results, we provide practical guidelines for parallel analysis of the three dimensional time series (MD trajectories) in \package{MDAnalysis} on HPC resources.
 
 \begin{description}
   \item[\textbf{Heuristic 1}] Calculate compute to I/O (\tcomp/\tIO) and compute to communication (\tcomp/\tcomm) ratio. 
@@ -17,11 +17,11 @@ Here we provide practical guidelines for parallel analysis of the three dimensio
   blocks will be updated by the associated rank in the communication domain (Algorithm \ref{alg:GA}). 
   \end{description}
   
-  \item[\textbf{Heuristic 3}] For $\frac{\tcomp}{\tIO} \leqslant 1$ the task is I/O bound and one need to take the following steps:  
+  \item[\textbf{Heuristic 3}] For $\frac{\tcomp}{\tIO} \leqslant 1$ the task is I/O bound and one needs to take the following steps:  
   \begin{description}
     \item[\textbf{Heuristic 3.1}] If there is access to HDF5 format the recommended way will be to use MPI-based Parallel HDF5 (Section \ref{HDF5}). Since converting the XTC file to HDF5 is expensive, if the trajectory file formats are not in HDF5 format then one might prefer to split the trajectories. MD trajectories are often re-analyzed and therefore we suggest to incorporate trajectory conversion into the beginning of standard workflows for MD simulations. 
  Alternatively, it will be a good idea to keep the trajectories in smaller chunks, e.g. when running simulations on HPC resources using Gromacs \cite{Gromacs3, Gromacs1}, users can run their simulations with ``-noappend" option which   will automatically store the output trajectories in small chunks.
-    \item[\textbf{Heuristic 3.2}] If there is not access to HDF5, the trajectory file should be splitted into as many trajectory segments as the number of processes. Splitting the trajectories is cheap and time for splitting the trajectories are reported in \ref{sec:splitting-timing}.
+    \item[\textbf{Heuristic 3.2}] If there is not access to HDF5, the trajectory file should be split into as many trajectory segments as the number of processes. Splitting the trajectories is cheap (because it can be performed in parallel) (See \ref{sec:splitting-timing}).
     \item[\textbf{Heuristic 3.3}] In case of $\frac{\tcomp}{\tcomm} \ll 1$, appropriate parallel implementation along with \emph{Global Array} should be used on the trajectory segments (Section \ref{splitting-traj}) to achieve near ideal scaling.
   \end{description}
 \end{description}

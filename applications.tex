@@ -3,25 +3,21 @@
 \subsection{MDAnalysis}
 \label{sec:mda}
 
-Simulation data exist in trajectories in the form of three dimensional time series (atoms positions and velocities), and these come in a plethora of different and idiosyncratic file formats. 
-\package{MDAnalysis} is a widely used open source Python library to analyze these trajectory files with an object oriented interface. 
+Simulation data exist in trajectories in the form of time series of atoms positions and sometimes velocities, and these come in a plethora of different and idiosyncratic file formats. 
+\package{MDAnalysis} \citep{Gowers:2016aa,Michaud-Agrawal:2011fu} is a widely used open source Python library to analyze these trajectory files with an object oriented interface. 
 The package is written in Python, with time critical code in C/Cython. 
-\package{MDAnalysis} supports many common file formats of simulation packages including CHARMM, Gromacs, Amber, and NAMD and the Protein Data Bank format and enables accessing data stored in trajectories. 
-\package{MDAnalysis} utilizes fast numeric/algebraic libraries such as ATLAS, LAPACK, or MKL to improve speed and powerful Python libraries such as NumPy and SciPy.
+\package{MDAnalysis} supports most file formats of simulation packages including CHARMM, Gromacs, Amber, and NAMD and the Protein Data Bank format and enables accessing data stored in trajectories. 
  
 \subsubsection{Root Mean Square Distance (RMSD)}
-The calculation of the root mean square distance (\textbf{RMSD}) for C$_{\alpha}$ atoms after
-optimal superposition with the QCPROT algorithm \cite{Liu:2010kx,Theobald:2005vn} is commonly required in the analysis of molecular dynamics simulations (Algorithm \ref{alg:RMSD}). 
-The task used for the purpose of our benchmark is the $RMSD=\sqrt{\frac{1}{N}\sum_{i=1}^{N}\delta_{i}^{2}}$ implemented in MDAnalysis.analysis.rms module where $\delta_{i}$ is the distance between atom i and a reference structure (implemented in Cython \cite{Gowers:2016aa}).  
-This function computes the RMSD between two sets of coordinates using the fast QCPROT algorithm to optimally superimpose two structures and then calculates the RMSD. 
+The calculation of the root mean square distance (\textbf{RMSD}) for C$_{\alpha}$ atoms for a subset of the residues after 
+optimal superposition with the QCPROT algorithm \cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython \cite{Gowers:2016aa}) is commonly required in the analysis of molecular dynamics simulations (Algorithm \ref{alg:RMSD}). 
+The task used for the purpose of our benchmark is the $\text{RMSD}=\sqrt{\frac{1}{N}\sum_{i=1}^{N}\delta_{i}^{2}}$ implemented in MDAnalysis.analysis.rms module where $\delta_{i}$ is the distance between atom $i$ and a reference structure.  
 
 To this, the protein structure (selected C$_{\alpha}$ atoms) in the initial frame will be considered as the reference and as the mobile group at other time steps. 
-The superposition is done in the following way:
-First, the mobile group is translated so that its center of mass coincides with the one of reference. 
-Second, a rotation matrix is computed that spatially aligns the mobile group to reference which minimizes the RMSD between the coordinates of the mobile group and reference structure. 
-Finally, all atoms in mobile group are shifted and rotated.
-For each frame, a non-negative floating point number is calculated and the final result is a time-series of the RMSD. 
-RMSD values show how rigid the domains in a protein structure are, during the transition. 
+In the RMSD algorithm, a translation and rigid body rotation are found that minimize the RMSD between the mobile coordinates and the reference coordinates. 
+The RMSD of this optimum superposition is reported. 
+The process is repeated for each trajectory frame, with the output being a time series of RMSD values.
+The RMSD is used to show the rigidity of protein domains and more generally characterizes structural changes.
 The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$ \cite{rmsd} where T is the number of frames in the trajectory and N the number of particles in a frame.
 
 \begin{algorithm}[ht!]
@@ -54,67 +50,6 @@ The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \tim
 	\end{algorithmic}
 \end{algorithm}
 
-\subsubsection{Dihedral Featurization}
-As a real-world compute-bound task we investigated \textbf{Dihedral featurization} \cite{Sittel:2014aa} (Algorithm \ref{alg:Dihedral}) whereby a time series of
-feature vectors consisting of the two backbone dihedral angles per residue ($\phi_{i}$ and $\psi_{i}$) is calculated for all 212
-non-terminal residues. For each frame, an array of dihedral angles is calculated where for later convenience, an angle $\theta_{i}$ is
-actually represented as $(\cos\theta_{i}, \sin\theta_{i})$. 
-The order of complexity for Dihedral featurization algorithm (Algorithm \ref{alg:Dihedral}) is $\mathcal{O}(T \times N)$. 
-\obnote{Write out the calculation, based on the 4 atoms}
-\mknote{What calculations? how residues are converted to dihedrals? or the procedure we perform in the algorithm? that one is explained in algorithm 2}
-
-\begin{algorithm}[ht!]
-	\scriptsize
-	\caption{MPI-parallel Multi-frame Dihedral Featurization Algorithm}
-	\label{alg:Dihedral}
-	\hspace*{\algorithmicindent} \textbf{Input:} \emph{mobile}: the desired atom groups to perform RMSD on them \\ 
-	\hspace*{\algorithmicindent} \emph{start \& stop}: that tell which block of trajectory (frames) is assigned to each rank \\
-	\hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
-	\hspace*{\algorithmicindent} \textbf{Output:} Calculated Dihedral Angles
-	\begin{algorithmic}[1]
-		\Procedure{$angle2sincos$}{x}     
-		\State \Return $\cos{x},\: \sin{x}$
-		\EndProcedure
-		\\
-		\Procedure{$residues\_to\_dihedrals$}{residues}
-		\State List angles
-		\For{$\forall res$ in $residues$}
-		\State Append $(\phi (res),\: \psi (res))$ in angles
-		\EndFor
-		\State \Return angles
-		\EndProcedure
-		\\
-		\Procedure{$featurize\_dihedrals$}{dihedrals}
-		\State List angles
-		\For{$\forall dihedral$ in $dihedrals$}
-		\State Append value of $dihedral$ in angles
-		\EndFor
-		\State \Return \texttt{angle2sincos(angles)}
-		\EndProcedure
-		\\
-		\Procedure{$Block\_Dihedral$}{topology, trajectory, $ref$, start, stop}                       
-		\State u $\leftarrow$ Universe(topology, trajectory)
-		\State $g$ $\leftarrow$ u.frames[start:stop]
-		\State List $results$
-		\For{$\forall frame$ in $g$}
-		\State $D_{angles} \leftarrow featurize\_dihedrals(dihedrals)$
-		\State Append $D_{angles}$ in $results$ 
-		\EndFor
-		\EndProcedure
-		\\      
-		\State MPI Init 
-		\State residues $\leftarrow$ residues of mobile atom group
-		\State dihedrals $\leftarrow$ residues\_to\_dihedrals(residues)
-		\State rank $\leftarrow$ rank ID
-		\State index $\leftarrow$ indices of mobile atom group
-		\State xref0 $\leftarrow$ Reference atom group\textsc{\char13}s position
-		\State out $\leftarrow$ Block\_Dihedral(topology, trajectory, xref0, start=start, stop=stop)
-		\\
-		\State Gather(out, RMSD\_data, rank\_ID=0)
-		\State MPI Finalize
-	\end{algorithmic}
-\end{algorithm}
-
 \subsection{MPI for Python \package{mpi4py}}
 MPI for Python (\package{mpi4py}) is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to employ multiple processors \cite{Dalcin:2011aa, Dalcin:2005aa}.
 Python has several advantages that makes it a very attractive language including rapid development of small scripts and code prototypes as well as large applications and highly portable and reusable modules and libraries.
@@ -123,21 +58,19 @@ Based on the efficiency tests \cite{Dalcin:2011aa, Dalcin:2005aa}, the performan
 In addition, there are works on improving the communication performance in \package{mpi4py} and it shows minimal overheads compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}.
 
 \subsection{Applications of Global Array}
-Global array toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}.
-
-Global array (GA) toolkit allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
-Global Arrays in NumPy (GAiN) extends GA to python through Numpy \cite{GAiN}. 
+The Global array (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}. The Global array toolkit allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
+Global Arrays in NumPy (GAiN) extends GA to Python through Numpy \cite{GAiN}. 
 The basic components of the Global Arrays toolkit are function calls to create global arrays ($ga\_create$), copy data to ($ga\_put$), from ($ga\_get$), and between global arrays ($ga\_distribution$, $ga\_scatter$), and identify and access the portions of the global array data that are held locally ($ga\_access$). 
 In addition, there are also functions to destroy arrays ($ga\_destroy$) and free up the memory originally allocated to them \cite{GAiN}.
 
 When the global array is created ($ga\_create$) each process will create an array of the same shape and size, physically located in the local memory space of that process \cite{GA}. 
-User can get a pointer to this memory by using $ga\_access$ function or one of its variants.
-Using this pointer it is possible to directly modify the data that is local to each process.
 The GA library keeps track of all these memory locations by recording a list of them when a global array is created. 
+The user can get a pointer to this memory by using $ga\_access$ function.
+Using this pointer it is possible to directly modify the data that is local to each process.
 When a process tries to access a block of data, it first does a decomposition of the request into individual blocks representing the contribution to the total request from the data held locally on each process \cite{PNNL:2018}. 
 The requesting process then makes individual requests to each of the remote processes. 
-The requests are implemented using the native one-sided semantics inside the the infini-band Verbs library. 
-OpenIB/infini-band uses SHMEM (Symmetric Hierarchical MEMory) parallel computing library \cite{SHMEM1,SHMEM2} within the node and will use the infini-band network card to communicate between nodes.
+The way data communication within the node and between the nodes happens depends on which runtime is configured when installing the GA library.
+
 Algorithm \ref{alg:GA} describes RMSD algorithm in combination with the global array.
 In this algorithm, we use global array instead of message passage paradigm to see if we can reduce communication cost. 
 
@@ -165,12 +98,13 @@ In this algorithm, we use global array instead of message passage paradigm to se
 \end{algorithm}
 
 \subsection{MPI and Parallel HDF5}
-MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
+HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python \cite{pythonhdf5}.
+Parallel HDF5 typically sits on top of MPI-IO layer and can use MPI-IO optimizations. 
 In parallel HDF5, all file accesses are coordinated though the MPI library; otherwise, multiple processes would compete over accessing over the same file on disk. 
+MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
 HDF5 itself handles nearly all the details involved with coordinating file access when the shared file is opened through ``mpio" driver.
-In addition,  MPI communicator should be supplied as well and the users also need to follow some constraints for data consistency \cite{pythonhdf5}.
+In addition, MPI communicator should be supplied as well and the users also need to follow some constraints for data consistency \cite{pythonhdf5}.
 
-\subsubsection{Collective Versus Independent Operations} 
 MPI has two flavors of operation: collective, which means that all processes have to participate in the same order, and independent, which means each process can perform the operation or not and the order also does not matter  \cite{pythonhdf5}.
 With HDF5, modifications to file metadata must be done collectively and although all processes perform the same task, they do not wait until the others catch up \cite{pythonhdf5}. 
 Other tasks and any type of data operations can be performed independently by processes.
