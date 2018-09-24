@@ -1,5 +1,6 @@
 \label{guideline}
 Based on our results, we provide practical guidelines for parallel analysis of the three dimensional time series (MD trajectories) in \package{MDAnalysis} on HPC resources.
+To achieve, near ideal scaling we enforce the following step by step guidelines:
 
 \begin{description}
   \item[\textbf{Heuristic 1}] Calculate compute to I/O (\tcomp/\tIO) and compute to communication (\tcomp/\tcomm) ratio. 

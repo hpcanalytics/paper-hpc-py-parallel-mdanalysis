@@ -8,8 +8,10 @@ These cases include: Splitting the trajectories with collective communications i
 Figure \ref{fig:MPI-splitting-clusters} shows how RMSD task scales with the increase in the number of cores on different HPC resources.  
 When we split the trajectories the scaling follows the same pattern on both Comet and SuperMIC with global array and without global array.
 Both Comet and SuperMIC scale very well using Global array. 
-RMSD task still scales on both clusters without global array; however, scaling is far from ideal scaling due to the communication cost (Refer to section \ref{splitting-traj} and Figure \ref{fig:MPIranks-split}). 
+RMSD task still scales on both clusters without global array; however, scaling is far from ideal scaling due to the communication cost (Refer to section \ref{splitting-traj} and Figures \ref{fig:MPIranks-split} and \ref{fig:MPIwithIO-split-SuperMIC}). 
 Overal, the scaling of the RMSD task is better on SuperMIC and the performance gap increases as we increase the number of cores.
+\obnote{Not sure what this is telling me. I think you can just leave it at the observation that GA works better here. }
+\mknote{What part is not clear?This is explaining that why GA should do better and it is because it avoids some overheads that MPI collective comm has.}
 In global arrays, primary mechanisms provided by GA for accessing data are block copy operations that transfer data between layers of memory hierarchy, namely global memory of the node (distributed array) and local memory. 
 Each process is able to directly access data held in a section of a Global Array that is locally assigned to that process \cite{GA}.
 This is an advantage over MPI collective communication where direct memory access is not allowed. 
@@ -40,7 +42,9 @@ nodes.
 \caption{Comparison of the performance of the RMSD task with MPI ($\tcomp/\tIO \approx 0.3$) when the trajectories are split using global 
 array and without global array across different clusters (SDSC Comet, SuperMIC). 
 In case of global array, all ranks update the global array (\text{$ga_{put}$}) and rank 0 accesses the whole RMSD array through the global memory address (\text{$ga_{get}$}).
-Five repeats are performed to collect statistics. The error bars show standard deviation with respect to mean. }
+Five repeats are performed to collect statistics. The error bars show standard deviation with respect to mean.}
+\obnote{If comm and the other terms are added, does it become clearer why no-GA is much worse?}
+\mknote{Yes, it does. I showed it in rmsd with GA. Here this plot already contains 8 lines. If I add communication. it will get too crowded for one plot. previous plots show it}
 \label{fig:MPI-splitting-clusters}
 \end{figure} 
 

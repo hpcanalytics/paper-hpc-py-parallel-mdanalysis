@@ -1,9 +1,44 @@
 \label{background}
-\obnote{The background still needs: other parallel analysis libraries, work on accessing files in parallel; someone must have written something...}
-Long Tail phenomena, whereby a small proportion of task stragglers significantly impede job completion time is a big challenge toward achieving improved performance \cite{Garraghan2016}.
-Long Tail phenomena is a known problem in other frameworks such as Spark \cite{Kyong2017,Ousterhout2017,Gittens2016}, Google\textsc{\char13}s MapReduce \cite{Dean2004}, Hadoop \cite{Dean2004}, and cloud data centers \cite{Schmidt2016}.
 
-Straggler root-cause has both internal and external factors. 
+Parallel analysis frameworks are becoming very popular instead of the traditional sequential post-simulation data analysis methods as a result of increase in the computational power of MD simulations and size of the generated output dataset.
+
+HiMach \cite{himach-2008} introduces scalable and flexible parallel Python framework to deal with massive MD trajectories, by combining and extending the strengths of Google\textsc{\char13}s MapReduce and VMD analysis tool. 
+HiMach\textsc{\char13}s runtime is responsible to parallelize and distribute the Map and Reduce classes to the assigned cores.
+Parallel I/O for file access during the map tasks and \text{MPI\_Allgather} in the reduction process. 
+HiMach, however, does not discuss parallel analysis for the task types which can not be analyzed using MapReduce implementation.
+The analysis needs by MD community, however, are always varied and a generalized parallel framework should be able to provide parallel analysis for a variety of task types.
+
+Wu et. al. \cite{Wu_et.al} present a scalable parallel framework for distributed-memory post-simulation data analysis.
+This work consists of an interface that allows a user to write analysis programs sequentially, and the machinery that ensures these programs execute in parallel automatically. 
+The main components of the proposed framework are (1) domain decomposition that splits computational domain into blocks with specified boundary conditions, (2) HDF5 based parallel I/O (3) data exchangethat communicates ghost atoms between neighbor blocks, and (4) parallel analysis implementation of a real-world analysis application.
+Again, this work does not discuss parallel analysis for the task types which can not be analyzed using MapReduce implementation and is limited to HDF5 file format.
+
+Zazen \cite{Zazen} is a novel task-assignment protocol to overcome the I/O bottleneck for many I/O bound tasks.This protocol caches a copy of simulation output files on the local disks of an analysis cluster?s compute nodes, and uses co-locate data access with computation. 
+Zazen is implemented in a parallel disk cache system and avoids the overhead associated with querying metadata servers by reading data in parallel from local disks.
+However, transferring Terabytes of data might not be feasible even if high performance data transfer tools are used for that purpose.
+
+VMD \cite{VMD2013} provides molecular visualization and analysis tool through algorithmic and memory efficiency improvements, hand-vectorization of key CPU algorithms, new and improved GPU analysis andvisualization algorithms, and parallel I/O performance.
+While VMD provides a very strong tool for use in the personal workstation or local clusters, it is not typically used for very heavy and large scale computations on HPC clusters.
+In addition, VMD does not provide much flexibility for analysis of very specific task types and performing multiple types of analysis.
+
+CPPTraj~\cite{cpptraj-2013} offers three levels of parallelization through a C++ implementation. The two are through MPI and the third through OpenMP.
+CCPTraj allows the parallel read between frames of the same trajectory or ensemble members of the same trajectory. 
+ pyPcazip \cite{pyPcazip} is a suite of software tools written in Python for compression and analysis of molecular dynamics (MD) simulation data. 
+pyPcazip is MPI parallelised and is specific to PCA-based investigations of MD trajectories and supports wide variety of trajectory file formats.
+pyPcazip can take one or many input MD trajectory files and converts them into a highly compressed, HDF5-based, .pcz format with insignificant loss of information.
+
+In situ analysis can be simultaneously executed with MD simulation through which mitigates I/O bottlenecks.
+Malakar et. al. \cite{Malakar-etal} provide approaches for improving in situ analysis performance. 
+They study the scalability challenges of time- and space-shared modes of analyzing large-scale MD simulations through a topology-aware mapping for simulation and analysis using LAMMPS code.
+
+The motivation behind present study is to provide parallel analysis in \package{MDAnalysis} library.
+However, straggler tasks hamper achieving scalability beyond a single compute node \cite{Khoshlessan:2017ab}. 
+All of the above frameworks, provide tools for parallel analysis of MD trajectories. 
+However, none of these framework discuss the difficulties related to straggler tasks and their effect on the performance of parallel task.
+Parallel computing requires substantial programming efforts especially when researchers are not experts in computer science.
+As a result we decided to have a detailed study on the straggler problem (So called long Tail phenomena) and address useful solutions for parallel analysis of MD trajectories.
+Long Tail phenomena, whereby a small proportion of task stragglers significantly impede job completion time is a big challenge toward achieving improved performance \cite{Garraghan2016}.
+Long Tail phenomena is a known problem in other frameworks such as Google\textsc{\char13}s MapReduce \cite{Dean2004}, Spark \cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop \cite{Dean2004}, and cloud data centers \cite{Schmidt2016}. Straggler root-cause has both internal and external factors. 
 Internal factors include heterogeneous capacity of worker nodes, and resource competition due to other tasks running on the same worker node. 
 External factors include resource competition due to co-hosted applications, input data skew, remote input or output source being too slow and faulty hardware \cite{Chen2014}.
 
@@ -13,79 +48,9 @@ In addition to these reasons, stragglers on Spark have been attributed to the ov
 Garraghan et al. \cite{Garraghan2016} reported high CPU utilization, disk utilization, unhandled I/O access requests and network package loss as the most frequent reasons for stragglers on Virtualized Cloud Data-centers.
 
 Tuning resource allocation and tuning parallelism such as breaking the workload into many small tasks that are dynamically scheduled at runtime \cite{Rosen2012}, slow Node-Threshold \cite{Dean2004}, speculative execution \cite{Dean2004}, sampling or data distribution estimation techniques, SkewTune to avoid data imbalance \cite{Kwon2012}, dynamic work rebalancing \cite{Schmidt2016}, blocked time analysis \cite{Ousterhout2015}, and Intelligent scheduling \cite{AWE-WQ2014} are among a wide variety of approaches that are trying to detect and mitigate stragglers. 
-
 However, a comprehensive solution will involve tricks to avoid stragglers. 
-This work focuses on the stragglers root-causes that prevent us from achieving near ideal scaling in \package{MDAnalysis} beyond a single compute node.
-In the present study, we are trying to find the root-cause of the straggler tasks and solutions through which we can improve performance and scaling.
-  
 
-%--------------------------------------------------
-
-%Over the past few years a significant amount of research has been done trying to detect and mitigate stragglers \cite{Rosen2012, Dean2004, Chen2014, Bhandare2016, Kwon2012}. 
-%There are also works to find the stragglers root-cause in many big data processing systems \cite{Ballani2011, Ananthanarayanan2014, Jeyakumar2013, Li2014, Zaharia2012}.
-
-%Straggler root-cause has both internal and external factors. 
-%Internal factors include heterogeneous capacity of worker nodes, and resource competition due to other tasks running on the same worker node. 
-%External factors include resource competition due to co-hosted applications, input data skew, remote input or output source being too slow and faulty hardware \cite{Chen2014}.
-
-%Spark introduces stragglers for a number of different reasons: 1) garbage collections~\cite{Kyong2017,Ousterhout2017}, 2) JVM positioning to cores~\cite{Kyong2017}, 
-%2) the delay's introduced while the task moves from the scheduler to executing~\cite{Gittens2016}, 3) Disk I/O during shuffling, 4) Java's just-in-time compilation~\cite{Ousterhout2017}, 
-%and 5) output skew \cite{Ousterhout2017}. 
-%In addition to these reasons, stragglers on Spark have been attributed to the overall performance of the worker or competition between resources \cite{Yang2016}.
-
-%Tuning resource allocation and tuning parallelism are other methods to improve Spark job performance. 
-%However, manual tuning are laborious and imprecise. 
-%Many frameworks suggest breaking the workload into many small tasks that are dynamically scheduled at runtime \cite{Rosen2012}. 
-%This approach is only effective in systems with high-throughput, low-latency task schedulers and efficient data materialization though.
-%In general, finer-grained splitting produces fewer stragglers; however, at some point the overhead of a large number of splits starts to dominate. 
-
-%Some frameworks will identify the straggler nodes using a slow Node-Threshold. 
-%They identify straggler node when its performance score is less than the average performance score of all nodes and therefore prevent to launch any tasks on these slow nodes. 
-%The straggler node can be due to the faulty hardware or mis-configuration \cite{Dean2004}. 
-%However, this solution only addresses hardware-based stragglers \cite{Chen2014}.
-
-%For most of the factors causing stragglers, speculative execution and its improved versions are an effective way to solve the straggler problem. 
-%Speculative execution (back-up tasks) is a replication-based reactive straggler mitigation technique that spawns redundant copies of the slow running tasks, hoping a copy will reach completion before the original. 
-%This is the most prominently used in production clusters at Facebook and Microsoft Bing and is also implemented by both Hadoop and Google\textsc{\char13}s MapReduce \cite{Dean2004}.
-%Google reported that speculative execution can improve job running times by $44\%$ \cite{Dean2004}.
-%However, without any additional information, such reactive techniques can not differentiate between nodes that are inherently slow and nodes that are temporarily overloaded (i.e. input data skew or data imbalance) \cite{Chen2014, Bhandare2016}.
-
-%Sampling or similar techniques can help estimate the data distribution to split the data more evenly. 
-%However, such statistics are often expensive to collect, insufficiently precise, or obsolete. 
-%Moreover, stragglers can happen even if the data distribution is balanced, due to unbalanced processing complexity for different parts of the data \cite{Khoshlessan:2017ab}.
-
-%SkewTune is another technique for addressing data imbalance. 
-%SkewTune identifies the task with the greatest expected remaining processing time when a node becomes idle. 
-%The un-processed input data of this straggling task is then pro-actively repartitioned in a way that fully utilizes the nodes in the cluster and preserves 
-%the ordering of the input data so that the original output can be reconstructed by concatenation \cite{Kwon2012}. 
-%SkewTune can significantly reduce job runtime and adds little to no overhead in the absence of skew; however, the cost of fully reading the rest of a straggler's input can be prohibitive, in particular, making 
-%the technique meaningless if the straggler was already dominated by the cost of reading the input.
-
-%Garraghan et al. \cite{Garraghan2016} studied stragglers on Virtualized Cloud Data-centers. 
-%Through statistical analysis they found that the most frequent reasons were high CPU utilization, disk utilization, unhandled I/O access requests and network package loss. 
-%About $3\%$ to $6.5\%$ of the tasks were stragglers resulting to a $37.8\%$ to almost $50\%$ of jobs negatively impacted. 
-%In this study, task stragglers are defined as tasks whose execution is $150\%$ of the median duration of all tasks within the same job and median task duration is used instead of mean task duration. 
-%This is especially because median job execution duration is less affected by extreme execution times caused by stragglers.  
-
-%The analysis performed on the trace data from Microsoft Bing's production cluster shows that $80\%$ of stragglers have a uniform probability of delay between $150-250\%$ 
-%compared to the median task duration, with 10\% exhibiting a delay $1000\%$ greater than median task duration \cite{Ananthanarayanan2010}.
-
-%Cloud data-flow deals with stragglers problem using dynamic work rebalancing. 
-%However, this method has its own technical challenges which includes data consistency, intense systematic testing, as well as a careful design, and predicting how a task will progress over time \cite{Schmidt2016}.
-%In addition, this approach is only effective in systems with high-throughput, low-latency task schedulers and efficient data materialization \cite{Rosen2012}.
-
-%Blocked time analysis is used to measure how long each task spends blocked on a given resource. 
-%These approach provides a per-task measurements and allows the understanding of straggler root-causes by correlating slow tasks with long blocked times \cite{Ousterhout2015}. 
-%However, the work by \cite{Ousterhout2015} does not look at a vast range of workloads nor a wide range of cluster sizes.
-
-%Intelligent scheduling \cite{AWE-WQ2014} is another approach to remove stragglers. Several components of task scheduling affect the scalability.
-%The first is knowledge of a worker\textsc{\char13}s past task execution times. This allows to schedule tasks preferentially to the most performant machines. 
-%The second involves task replication to remove the effect of straggling workers. 
-%By monitoring the state of the workers either busy or idle ($w_{i}$) and the number of tasks waiting to be assigned a worker, task replication can be engaged when $w_{i}>0$.
-
-%All of these previous studies are trying to mitigate stragglers through a wide variety of approaches.
-%While a comprehensive solution will involve tricks to avoid causing stragglers. 
-%This work focuses on the stragglers root-causes that prevent us from achieving near ideal scaling in \package{MDAnalysis} beyond a single compute node.
-%In the present study, we are trying to find the root-cause of the straggler tasks and solutions through which we can improve performance and scaling.
+In the present study, we find the root-cause of the straggler tasks and provide solutions through which we can improve performance and scaling.
+Even though the proposed solutions to avoid stragglers, is specifically applied for MD trajectory analysis in \package{MDAnalysis} library, all of these principles and implementation techniques are potentially applicable to data analysis for other types of Python-based libraries.
 
 

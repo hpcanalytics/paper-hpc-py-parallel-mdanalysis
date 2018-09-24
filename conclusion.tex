@@ -8,8 +8,7 @@ In this study, we looked at the \emph{straggler} problem that we previously face
 To this aim, we tested our benchmark on RMSD (I/O bound) algorithm in \package{MDAnalysis}.
 
 Our initial analysis showed that the ratio between compute load to I/O load and compute load to communication load have a crucial effect on the performance. 
-For sufficiently large per-frame workloads ($\tcomp/\tIO \approx 100$), close to ideal scaling was achievable (Figure \ref{fig:comparison-t_comm-dihedral}).
-However, the I/O bound workload ($\tcomp/\tIO \approx 0.3$) does not scale due to the appearance of \emph{stragglers}. 
+An I/O bound workload (e.g. RMSD task, $\tcomp/\tIO \approx 0.3$) does not scale due to the appearance of \emph{stragglers}. 
 
 Different factors like opening the trajectory file, or other sources of overheads can be responsible for observing \emph{stragglers} for I/O bound workload.
 But, for the I/O bound workload, both communication and I/O appeared to be the main scalability bottlenecks when using a shared file.
