@@ -4,7 +4,7 @@ Parallel analysis frameworks are becoming very popular instead of the traditiona
 
 HiMach \cite{himach-2008} introduces scalable and flexible parallel Python framework to deal with massive MD trajectories, by combining and extending the strengths of Google\textsc{\char13}s MapReduce and VMD analysis tool. 
 HiMach\textsc{\char13}s runtime is responsible to parallelize and distribute the Map and Reduce classes to the assigned cores.
-Parallel I/O for file access during the map tasks and \text{MPI\_Allgather} in the reduction process. 
+HiMach uses parallel I/O for file access during the map tasks and \text{MPI\_Allgather} in the reduction process. 
 HiMach, however, does not discuss parallel analysis for the task types which can not be analyzed using MapReduce implementation.
 The analysis needs by MD community, however, are always varied and a generalized parallel framework should be able to provide parallel analysis for a variety of task types.
 
@@ -13,7 +13,7 @@ This work consists of an interface that allows a user to write analysis programs
 The main components of the proposed framework are (1) domain decomposition that splits computational domain into blocks with specified boundary conditions, (2) HDF5 based parallel I/O (3) data exchangethat communicates ghost atoms between neighbor blocks, and (4) parallel analysis implementation of a real-world analysis application.
 Again, this work does not discuss parallel analysis for the task types which can not be analyzed using MapReduce implementation and is limited to HDF5 file format.
 
-Zazen \cite{Zazen} is a novel task-assignment protocol to overcome the I/O bottleneck for many I/O bound tasks.This protocol caches a copy of simulation output files on the local disks of an analysis cluster?s compute nodes, and uses co-locate data access with computation. 
+Zazen \cite{Zazen} is a novel task-assignment protocol to overcome the I/O bottleneck for many I/O bound tasks.This protocol caches a copy of simulation output files on the local disks of an analysis cluster\textsc{\char13}s compute nodes, and uses co-locate data access with computation. 
 Zazen is implemented in a parallel disk cache system and avoids the overhead associated with querying metadata servers by reading data in parallel from local disks.
 However, transferring Terabytes of data might not be feasible even if high performance data transfer tools are used for that purpose.
 
@@ -31,12 +31,12 @@ In situ analysis can be simultaneously executed with MD simulation through which
 Malakar et. al. \cite{Malakar-etal} provide approaches for improving in situ analysis performance. 
 They study the scalability challenges of time- and space-shared modes of analyzing large-scale MD simulations through a topology-aware mapping for simulation and analysis using LAMMPS code.
 
-The motivation behind present study is to provide parallel analysis in \package{MDAnalysis} library.
-However, straggler tasks hamper achieving scalability beyond a single compute node \cite{Khoshlessan:2017ab}. 
 All of the above frameworks, provide tools for parallel analysis of MD trajectories. 
 However, none of these framework discuss the difficulties related to straggler tasks and their effect on the performance of parallel task.
+The motivation behind present study is to provide parallel analysis in \package{MDAnalysis} library.
+However, straggler tasks hamper achieving scalability beyond a single compute node \cite{Khoshlessan:2017ab}. 
 Parallel computing requires substantial programming efforts especially when researchers are not experts in computer science.
-As a result we decided to have a detailed study on the straggler problem (So called long Tail phenomena) and address useful solutions for parallel analysis of MD trajectories.
+As a result we decided to have a detailed study on the straggler problem (So called long Tail phenomena) and address useful solutions to overcome straggler problem.
 Long Tail phenomena, whereby a small proportion of task stragglers significantly impede job completion time is a big challenge toward achieving improved performance \cite{Garraghan2016}.
 Long Tail phenomena is a known problem in other frameworks such as Google\textsc{\char13}s MapReduce \cite{Dean2004}, Spark \cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop \cite{Dean2004}, and cloud data centers \cite{Schmidt2016}. Straggler root-cause has both internal and external factors. 
 Internal factors include heterogeneous capacity of worker nodes, and resource competition due to other tasks running on the same worker node. 

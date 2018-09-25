@@ -20,10 +20,11 @@ We use Python, a machine-independent, byte-code interpreted, object-oriented pro
 Based on our initial analysis, there are two important performance parameters, \text{$t_{Compute}$/$t_{IO}$} and \text{$t_{Compute}$/$t_{Communication}$} which are the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, and the ratio of computational to communication load respectively that determines whether we observe stragglers.
 If \text{$t_{Compute}$/$t_{IO}$}  $\gg 1$, the algorithm scales very well, otherwise it does not scale beyond a single node.  
 For the algorithms with small \text{$t_{Compute}$/$t_{IO}$}, we need to come up with strategies to improve scaling and overcome straggler problems.
-In addition, $t_{Compute}$/$t_{Communication}$ plays an important role on scaling and performance. \obnote{check, new} \mknote{I explained this effect in figure \ref{fig:tcomp_tcomm_ratio_rmsd}} 
+In addition, $t_{Compute}$/$t_{Communication}$ plays an important role on scaling and performance. \obnote{check, new} \mknote{I explained this effect in figure 5} 
 The details on these are given in the results section. 
 We noticed that communication and I/O are the two main scalability bottlenecks.
 
 Taking advantage of Global Array toolkit \cite{GA, GAiN}, we were able to reduce communication cost noticeably.
 In addition, our data show that I/O does not scale beyond a single node due to the contention of many requests to access the file and interference with MPI messages. 
 We examined two different approaches and both of them significantly improved the performance and lead near ideal scaling.
+The code repo ``https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis" provides detailed documentation to recreate the computational environment on the tested HPC resources
