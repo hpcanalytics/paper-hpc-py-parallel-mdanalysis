@@ -1,6 +1,6 @@
 \label{impl_exp}
 
-\subsection{RMSD Benchmarks}
+\subsection{RMSD Benchmark}
 \label{sec:RMSD}
 The RMSD algorithm for the present test case represents a task for which the computational workload per frame is smaller than the I/O workload per frame ($t_{compute}^{frame}$ = 0.09 ms, $t_{IO}^{frame}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$, calculated based on Equation \ref{eq:Compute-I/O}). 
 We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet}, and \emph{Stampede}, using either Dask or MPI \cite{Khoshlessan:2017ab}. 
@@ -35,7 +35,7 @@ This initial analysis (especially Figure \ref{fig:MPIranks}) indicates that comm
 
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison.pdf}
-\caption{Time scaling for different components}
+\caption{Scaling for different components}
 \label{fig:ScalingComputeIO}
 \end{subfigure}
 \hfill
@@ -50,7 +50,7 @@ Results are communicated back to rank 0 (communications included). Five repeats 
 standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
 opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (as described in methods).
 This is typical data from one run of the 5 repeats. MPI ranks 0 and 63 to 72 are stragglers, i.e., their total time 
-far exceeds the mean of the majority of ranks.}
+far exceeds the mean of the majority of ranks. \textbf{Note:} In serial, there is no communication.}
   
 \obnote{This does not look like t\_comp/t\_IO = 0.3 ? looks more like 2/30 = 0.06; the next page says 4/26=0.16. Please make sure that all numbers are consistent!}
 \mknote{because t\_comp/t\_IO is per frame and it is also average, what I have reported is only average.}
@@ -91,7 +91,7 @@ We therefore increased the computational load so that the work became compute bo
 So that now processes are not constantly performing I/O and instead, I/O is interleaved with longer periods of computation.
 In order to artificially increase the computational load we repeated the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop respectively.
 
-\subsubsection{Increased workload (RMSD)}
+\subsubsection{Examining the Effect of Increased Compute workload for RMSD Task}
 The RMSD workload was artificially increased forrty-fold (``$40\times$'' ), seventy-fold (``$70\times$'' ), and hundred-fold (``$100\times$'' ) and we measured performance as before. 
 These workloads correspond to \tcomp/\tIO ratio of 12, 21, 30 respectively as shown in Table \ref{tab:load-ratio}.
 We performed this experiment to show the effect of $\tcomp/\tIO$ ratio on performance (Figure \ref{fig:tcomp_tIO_effect}).
@@ -197,7 +197,7 @@ These slow processes take about 50~s, which are slower than the mean execution t
 
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/RMSD-ga4py-time_IO_comparison.pdf}
-\caption{Time scaling for different components}
+\caption{Scaling for different components}
 \label{fig:ScalingComputeIO-ga4py}
 \end{subfigure}
 \hfill
@@ -213,7 +213,7 @@ Five repeats are performed to collect statistics. (a-c) The error bars show stan
 (d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0, \text{$t_{Access\_Global\_Array}$}, ending the for loop \text{$t_{end\_loop}$}, 
 opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$}, 
 \text{$t_{Overhead2}$} per MPI rank (as described in methods). This is typical data from one run of the 5 repeatsMPI ranks 20 and 56 are stragglers, i.e., 
-their total time far exceeds the mean of the majority of ranks.}
+their total time far exceeds the mean of the majority of ranks. \textbf{Note:} In serial, there is no communication.}
 \label{fig:MPIwithIO-ga4py}
 \end{figure}
 
@@ -256,7 +256,7 @@ These delayed tasks impact performance as well and hence the speed-up is not sti
 \centering
 \begin{subfigure}{.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
-  \caption{\tcomp and \tIO scaling}
+  \caption{Scaling for different components}
   \label{fig:ScalingComputeIO-split}
 \end{subfigure}
 \hfill
@@ -288,7 +288,7 @@ These delayed tasks impact performance as well and hence the speed-up is not sti
 \caption{Comparison on the performance of the RMSD task with MPI when the trajectories are split using global array and without global array (\text{$\tcomp/\tIO \approx 0.3$}) on SDSC Comet.
 In case of global array, all ranks update the global array (\text{$ga_{put}$}) and rank 0 accesses the whole RMSD array through the global memory address (\text{$ga_{get}$}).
 Five repeats are performed to collect statistics. (a) Compute \& I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean. (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0, \text{$t_{Access\_Global\_Array}$}, ending the for loop \text{$t_{end\_loop}$}, 
-opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$}, \text{$t_{Overhead2}$} per MPI rank (as described in methods). When global array is not used, the performance is affected due to the non-uniform communication time across different ranks. However, when global array is used communication time has significantly reduced and scaling is close to ideal.}
+opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$}, \text{$t_{Overhead2}$} per MPI rank (as described in methods). When global array is not used, the performance is affected due to the non-uniform communication time across different ranks. However, when global array is used communication time has significantly reduced and scaling is close to ideal. \textbf{Note:} In serial, there is no communication.}
 \label{fig:MPIwithIO-split}
 \end{figure}
 
@@ -303,74 +303,51 @@ The present results show that contention for a file impacts the performance.
 The initial results with splitting the trajectory file suggests that there is in fact an effect, which possibly also interferes with the communications when $\tcomp/\tIO \ll 1$ (i.e. with a I/O bound workload).
 
 \subsection{Effect of \tcomp/\tcomm on Performance}
-
-In addition to the compute to I/O ratio we define another important performance parameter which is compute to communication ratio.
+\obnote{Analyze the RMSD with different load. See if t\_comp/t\_comm is also important in that case. Can you still draw the same conclusions?}
+\mknote{What do you mean by different loads? tcomp/tio is constant for all number of processes and as a result we were able to see the changes with the change in the ratio. 
+tcomp/tcomm is not constant with number of processes (fig 5). A better experiment would be to change size of the arrays to be communicated for RMSD 100X for example and evaluate performance. If you agree with that let me know and I wlll go ahead and run those cases.}
+In addition to the compute to I/O ratio we define another important performance parameter called compute to communication ratio.
 Based on the results shown in the section \ref{I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without global array.
-This means that the task remains communication bound (Figure \ref{fig:tcomp_tcomm_ratio_rmsd}). 
-Examples of the communication bound task is RMSD task with splitting the trajectories and without global array.
+This means that the task remains communication bound (Figure \ref{fig:MPIwithIO-split}). 
 When the task is communication bound, i.e.,
 
 \begin{gather*}
   \frac{t_{comp}}{t_{comm}} \ll 1.
 \end{gather*}
 
-We are not able to achieve near ideal scaling even when I/O is not a bottleneck anymore (Figure \ref{fig:MPIwithIO-split}).
-However, Dihedral featurization turned out to be compute bound and we were able to achieve near ideal scaling even when we did not use global array in our benchmark (Figure \ref{fig:MPIwithIO-dihed}).
-This is mainly because both communication and I/O are very small with respect to compute time ($\tcomp/\tIO \approx 100$ and Figure \ref{fig:tcomp_tcomm_ratio_dihed}). 
-Although, there are stragglers due to communication (Figure \ref{fig:MPIwithIO-comm-dihed-rank}) their effect on performance is not crucial mainly because compute to communication ratio is very large. 
-We therefore, conclude that decreasing the relative communication load with respect to compute load would also reduce the stragglers. 
 If the computational load is more than communication load then the work became compute bound, i.e.,
 
 \begin{gather*}
   \frac{t_{comp}}{t_{comm}} \gg 1.
 \end{gather*}
 
-It should be noted that size of the RMSD arrays to be communicated to rank 0 is much smaller than the resulted arrays in Dihedral featurization task (0.7 MB versus 2GB with 8 processes).
-As a result communication time is very small within a single node (24 cores) for RMSD task and that is why \tcomp/\tcomm $\gg$ 1.
-However for more than a single node, communication overhead becomes a bottleneck and \tcomp/\tcomm $\ll$ 1 (Figure \ref{fig:tcomp_tcomm_ratio_rmsd}).
+Figure \ref{fig:tcom_tcomm_effect} shows the relationship of performance with \tcomp/\tcomm ratio.
+When \tcomp/\tcomm ratio is higher the performance is better even if communication time is larger (Look at Figure \ref{fig:tcomp_tcomm_ratio} and \ref{fig:MPItottime-chain-reader} and Figure \ref{fig:tcomp_tIO_effect}).
+Although, there are stragglers due to communication, their effect on performance is not crucial mainly because compute to communication ratio is very large. 
+We therefore, higher compute to communication loads would lead to better performance. 
+
+It should be noted that within one node communication is not usually a problem because of the shared memory environment. 
+As a result, communication time would not be problematic even if compute to communication ratio is small (refer to Figure \ref{fig:tcomp_tcomm_ratio}).
+However, beyond a single node, communication overhead becomes a bottleneck and effect of \tcomp/\tcomm becomes very important.
 
 \begin{figure}[ht!]
 \centering
 \begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/tcomp_tcomm_ratio_dihed.pdf}
-  \caption{Dihedral Featurization}
-  \label{fig:tcomp_tcomm_ratio_dihed}
-\end{subfigure}
-\bigskip
-\begin{subfigure} {.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/tcomp_tcomm_RMSD.pdf}
-  \caption{RMSD}
-  \label{fig:tcomp_tcomm_ratio_rmsd}
-\end{subfigure}
-%
-\caption{Average compute to communication ratio with number of processes for RMSD and Dihedral featurization tasks performed on SDSC Comet.
-Five repeats are performed to collect statistics and error bars show standard deviation with respect to mean.}
+  \includegraphics[width=\linewidth]{figures/Compute_to_comm_ratio_on_performance_v17.pdf}
+\caption{Compute to communication ratio}
 \label{fig:tcomp_tcomm_ratio}
-\end{figure} 
-
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.47\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-dihedral-BarPlot-rank-comm-comparison_8_5.pdf}
-  \caption{8 Processes}
-  \label{fig:comm-rank-dihed-8}
 \end{subfigure}
-\bigskip
-\begin{subfigure} {.47\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-dihedral-BarPlot-rank-comm-comparison_72_5.pdf}
-  \caption{72 Processes}
-  \label{fig:comm-rank-dihed-72}
+\hfill
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/comm_comparison_different_RMSD_overload.pdf}
+  \caption{Communication time}
+  \label{fig:MPItottime-chain-reader}
 \end{subfigure}
-%
-\caption{Examples of timing per MPI rank for Dihedral featurization task (\text{$\tcomp/\tIO \approx 100$}) on SDSC Comet without showing the compute portion with 8 and 72 processes.
-I/O \tIO, communication \tcomm, ending the for loop \text{$t_{end\_loop}$}, opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$},  
-\text{$t_{Overhead2}$} per MPI rank (as described in methods).
-This task is compute bound and the compute portion is not shown here so that we can observe the variation in communication time across different ranks. 
-In fact, there are stragglers due to communication and communication time is not uniform across different ranks. 
-However, the performance is not affected due to stragglers caused by communication because the task is compute bound.
-Five repeats are performed to collect statistics and this is typical data from one run of the 5 repeats.}
-\label{fig:MPIwithIO-comm-dihed-rank}
-\end{figure} 
+\caption{(a) Change in compute to communication ratio with number of processes for different RMSD workload on SDSC Comet. 
+(b) Comparison of communication time for different RMSD workload on SDSC Comet.
+Five repeats are performed to collect statistics and error bars show standard deviation with respect to mean.}
+\label{fig:tcom_tcomm_effect}
+\end{figure}
 
 \subsubsection{ChainReader}
 The ChainReader, is used in \package{MDAnalysis} to represent multiple trajectories as one virtual trajectory. 
@@ -384,7 +361,7 @@ In the current implementation of ChainReader each process opens all the trajecto
 \centering
 \begin{subfigure}{.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting-chain-reader.pdf}
-  \caption{\tcomp and \tIO scaling}
+  \caption{Scaling for different components}
   \label{fig:MPIscaling-chain-reader}
 \end{subfigure}
 \hfill
@@ -415,10 +392,9 @@ In the current implementation of ChainReader each process opens all the trajecto
 
 \caption{Comparison on the performance of ChainReader for RMSD task with MPI when the trajectories are split using global array and without global array ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
 In case of global array, all ranks update the global array (\text{$ga_{put}$}) and rank 0 accesses the whole RMSD array through the global memory address (\text{$ga_{get}$}).
-Five repeats are performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
-(d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0 \text{$t_{Access\_Global\_Array}$}, ending the for loop \text{$t_{end\_loop}$}, 
+Five repeats are performed to collect statistics. (a) Compute \& I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean. (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole global array by rank 0 \text{$t_{Access\_Global\_Array}$}, ending the for loop \text{$t_{end\_loop}$}, 
 opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$}, \text{$t_{Overhead2}$} per MPI rank (as described in methods). When global array is not used, the performance is affected due to the non-uniform communication time across different ranks. However, when global array is used communication time has significantly reduced and scaling is close to ideal. In addition, time for ending the for loop \text{$t_{end\_loop}$} and 
-opening the trajectory \text{$t_{opening\_trajectory}$} is a bottleneck as opposed to our calculation without ChainReader. We obtained the results for the ChainReader with a \emph{patched version} of the MDAnalysis that avoid race condition}
+opening the trajectory \text{$t_{opening\_trajectory}$} is a bottleneck as opposed to our calculation without ChainReader. We obtained the results for the ChainReader with a \emph{patched version} of the MDAnalysis that avoid race condition. \textbf{Note:} In serial, there is no communication.}
 \label{fig:MPIwithIO-split-chain-reader}
 \end{figure}
 
@@ -428,11 +404,11 @@ These offsets will be generated automatically the first time the trajectory is o
 The advantage of these offset files is that after opening the trajectory for the first time, opening the same file will be very fast afterward. 
 
 It sometimes can happen that the stored offsets get out off sync with the trajectory they refer to. 
-For this the offsets also store the number of atoms, size of the file and last modification time. 
+For this, the offsets also store the number of atoms, size of the file and last modification time. 
 If any of these parameters change, the offsets are recalculated. 
 If the XTC changes and any of the number of atoms, size of the file and last modification time changes but the offset file is not updated, then the offset file can be detected as invalid.
 With ChainReader in parallel, each process opens all the trajectories; therefore in case of invalid offset file, several processes might want to recalculate these parameters and rebuild the offset file which will lead to race condition.
-In order to avoid race condition, we removed this check from MDAnalysis, but this comes at the price of not checking the validity of the offset file at all; future versions of MDAnalysis will lift this limitation..
+In order to avoid race condition, we removed this check from MDAnalysis, but this comes at the price of not checking the validity of the offset file at all; future versions of MDAnalysis will lift this limitation.
  
 We obtained the results for the ChainReader with a \emph{patched version} of \package{MDAnalysis} that eliminates the race condition by assuming that XTC index files are present and valid. 
 Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance of ChainReader for RMSD task using GA and without GA. 
@@ -451,7 +427,7 @@ For $N=M=100$, the Lustre file system has to perform 10,000 of these operations 
 Another approach we examined to improve I/O scaling is MPI-based Parallel HDF5. 
 We converted our XTC trajectory file into HDF5 format so that we can test the performance of parallel IO with HDF5 file format.
 The time it took to convert our XTC file with $2,512,200$ frames into a simple custom HDF5 format was about $5400~s$ in our local resources with network file system (NFS).
-We ran our benchmark on up to 8 nodes (192 cores) and, we observed near ideal scaling behavior with efficiencies above 0.8 (Figure \ref{fig:MPIscaling-hdf5} and \ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure \ref{fig:MPIranks-hdf5}).  
+We ran our benchmark on up to 8 nodes (192 cores) and, we observed near ideal scaling behavior with parallel efficiencies above 0.8 (Figure \ref{fig:comparison_efficiency} and Figures \ref{fig:MPIscaling-hdf5} and \ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure \ref{fig:MPIranks-hdf5}).  
 When we split our trajectory, scaling is better as compared to that of parallel I/O (Compare Figure \ref{fig:MPIspeedup-hdf5} to Figure \ref{fig:MPIspeedup-split}). 
 However, both methods scale very well up to 8 nodes and have comparable performance.  
 
@@ -472,8 +448,8 @@ However, both methods scale very well up to 8 nodes and have comparable performa
 
 \begin{subfigure}{.4\textwidth}
 \centering
-  \includegraphics[width=\linewidth]{figures/hdf5-time_IO_comparison.pdf}
-\caption{\tcomp and \tIO scaling}
+  \includegraphics[width=\linewidth]{figures/hdf5-time_comp_IO_comparison.pdf}
+\caption{Scaling for different components}
 \label{fig:ScalingComputeIO-hdf5}
 \end{subfigure}
 \hfill
@@ -487,6 +463,6 @@ However, both methods scale very well up to 8 nodes and have comparable performa
 Data are read from the file system from a shared HDF5 file format instead of XTC format (Independent I/O) and results are communicated back to rank 0 (communications included). 
 Five repeats are performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{end\_loop}$},
   opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$},  \text{$t_{Overhead2}$} per MPI rank (as described in methods).
-  This is typical data from one run of the 5 repeats. No straggler is observed.}
+  This is typical data from one run of the 5 repeats. No straggler is observed. \textbf{Note:} In serial, there is no communication.}
 \label{fig:MPIwithIO-hdf5}
 \end{figure}

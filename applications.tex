@@ -57,7 +57,7 @@ In addition, Python\textsc{\char13}s interactive nature, and other factors like 
 Based on the efficiency tests \cite{Dalcin:2011aa, Dalcin:2005aa}, the performance degradation due to using \package{mpi4py} is not prohibitive and the overhead introduced by \package{mpi4py} is far smaller than the overhead associated to the use of interpreted versus compiled languages \cite{GAiN}.
 In addition, there are works on improving the communication performance in \package{mpi4py} and it shows minimal overheads compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}.
 
-\subsection{Applications of Global Array}
+\subsection{Application of Global Array}
 The Global array (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}. The Global array toolkit allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
 Global Arrays in NumPy (GAiN) extends GA to Python through Numpy \cite{GAiN}. 
 The basic components of the Global Arrays toolkit are function calls to create global arrays ($ga\_create$), copy data to ($ga\_put$), from ($ga\_get$), and between global arrays ($ga\_distribution$, $ga\_scatter$), and identify and access the portions of the global array data that are held locally ($ga\_access$). 
@@ -98,7 +98,7 @@ In this algorithm, we use global array instead of message passage paradigm to se
 \end{algorithm}
 
 \subsection{MPI and Parallel HDF5}
-HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python \cite{pythonhdf5}.
+HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python \cite{pythonhdf5, HDF5_url}.
 Parallel HDF5 typically sits on top of MPI-IO layer and can use MPI-IO optimizations. 
 In parallel HDF5, all file accesses are coordinated though the MPI library; otherwise, multiple processes would compete over accessing over the same file on disk. 
 MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
