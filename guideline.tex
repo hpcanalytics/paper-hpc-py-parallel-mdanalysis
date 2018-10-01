@@ -12,7 +12,7 @@ To achieve, near ideal scaling we enforce the following step by step guidelines:
   
   \item[\textbf{Heuristic 2}] For $\frac{\tcomp}{\tIO} \geqslant 1$, one needs to consider the following cases: 
   \begin{description}
-  \item[\textbf{Heuristic 2.1}] If $\frac{\tcomp}{\tcomm} \gg 1$, the task is compute bound and will scale very well as we showed in Section \ref{DF}.
+  \item[\textbf{Heuristic 2.1}] If $\frac{\tcomp}{\tcomm} \gg 1$, the task is compute bound and will scale very well as we showed in Figure \ref{fig:tcomp_tIO_effect}.
   \item[\textbf{Heuristic 2.2}] If $\frac{\tcomp}{\tcomm} \ll 1$, one might consider using global arrays to achieve near ideal scaling behavior (Section \ref{Global-Array}). 
   Application of Global array is useful in the sense that it replaces message-passing interface with a distributed shared array where its 
   blocks will be updated by the associated rank in the communication domain (Algorithm \ref{alg:GA}). 

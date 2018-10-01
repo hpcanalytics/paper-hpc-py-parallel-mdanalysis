@@ -15,14 +15,13 @@ But, for the I/O bound workload, both communication and I/O appeared to be the m
 Our data suggest that \emph{stragglers might be due to the competition between MPI and the Lustre file system on the shared Infini-band interconnect}.  
 Since I/O traffic must compete with MPI messages and other traffics, it can be difficult to achieve peak single-node I/O rates for an arbitrary file when the system is fully loaded with other jobs \cite{VMD2013, Kevin2018}. 
 
-This is because when we remove I/O, communication does not appear to be the scalability bottleneck anymore (data not shown here).
-In fact, communication time, \tcomm, could take
-much longer for \emph{stragglers} than for ``normal'' MPI ranks when I/O has to be performed through a shared trajectory file (Figure \ref{fig:MPIranks}). 
+This is because when we remove I/O, communication effect is less pronounced and scaling is much better as compared to with I/O case (Figure \ref{fig:MPIwithoutIO}).
+In fact, communication time, \tcomm, could take much longer for \emph{stragglers} than for ``normal'' MPI ranks when I/O has to be performed through a shared trajectory file (Figure \ref{fig:MPIranks}). 
 
 Additionally, the number of I/O requests is a function of number of frames in the trajectory. 
 For I/O bound task and compute bound task with the same number of frames per trajectory, the frequency of sending the I/O requests makes a difference.
 For sufficiently large per-frame compute workload, the I/O requests interfere much less often with communication than an I/O bound task.
-\obnote{citations? How can you back up this statement?}\mknote{Our results sugest. When we increse workload we see this effect right?}
+\obnote{citations? How can you back up this statement?}\mknote{Our results suggest. When we increase workload we see this effect right?}
 This is why both communication and I/O appeared to prevent us from achieving the near ideal scaling for an I/O bound task.
 
 It should be also noted that, for $\frac{\tcomp}{\tcomm} \gg 1$ and $\frac{\tcomp}{\tIO} \gg 1$, the effect of communication was less pronounced when the work became more compute-bound and this 

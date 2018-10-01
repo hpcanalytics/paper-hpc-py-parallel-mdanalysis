@@ -39,9 +39,8 @@ Five repeats are performed to collect statistics. (a) Compute \& I/O scaling ver
 
 
 We ran a benchmark where no I/O was performed and instead generated random input data of the same size as would have been obtained from the trajectory; the time for the data generation was excluded and no file access was necessary. 
-In this case, we observed rather good scaling behavior with efficiencies above 0.8 and no stragglers (Figure \ref{fig:MPIwithoutIO})
+In this case, we observed rather good scaling behavior with communication effect being less pronounced (Figure \ref{fig:MPIwithoutIO}).
 
-\mknote{I have to re-run this case with v17 and updated RMSD. These are old data.}
 
  \begin{figure}[ht!]
 \centering
@@ -51,7 +50,7 @@ In this case, we observed rather good scaling behavior with efficiencies above 0
   \label{fig:MPIspeedup-no-IO}
 \end{subfigure}
 \hfill
-\begin{subfigure}{.6\textwidth}
+\begin{subfigure}{.5\textwidth}
   \includegraphics[width=\linewidth]{figures/BarPlot-rank-comparison-no-IO.pdf}
   \caption{Time comparison on different parts of the calculations per MPI rank when I/O is removed}
   \label{fig:MPIranks-no-IO}
