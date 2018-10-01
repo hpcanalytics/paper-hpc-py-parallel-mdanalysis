@@ -21,7 +21,7 @@ Zazen \cite{Zazen} is a novel task-assignment protocol to overcome the I/O bottl
 Zazen is implemented in a parallel disk cache system and avoids the overhead associated with querying metadata servers by reading data in parallel from local disks.
 However, transferring Terabytes of data might not be feasible even if high performance data transfer tools are used for that purpose.
 
-VMD \cite{Hum96, VMD2013} \obnote{ref \cite{VMD2013} is incomplet} provides molecular visualization and analysis tool through algorithmic and memory efficiency improvements, hand-vectorization of key CPU algorithms, new and improved GPU analysis and visualization algorithms, and good parallel I/O performance on supercomputers. It is one of the most advanced programs for the visualization and analysis of MD simulations. It is, however, a large monolithic program, that can only be drive through its built-in Tcl interface and thus is less well suited as a library that allows the rapid development of new algorithms or integration into workflows.
+VMD \cite{Hum96, VMD2013} \obnote{ref \cite{VMD2013} is incomplete} provides molecular visualization and analysis tool through algorithmic and memory efficiency improvements, hand-vectorization of key CPU algorithms, new and improved GPU analysis and visualization algorithms, and good parallel I/O performance on supercomputers. It is one of the most advanced programs for the visualization and analysis of MD simulations. It is, however, a large monolithic program, that can only be drive through its built-in Tcl interface and thus is less well suited as a library that allows the rapid development of new algorithms or integration into workflows.
 
 
 CPPTraj~\cite{cpptraj-2013} offers three levels of parallelization through a C++ implementation. The two are through MPI and the third through OpenMP.
@@ -36,20 +36,10 @@ They study the scalability challenges of time- and space-shared modes of analyzi
 
 \obnote{This paragraph needs to be rewritten to better motivate this paper. For instance, they might not discuss stragglers because they don't see them so we just have to formulate our motivation a bit more carefully. We need to make clearer that we provide general guidelines that some packages might have already overcome but that have to the best of our knowledge been clearly elucidated in the literature.}
 All of the above frameworks, provide tools for parallel analysis of MD trajectories. 
-<<<<<<< HEAD
-However, none of these frameworks discusses the difficulties related to straggler tasks and their effect on the performance of parallel task.
-The motivation behind present study is to provide parallel analysis in \package{MDAnalysis} library.
-However, straggler tasks hamper achieving scalability beyond a single compute node \cite{Khoshlessan:2017ab}. 
-Parallel computing requires substantial programming efforts especially when researchers are not experts in computer science.
-As a result we decided to have a detailed study on the straggler problem (So called long Tail phenomena) and address useful solutions to overcome straggler problem.
-Long Tail phenomena, whereby a small proportion of task stragglers significantly impede job completion time is a big challenge toward achieving improved performance \cite{Garraghan2016}.
-Long Tail phenomena is a known problem in other frameworks such as Google\textsc{\char13}s MapReduce \cite{Dean2004}, Spark \cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop \cite{Dean2004}, and cloud data centers \cite{Schmidt2016}. Straggler root-cause has both internal and external factors. 
-Internal factors include heterogeneous capacity of worker nodes, and resource competition due to other tasks running on the same worker node. 
-External factors include resource competition due to co-hosted applications, input data skew, remote input or output source being too slow and faulty hardware \cite{Chen2014}.
-=======
+
 However, none of these framework discuss the difficulties related to straggler tasks and their effect on the performance of parallel task.
 The present work is motivated to better understand the requirements for efficient parallel analysis of MD trajectories in order to implement efficient parallel algorithms in \package{MDAnalysis} but to also provide more generally guidance for similar developments in other libraries.
->>>>>>> 9812198f65a2d2a4f9bd747a2774b54f615c19b0
+
 
 \subsection{Stragglers}
 \label{sec:stragglers}
