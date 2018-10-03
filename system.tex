@@ -1,52 +1,42 @@
 \label{system}
-The test system contained the protein adenylate kinase with 214 amino acid residues and 3341 atoms in total \cite{Seyler:2014il}. 
-The trajectory \cite{Seyler:2017aa} was in Gromacs XTC format trajectory (``600x'' in \citet{Khoshlessan:2017ab}) with a size of about 30 GB and 2,512,200
-time frames (corresponding to $602.4 \sim \mu s$ simulated time) which represents a typical medium per-frame size but is very long for
-current standards.
+Our benchmark environment consisted of three different XSEDE HPC resources (described in section \ref{sec:hpcresources}), the software stack (section \ref{sec:software}), which had to be compiled for each resource, and the common test data set (section \ref{sec:data}).
 
-The experiments were executed on the XSEDE Supercomputers: \emph{SDSC Comet}, 
-\emph{PSC Bridges} and \emph{SuperMIC}. SDSC Comet is a 2.7 PFlop/s cluster with 
-6,400 compute nodes in total. The standard compute nodes consist of Intel Xeon 
-E5-2680v3 processors, 128 GB DDR4 DRAM (64 GB per socket). The network topology 
-is 56 Gbps FDR Infini-Band (IB).
+\subsection{Hardware}
+\label{sec:hpcresources}
 
-PSC Bridges is a 1.35 PFlop/s cluster with four types of computational nodes. Bridges 
-computational nodes supply 1.3018 PFlop/s and 274 TiB RAM. The Regular Shared 
-Memory (RSM) nodes consist of Intel Haswell (E5-2695 v3) processors, 128 GB DDR4 
-DRAM (64 GB per socket). The network topology is 12.37 Gbps Omni-Path Architecture 
-(OPA).
-
-LSU SuperMIC offers 360 standard compute nodes with Ivy Bridge Intel processors (E5-2680).
-Each node has 64 GBs DDR3 RAM. SUperMIC's nodes are connected 56 Gbps Infiniband Network. 
-SuperMIC's peak performance is measured at 557 TFlop/s.
-All the experiments are performed using standard compute nodes on Comet, PSC Bridges and SuperMIC respectively in the present study.
+The computational experiments were executed on standard compute nodes of three XSEDE supercomputers, \emph{SDSC Comet}, \emph{PSC Bridges}, and \emph{SuperMIC} (Table~\ref{tab:sys-config}).
+\emph{SDSC Comet} is a 2.7 PFlop/s cluster with 6,400 compute nodes in total. It is optimized for running a large number of medium-size calculations (up to 1,024 cores) to support the most prevalent type of calculation on XSEDE resources.
+\emph{PSC Bridges} is a 1.35 PFlop/s cluster with different types of computational nodes, including 16 GPU nodes, 8 large memory and 2 extreme memory nodes, and 752 regular nodes.
+It was designed to flexibly support both traditional (medium scale calculations) and non-traditional (data analytics) HPC uses.
+\emph{LSU SuperMIC} offers 360 standard compute nodes with a peak performance of 557 TFlop/s.
 
 \begin{table}[ht!]
 	\centering
 	\begin{adjustbox}{max width=\textwidth}
 		\begin{tabular}{c c c c c c c c}
 			\toprule
-			\bfseries\thead{Cluster} & \bfseries\thead{Nodes} & \makecell{\bfseries\thead{Number \\of Nodes}} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology} & \makecell{\bfseries\thead{Scheduler and  \\ Resource Manager}}\\
+			\bfseries\thead{Name} & \bfseries\thead{Nodes} & \makecell{\bfseries\thead{Number \\of Nodes}} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology} & \makecell{\bfseries\thead{Scheduler and  \\ Resource Manager}}\\
 			\midrule
-			\bfseries SDSC Comet & Compute & 6400 & \makecell{2 Intel Xeon (E5-2680v3) CPUs \\ 12 cores/CPU, 2.5 GHz} &128 GB DDR4 DRAM & 56 Gbps IB & SLURM\\
-			\bfseries PSC Bridges & RSM & 752 & \makecell{2 Intel Haswell (E5-2695 v3) CPUs \\14 cores/CPU, 2.3 GHz} & 128 GB, DDR4-2133Mhz & 12.37 Gbps OPA & SLURM\\
-			\bfseries SuperMIC & Standard & 360 & \makecell{2 Intel Ivy Bridges (E5-2680) CPUs \\10 cores/CPU, 2.8GB GHz} & 64 GB, DDR3-1866Mhz  & 56 Gbps IB & PBS\\
+			\bfseries SDSC Comet & Compute & 6400 & \makecell{2 Intel Xeon (E5-2680v3) \\ 12 cores/CPU, 2.5 GHz} &128 GB DDR4 DRAM & 56 Gbps IB & SLURM\\
+			\bfseries PSC Bridges & RSM & 752 & \makecell{2 Intel Haswell (E5-2695 v3)  \\14 cores/CPU, 2.3 GHz} & 128 GB, DDR4-2133Mhz & 12.37 Gbps OPA & SLURM\\
+			\bfseries SuperMIC & Standard & 360 & \makecell{2 Intel Ivy Bridge (E5-2680) \\10 cores/CPU, 2.8 GHz} & 64 GB, DDR3-1866Mhz  & 56 Gbps IB & PBS\\
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
-	\caption[System configuration used in the present study]
-	{List of benchmarked clusters and their system configuration}
+	\caption[Configuration of HPC resources]
+	{Configuration of the HPC resources that were benchmarked. Only a subset of the total available nodes were used. IB: InfiniBand; OPA: Omni-Path Architecture.}
 	\label{tab:sys-config}
 \end{table}
 
-\subsection{Installing libraries on multi-user HPC systems}
-Usually, highly optimized libraries require a lot of dependencies. 
-Sometimes the documentation does not cover a specific use case or system configuration. 
-As a result, getting these libraries to install correctly is often challenging.
-In addition, many domain specific packages are not available through package manager in super-computers 
-Building and installing all libraries required a substantial amount of effort. 
-In order to provide insight into our process for creating our computational environment, we provide detailed information regarding the version of each library, its dependencies, the quality of its documentation, and the time necessary for building and installing the packages in Table \ref{tab:version}. 
-In addition, detailed instructions to create the environments can be found in the GitHub repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} together with the benchmarking code.
+\subsection{Software}
+\label{sec:software}
+
+Table~\ref{tab:version} lists the tools and libraries that were required for our computational experiments.  Many domain specific packages are not available in the standard software installation on super-computers.
+We therefore had to compile them from source, which in some cases required substantial efforts due to non-standard building and installation procedures or lack of good documentation.
+Because this is a common problem that hinders reproducibility we provide detailed version information, notes on the installation process, as well as comments on the ease of installation and the quality of the documentation in Table~\ref{tab:version}.
+Detailed instructions to create the computing environments can be found in the GitHub repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} together with the benchmarking code.
+Carefully setting up the same software stack on the three different supercomputers allowed us to clearly demonstrate the reproducibility of our results and showed that our findings were not dependent machine specifics.
+
 
 \begin{table}[ht!]
 \centering
@@ -55,23 +45,25 @@ In addition, detailed instructions to create the environments can be found in th
   \toprule
             \bfseries\thead{Package} & \bfseries\thead{Version} & \bfseries\thead{Description} & \bfseries\thead{Ease of Installation} & \bfseries\thead{Documentation} & \bfseries\thead{Installation} & \bfseries\thead{Dependencies}\\
   \midrule
-   \bfseries GCC & 4.9.4 & GNU Compiler Collection & 0 & Excellent & \makecell[l]{via configuration \\files, environment \\or command line options, \\ minimal configuration \\ is required} &--\\
-   \bfseries OpenMPI & 1.10.7 & MPI Implementation & 0 & Excellent & \makecell[l]{via configuration \\ files, environment \\or command line options, \\ minimal configuration \\ is required} &--\\
-   \bfseries Global Array & 5.6.1 & Global Array & - & Good & \makecell[l]{via configuration files, environment \\or command line options, \\ several optional configuration\\ settings available} & \makecell[l]{MPI 1.x/2.x/3.x \\ implementation like \\ MPICH or Open MPI \\ built with shared/dynamic\\ libraries, GCC}\\
-   \bfseries MPI4py & 3.0.0 & MPI for Python & + & Excellent & Conda Installation &\makecell[l]{Python 2.7, \\or above, \\ MPI 1.x/2.x/3.x  \\ implementation like \\ MPICH or Open-MPI \\built with shared/dynamic \\libraries, Cython}\\
-   \bfseries GA4py & 1.0 & Global Array for Python & 0 & Average & Python Setuptools &\makecell[l]{Python 2.7, \\or above, \\ MPI 1.x/2.x/3.x  \\implementation like \\ MPICH or Open-MPI \\ built with shared/dynamic \\libraries, Cython,  \\MPI4py, Numpy} \\
-   \bfseries PHDF5 & 1.10.1 & Parallel HDF5 & - & Excellent & \makecell[l]{via configuration files, environment \\or command line options, \\ several optional configuration\\ settings available} &\makecell[l]{MPI 1.x/2.x/3.x  \\ implementation like \\ MPICH or Open-MPI,  \\GNU, MPIF90,  \\MPICC, MPICXX}\\
-   \bfseries H5py &  2.7.1 & Pythonic wrapper around the HDF5 & + & Excellent & Conda Installation & \makecell[l]{Python 2.7, or above,\\ PHDF5, Cython}\\    
-   \bfseries MDAnalysis & 0.17.0 & \makecell[l]{Python library to analyze  \\trajectories from MD simulations} & + & Excellent & Conda Installation & \makecell[l]{Python $>=$2.7 \\ Cython, GNU, Numpy}\\
+   \bfseries GCC & 4.9.4 & GNU Compiler Collection & 0 & ++ & \makecell[l]{via configuration \\files, environment \\or command line options, \\ minimal configuration \\ is required} &--\\
+   \bfseries OpenMPI & 1.10.7 & MPI Implementation & 0 & ++ & \makecell[l]{via configuration \\ files, environment \\or command line options, \\ minimal configuration \\ is required} &--\\
+   \bfseries Global Array & 5.6.1 & Global Array & $-$ & + & \makecell[l]{via configuration files, environment \\or command line options, \\ several optional configuration\\ settings available} & \makecell[l]{MPI 1.x/2.x/3.x \\ implementation like \\ MPICH or Open MPI \\ built with shared/dynamic\\ libraries, GCC}\\
+   \bfseries MPI4py & 3.0.0 & MPI for Python & + & ++ & Conda Installation &\makecell[l]{Python 2.7, \\or above, \\ MPI 1.x/2.x/3.x  \\ implementation like \\ MPICH or Open-MPI \\built with shared/dynamic \\libraries, Cython}\\
+   \bfseries GA4py & 1.0 & Global Array for Python & 0 & 0 & Python Setuptools &\makecell[l]{Python 2.7, \\or above, \\ MPI 1.x/2.x/3.x  \\implementation like \\ MPICH or Open-MPI \\ built with shared/dynamic \\libraries, Cython,  \\MPI4py, Numpy} \\
+   \bfseries PHDF5 & 1.10.1 & Parallel HDF5 & $-$ & ++ & \makecell[l]{via configuration files, environment \\or command line options, \\ several optional configuration\\ settings available} &\makecell[l]{MPI 1.x/2.x/3.x  \\ implementation like \\ MPICH or Open-MPI,  \\GNU, MPIF90,  \\MPICC, MPICXX}\\
+   \bfseries H5py &  2.7.1 & Pythonic wrapper around the HDF5 & + & ++ & Conda Installation & \makecell[l]{Python 2.7, or above,\\ PHDF5, Cython}\\    
+   \bfseries MDAnalysis & 0.17.0 & \makecell[l]{Python library to analyze  \\trajectories from MD simulations} & + & ++ & Conda Installation & \makecell[l]{Python $>=$2.7 \\ Cython, GNU, Numpy}\\
   \bottomrule
 \end{tabular}
 \end{adjustbox}
-\caption[Version of the packages used in the present study]
-{Detailed comparison on the dependency and installation of different packages used in the present study on multi-user HPC systems}
+\caption[Version of the packages used in the present study]%
+{Detailed comparison on the dependencies and installation of different software packages used in the present study. Software was built from source or obtained via a package manager and installed on the multi-user HPC systems in Table~\protect\ref{tab:sys-config}. Evaluation of ease of installation and documentation uses a subjective scale with ``++'' (excellent), ``+'' (good), ``0'' (average), and ``$-$'' (difficult/lacking) and reflects the experience of a typical domain scientist at the graduate/post-graduate level in a discipline such as computational biophysics or chemistry.}
 \label{tab:version}
 \end{table}
 
-Overall, the installation was successful on all clusters and we were able to observe similar performances which shows the applicability of the libraries for achieving near ideal scaling.
-\obnote{not clear what you want to say here? The libraries are suitable for the intended purpose?}
-\mknote{I want to say that the results that we get using these libraries are reproduceable on all clusters} 
 
+\subsection{Data set}
+\label{sec:data}
+
+The test system contained the protein adenylate kinase with 214 amino acid residues and 3341 atoms in total \cite{Seyler:2014il}. 
+The trajectory \cite{Seyler:2017aa} was in Gromacs XTC format trajectory (``600x'' in \citet{Khoshlessan:2017ab}) with a size of about 30 GB and 2,512,200 time frames (corresponding to $602.4 \sim \mu s$ simulated time), which represents a typical medium per-frame size but is very long for current standards.
