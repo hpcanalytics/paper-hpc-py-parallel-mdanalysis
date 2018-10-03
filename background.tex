@@ -3,9 +3,9 @@
 \subsection{Stragglers}
 \label{sec:stragglers}
 
-We found that straightforward implementation of simple parallelization with a Map-Reduce scheme in Python failed to scale beyond a single compute node \cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask \citep{Rocklin:2015aa} processes) took much longer that the typical task and so limited the overall performance.
+We found that straightforward implementation of simple parallelization with a Map-Reduce scheme in Python failed to scale beyond a single compute node \cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask \citep{Rocklin:2015aa} processes) took much longer than the typical task and so limited the overall performance.
 However, the cause for these \emph{straggler} tasks remained obscure.
-Here we perform a detailed study of the straggler problem (also called a long tail phenomenon) and address solutions to overcome it.
+Here, we perform a detailed study of the straggler problem (also called a long tail phenomenon) and address solutions to overcome it.
 Long tail phenomena, whereby a small proportion of task stragglers significantly impede job completion time, are a challenge for improving performance \cite{Garraghan2016} on HPC resources.
 It is a known problem in other frameworks such as Google's MapReduce \cite{Dean2004}, Spark \cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop \cite{Dean2004}, and cloud data centers \cite{Schmidt2016}. Known root-causes of stragglers have both internal and external factors. 
 Internal factors include heterogeneous capacity of worker nodes and resource competition due to other tasks running on the same worker node. 
@@ -42,10 +42,11 @@ Zazen \cite{Zazen} is a novel task-assignment protocol to overcome the I/O bottl
 Zazen is implemented in a parallel disk cache system and avoids the overhead associated with querying metadata servers by reading data in parallel from local disks.
 However, transferring Terabytes of data might not be feasible even if high performance data transfer tools are used for that purpose.
 
-VMD \cite{Hum96, VMD2013} \obnote{ref \cite{VMD2013} is incomplete} provides molecular visualization and analysis tool through algorithmic and memory efficiency improvements, hand-vectorization of key CPU algorithms, new and improved GPU analysis and visualization algorithms, and good parallel I/O performance on supercomputers. It is one of the most advanced programs for the visualization and analysis of MD simulations. It is, however, a large monolithic program, that can only be driven through its built-in Tcl interface and thus is less well suited as a library that allows the rapid development of new algorithms or integration into workflows.
+VMD \cite{Hum96, VMD2013} provides molecular visualization and analysis tool through algorithmic and memory efficiency improvements, hand-vectorization of key CPU algorithms, new and improved GPU analysis and visualization algorithms, and good parallel I/O performance on supercomputers. It is one of the most advanced programs for the visualization and analysis of MD simulations. It is, however, a large monolithic program, that can only be driven through its built-in Tcl interface and thus is less well suited as a library that allows the rapid development of new algorithms or integration into workflows.
 
 CPPTraj~\cite{cpptraj-2013} offers three levels of parallelization through a C++ implementation. The two are through MPI and the third through OpenMP.
 CCPTraj allows the parallel read between frames of the same trajectory or ensemble members of the same trajectory. 
+
 pyPcazip \cite{pyPcazip} is a suite of software tools written in Python for compression and analysis of molecular dynamics (MD) simulation data. 
 pyPcazip is MPI parallelised and is specific to PCA-based investigations of MD trajectories and supports wide variety of trajectory file formats.
 pyPcazip can take one or many input MD trajectory files and converts them into a highly compressed, HDF5-based, .pcz format with insignificant loss of information.
@@ -54,10 +55,13 @@ In situ analysis can be simultaneously executed with MD simulation through which
 Malakar et. al. \cite{Malakar-etal} provide approaches for improving in situ analysis performance. 
 They study the scalability challenges of time- and space-shared modes of analyzing large-scale MD simulations through a topology-aware mapping for simulation and analysis using LAMMPS code.
 
-\obnote{This paragraph needs to be rewritten to better motivate this paper. For instance, they might not discuss stragglers because they don't see them so we just have to formulate our motivation a bit more carefully. We need to make clearer that we provide general guidelines that some packages might have already overcome but that have to the best of our knowledge been clearly elucidated in the literature.}
 All of the above frameworks, provide tools for parallel analysis of MD trajectories. 
-However, none of these framework discuss the difficulties related to straggler tasks and their effect on the performance of parallel task.
-In the present work we want to better understand general requirements for efficient parallel analysis of MD trajectories in order to implement efficient parallel algorithms in \package{MDAnalysis} but to also provide more generally guidance for similar developments in other libraries.
+These frameworks, however, do not support parallelism for generalized task types. 
+Straggler tasks are one of the common issues arising in parallel analysis due to a wide variety of reasons.
+RMSD task can be analyzed using map-reduce implementation, but our initial study in \package{MDAnalysis} on different resources showed that this is not possible due to stragglers \cite{Khoshlessan:2017ab}.
+Apparently, stragglers are a problem for parallel analysis even for a simple map-reduce implementation inside \package{MDAnalysis} which does not seem to be the case in other studies \cite{himach-2008, Wu_et.al}.
+To the best of our knowledge, straggler problem and its effect are not discussed in MD community and it appeared to be the main reason preventing us from achieving ideal scaling beyond a single compute node.
+Therefore, in the present work we want to better understand general requirements for efficient parallel analysis of MD trajectories in \package{MDAnalysis}, but to also provide more general guidance for similar developments in other libraries inside and outside of the scope of molecular dynamic analysis.
 
 
 
