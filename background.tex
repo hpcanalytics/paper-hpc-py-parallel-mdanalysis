@@ -40,7 +40,9 @@ Again, this work does not discuss parallel analysis for the task types which can
 
 Zazen \cite{Zazen} is a novel task-assignment protocol to overcome the I/O bottleneck for many I/O bound tasks. This protocol caches a copy of simulation output files on the local disks of the compute nodes of an analysis cluster, and uses co-located data access with computation. 
 Zazen is implemented in a parallel disk cache system and avoids the overhead associated with querying metadata servers by reading data in parallel from local disks.
-However, transferring Terabytes of data might not be feasible even if high performance data transfer tools are used for that purpose.
+The approach has been used to improve the performance of the HiMach \cite{himach-2008} framework.
+It, however, advocates a specific architecture where a parallel supercomputer, which runs the simulations, immediately pushes the trajectory data to a local analysis cluster where trajectory fragments are cached on node-local disks.
+In the absence of such a specific  workflow, one would still need to initially stage the trajectory to the nodes and the time for the data distribution alone is likely to severely reduce any gains from the parallel analysis.
 
 VMD \cite{Hum96, VMD2013} provides molecular visualization and analysis tool through algorithmic and memory efficiency improvements, hand-vectorization of key CPU algorithms, new and improved GPU analysis and visualization algorithms, and good parallel I/O performance on supercomputers. It is one of the most advanced programs for the visualization and analysis of MD simulations. It is, however, a large monolithic program, that can only be driven through its built-in Tcl interface and thus is less well suited as a library that allows the rapid development of new algorithms or integration into workflows.
 
