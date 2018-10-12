@@ -7,7 +7,7 @@ We found that straightforward implementation of simple parallelization with a Ma
 However, the cause for these \emph{straggler} tasks remained obscure.
 Here, we perform a detailed study of the straggler problem (also called a long tail phenomenon) and address solutions to overcome it.
 Long tail phenomena, whereby a small proportion of task stragglers significantly impede job completion time, are a challenge for improving performance \cite{Garraghan2016} on HPC resources.
-It is a known problem in other frameworks such as Google's MapReduce \cite{Dean2004}, Spark \cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop \cite{Dean2004}, and cloud data centers \cite{Schmidt2016}. Known root-causes of stragglers have both internal and external factors. 
+It is a known problem in other frameworks such as Google's MapReduce \cite{Dean2004}, Spark \cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop \cite{Dean2004}, and cloud data centers \cite{Schmidt2016}. Both internal and external factors contribute to known root-causes of stragglers. 
 Internal factors include heterogeneous capacity of worker nodes and resource competition due to other tasks running on the same worker node. 
 External factors include resource competition due to co-hosted applications, input data skew, remote input or output source being too slow and faulty hardware \cite{Chen2014}.
 A node with faulty hardware or mis-configuration (a ``straggler node'') can lead to stragglers \cite{Dean2004}. 
@@ -18,7 +18,7 @@ Garraghan et al. \cite{Garraghan2016} reported high CPU utilization, disk utiliz
 Tuning resource allocation and tuning parallelism such as breaking the workload into many small tasks that are dynamically scheduled at runtime \cite{Rosen2012}, slow Node-Threshold \cite{Dean2004}, speculative execution \cite{Dean2004}, sampling or data distribution estimation techniques, SkewTune to avoid data imbalance \cite{Kwon2012}, dynamic work rebalancing \cite{Schmidt2016}, blocked time analysis \cite{Ousterhout2015}, and intelligent scheduling \cite{AWE-WQ2014} are among a wide variety of approaches that are trying to detect and mitigate stragglers. 
 
 In the present study, we identify the root-cause of the straggler tasks in the context of analyzing large MD trajectories and provide solutions through which we can improve performance and scaling.
-Even though the proposed solutions to avoid stragglers, is specifically applied for MD trajectory analysis in \package{MDAnalysis} library, all of these principles and implementation techniques are potentially applicable to data analysis for other types of Python-based libraries.
+Even though the proposed solutions to avoid stragglers are specifically applied to the analysis of MD trajectory in the \package{MDAnalysis} library, all of these principles and implementation techniques are potentially applicable to data analysis in other Python-based libraries.
 
 
 \subsection{Other packages with parallel analysis capabilities}
@@ -30,8 +30,8 @@ HiMach \cite{himach-2008} introduces scalable and flexible parallel Python frame
 HiMach's runtime is responsible to parallelize and distribute the Map and Reduce classes to the assigned cores.
 HiMach uses parallel I/O for file access during the map tasks and \text{MPI\_Allgather} in the reduction process. 
 HiMach, however, does not discuss parallel analysis for the task types which can not be analyzed using a MapReduce implementation.
-The analysis needs by MD community, however, are always varied and a generalized parallel framework should be able to provide parallel analysis for a variety of task types.
-Furthermore, HiMach is not available under an open source licence, which make it difficult to improve upon this work.
+The analysis needs by MD community, however, tend to be varied and a generalized parallel framework should be able to provide parallel analysis for a variety of task types.
+Furthermore, HiMach is not available under an open source licence, which makes it difficult to improve upon this work or integrate it in more complex analysis workflows.
 
 Wu et. al. \cite{Wu_et.al} present a scalable parallel framework for distributed-memory post-simulation data analysis.
 This work consists of an interface that allows a user to write analysis programs sequentially, and the machinery that ensures these programs execute in parallel automatically. 
@@ -44,24 +44,22 @@ However, transferring Terabytes of data might not be feasible even if high perfo
 
 VMD \cite{Hum96, VMD2013} provides molecular visualization and analysis tool through algorithmic and memory efficiency improvements, hand-vectorization of key CPU algorithms, new and improved GPU analysis and visualization algorithms, and good parallel I/O performance on supercomputers. It is one of the most advanced programs for the visualization and analysis of MD simulations. It is, however, a large monolithic program, that can only be driven through its built-in Tcl interface and thus is less well suited as a library that allows the rapid development of new algorithms or integration into workflows.
 
-CPPTraj~\cite{cpptraj-2013} offers three levels of parallelization through a C++ implementation. The two are through MPI and the third through OpenMP.
-CCPTraj allows the parallel read between frames of the same trajectory or ensemble members of the same trajectory. 
+CPPTraj~\cite{cpptraj-2013} offers multiple levels of parallelization (MPI and OpenMP) in a monolithic C++ implementation.
+CCPTraj allows parallel reads between frames of the same trajectory but is especially geared towards processing an ensemble of many trajectories in parallel.
 
 pyPcazip \cite{pyPcazip} is a suite of software tools written in Python for compression and analysis of molecular dynamics (MD) simulation data. 
-pyPcazip is MPI parallelised and is specific to PCA-based investigations of MD trajectories and supports wide variety of trajectory file formats.
+pyPcazip is MPI parallelised and is specific to PCA-based investigations of MD trajectories and supports a wide variety of trajectory file formats (based on the capabilities of the underlying mdtraj package \cite{mdtraj-2015}).
 pyPcazip can take one or many input MD trajectory files and converts them into a highly compressed, HDF5-based, .pcz format with insignificant loss of information.
+However, the package does not support general purpose analysis.
 
-In situ analysis can be simultaneously executed with MD simulation through which mitigates I/O bottlenecks.
-Malakar et. al. \cite{Malakar-etal} provide approaches for improving in situ analysis performance. 
-They study the scalability challenges of time- and space-shared modes of analyzing large-scale MD simulations through a topology-aware mapping for simulation and analysis using LAMMPS code.
+\textit{In situ} analysis is an approach to simultaneously execute analysis while the MD simulations are running so that I/O bottlenecks are potentially mitigated \cite{Malakar-etal}.
+Malakar et al studied the scalability challenges of time- and space-shared modes of analyzing large-scale MD simulations through a topology-aware mapping for simulation and analysis using LAMMPS code.
 
-All of the above frameworks, provide tools for parallel analysis of MD trajectories. 
-These frameworks, however, do not support parallelism for generalized task types. 
-Straggler tasks are one of the common issues arising in parallel analysis due to a wide variety of reasons.
-RMSD task can be analyzed using map-reduce implementation, but our initial study in \package{MDAnalysis} on different resources showed that this is not possible due to stragglers \cite{Khoshlessan:2017ab}.
-Apparently, stragglers are a problem for parallel analysis even for a simple map-reduce implementation inside \package{MDAnalysis} which does not seem to be the case in other studies \cite{himach-2008, Wu_et.al}.
-To the best of our knowledge, straggler problem and its effect are not discussed in MD community and it appeared to be the main reason preventing us from achieving ideal scaling beyond a single compute node.
-Therefore, in the present work we want to better understand general requirements for efficient parallel analysis of MD trajectories in \package{MDAnalysis}, but to also provide more general guidance for similar developments in other libraries inside and outside of the scope of molecular dynamic analysis.
+All of the above frameworks provide tools for parallel analysis of MD trajectories. 
+These frameworks, however, tend to fall short in providing parallelism in the context of a general and flexible library for the analysis of MD trajectories.
+Although straggler tasks are a common challenge arising in parallel analysis and are well-known in the data analysis community (see Section \ref{sec:stragglers}), there is, to our knowledge, little discussion about this problem in the biomolecular simulation community.
+Our own experience with a MapReduce approach in \package{MDAnalysis} \cite{Khoshlessan:2017ab} suggested that stragglers might be a somewhat under-appreciated problem.
+Therefore, in the present work we want to better understand general requirements for efficient parallel analysis of MD trajectories in \package{MDAnalysis}, but to also provide more general guidance that could benefit developments in other libraries inside and outside of the scope of molecular dynamic analysis.
 
 
 
