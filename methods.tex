@@ -26,18 +26,13 @@ Strong scaling was quantified by calculating the speed-up relative to performanc
 
 Additionally, we introduced two performance parameters that we will show are indicative for the occurence of stragglers.
 We define the ratio of compute time to I/O time $t_{Compute}/t_{IO}$. 
-In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, which we showed in our previous study \cite{Khoshlessan:2017ab}.
-Equation \ref{eq:Compute-I/O} shows the definition of compute to I/O ratio and is defined for a single rank.
-\obnote{not clear to me what you want to say here ? do you want to say that the average ratio is approximately the ratio of the averages?} \mknote{No. compute time per frame and I/O time per frame should not change in parallel and in serial. Therefore we can say that this ratio can be estimated using serial version of the code}\obnote{I/O time per frame \emph{should} not change, but we know that they do for larger $N$! I understand that in an ideal scenario they should not change. Therfore, it makes sense to use the serial version. Because this is already expressed in the preceeding sentence, I will remove the equations below in the next commit.}
-\begin{gather}
-  \label{eq:Compute-I/O}
-    \frac{t_{\text{comp}}}{t_{\text{IO}}}=\frac{t_{\text{comp}}^{frame}}{t_{\text{IO}}^{frame}} \approx \frac{\overline{t_{\text{comp}}^{frame}}}{\overline{t_{\text{IO}}^{frame}}} \approx \frac{\frac{\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N_{\text{frames}}}}{\frac{\sum_{1}^{N_{\text{frames}}}t_{\text{I/O}}^{frame}}{N_{\text{frames}}}} 
- \end{gather}
-and the ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to total communication time per rank averaged across all ranks as shown in Table \ref{tab:notation}:
+In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed in our previous study \cite{Khoshlessan:2017ab}.
+The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
 \begin{gather}
   \label{eq:Compute-comm}
-       \frac{t_{\text{comp}}}{t_{\text{comm}}}= \frac{\frac{\sum_{1}^{N}\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N}}{\overline{t_{\text{comm}}}}  
- \end{gather}
+  \frac{t_{\text{comp}}}{t_{\text{comm}}}= \frac{\frac{\sum_{1}^{N}\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N}}{\overline{t_{\text{comm}}}},
+\end{gather}
+as shown in Table \ref{tab:notation}.
  
 All code used in the present study is available from \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the open source MIT license. 
  
