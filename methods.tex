@@ -1,52 +1,45 @@
 \label{methods}
 
 \subsection{Timing observables}
-We evaluate MPI performance based on the RMSD algorithm (\ref{alg:RMSD}). 
+We evaluate MPI performance based on the RMSD algorithm \ref{alg:RMSD}. 
 The notation for our models is summarized in Table \ref{tab:notation}.
-Inside the code, relevant probs were taken and stored. 
-We will abbreviate the timings in the following as variables \text{$t_{L_{n}}$} where \text{$L_{n}$} refers to the line number in algorithm \ref{alg:RMSD}.
-Similar calculations can be used for all other algorithms.
+We abbreviate the timings in the following as variables $t_{L_{n}}$ where $L_{n}$ refers to the line number in algorithm \ref{alg:RMSD}.
 
 We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``I/O'' time for
 ingesting the data from the file system into memory, ($t_{I/O}^{frame} = t_{L4}$) and the ``compute'' time per
-trajectory frame to perform the computation ($t_{comp}^{frame} = t_{L5}$). 
- \tIO is the summation of ``I/O'' time per frame and \tcomp is the summation of ``compute'' time per frame for all the frames assigned to each rank ($N_{frames}$). 
-$t_{end\_loop} = t_{L6}+t_{L7}$ is the time delay between the end of the last iteration and exiting the \texttt{for} loop.
-$t_{opening\_trajectory} = t_{L2}+t_{L3}$ is the time which data structures are initialized and topology and trajectory files are opened (problem setup).
-
-$t_{Communication_{MPI}} = t_{L16}$ is the time ``Shuffle'' time to gather (``reduce'') all data from all processor ranks to rank zero.
+trajectory frame to perform the computation ($t_{comp}^{frame} = t_{L5}$).
+The total I/O time for a rank  $\tIO = \sum_{frames}^{N_{frames}} t_{I/O}^{frame}$ is the sum over all I/O times for all the $N_{frames}$ frames assigned to the rank; similarly, the total compute time for a rank is $\tcomp = \sum_{frame}^{N_{frames}} t_{comp}^{frame}$. 
+The time delay between the end of the last iteration and exiting the \texttt{for} loop is $t_{end\_loop} = t_{L6}+t_{L7}$.
+The time $t_{opening\_trajectory} = t_{L2}+t_{L3}$ measures the problem setup, which includes data structure initialization and opening of topology and trajectory files.
+$t_{Communication_{MPI}} = t_{L16}$ is the time to gather (``reduce'') all data from all processor ranks to rank zero.
 The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMSD}} = t_{L1} + ...+ t_{L8}$. 
 There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO. 
 To measure the un-accounted time we define the ``overheads''.
-$t_{Overhead1}$ and $t_{Overhead2}$ are the overhead of the calculations and they should be ideally very small.  
+$t_{Overhead1}$ and $t_{Overhead2}$ are the overhead of the calculations and they should be ideally very small (see Table \ref{tab:notation} for the definition).  
 The total time to completion for a single process on $N$ cores is $t_{N}$, which is mathematically equivalent to
-$t_{N} \equiv t_{RMSD} + \tcomm$.
+$ t_{RMSD} + \tcomm \equiv t_{N}$.
 
 \subsection{Performance Measurement}
 We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
 $t_{\text{total}}(N) \approx \max t_{N}$). 
-Strong scaling was quantified by calculating the speed-up relative to performance on a single core \text{$S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}$} and efficiency \text{$E = \frac{S}{N}$} (using MPI).
+Strong scaling was quantified by calculating the speed-up relative to performance on a single core $S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}$ and efficiency $E = \frac{S}{N}$.
 
-Additionally, we introduce two important performance parameters that determine whether we observe stragglers.
-We define the ratio of compute time to I/O time \text{$t_{Compute}$/$t_{IO}$}. 
-In the present study, we calculated this ratio using the serial version of our algorithms.
-However, one can run the algorithm using several cores and several frames of the trajectory to get an estimation of the compute to I/O ratio. 
-It is possible to estimate \text{$t_{Compute}$/$t_{IO}$} serially because, ideally, compute time per frame and I/O time per frame should be the same for different runs using different processes and we have shown this on our previous study \cite{Khoshlessan:2017ab}. Equation \ref{eq:Compute-I/O} shows the definition of compute to I/O ratio and is defined for a single rank.
-\obnote{not clear to me what you want to say here ? do you want to say that the average ratio is approximately the ratio of the averages?} \mknote{No. compute time per frame and I/O time per frame should not change in parallel and in serial. Therefore we can say that this ratio can be estimated using serial version of the code}
-
+Additionally, we introduced two performance parameters that we will show are indicative for the occurence of stragglers.
+We define the ratio of compute time to I/O time $t_{Compute}/t_{IO}$. 
+In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, which we showed in our previous study \cite{Khoshlessan:2017ab}.
+Equation \ref{eq:Compute-I/O} shows the definition of compute to I/O ratio and is defined for a single rank.
+\obnote{not clear to me what you want to say here ? do you want to say that the average ratio is approximately the ratio of the averages?} \mknote{No. compute time per frame and I/O time per frame should not change in parallel and in serial. Therefore we can say that this ratio can be estimated using serial version of the code}\obnote{I/O time per frame \emph{should} not change, but we know that they do for larger $N$! I understand that in an ideal scenario they should not change. Therfore, it makes sense to use the serial version. Because this is already expressed in the preceeding sentence, I will remove the equations below in the next commit.}
 \begin{gather}
   \label{eq:Compute-I/O}
     \frac{t_{\text{comp}}}{t_{\text{IO}}}=\frac{t_{\text{comp}}^{frame}}{t_{\text{IO}}^{frame}} \approx \frac{\overline{t_{\text{comp}}^{frame}}}{\overline{t_{\text{IO}}^{frame}}} \approx \frac{\frac{\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N_{\text{frames}}}}{\frac{\sum_{1}^{N_{\text{frames}}}t_{\text{I/O}}^{frame}}{N_{\text{frames}}}} 
  \end{gather}
-
 and the ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to total communication time per rank averaged across all ranks as shown in Table \ref{tab:notation}:
-
 \begin{gather}
   \label{eq:Compute-comm}
        \frac{t_{\text{comp}}}{t_{\text{comm}}}= \frac{\frac{\sum_{1}^{N}\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N}}{\overline{t_{\text{comm}}}}  
  \end{gather}
  
-All compute codes used in the present study are available from \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the MIT license. 
+All code used in the present study is available from \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the open source MIT license. 
  
 \begin{table}[ht!]
 \centering
