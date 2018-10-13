@@ -18,7 +18,7 @@ In the RMSD algorithm, a translation and rigid body rotation are found that mini
 The RMSD of this optimum superposition is reported. 
 The process is repeated for each trajectory frame, with the output being a time series of RMSD values.
 The RMSD is used to show the rigidity of protein domains and more generally characterizes structural changes.
-The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$ \cite{Liu:2010kx} where T is the number of frames in the trajectory and N the number of particles in a frame.
+The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$ \cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles in a frame.
 
 \begin{algorithm}[ht!]
 	\scriptsize
@@ -52,10 +52,9 @@ The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \tim
 
 \subsection{MPI for Python \package{mpi4py}}
 MPI for Python (\package{mpi4py}) is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to employ multiple processors \cite{Dalcin:2011aa, Dalcin:2005aa}.
-Python has several advantages that makes it a very attractive language including rapid development of small scripts and code prototypes as well as large applications and highly portable and reusable modules and libraries.
-In addition, Python\textsc{\char13}s interactive nature, and other factors like lines of codes (LOC), number of function invocation, and development time, add to its attractiveness and clarifies why parallel programming models, such as MPI or MapReduce, should be supported.
+Python is widely used in the scientific community because it facilitates rapid development of small scripts and code prototypes as well as development of large applications and highly portable and reusable modules and libraries.
 Based on the efficiency tests \cite{Dalcin:2011aa, Dalcin:2005aa}, the performance degradation due to using \package{mpi4py} is not prohibitive and the overhead introduced by \package{mpi4py} is far smaller than the overhead associated to the use of interpreted versus compiled languages \cite{GAiN}.
-In addition, there are works on improving the communication performance in \package{mpi4py} and it shows minimal overheads compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}.
+Overheads in \package{mpi4py} are small compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}.
 
 \subsection{Application of Global Array}
 The Global array (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}. The Global array toolkit allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
@@ -67,11 +66,11 @@ When the global array is created ($ga\_create$) each process will create an arra
 The GA library keeps track of all these memory locations by recording a list of them when a global array is created. 
 The user can get a pointer to this memory by using $ga\_access$ function.
 Using this pointer it is possible to directly modify the data that is local to each process.
-When a process tries to access a block of data, it first does a decomposition of the request into individual blocks representing the contribution to the total request from the data held locally on each process \cite{PNNL:2018}. 
+When a process tries to access a block of data, request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process \cite{PNNL:2018}.\obnote{This ``personal communication'' reference is broken; e.g. no author. Can you replace it with something fully citable --- a paper or docs? Personal communication citations are not very useful but if you want to keep it, write it in text: (A.U. Thor, personal communication). The journal might still not allow it.} 
 The requesting process then makes individual requests to each of the remote processes. 
 The way data communication within the node and between the nodes happens depends on which runtime is configured when installing the GA library.
 
-Algorithm \ref{alg:GA} describes RMSD algorithm in combination with the global array.
+Algorithm \ref{alg:GA} describes the RMSD algorithm in combination with the global array.
 In this algorithm, we use global array instead of message passage paradigm to see if we can reduce communication cost. 
 
 \begin{algorithm}[ht!]
@@ -98,14 +97,14 @@ In this algorithm, we use global array instead of message passage paradigm to se
 \end{algorithm}
 
 \subsection{MPI and Parallel HDF5}
-HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python \cite{pythonhdf5, HDF5_url}.
-Parallel HDF5 typically sits on top of MPI-IO layer and can use MPI-IO optimizations. 
-In parallel HDF5, all file accesses are coordinated though the MPI library; otherwise, multiple processes would compete over accessing over the same file on disk. 
+HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python \cite{pythonhdf5, HDF5_url}.\obnote{The reference \emph{HDF5\_url} \cite{HDF5_url} is broken. Please fix. If it is just a URL, add it in text.}
+Parallel HDF5 (\package{PHDF5}) typically sits on top of a MPI-IO layer and can use MPI-IO optimizations. 
+In \package{PHDF5}, all file accesses are coordinated through the MPI library; otherwise, multiple processes would compete over accessing over the same file on disk. 
 MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
-HDF5 itself handles nearly all the details involved with coordinating file access when the shared file is opened through ``mpio" driver.
+HDF5 itself handles nearly all the details involved with coordinating file access when the shared file is opened through the \emph{mpio} driver.
 In addition, MPI communicator should be supplied as well and the users also need to follow some constraints for data consistency \cite{pythonhdf5}.
 
 MPI has two flavors of operation: collective, which means that all processes have to participate in the same order, and independent, which means each process can perform the operation or not and the order also does not matter  \cite{pythonhdf5}.
-With HDF5, modifications to file metadata must be done collectively and although all processes perform the same task, they do not wait until the others catch up \cite{pythonhdf5}. 
+With \package{PHDF5}, modifications to file metadata must be done collectively and although all processes perform the same task, they do not wait until the others catch up \cite{pythonhdf5}. 
 Other tasks and any type of data operations can be performed independently by processes.
 In the present study, we use independent operations.
