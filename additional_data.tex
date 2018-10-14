@@ -31,7 +31,7 @@ Figure \ref{fig:MPIwithIO-split-SuperMIC} shows how RMSD task scales with the in
   \label{fig:MPIspeedup-chain-reader}
 \end{subfigure}
 
-\caption{Comparison on the performance of ChainReader for RMSD task with MPI when the trajectories are split using global array and without global array ($\tcomp/\tIO \approx 0.3$) on SuperMIC.
+\caption{Comparison on the performance of the RMSD task with MPI when the trajectories are split using global array and without global array ($\tcomp/\tIO \approx 0.3$) on SuperMIC.
 In case of global array, all ranks update the global array (\text{$ga_{put}$}) and rank 0 accesses the whole RMSD array through the global memory address (\text{$ga_{get}$}).
 Five repeats are performed to collect statistics. (a) Compute \& I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean.}
 \label{fig:MPIwithIO-split-SuperMIC}
@@ -59,6 +59,6 @@ In this case, we observed rather good scaling behavior with communication effect
 \caption{Comparison on the performance of RMSD task with MPI with I/O and without I/O ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
 Five repeats are performed to collect statistics. (a) Speed-up. The error bars show standard deviation with respect to mean.
 (b) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{end\_loop}$},
-  opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$},  \text{$t_{Overhead2}$} per MPI rank (as described in methods).}
+  opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$},  \text{$t_{Overhead2}$} per MPI rank (See Table \ref{tab:notation} for the definition).}
 \label{fig:MPIwithoutIO}
 \end{figure}

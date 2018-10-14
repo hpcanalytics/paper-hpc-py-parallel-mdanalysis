@@ -66,7 +66,7 @@ When the global array is created ($ga\_create$) each process will create an arra
 The GA library keeps track of all these memory locations by recording a list of them when a global array is created. 
 The user can get a pointer to this memory by using $ga\_access$ function.
 Using this pointer it is possible to directly modify the data that is local to each process.
-When a process tries to access a block of data, request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process \cite{PNNL:2018}.\obnote{This ``personal communication'' reference is broken; e.g. no author. Can you replace it with something fully citable --- a paper or docs? Personal communication citations are not very useful but if you want to keep it, write it in text: (A.U. Thor, personal communication). The journal might still not allow it.} 
+When a process tries to access a block of data, request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process (\textit{B. J. Palmer and J. Daily, personal communication}).\obnote{This ``personal communication'' reference is broken; e.g. no author. Can you replace it with something fully citable --- a paper or docs? Personal communication citations are not very useful but if you want to keep it, write it in text: (A.U. Thor, personal communication). The journal might still not allow it.} \mknote{I did not find this info from the paper or documentation. I contacted jeff daily he helped me with some parts and for the other parts he introduced B. J. Palmer and I contacted him and had discussion with him and he explained these to me. That is why I said personal communication. They work for pnnl}
 The requesting process then makes individual requests to each of the remote processes. 
 The way data communication within the node and between the nodes happens depends on which runtime is configured when installing the GA library.
 
@@ -97,11 +97,11 @@ In this algorithm, we use global array instead of message passage paradigm to se
 \end{algorithm}
 
 \subsection{MPI and Parallel HDF5}
-HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python \cite{pythonhdf5, HDF5_url}.\obnote{The reference \emph{HDF5\_url} \cite{HDF5_url} is broken. Please fix. If it is just a URL, add it in text.}
+HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python (\url{http://www.hdfgroup.org/HDF5}, \cite{pythonhdf5}).
 Parallel HDF5 (\package{PHDF5}) typically sits on top of a MPI-IO layer and can use MPI-IO optimizations. 
 In \package{PHDF5}, all file accesses are coordinated through the MPI library; otherwise, multiple processes would compete over accessing over the same file on disk. 
 MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
-HDF5 itself handles nearly all the details involved with coordinating file access when the shared file is opened through the \emph{mpio} driver.
+\package{HDF5} itself handles nearly all the details involved with coordinating file access when the shared file is opened through the \emph{mpio} driver.
 In addition, MPI communicator should be supplied as well and the users also need to follow some constraints for data consistency \cite{pythonhdf5}.
 
 MPI has two flavors of operation: collective, which means that all processes have to participate in the same order, and independent, which means each process can perform the operation or not and the order also does not matter  \cite{pythonhdf5}.

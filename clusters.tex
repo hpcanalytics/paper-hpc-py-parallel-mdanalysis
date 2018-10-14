@@ -104,7 +104,7 @@ collect statistics. The error bars show standard deviation with respect to mean.
 %
 \caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 (\text{$\tcomp/\tIO \approx 0.3$}) on (a) PSC Bridges and (b) SuperMIC.
 Five repeats are performed to collect statistics and this is typical data from one run of the 5 repeats. Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{end\_loop}$},
-opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$},  \text{$t_{Overhead2}$} per MPI rank (as described in methods).
+opening the trajectory \text{$t_{opening\_trajectory}$}, and overheads \text{$t_{Overhead1}$},  \text{$t_{Overhead2}$} per MPI rank (See Table \ref{tab:notation} for the definition).
 I/O distribution is non-uniform on Bridges while it is more uniform on SuperMIC and this explains why SuperMIC has better scaling as compared to PSC Bridges.}
 \label{fig:MPIwithIO-clusters-rank}
 \end{figure} 

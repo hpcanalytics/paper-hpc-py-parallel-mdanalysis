@@ -20,7 +20,7 @@ As in our previous study we selected the commonly used RMSD algorithm implemente
 We use the single program multiple data (SPMD) paradigm to parallelize this algorithm on HPC resources.
 With SPMD, each process executes essentially the same code but on a different part of the data. 
 We use Python, a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in HPC parallel environments \cite{GAiN}. 
-We show that there are two important performance parameters, $t_{Compute}/t_{IO}$ and $t_{Compute}/t_{Communication}$ which are the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, and the ratio of computational to communication load respectively that determines whether we observe stragglers.
+We show that there are two important performance parameters, $t_{Compute}/t_{IO}$ and $t_{Compute}/t_{Communication}$ which are the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, and the ratio of computational to communication load respectively that determine whether we observe stragglers.
 If $t_{Compute}/t_{IO} \gg 1$, the algorithm scales very well, otherwise it does not scale beyond a single node.  
 For the algorithms with small $t_{Compute}/t_{IO}$, we need to come up with strategies to improve scaling and overcome problems with stragglers.
 In addition, $t_{Compute}/t_{Communication}$ plays an important role in determining scaling and performance.

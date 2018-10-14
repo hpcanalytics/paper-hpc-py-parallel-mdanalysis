@@ -24,7 +24,7 @@ We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI p
 $t_{\text{total}}(N) \approx \max t_{N}$). 
 Strong scaling was quantified by calculating the speed-up relative to performance on a single core $S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}$ and efficiency $E = \frac{S}{N}$.
 
-Additionally, we introduced two performance parameters that we will show are indicative for the occurence of stragglers.
+Additionally, we introduced two performance parameters that we will show are indicative of the occurrence of stragglers.
 We define the ratio of compute time to I/O time $t_{Compute}/t_{IO}$. 
 In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed in our previous study \cite{Khoshlessan:2017ab}.
 The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
