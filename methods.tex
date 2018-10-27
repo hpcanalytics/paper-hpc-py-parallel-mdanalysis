@@ -22,15 +22,26 @@ $ t_{RMSD} + \tcomm \equiv t_{N}$.
 \subsection{Performance Measurement}
 We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
 $t_{\text{total}}(N) \approx \max t_{N}$). 
-Strong scaling was quantified by calculating the speed-up relative to performance on a single core $S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}$ and efficiency $E = \frac{S}{N}$.
+Strong scaling was quantified by calculating the speed-up relative to performance on a single core
 
+\begin{equation}
+  \label{eq:speedup}
+  S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
+\end{equation}
+and efficiency
+\begin{equation}
+  \label{eq:efficiency}
+  E = \frac{S}{N}.
+\end{equation}
 Additionally, we introduced two performance parameters that we will show are indicative of the occurrence of stragglers.
 We define the ratio of compute time to I/O time $t_{Compute}/t_{IO}$. 
 In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed in our previous study \cite{Khoshlessan:2017ab}.
 The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
 \begin{gather}
   \label{eq:Compute-comm}
-  \frac{t_{\text{comp}}}{t_{\text{comm}}}= \frac{\frac{\sum_{1}^{N}\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{frame}}{N}}{\overline{t_{\text{comm}}}},
+  \frac{t_{\text{comp}}}{t_{\text{comm}}} = \frac{\frac{1}{N}
+    \sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{frames}}}t_{\text{comp}}^{\text{frame}}}%
+  {\overline{t_{\text{comm}}}},
 \end{gather}
 as shown in Table \ref{tab:notation}.
  
@@ -43,11 +54,11 @@ All code used in the present study is available from \url{https://github.com/hpc
            \bfseries\thead{Item} & \bfseries\thead{Definition}\\
   \midrule
   \midrule
-    $N_{\text{frames}}$ & $N_{\text{frames}}^{total}/N$\\  
+    $N_{\text{frames}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
     $t_{\text{end\_loop}}$ & $t_{L6}+t_{L7}$\\
     $t_{\text{opening\_trajectory}}$ &  $t_{L2}+t_{L3}$ \\
-    $t_{\text{comp}}$ & $\sum_{1}^{N_{\text{frames}}}t_{\text{comp}}^{\text{frame}}$\\
-    $t_{\text{I/O}}$ & $\sum_{1}^{N_{\text{frames}}}t_{\text{I/O}}^{\text{frame}}$\\
+    $t_{\text{comp}}$ & $\sum_{\text{frame}=1}^{N_{\text{frames}}}t_{\text{comp}}^{\text{frame}}$\\
+    $t_{\text{I/O}}$ & $\sum_{\text{frame}=1}^{N_{\text{frames}}}t_{\text{I/O}}^{\text{frame}}$\\
     $t_{\text{all\_frame}}$ & $t_{L4}+t_{L5}+t_{L6}$  \\
     $t_{\text{RMSD}}$ &  $t_{L1} + ...+ t_{L8}$ \\
     $t_{\text{Communication}_{\text{MPI}}}$ &  $t_{L16}$  \\
@@ -56,7 +67,7 @@ All code used in the present study is available from \url{https://github.com/hpc
     $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
     $t_{N}$ & $t_{\text{RMSD}}+t_{\text{Communication}}$ \\
    \midrule  
-    $\overline{t_{\text{comm}}}$ & $\frac{\sum_{1}^{N}t_{\text{communication}}}{N}$ \\
+    $\overline{t_{\text{comm}}}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}$ \\
     $t_{\text{total}}$ & $\max t_{N}$ \\
   \bottomrule
 \end{tabular}
