@@ -56,8 +56,8 @@ Python is widely used in the scientific community because it facilitates rapid d
 Based on the efficiency tests \cite{Dalcin:2011aa, Dalcin:2005aa}, the performance degradation due to using \package{mpi4py} is not prohibitive and the overhead introduced by \package{mpi4py} is far smaller than the overhead associated to the use of interpreted versus compiled languages \cite{GAiN}.
 Overheads in \package{mpi4py} are small compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}.
 
-\subsection{Application of Global Array}
-The Global array (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}. The Global array toolkit allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
+\subsection{Application of Global Arrays}
+The Global Arrays (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}. The Global Arrays toolkit allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
 Global Arrays in NumPy (GAiN) extends GA to Python through Numpy \cite{GAiN}. 
 The basic components of the Global Arrays toolkit are function calls to create global arrays ($ga\_create$), copy data to ($ga\_put$), from ($ga\_get$), and between global arrays ($ga\_distribution$, $ga\_scatter$), and identify and access the portions of the global array data that are held locally ($ga\_access$). 
 In addition, there are also functions to destroy arrays ($ga\_destroy$) and free up the memory originally allocated to them \cite{GAiN}.
@@ -66,12 +66,12 @@ When the global array is created ($ga\_create$) each process will create an arra
 The GA library keeps track of all these memory locations by recording a list of them when a global array is created. 
 The user can get a pointer to this memory by using $ga\_access$ function.
 Using this pointer it is possible to directly modify the data that is local to each process.
-When a process tries to access a block of data, request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process (\textit{B. J. Palmer and J. Daily, personal communication}).\obnote{This ``personal communication'' reference is broken; e.g. no author. Can you replace it with something fully citable --- a paper or docs? Personal communication citations are not very useful but if you want to keep it, write it in text: (A.U. Thor, personal communication). The journal might still not allow it.} \mknote{I did not find this info from the paper or documentation. I contacted jeff daily he helped me with some parts and for the other parts he introduced B. J. Palmer and I contacted him and had discussion with him and he explained these to me. That is why I said personal communication. They work for pnnl}
+When a process tries to access a block of data, request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process (\textit{B. J. Palmer and J. Daily, personal communication}).
 The requesting process then makes individual requests to each of the remote processes. 
 The way data communication within the node and between the nodes happens depends on which runtime is configured when installing the GA library.
 
-Algorithm \ref{alg:GA} describes the RMSD algorithm in combination with the global array.
-In this algorithm, we use global array instead of message passage paradigm to see if we can reduce communication cost. 
+Algorithm \ref{alg:GA} describes the RMSD algorithm in combination with a global array.
+In this algorithm, we use Global Arrays instead of the message passing paradigm to investigate if we can reduce the communication cost. 
 
 \begin{algorithm}[ht!]
 	\scriptsize
