@@ -2,23 +2,22 @@
 
 \subsection{RMSD Benchmark}
 \label{sec:RMSD}
-The RMSD algorithm for the present test case represents a task for which the computational workload per frame is smaller than the I/O workload per frame ($t_{compute}^{frame}$ = 0.09 ms, $t_{IO}^{frame}$ = 0.3 ms, thus $\tcomp/\tIO \approx 0.3$). 
-We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{Comet}, and \emph{Stampede}, using either Dask or MPI \cite{Khoshlessan:2017ab}. 
-Here we focus on the MPI implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}), in order to
-better understand the cause for the poor scaling across nodes.
+The RMSD algorithm for the present test case represents a task for which the computational workload per frame is smaller than the I/O workload per frame (typical values $t_{\text{compute}}^{\text{frame}} = 0.09\ \text{ms}$, $t_{\text{IO}}^{\text{frame}} = 0.3\ \text{ms}$, thus $\tcomp/\tIO \approx 0.3$). 
+We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{SDSC Comet}, and \emph{TACC Stampede}, using either Dask or MPI \cite{Khoshlessan:2017ab}.
 
-We observed stragglers, individual workers or MPI ranks, that take much longer to complete than mean execution time of all other workers or ranks. 
-Waiting for these stragglers destroys strong scaling performance, as shown in Figure \ref{fig:MPIscaling}, \ref{fig:MPIspeedup} for MPI. 
-
+Here we focus on the MPI implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}), in order to better understand the cause for the lack of scaling across nodes.
+As in the previous work we also observed very poor strong strong scaling performance (Figures \ref{fig:MPIscaling}, \ref{fig:MPIspeedup}) beyond a single node.
+A more detailed analysis showed that the RMSD computation itself and to a lesser degree the I/O considered on their own scale well beyond 50 cores (Figure \ref{fig:ScalingComputeIO}) but that communication and the initial file opening start to dominate.
+However, the communication cost is distributed unevenly across the MPI ranks (Figure \ref{fig:MPIranks}) and these ranks, which took much longer to complete than the mean execution time of all other ranks, are the stragglers that hurt performance. 
 In the example run in Figure \ref{fig:MPIranks}, ten ranks out of 72 take almost 65~s whereas the
 remaining ranks only take about 40~s. The detailed breakdown of the time spent on each rank (Figure \ref{fig:MPIranks}) shows that time
 for the actual computation, \tcomp, is fairly constant across ranks. 
 The time spent on reading data from the shared trajectory file on the Lustre file system into memory, \tIO, shows variability across different ranks. 
-Stragglers, however, appear to be defined by occasional much larger \emph{communication} times, \tcomm (line 16 in \ref{alg:RMSD}), that are on the order of 30~s in this example. 
+The stragglers, however, appear to be defined by occasional much larger \emph{communication} times, \tcomm (line 16 in \ref{alg:RMSD}), that are on the order of 30~s in this example. 
 For other ranks, \tcomm varies across different ranks and for a few ranks $\tcomm < 10$~s or is barely measurable. 
 This initial analysis (especially Figure \ref{fig:MPIranks}) indicates that communication is a major issue. 
 
-\begin{figure}[ht!]
+\begin{figure}
 \centering
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/main-RMSD-t_total.pdf}
@@ -49,13 +48,9 @@ This initial analysis (especially Figure \ref{fig:MPIranks}) indicates that comm
 Results are communicated back to rank 0 (communications included). Five repeats are performed to collect statistics. (a-c) The error bars show
 standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{end\_loop}$,
 opening the trajectory $t_{opening\_trajectory}$, and overheads $t_{Overhead1}$,  $t_{Overhead2}$ per MPI rank (See Table \ref{tab:notation} for the definition).
-This is typical data from one run of the 5 repeats. MPI ranks 0 and 63 to 72 are stragglers, i.e., their total time 
+This is typical data from one run of the five repeats. MPI ranks 0 and 63 to 72 are stragglers, i.e., their total time 
 far exceeds the mean of the majority of ranks. \textbf{Note:} In serial, there is no communication.}
-  
-\obnote{This does not look like t\_comp/t\_IO = 0.3 ? looks more like 2/30 = 0.06; the next page says 4/26=0.16. Please make sure that all numbers are consistent!}
-\mknote{because t\_comp/t\_IO is per frame and it is also average, what I have reported is only average.}
-\obnote{I don't understand your argument. t\_comp and t\_IO should be linear with N\_frames, hence the ratio should be the same. Or at least not 0.3 vs 0.06. Please explain again.}
-\mknote{As I explained in the Method section. tcomp/tI/O is calculated based on the serial version or one frame calculation and should be ideally the same for all ranks. But this is not the case for all ranks and the distribution of time is non-uniform. But when we use GA or splitting or HDF5 then this ratio will be more uniform and the same for all ranks}
+\obnote{The subfigure \protect{\ref{fig:ScalingComputeIO}} is great but the large contribution of \textbf{Opening trajectory} is not at all visible in the example \protect{\ref{fig:MPIranks}}. Why? If the error bars on the opening trajectory are small then all examples for MPI ranks should show times for \textbf{Opening trajectory} with magnitude greater than the \textbf{compute} time. Please explain briefly and find an example that is consistent.}
 \label{fig:MPIwithIO}
 \end{figure} 
 
