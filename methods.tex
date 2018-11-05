@@ -6,22 +6,22 @@ The notation for our models is summarized in Table \ref{tab:notation}.
 We abbreviate the timings in the following as variables $t_{L_{n}}$ where $L_{n}$ refers to the line number in algorithm \ref{alg:RMSD}.
 
 We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``I/O'' time for
-ingesting the data from the file system into memory, ($t_{I/O}^{frame} = t_{L4}$) and the ``compute'' time per
-trajectory frame to perform the computation ($t_{comp}^{frame} = t_{L5}$).
-The total I/O time for a rank  $\tIO = \sum_{frames}^{N_{frames}} t_{I/O}^{frame}$ is the sum over all I/O times for all the $N_{frames}$ frames assigned to the rank; similarly, the total compute time for a rank is $\tcomp = \sum_{frame}^{N_{frames}} t_{comp}^{frame}$. 
-The time delay between the end of the last iteration and exiting the \texttt{for} loop is $t_{end\_loop} = t_{L6}+t_{L7}$.
-The time $t_{opening\_trajectory} = t_{L2}+t_{L3}$ measures the problem setup, which includes data structure initialization and opening of topology and trajectory files.
-$t_{Communication_{MPI}} = t_{L16}$ is the time to gather (``reduce'') all data from all processor ranks to rank zero.
+ingesting the data from the file system into memory, ($t_{\text{I/O}}^{frame} = t_{L4}$) and the ``compute'' time per
+trajectory frame to perform the computation ($t_{\text{comp}}^{frame} = t_{L5}$).
+The total I/O time for a rank  $\tIO = \sum_{frames}^{N_{\text{frames}}} t_{\text{I/O}}^{frame}$ is the sum over all I/O times for all the $N_{\text{frames}}$ frames assigned to the rank; similarly, the total compute time for a rank is $\tcomp = \sum_{frame}^{N_{frames}} t_{\text{comp}}^{frame}$. 
+The time delay between the end of the last iteration and exiting the \texttt{for} loop is $t_{\text{end\_loop}} = t_{L6}+t_{L7}$.
+The time $t_{\text{opening\_trajectory}} = t_{L2}+t_{L3}$ measures the problem setup, which includes data structure initialization and opening of topology and trajectory files.
+$t_{\text{Communication\_{MPI}}} = t_{L16}$ is the time to gather (``reduce'') all data from all processor ranks to rank zero.
 The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMSD}} = t_{L1} + ...+ t_{L8}$. 
 There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO. 
 To measure the un-accounted time we define the ``overheads''.
-$t_{Overhead1}$ and $t_{Overhead2}$ are the overhead of the calculations and they should be ideally very small (see Table \ref{tab:notation} for the definition).  
-The total time to completion for a single process on $N$ cores is $t_{N}$, which is mathematically equivalent to
-$ t_{RMSD} + \tcomm \equiv t_{N}$.
+$t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ are the overhead of the calculations and they should be ideally very small (see Table \ref{tab:notation} for the definition).  
+The total time to completion for a single process on $N$ cores is $t_{\text{N}}$, which is mathematically equivalent to
+$ t_{\text{RMSD}} + \tcomm \equiv t_{\text{N}}$.
 
 \subsection{Performance Measurement}
 We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
-$t_{\text{total}}(N) \approx \max t_{N}$). 
+$t_{\text{total}}(N) \approx \max t_{\text{N}}$). 
 Strong scaling was quantified by calculating the speed-up relative to performance on a single core
 
 \begin{equation}
@@ -34,7 +34,7 @@ and efficiency
   E = \frac{S}{N}.
 \end{equation}
 Additionally, we introduced two performance parameters that we will show are indicative of the occurrence of stragglers.
-We define the ratio of compute time to I/O time $t_{Compute}/t_{IO}$. 
+We define the ratio of compute time to I/O time $t_{\text{Compute}}/t_{\text{IO}}$. 
 In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed in our previous study \cite{Khoshlessan:2017ab}.
 The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
 \begin{gather}
@@ -74,7 +74,7 @@ All code used in the present study is available from \url{https://github.com/hpc
 \caption[Summary of the notation of our performance modeling]
 {Summary of the notation of our performance modeling. Relevant probes in the codes are taken and stored,
 which we will abbreviate in here as $t_{Ln}$ where {Ln} refers to the line number in the corresponding algorithm. 
-$t_{Communication_{MPI}}$ and $t_{Communication_{GA}}$ are both referred to $t_{Communication}$ in the text.
+$t_{\text{Communication\_{MPI}}}$ and $t_{\text{Communication\_{GA}}}$ are both referred to $t_{\text{Communication}}$ in the text.
 All the timings on the first row are per rank.}
 \label{tab:notation}
 \end{table}

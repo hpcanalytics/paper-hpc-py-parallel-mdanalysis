@@ -31,7 +31,7 @@ HiMach's runtime is responsible to parallelize and distribute the Map and Reduce
 HiMach uses parallel I/O for file access during the map tasks and \text{MPI\_Allgather} in the reduction process. 
 HiMach, however, does not discuss parallel analysis for the task types which can not be analyzed using a MapReduce implementation.
 The analysis needs by MD community, however, tend to be varied and a generalized parallel framework should be able to provide parallel analysis for a variety of task types.
-Furthermore, HiMach is not available under an open source licence, which makes it difficult to improve upon this work or integrate it in more complex analysis workflows.
+Furthermore, HiMach is not available under an open source license, which makes it difficult to improve upon this work or integrate it in more complex analysis workflows.
 
 Wu et. al. \cite{Wu_et.al} present a scalable parallel framework for distributed-memory post-simulation data analysis.
 This work consists of an interface that allows a user to write analysis programs sequentially, and the machinery that ensures these programs execute in parallel automatically. 
