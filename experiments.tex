@@ -10,6 +10,8 @@ As in the previous work we also observed very poor strong strong scaling perform
 A more detailed analysis showed that the RMSD computation itself and to a lesser degree the I/O considered on their own scale well beyond 50 cores (yellow and blue lines in Figure \ref{fig:ScalingComputeIO}) but that communication (red line in Figure \ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure \ref{fig:ScalingComputeIO}) start to dominate.
 However, the communication cost and the initial time for opening the trajectory were distributed unevenly across the MPI ranks, as shown in the example in Figure \ref{fig:MPIranks}. The ranks that took much longer to complete than the mean execution time of all other ranks are the stragglers that hurt performance.
 
+\subsubsection*{Identification of a Scalability Bottleneck}
+
 In the example run in Figure \ref{fig:MPIranks}, 62 ranks out of 72 took about 60~s whereas the remaining ranks only took about 20~s. 
 The detailed breakdown of the time spent on each rank (Figure \ref{fig:MPIranks}) shows that time
 for the actual computation, \tcomp, was fairly constant across ranks. 
@@ -17,7 +19,7 @@ The time spent on reading data from the shared trajectory file on the Lustre fil
 The stragglers, however, appear to be defined by occasional much larger \emph{communication} times, \tcomm (line 16 in Algorithm \ref{alg:RMSD}), which were on the order of 30~s in this example, and by larger times to initially open the trajectory (line 2 in Algorithm \ref{alg:RMSD}).
 For other ranks, \tcomm varied across different ranks and was barely measurable for a few ranks.
 Although the data in Figure \ref{fig:MPIranks} only represent one example and in other instances perhaps only ten ranks were stragglers, the overall picture is confirmed by the averages over five independent repeats and all ranks (Figure \ref{fig:ScalingComputeIO}).
-This initial analysis indicates that communication is a major issue. 
+This initial analysis indicates that communication is a major issue that prevents good scaling beyond a single node, but that problems related to file I/O also play an important role in limiting performance.
 
 
 \begin{figure}
@@ -55,11 +57,6 @@ These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 
 \label{fig:MPIwithIO}
 \end{figure} 
 
-\subsubsection*{Identification of Scalability Bottleneck}
-
-Figure \ref{fig:ScalingComputeIO} shows the scaling of \tcomp and \tIO individulally. 
-As shown, \tcomp scales very well; however, \tIO does not show good scaling beyond a single node (24 cores) and that explains why we are seeing these variations in \tIO across different ranks (Figure \ref{fig:MPIranks}). 
-Considering the results in Figures \ref{fig:MPIwithIO} and \ref{fig:ScalingComputeIO}, we can conclude that communication and I/O are the root causes for stragglers. 
 
 \subsubsection*{Hardware}
 We did not discern any specific patterns that could be traced to the underlying hardware. 
