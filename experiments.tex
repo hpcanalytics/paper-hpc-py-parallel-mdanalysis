@@ -58,12 +58,13 @@ These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 
 \end{figure} 
 
 
-\subsubsection*{Hardware}
+\subsubsection*{Influence of Hardware}
 We did not discern any specific patterns that could be traced to the underlying hardware. 
-We previously observed stragglers on \emph{SDSC Comet}, \emph{TACC Stampede} and \emph{ASU local computing resources} \cite{Khoshlessan:2017ab}. 
+We previously observed stragglers on \emph{SDSC Comet}, \emph{TACC Stampede} and local computing resources at Arizona State University \cite{Khoshlessan:2017ab}. 
 We also show in the present study that stragglers occur on other XSEDE resources such as PSC Bridges and SuperMIC as well.
 There was no clear pattern in which certain MPI ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not reveal an obvious pattern). 
 Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the resources.
+\obnote{What data do we show to prove the statement that we have stragglers on other machines? In principle we would want the same kind of figure as Fig~\ref{fig:MPIwithIO}---if we already have that, I would include that in Appendix. Alternatively, add similar figures like Fig \ref{fig:comparison_efficiency} for \emph{Bridges} and \emph{SuperMIC}.}
 
 \subsection{Effect of \tcomp/\tIO on Performance}
 \label{bound}
