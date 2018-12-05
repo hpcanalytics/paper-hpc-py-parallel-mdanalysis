@@ -39,10 +39,10 @@ nodes.
   \label{fig:compute-IO-scaling-clusters-splitting}
 \end{subfigure}
 %
-\caption{Comparison of the performance of the RMSD task with MPI ($\tcomp/\tIO \approx 0.3$) when the trajectories are split using global 
+\caption{Comparison of the performance of the RMSD task with MPI (\text{$\tcomp/\tIO \approx 0.3$}) when the trajectories are split using global 
 array and without Global Arrays across different clusters (SDSC Comet, SuperMIC). 
-In case of Global Arrays, all ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
-Five repeats are performed to collect statistics. The error bars show standard deviation with respect to mean.}
+In case of Global Arrays, all ranks update the Global Arrays (\text{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\text{ga\_get()}).
+Five repeats were performed to collect statistics. The error bars show standard deviation with respect to mean.}
 \obnote{If comm and the other terms are added, does it become clearer why no-GA is much worse?}
 \mknote{Yes, it does. I showed it in rmsd with GA. Here this plot already contains 8 lines. If I add communication. it will get too crowded for one plot. previous plots show it}
 \label{fig:MPI-splitting-clusters}
@@ -81,9 +81,9 @@ However, on Bridges the I/O time is on average about two and a half times larger
   \label{fig:compute-IO-scaling-clusters}
 \end{subfigure}
 %
-\caption{Comparison of the performance of the RMSD task with MPI ($\tcomp/\tIO \approx 0.3$)
+\caption{Comparison of the performance of the RMSD task with MPI (\text{$\tcomp/\tIO \approx 0.3$})
 across different clusters (SDSC Comet, PSC Bridges, SuperMIC). Data are read from a shared HDF5 file format instead of XTC format (Independent I/O)
-and results are communicated back to rank 0 (communications included). Five repeats are performed to 
+and results are communicated back to rank 0 (communications included). Five repeats were performed to 
 collect statistics. The error bars show standard deviation with respect to mean.}
 \label{fig:MPIwithIO-clusters}
 \end{figure} 
@@ -103,8 +103,8 @@ collect statistics. The error bars show standard deviation with respect to mean.
 \end{subfigure}
 %
 \caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 (\text{$\tcomp/\tIO \approx 0.3$}) on (a) PSC Bridges and (b) SuperMIC.
-Five repeats are performed to collect statistics and this is typical data from one run of the 5 repeats. Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \texttt{$t_{\text{end\_loop}}$},
-  opening the trajectory \texttt{$t_{\text{opening\_trajectory}}$}, and overheads \texttt{$t_{\text{Overhead1}}$},  \texttt{$t_{\text{Overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition).
+Five repeats were performed to collect statistics and this is typical data from one run of the 5 repeats. Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
+  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition).
 I/O distribution is non-uniform on Bridges while it is more uniform on SuperMIC and this explains why SuperMIC has better scaling as compared to PSC Bridges.}
 \label{fig:MPIwithIO-clusters-rank}
 \end{figure} 
@@ -148,7 +148,7 @@ When the trajectories are split and Global Arrays is used for communication both
 \end{tabular}
 \end{adjustbox}
 \caption[Notation of our performance modeling]
-{Comparison of the compute and I/O scaling for different test cases and number of processes. Five repeats are performed to collect statistics. The mean value and the
+{Comparison of the compute and I/O scaling for different test cases and number of processes. Five repeats were performed to collect statistics. The mean value and the
 standard deviation with respect to mean are reported for each case.}
 \label{tab:comp-IO-scaling}
 \end{sidewaystable}
