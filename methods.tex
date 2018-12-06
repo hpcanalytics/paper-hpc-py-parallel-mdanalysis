@@ -8,7 +8,7 @@ We abbreviate the timings in the following as variables $t_{\text{L}_{\text{n}}}
 We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``I/O'' time for
 ingesting the data from the file system into memory, ($t_{\text{I/O}}^{\text{frame}} = t_{\text{L4}}$) and the ``compute'' time per
 trajectory frame to perform the computation ($t_{\text{comp}}^{\text{frame}} = t_{\text{L5}}$).
-The total I/O time for a rank  $\tIO = \sum_{\text{frames}}^{\text{N}_{\text{frames}}} t_{\text{I/O}}^{\text{frame}}$ is the sum over all I/O times for all the $N_{\text{frames}}$ frames assigned to the rank; similarly, the total compute time for a rank is $\tcomp = \sum_{\text{frame}}^{N_{\text{frames}}} t_{\text{comp}}^{\text{frame}}$. 
+The total I/O time for a rank  $\tIO = \sum_{\text{frame}=1}^{N_{\text{b}}} t_{\text{I/O}}^{\text{frame}}$ is the sum over all I/O times for all the $N_{\text{frames}}$ frames assigned to the rank; similarly, the total compute time for a rank is $\tcomp = \sum_{\text{frame}=1}^{N_{\text{b}}} t_{\text{comp}}^{\text{frame}}$. 
 The time delay between the end of the last iteration and exiting the \texttt{for} loop is $t_{\text{end\_loop}} = t_{\text{L6}}+t_{\text{L7}}$.
 The time $t_{\text{opening\_trajectory}} = t_{\text{L2}}+t_{\text{L3}}$ measures the problem setup, which includes data structure initialization and opening of topology and trajectory files.
 $t_{\text{Communication\_{MPI}}} = t_{\text{L16}}$ is the time to gather (``reduce'') all data from all processor ranks to rank zero.
@@ -40,7 +40,7 @@ The ratio of compute to communication time is defined by the ratio of total comp
 \begin{gather}
   \label{eq:Compute-comm}
   \frac{t_{\text{comp}}}{t_{\text{comm}}} = \frac{\frac{1}{N}
-    \sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{frames}}}t_{\text{comp}}^{\text{frame}}}%
+    \sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}}%
   {\overline{t_{\text{comm}}}},
 \end{gather}
 as shown in Table \ref{tab:notation}.
@@ -54,11 +54,11 @@ All code used in the present study is available from \url{https://github.com/hpc
            \bfseries\thead{Item} & \bfseries\thead{Definition}\\
   \midrule
   \midrule
-    $N_{\text{frames}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
+    $N_{\text{b}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
     $t_{\text{end\_loop}}$ & $t_{\text{L6}}+t_{\text{L7}}$\\
     $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ \\
-    $t_{\text{comp}}$ & $\sum_{\text{frame}=1}^{N_{\text{frames}}}t_{\text{comp}}^{\text{frame}}$\\
-    $t_{\text{I/O}}$ & $\sum_{\text{frame}=1}^{N_{\text{frames}}}t_{\text{I/O}}^{\text{frame}}$\\
+    $t_{\text{comp}}$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}$\\
+    $t_{\text{I/O}}$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{I/O}}^{\text{frame}}$\\
     $t_{\text{all\_frame}}$ & $t_{\text{L4}}+t_{\text{L5}}+t_{\text{L6}}$  \\
     $t_{\text{RMSD}}$ &  $t_{\text{L1}} + ...+ t_{\text{L8}}$ \\
     $t_{\text{Communication}_{\text{MPI}}}$ &  $t_{\text{L16}}$  \\
