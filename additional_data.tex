@@ -1,10 +1,65 @@
-\label{sec:splitting-timing}
-Figure \ref{fig:comparison_efficiency} shows comparison of the parallel efficiency of the RMSD task between different test cases on SDSC Comet.  
+\label{sec:supplement}
+
+Figure \ref{fig:MPIwithIO-Bridges} shows performance of the RMSD task on PSC Bridges. 
 
 \begin{figure}[ht!]
 \centering
-  \includegraphics[width=0.65\linewidth]{figures/Comparison_Efficiency_all.pdf}
-\caption{Comparison of the parallel efficiency between different test cases on SDSC Comet.
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/main-RMSD-t_total-Bridges.pdf}
+  \caption{Scaling total (five repeats)}
+  \label{fig:MPIscaling-Bridges}
+\end{subfigure}
+\hfill
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/main-RMSD-speed_up-Bridges.pdf}
+  \caption{Speed-up (five repeats)}
+  \label{fig:MPIspeedup-Bridges}
+\end{subfigure}
+\bigskip
+
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison-Bridges.pdf}
+\caption{Scaling for different components (five repeats)}
+\label{fig:ScalingComputeIO-Bridges}
+\end{subfigure}
+\hfill
+\begin{subfigure} {.5\textwidth}
+  \includegraphics[width=\linewidth]{figures/main-RMSD-BarPlot-rank-comparison_72_4-Bridges.pdf}
+  \caption{Time comparison on different parts of the calculations per MPI rank (example)}
+  \label{fig:MPIranks-Bridges}
+\end{subfigure}
+
+\caption{Performance of the RMSD task with MPI which is I/O-bound $\tcomp/\tIO \approx 0.3$ on PSC Bridges.
+Results are communicated back to rank 0 (communications included). Five independent repeats were performed to collect statistics. (a-c) The error bars show
+standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
+  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition).
+These are data from one run of the five repeats. MPI ranks 0 and 70 are stragglers. \textbf{Note:} In serial, there is no communication.}
+\label{fig:MPIwithIO-Bridges}
+\end{figure} 
+
+Figure \ref{fig:comparison_efficiency} shows comparison of the parallel efficiency of the RMSD task between different test cases on SDSC Comet.  
+
+ \begin{figure}[ht!]
+\centering
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/Comparison_Efficiency_all.pdf}
+  \caption{Comet}
+  \label{fig:comparison_efficiency}
+\end{subfigure}
+\hfill
+\begin{subfigure}{.5\textwidth}
+  \includegraphics[width=\linewidth]{figures/Comparison_Efficiency_all_Bridges.pdf}
+  \caption{Bridges}
+  \label{fig:comparison_efficiency_Bridges}
+\end{subfigure}
+%\hfill
+%\begin{subfigure}{.3\textwidth}
+ % \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting-SuperMIC.pdf}
+ % \caption{Speed-up}
+  %\label{fig:comparison_efficiency_SuperMIC}
+%\end{subfigure}
+
+\caption{Comparison of the parallel efficiency between different test cases on (a) SDSC Comet, (b) Bridges, and (c) SuperMIC.
 Five repeats were performed to collect statistics and error bars show standard deviation with respect to mean.}
 \label{fig:comparison_efficiency}
 \end{figure} 

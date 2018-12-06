@@ -6,7 +6,7 @@ The RMSD algorithm for the present test case represents a task for which the com
 We showed previously that the RMSD task only scaled well up to 24 cores, on a single compute node on \emph{SDSC Comet}, and \emph{TACC Stampede}, using either Dask or MPI \cite{Khoshlessan:2017ab}.
 
 Here we focus on the MPI implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}), in order to better understand the cause for the lack of scaling across nodes.
-As in the previous work we also observed very poor strong scaling performance (Figures \ref{fig:MPIscaling}, \ref{fig:MPIspeedup}) beyond a single node.
+As in the previous work we also observed very poor strong scaling performance (Figures \ref{fig:MPIscaling}, \ref{fig:MPIspeedup} and \ref{fig:MPIwithIO-Bridges}) beyond a single node.
 A more detailed analysis showed that the RMSD computation itself and to a lesser degree the I/O considered on their own scale well beyond 50 cores (yellow and blue lines in Figure \ref{fig:ScalingComputeIO}) but the communication (red line in Figure \ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure \ref{fig:ScalingComputeIO}) start to dominate.
 Communication cost and the initial time for opening the trajectory were distributed unevenly across the MPI ranks, as shown in the example in Figure \ref{fig:MPIranks}. The ranks that took much longer to complete than the mean execution time of all other ranks were the stragglers that hurt performance.
 
@@ -20,7 +20,6 @@ The stragglers, however, appear to be defined by occasional much larger \emph{co
 For other ranks, \tcomm varied across different ranks and was barely measurable for a few ranks.
 Although the data in Figure \ref{fig:MPIranks} only represent one example and in other instances perhaps only ten ranks were stragglers, the overall picture is confirmed by the averages over five independent repeats and all ranks (Figure \ref{fig:ScalingComputeIO}).
 This initial analysis indicates that communication is a major issue that prevents good scaling beyond a single node, but the problems related to file I/O also play an important role in limiting performance.
-
 
 \begin{figure}
 \centering
@@ -60,10 +59,9 @@ These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 
 \subsubsection*{Influence of Hardware}
 We did not discern any specific patterns that could be traced to the underlying hardware. 
 We previously observed stragglers on \emph{SDSC Comet}, \emph{TACC Stampede} and local computing resources at Arizona State University \cite{Khoshlessan:2017ab}. 
-We also show in the present study that stragglers occur on other XSEDE resources such as PSC Bridges and SuperMIC as well.
+We also show in the present study that stragglers occur on other XSEDE resources such as PSC Bridges (\ref{fig:MPIwithIO-Bridges}) and SuperMIC (???) as well.
 There was no clear pattern in which certain MPI ranks would always be a straggler and we could also not trace stragglers to specific cores or nodes (or at least our data did not reveal an obvious pattern). 
 Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the resources.
-\obnote{What data do we show to prove the statement that we have stragglers on other machines? In principle we would want the same kind of figure as Fig~\ref{fig:MPIwithIO}---if we already have that, I would include that in Appendix. Alternatively, add similar figures like Fig \ref{fig:comparison_efficiency} for \emph{Bridges} and \emph{SuperMIC}.}
 
 \subsection{Effect of \tcomp/\tIO on Performance}
 \label{bound}
@@ -210,26 +208,25 @@ Five repeats were performed to collect statistics. (a-c) The error bars show sta
 (d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, \text{$t_{\text{Access\_Global\_Array}}$}, ending the for loop \text{$t_{\text{end\_loop}}$},
   opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition). 
   This is typical data from one run of the 5 repeats. MPI ranks 20 and 56 are stragglers, i.e., 
-their total time far exceeds the mean of the majority of ranks. \textbf{Note:} In serial, there is no communication.}
+their total time far exceeds the mean of the all ranks. \textbf{Note:} In serial, there is no communication.}
 \label{fig:MPIwithIO-ga4py}
 \end{figure}
 
 \subsection{I/O Cost}
 \label{I/O}
 We previously showed that the I/O system can have a large effect on the parallel performance of the RMSD task \cite{Khoshlessan:2017ab},
-especially because time to perform the computation \tcomp (about 0.09 ms) is about three times smaller than the I/O time \tIO (about 0.3 ms) (Figures \ref{fig:ScalingComputeIO}). 
-In fact, poor I/O performance was one of the factors responsible for the stragglers. 
+especially because time to perform the computation \tcomp (about 0.09 ms) is about three times smaller than the I/O time \tIO (about 0.3 ms) (Figures \ref{fig:ScalingComputeIO} and \ref{fig:ScalingComputeIO}). 
+In fact, poor I/O performance resulting from small compute to I/O ratio contribute to stragglers and prevents us from effectively utilizing HPC resources. 
 In MDAnalysis, all the information describing the system are stored in \emph{Universe}.
 \emph{Universe} includes thousands of frames and each frame stores system information at a specific instance of time.
-Due to the large file size and memory limit, processes are not able to load the whole trajectory into memory at once and as a result each process is only allowed to load one frame into memory at a time.
+Due to the large file size and memory limit, processes are not able to load all the frames assigned to them into memory at once and as a result each process is only allowed to load one frame into memory at a time.
 The test trajectory has $2,512,200$ frames in total and size of each frame is about 11 MB.
-These means that 2,512,200 I/O need to be performed for our RMSD calculation task.
+This means that 2,512,200 I/O need to be performed for our RMSD calculation task.
 Since each I/O request is to read/write a single Lustre stripe \cite{optimize_lustre}, and the default stripe size value is 1MB in Lustre, therefore, there will be about 11 I/O requests per frame of the trajectory.
 Many small I/O requests have a high overhead. 
 \obnote{How many requests per second? What can Lustre handle?}
-\mknote{That depends on the file server.}
-Thus, when the compute time is small with respect to I/O, then I/O can be a major issue as we also observe in our results (Figures \ref{fig:ScalingComputeIO} and \ref{fig:MPIwithIO}).    
-Read throughput might be limited by the available bandwidth (56 Gbs on Comet \& SuperMIC) on the Infini-band network interface that serves the Lustre file system.
+\mknote{That depends on the file server.} 
+In addition, read throughput might be limited by the available bandwidth (56 Gbs on Comet \& SuperMIC) on the Infini-band network interface that serves the Lustre file system.
 Excessive number of I/O requests, from one or more users and one or more jobs, can lead to contention for storage resources and access to files (30 GB for trajectory file 11 MB per frame) might be throttled.
 \obnote{We need at least some numbers for a plausibility argument here: what is the bandwidth and how much data would be communicated.}\mknote{You mean the file size and frame size in I/O. I just added them to the text. Is that what you mean?}
 We show that depending on the cluster and its capabilities the throughput might become a problem for achieving good performance and we also show ways to overcome this problem and improve performance.
@@ -241,16 +238,19 @@ We discuss these two approaches in detail in the following sections.
 \subsubsection{Splitting the Trajectories}
 \label{splitting-traj}
 In all the previous benchmarks all processes were using a shared trajectory file.
-In order to test whether \emph{I/O and communication compete over the network resources with small \tcomp/\tIO ratio}, we split our trajectory file into as many trajectory segments as the number of processes.
+Here, we propose splitting our trajectory file into as many trajectory segments as the number of processes.
+Subfiling, is a mechanism that is previously used for splitting a large multi-dimensional global array to a number of smaller subarrays, each saved in a separate file. 
+This scheme reduces the file system control overhead by decreasing the number of processes concurrently accessing a shared file \cite{scalable-IO, scalable-IO1}.
+Subfiling is known to improve programming Flexibility and Performance of Parallel Shared-file I/O. 
 This means that if we have $N$ processes, the trajectory file is split into $N$ segments and each segment will have $N_{b}$ frames in it. 
 Through this approach, each process will have access to its own segment and there should be no competition for file accesses. 
 For reference, the necessary times for splitting the trajectory file are given in \ref{sec:splitting-timing}.
 
 \subsubsection*{Performance without Global Arrays}
-We ran a benchmark up to 8 nodes (192 cores) and, we observed rather better scaling behavior with efficiencies above 0.6 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) and the delay time for stragglers has also reduced from 65s to about 10s for 72 processes. 
-However, the scaling is still far from ideal due to the communication. 
-Although the delay due to communication was much smaller as compared to RMSD with a shared trajectory file (Compare Figure \ref{fig:MPIranks-split} to Figure \ref{fig:MPIranks}), it is still delaying several processes and as a result led to longer job completion time (Figure \ref{fig:MPIranks-split}). 
-These delayed tasks impact performance as well and hence the speed-up is not still close to ideal scaling (Figure \ref{fig:MPIspeedup-split}).
+We ran a benchmark up to 8 nodes (192 cores) and, we observed rather better scaling behavior with efficiencies above 0.6 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with the delay time for stragglers reduced from 65 s to about 10 s for 72 processes. 
+However, scaling is still far from ideal due to communication. 
+Although, the delay due to communication was much smaller as compared to Parallel RMSD with shared-file I/O (Compare Figure \ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure \ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and as a result led to longer job completion time (Figure \ref{fig:MPIranks-split}). 
+These delayed tasks impact performance as well and as a result speed-up is far from ideal (Figure \ref{fig:MPIspeedup-split}).
 
 \begin{figure}[ht!]
 \centering
@@ -298,9 +298,8 @@ Five repeats were performed to collect statistics. (a) Compute \& I/O scaling ve
 \gpnote{So there are no similarities between GA communication and asynchronous MPI communication? Asynchronous MPI communication does not block anything and there is no need for synchronization when done correctly. It is still confusing for me at least.}\mknote{No,  there are no similarities. MPI.Gather is collective communication and collective communications are blocking in MPI, right?}\gpnote{For synchronous, yes you are right. I am asking about asynchronous MPI communication.}\mknote{Maybe using Isend and Ireceive can be helpful but I do not think it will be comparable with GA. DO you volunteer to give it a shot and replace \text{mpi.Gather} with asynchronous communication and run it so that we can compare with GA?}
 Previously, we showed that Global Arrays significantly reduces the communication cost (Section \ref{Global-Array}). 
 We want to examine effect of splitting the trajectory file and using Global Arrays on the performance.
-Again, we ran our benchmark up to 8 nodes (192 cores) and, we observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with no straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
-The present results show that contention for file access impact the performance. 
-The initial results with splitting the trajectory file suggests that there is in fact an effect, which possibly also interferes with the communications when $\tcomp/\tIO \ll 1$ (i.e. with a I/O bound workload).
+Again, we ran our benchmark up to 8 nodes (192 cores) and observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with no straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
+The present results suggest that contention for file access impacts performance. 
 
 \subsection{Effect of \tcomp/\tcomm on Performance}
 \obnote{Analyze the RMSD with different load. See if t\_comp/t\_comm is also important in that case. Can you still draw the same conclusions?}
@@ -322,13 +321,13 @@ If the computational load is more than communication load then the work became c
 \end{gather*}
 
 Figure \ref{fig:tcom_tcomm_effect} shows the relationship of performance with \tcomp/\tcomm ratio.
-When \tcomp/\tcomm ratio is higher the performance is better even if communication time is larger (Look at Figure \ref{fig:tcomp_tcomm_ratio} and \ref{fig:MPItottime-chain-reader} and Figure \ref{fig:tcomp_tIO_effect}).
+When \tcomp/\tcomm ratio is higher, performance is better even if communication time is larger (Figure \ref{fig:tcomp_tcomm_ratio} and Figure \ref{fig:S2_tcomp_tIO_effect}).
 Although, there are stragglers due to communication, their effect on performance is not crucial mainly because compute to communication ratio is very large. 
-We therefore, higher compute to communication loads would lead to better performance. 
+We therefore, conclude that higher compute to communication loads would lead to better performance. 
 
-It should be noted that within one node communication is not usually a problem because of the shared memory environment. 
-As a result, communication time would not be problematic even if compute to communication ratio is small (refer to Figure \ref{fig:tcomp_tcomm_ratio}).
-However, beyond a single node, communication overhead becomes a bottleneck and effect of \tcomp/\tcomm becomes very important.
+It should be noted that within one node, communication is not usually a problem because of the shared memory environment. 
+As a result, communication time would not be problematic even if compute to communication ratio is small (Figure \ref{fig:tcomp_tcomm_ratio}, 1-24 cores represents a single compute node on SDSC Comet).
+However, beyond a single node, communication overhead becomes a bottleneck and effect of \tcomp/\tcomm becomes very important (Figure \ref{fig:tcomp_tcomm_ratio}, 24-72 cores represents multiple compute node on SDSC Comet).
 
 \begin{figure}[ht!]
 \centering
