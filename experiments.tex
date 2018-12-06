@@ -73,27 +73,20 @@ The RMSD task turned out to be I/O bound, i.e.,
 \begin{gather*}
   \frac{\tcomp}{\tIO} \ll 1
 \end{gather*}
-
-and we were not able to achieve good scaling above a single compute node. 
-We hypothesized that decreasing the relative I/O load with respect to compute load would also reduce number of stragglers. 
-We believe as the task becomes more compute bound the processes will not constantly be performing I/O and instead, I/O is interleaved with longer periods of computation.
+and we were not able to achieve good scaling beyond a single node. 
+We hypothesized that decreasing the relative I/O load with respect to the compute load would also reduce the impact of stragglers by interleaving I/O with longer periods of computation and thus reducing the impact of I/O contention.
 We therefore increased the computational load so that the work became compute bound, i.e.,
-
 \begin{gather*}
-  \frac{\tcomp}{\tIO} \gg 1
+  \frac{\tcomp}{\tIO} \gg 1.
 \end{gather*}
 
-In order to artificially increase the computational load we repeated the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop respectively.
+In order to artificially increase the computational load we repeated the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop.
 
-\subsubsection{Examining the Effect of Increased Compute workload for RMSD Task}
-The RMSD workload was artificially increased forrty-fold (``$40\times$'' ), seventy-fold (``$70\times$'' ), and hundred-fold (``$100\times$'' ) and we measured performance as before. 
-These workloads correspond to \tcomp/\tIO ratio of 12, 21, 30 respectively as shown in Table \ref{tab:load-ratio}.
-We performed this experiment to show the effect of $\tcomp/\tIO$ ratio on performance (Figure \ref{fig:tcomp_tIO_effect}).
-On average, each rank\textsc{\char13}s workload is $N_{\text{frames}} \times t_{\text{I/O}}^{\text{frame}} $ (where $N_{\text{frames}}=N_{\text{frames}}^{\text{total}}/N$ is the
-number of frames per trajectory block, i.e., the number of frames
-processed by each MPI rank for $N$ processes) for I/O, and
-$X \times N_{\text{frames}} \times t_{\text{comp}}^{\text{frame}}$ for the RMSD calculation. 
-$X$ is the factor by which we increase the RMSD compute workload in our experiment.
+\subsubsection{Effect of Increased Compute workload for RMSD Task}
+The RMSD workload was artificially increased forty-fold (``$40\times$'' ), seventy-fold (``$70\times$'' ), and hundred-fold (``$100\times$'' ) and we measured performance as before. 
+These workloads corresponded to \tcomp/\tIO ratios of 12, 21, 30 respectively as shown in Table \ref{tab:load-ratio}.
+We performed this experiment to show the effect of the $\tcomp/\tIO$ ratio on performance (Figure \ref{fig:tcomp_tIO_effect}).
+On average, the workload of each rank is $N_{\text{frames}} \times \tIO $ (where $N_{\text{frames}} = N_{\text{frames}}^{total}/N$ is the number of frames per trajectory block, i.e., the number of frames processed by each MPI rank for $N$ processes) for I/O, and $X \times N_{\text{frames}} \times \tcomp$ for the RMSD calculation, where $X$ is the factor by which we increased the RMSD compute workload.
 
 \begin{table}[ht!]
 \centering
