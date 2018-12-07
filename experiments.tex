@@ -26,12 +26,14 @@ This initial analysis indicates that communication is a major issue that prevent
 \centering
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/main-RMSD-t_total.pdf}
+  \captionsetup{format=hang}
   \caption{Scaling total (five repeats)}
   \label{fig:MPIscaling}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/main-RMSD-speed_up.pdf}
+  \captionsetup{format=hang}
   \caption{Speed-up (five repeats)}
   \label{fig:MPIspeedup}
 \end{subfigure}
@@ -39,12 +41,14 @@ This initial analysis indicates that communication is a major issue that prevent
 
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison.pdf}
+  \captionsetup{format=hang}
 \caption{Scaling for different components (five repeats)}
 \label{fig:ScalingComputeIO}
 \end{subfigure}
 \hfill
 \begin{subfigure} {.5\textwidth}
   \includegraphics[width=\linewidth]{figures/main-RMSD-BarPlot-rank-comparison_72_5.pdf}
+  \captionsetup{format=hang}
   \caption{Time comparison on different parts of the calculations per MPI rank (example)}
   \label{fig:MPIranks}
 \end{subfigure}
@@ -173,12 +177,14 @@ In fact, although communication time significantly reduced using Global Arrays, 
 \centering
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/RMSD-ga4py-t_total.pdf}
+  \captionsetup{format=hang}
   \caption{Scaling total}
   \label{fig:MPIscaling-ga4py}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/RMSD-ga4py-speed_up.pdf}
+  \captionsetup{format=hang}
   \caption{Speed-up}
   \label{fig:MPIspeedup-ga4py}
 \end{subfigure}
@@ -186,12 +192,14 @@ In fact, although communication time significantly reduced using Global Arrays, 
 
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/RMSD-ga4py-time_IO_comparison.pdf}
+  \captionsetup{format=hang}
 \caption{Scaling for different components}
 \label{fig:ScalingComputeIO-ga4py}
 \end{subfigure}
 \hfill
 \begin{subfigure} {.5\textwidth}
   \includegraphics[width=\linewidth]{figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf}
+  \captionsetup{format=hang}
   \caption{Time comparison on different parts of the calculations per MPI rank}
   \label{fig:MPIranks-ga4py}
 \end{subfigure}
@@ -236,8 +244,8 @@ Here, we propose splitting our trajectory file into as many trajectory segments 
 Subfiling, is a mechanism that is previously used for splitting a large multi-dimensional global array to a number of smaller subarrays, each saved in a separate file. 
 This scheme reduces the file system control overhead by decreasing the number of processes concurrently accessing a shared file \cite{scalable-IO, scalable-IO1}.
 Subfiling is known to improve programming flexibility and performance of parallel shared-file I/O. 
-In the present study, if we have $N$ processes, the trajectory file is split into $N$ segments and each segment will have $N_{b}$ frames in it. 
-Through this approach, each process will have access to its own segment and there should be no competition for file accesses. 
+In the present study, we employ a similar approach through which, if we have $N$ processes, the trajectory file is split into $N$ segments and each segment will have $N_{b}$ frames in it. 
+In fact, each process will have access to its own trajectory segment and there should be no competition for file accesses. 
 For reference, we benchmarked the necessary time for splitting the trajectory using different number of processes (\ref{tab:timing-splitting}).
 
 \subsubsection*{Performance without Global Arrays}
@@ -250,6 +258,7 @@ These delayed tasks impacted performance and as a result speed-up was far from i
 \centering
 \begin{subfigure}{.32\textwidth}
   \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
+  \captionsetup{format=hang}
   \caption{Scaling for different components}
   \label{fig:ScalingComputeIO-split}
 \end{subfigure}
@@ -262,6 +271,7 @@ These delayed tasks impacted performance and as a result speed-up was far from i
 \hfill
 \begin{subfigure}{.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting.pdf}
+  \captionsetup{format=hang}
   \caption{Speed-up}
   \label{fig:MPIspeedup-split}
 \end{subfigure}
@@ -269,12 +279,14 @@ These delayed tasks impacted performance and as a result speed-up was far from i
 
 \begin{subfigure} {.45\textwidth}
   \includegraphics[width=\linewidth]{figures/split-BarPlot-rank-comparison_192_5.pdf}
+  \captionsetup{format=hang}
    \caption{Time comparison on different parts of the calculations per MPI rank without Global Arrays}
   \label{fig:MPIranks-split}
 \end{subfigure}
 \hfill
-\begin{subfigure} {.45\textwidth}
+\begin{subfigure} {.5\textwidth}
   \includegraphics[width=\linewidth]{figures/split-ga-BarPlot-rank-comparison_192_5.pdf}
+  \captionsetup{format=hang}
   \caption{Time comparison on different parts of the calculations per MPI rank using Global Arrays}
   \label{fig:MPIranks-split-ga}
 \end{subfigure}
@@ -327,6 +339,7 @@ However, beyond a single node, communication overhead becomes a bottleneck and e
 \centering
 \begin{subfigure}{.4\textwidth}
   \includegraphics[width=\linewidth]{figures/Compute_to_comm_ratio_on_performance_v17.pdf}
+  \captionsetup{format=hang}
 \caption{Compute to communication ratio}
 \label{fig:tcomp_tcomm_ratio}
 \end{subfigure}
@@ -354,6 +367,7 @@ In the current implementation of ChainReader, each process opens all the traject
 \centering
 \begin{subfigure}{.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting-chain-reader.pdf}
+  \captionsetup{format=hang}
   \caption{Scaling for different components}
   \label{fig:MPIscaling-chain-reader}
 \end{subfigure}
@@ -373,12 +387,14 @@ In the current implementation of ChainReader, each process opens all the traject
 
 \begin{subfigure} {.45\textwidth}
   \includegraphics[width=\linewidth]{figures/chain-reader-no-ga-BarPlot-rank-comparison_192_5.pdf}
+  \captionsetup{format=hang}
    \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader without Global Arrays}
   \label{fig:MPIranks-split-chain-reader}
 \end{subfigure}
 \hfill
 \begin{subfigure} {.45\textwidth}
   \includegraphics[width=\linewidth]{figures/chain-reader-ga-BarPlot-rank-comparison_192_3.pdf}
+  \captionsetup{format=hang}
   \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader using Global Arrays}
   \label{fig:MPIranks-split-ga-chain-reader}
 \end{subfigure}
@@ -443,12 +459,14 @@ However, both methods scale very well up to 8 nodes and have comparable performa
 \begin{subfigure}{.4\textwidth}
 \centering
   \includegraphics[width=\linewidth]{figures/hdf5-time_comp_IO_comparison.pdf}
+  \captionsetup{format=hang}
 \caption{Scaling for different components}
 \label{fig:ScalingComputeIO-hdf5}
 \end{subfigure}
 \hfill
 \begin{subfigure} {.5\textwidth}
   \includegraphics[width=\linewidth]{figures/hdf5-BarPlot-rank-comparison_192_4.pdf}
+  \captionsetup{format=hang}
   \caption{Time comparison on different parts of the calculations per MPI rank}
   \label{fig:MPIranks-hdf5}
 \end{subfigure}

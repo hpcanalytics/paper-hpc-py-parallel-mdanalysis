@@ -1,8 +1,8 @@
 \label{sec:clusters}
-In this section we try to compare the performance of RMSD task on different HPC resources to examine the robustness of the methods we used for our performance study.
+In this section we try to compare the performance of RMSD task on different HPC resources to examine the robustness of the methods we used for our performance study and to also make sure that the results are resource independent.
 HPC resources used for this purpose and their system configuration are given in Table \ref{tab:sys-config}.
 We perform these comparisons for several cases discussed previously. 
-These cases include: Splitting the trajectories with collective communications in MPI, Splitting the trajectories with Global Arrays for communications, and MPI-based Parallel HDF5.
+These cases include: splitting the trajectories with blocking collective communications in MPI, splitting the trajectories with Global Arrays for communications, and MPI-based parallel HDF5.
 
 \subsection{Splitting the Trajectories}
 Figure \ref{fig:MPI-splitting-clusters} shows how RMSD task scales with the increase in the number of cores on different HPC resources.  
@@ -10,13 +10,7 @@ When we split the trajectories the scaling follows the same pattern on both Come
 Both Comet and SuperMIC scale very well using Global Arrays. 
 RMSD task still scales on both clusters without Global Arrays; however, scaling is far from ideal scaling due to the communication cost (Refer to section \ref{splitting-traj} and Figures \ref{fig:MPIranks-split} and \ref{fig:MPIwithIO-split-SuperMIC}). 
 Overal, the scaling of the RMSD task is better on SuperMIC and the performance gap increases as we increase the number of cores.
-\obnote{Not sure what this is telling me. I think you can just leave it at the observation that GA works better here. }
-\mknote{What part is not clear?This is explaining that why GA should do better and it is because it avoids some overheads that MPI collective comm has.}
-In Global Arrays, primary mechanisms provided by GA for accessing data are block copy operations that transfer data between layers of memory hierarchy, namely global memory of the node (distributed array) and local memory. 
-Each process is able to directly access data held in a section of a Global Arrays that is locally assigned to that process \cite{GA}.
-This is an advantage over MPI collective communication where direct memory access is not allowed. 
-In message passing, CPU is stopped in order to access data from the local memory; while in GA CPU would continue doing its computations and would not stop to accommodate any communication between
-nodes.
+Presents results show that Global Arrays work better than MPI blocking collective communication.
 
 \begin{figure}[ht!]
 \centering
@@ -35,6 +29,7 @@ nodes.
 
 \begin{subfigure} {.8\textwidth}
   \includegraphics[width=\linewidth]{figures/Clusters_IO_compute_scaling_splitting.pdf}
+  \captionsetup{format=hang}
   \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI when the trajectories are split using Global Arrays and without Global Arrays.}
   \label{fig:compute-IO-scaling-clusters-splitting}
 \end{subfigure}
@@ -57,7 +52,7 @@ Bridges performance is different from Comet and SuperMIC.
 Bridges has 28 cores per compute node and when we use all cores for our calculations there is no scaling.
 However, decreasing the number of cores per node and having uniform workload distributions across all nodes can lead to significant improvements in the scaling as shown in Figure \ref{fig:MPIwithIO-clusters}.
 
-Based on Figure \ref{fig:MPIwithIO-clusters-rank} the I/O time distribution is fairly small and uniform across all ranks on Comet and SuperMIC (Figures \ref{fig:hdf5-SuperMIC} \& \ref{fig:MPIranks-hdf5}).
+Based on Figure \ref{fig:MPIwithIO-clusters-rank}, the I/O time distribution is fairly small and uniform across all ranks on Comet and SuperMIC (Figures \ref{fig:hdf5-SuperMIC} \& \ref{fig:MPIranks-hdf5}).
 However, on Bridges the I/O time is on average about two and a half times larger and the I/O time distribution is also erratic across different ranks (Figure \ref{fig:hdf5-bridge}).  
 
 \begin{figure}[ht!]
@@ -77,13 +72,15 @@ However, on Bridges the I/O time is on average about two and a half times larger
 
 \begin{subfigure} {.8\textwidth}
   \includegraphics[width=\linewidth]{figures/Clusters_IO_compute_scaling.pdf}
+  \captionsetup{format=hang}
   \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI-based parallel HDF5 (Independent I/O)}
   \label{fig:compute-IO-scaling-clusters}
 \end{subfigure}
 %
 \caption{Comparison of the performance of the RMSD task with MPI (\text{$\tcomp/\tIO \approx 0.3$})
 across different clusters (SDSC Comet, PSC Bridges, SuperMIC). Data are read from a shared HDF5 file format instead of XTC format (Independent I/O)
-and results are communicated back to rank 0 (communications included). Five repeats were performed to 
+and results are communicated back to rank 0 (communications included). $N_{\text{P}}/N_{\text{nodes}}$ means that number of processes used for the task is equal on all compute nodes.
+Five repeats were performed to 
 collect statistics. The error bars show standard deviation with respect to mean.}
 \label{fig:MPIwithIO-clusters}
 \end{figure} 
@@ -112,7 +109,7 @@ I/O distribution is non-uniform on Bridges while it is more uniform on SuperMIC 
 \subsection{Comparison of Compute and I/O Scaling Across Different Clusters}
 Comparison of compute and I/O scaling across different clusters for different test cases and algorithms is shown in Table \ref{tab:comp-IO-scaling}. 
 The corresponding plots for compute and I/O scaling are shown in related sections. 
-These plots together with Table \ref{tab:comp-IO-scaling} allow both quantitative and qualitative comparison of the compute and I/O time scaling.
+These plots together with Table \ref{tab:comp-IO-scaling} allow both quantitative and qualitative comparison of the compute and I/O time scaling across different resources and for different test cases.
 As can be seen in Table \ref{tab:comp-IO-scaling} for MPI-based parallel HDF5, both compute and I/O time on Bridges is larger than its corresponding value on Comet and SuperMIC.
 For example, with one core the corresponding compute and I/O time are about (387, 1318) versus (225, 423) and (273, 503) on Comet and SuperMIC respectively.
 This performance difference becomes more obvious as the number of cores increases.
@@ -128,6 +125,10 @@ When the trajectories are split and Global Arrays is used for communication both
            \bfseries\thead{Cluster} & \bfseries\thead{Gather} & \bfseries\thead{File Access} & \bfseries\thead{Time} & \bfseries\thead{Serial} & \begin{tabular}{c} \bfseries\thead{Comet:} 24 \\ \bfseries\thead{Bridges:} 24 \\ \bfseries\thead{SuperMIC:} 20 \end{tabular}  & \begin{tabular}{c} \bfseries\thead{Others:} 48 \\ \bfseries\thead{Bridges:} 48 \\ \bfseries\thead{SuperMIC:} 40 \end{tabular} & \begin{tabular}{c} \bfseries\thead{Comet:} 72 \\ \bfseries\thead{Bridges:} 60 \\ \bfseries\thead{SuperMIC:} 80 \end{tabular} & \begin{tabular}{c} \bfseries\thead{Comet:} 96 \\ \bfseries\thead{Bridges:} 78 \end{tabular} & \begin{tabular}{c} \bfseries\thead{Comet:} 144 \\ \bfseries\thead{Bridges:} 84 \\ \bfseries\thead{SuperMIC:} 160\end{tabular} & \bfseries\thead{Comet: 192} & \begin{tabular}{c} \bfseries\thead{Comet:} 384 \\  \bfseries\thead{SuperMIC:} 320\end{tabular}\\
   \midrule
     Comet & MPI & Single & \begin{tabular}{c} \tIO \\ \tcomp  \end{tabular} & \begin{tabular}{c} $791 \pm 5.22$ \\ $225 \pm 5.4$ \end{tabular} & \begin{tabular}{c} $49 \pm 3.45$ \\ $11 \pm 0.75$ \end{tabular} & \begin{tabular}{c} $29 \pm 1.3$ \\ $6 \pm 0.35$ \end{tabular} & \begin{tabular}{c} $26 \pm 9.19$ \\ $4 \pm 0.48$ \end{tabular} & -- & -- & -- & --\\  
+  \midrule
+    Bridges & MPI & Single & \begin{tabular}{c} \tIO \\ \tcomp  \end{tabular} & \begin{tabular}{c} $770 \pm 10.8$ \\ $221 \pm 3.9$ \end{tabular} &  \begin{tabular}{c} $38 \pm 0.84$ \\ $11 \pm 0.43$ \end{tabular} & \begin{tabular}{c} $33 \pm 19.4$ \\ $6 \pm 0.32$ \end{tabular} & \begin{tabular}{c} $15 \pm 1.6$ \\ $4 \pm 0.18$ \end{tabular} & -- & -- & -- & --\\  
+  \midrule
+    SuperMIC & MPI & Single & \begin{tabular}{c} \tIO \\ \tcomp  \end{tabular} & \begin{tabular}{c} $791 \pm 5.22$ \\ $225 \pm 5.4$ \end{tabular} & \begin{tabular}{c} $49 \pm 3.45$ \\ $11 \pm 0.75$ \end{tabular} & \begin{tabular}{c} $29 \pm 1.3$ \\ $6 \pm 0.35$ \end{tabular} & \begin{tabular}{c} $26 \pm 9.19$ \\ $4 \pm 0.48$ \end{tabular} & -- & -- & -- & --\\  
   \midrule
     Comet & GA & Single & \begin{tabular}{c} \tIO \\ \tcomp \end{tabular} & \begin{tabular}{c} $820 \pm 18.49$ \\ $219 \pm 9.8$ \end{tabular} & \begin{tabular}{c} $41 \pm 8.99$ \\ $10 \pm 0.3$ \end{tabular} & \begin{tabular}{c} $23 \pm 4.14$ \\ $5 \pm 0.48$ \end{tabular} & \begin{tabular}{c} $15 \pm 2.06$ \\ $3 \pm 0.54$ \end{tabular} & -- & -- & -- & --\\
   \midrule

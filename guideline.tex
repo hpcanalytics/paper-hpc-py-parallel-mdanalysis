@@ -1,9 +1,10 @@
 \label{guideline}
-Based on our results, we provide practical guidelines for parallel analysis of the three dimensional time series (MD trajectories) in \package{MDAnalysis} on HPC resources.
-To achieve, near ideal scaling we enforce the following step by step guidelines:
+Based on our results, we provide practical guidelines for parallel analysis of MD trajectories in \package{MDAnalysis} on HPC resources.
+It should be noted that the proposed guidelines are potentially applicable to data analysis in other Python-based libraries as well.
+To achieve near ideal scaling we enforce the following step by step guidelines:
 
 \begin{description}
-  \item[\textbf{Heuristic 1}] Calculate compute to I/O (\tcomp/\tIO) and compute to communication (\tcomp/\tcomm) ratio. 
+  \item[\textbf{Heuristic 1}] Calculate compute to I/O (\tcomp/\tIO) ratio and compute to communication (\tcomp/\tcomm) ratio. 
   \begin{description}
   \item[\textbf{Heuristic 1.1}] \tcomp/\tIO ratio determines whether the task is compute bound ($\frac{\tcomp}{\tIO} \gg 1$) or IO bound ($\frac{\tcomp}{\tIO} \ll 1$). 
   As discussed in Section \ref{bound} for I/O bound problems the interference between MPI communication and I/O traffic can be problematic \cite{VMD2013, Kevin2018} and the performance of the task will be affected by the straggler tasks which delay job completion time.  
