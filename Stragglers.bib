@@ -1,18 +1,66 @@
 %% This BibTeX bibliography file was created using BibDesk.
 %% http://bibdesk.sourceforge.net/
 
-%% Created for Mahzad Khoshlessan at 2018-12-05 16:44:53 -0700 
+%% Created for Oliver Beckstein at 2018-12-12 14:44:47 -0700 
 
 
 %% Saved with string encoding Unicode (UTF-8) 
 
 
 
+@inproceedings{Howison:2010aa,
+	Abstract = {HDF5 is a cross-platform parallel I/O library that is used by a wide variety of HPC applications for the flexibility of its hierarchical object-database representation of scientific data. We describe our recent work to optimize the performance of the HDF5 and MPI-IO libraries for the Lustre parallel file system. We selected three different HPC applications to represent the diverse range of I/O requirements, and measured their performance on three different systems to demonstrate the robustness of our optimizations across different file system configurations and to validate our optimization strategy. We demonstrate that the combined optimizations improve HDF5 parallel I/O performance by up to 33 times in some cases -- running close to the achievable peak performance of the underlying file system -- and demonstrate scalable performance up to 40,960-way concurrency.},
+	Address = {Heraklion, Crete, Greece},
+	Author = {Howison, Mark and Quincey Koziol and David Knaak and John Mainzer and John Shalf},
+	Booktitle = {Proceedings of Workshop on Interfaces and Abstractions for Scientific Data Storage},
+	Date-Added = {2018-12-12 14:32:53 -0700},
+	Date-Modified = {2018-12-12 14:32:53 -0700},
+	Keywords = {HDF5, Lustre, tuning, file systems},
+	Month = {September},
+	Pages = {LBNL-4803E},
+	Title = {Tuning {HDF5} for {Lustre} file systems},
+	Year = {2010}}
+
+@inproceedings{Paraskevakos:2018aa,
+	Abstract = {Different frameworks for implementing parallel data analytics applications have been proposed by the HPC and Big Data communities. In this paper, we investigate three frame- works: Spark, Dask and RADICAL-Pilot with respect to their ability to support data analytics requirements on HPC resources. We investigate the data analysis requirements of Molecular Dy- namics (MD) simulations which are significant consumers of su- percomputing cycles, producing immense amounts of data: a typ- ical large-scale MD simulation of physical systems of O(100,000) atoms can produce from O(10) GB to O(1000) GBs of data. We propose and evaluate different approaches for parallelization of a representative set of MD trajectory analysis algorithms, in partic- ular the computation of path similarity and the identification of connected atom. We evaluate Spark, Dask and RADICAL-Pilot with respect to the provided abstractions and runtime engine ca- pabilities to support these algorithms. We provide a conceptual basis for comparing and understanding the different frameworks that enable users to select the optimal system for its application. Further, we provide a quantitative performance analysis of the different algorithms across the three frameworks using different high-performance computing resources.},
+	Address = {New York, NY, USA},
+	Author = {Ioannis Paraskevakos and Andre Luckow and Mahzad Khoshlessan and Goerge Chantzialexiou and Thomas E. Cheatham and Oliver Beckstein and Geoffrey Fox and Shantenu Jha},
+	Booktitle = {ICPP 2018: 47th International Conference on Parallel Processing, August 13--16, 2018, Eugene, OR, USA},
+	Date-Added = {2018-12-12 14:22:51 -0700},
+	Date-Modified = {2018-12-12 14:22:51 -0700},
+	Doi = {10.1145/3225058.3225128},
+	Keywords = {Data analytics, MD Simulations Analysis, Parallel , MDAnalysis, task-parallel, PSA, LeafletFinder},
+	Month = {August 13--16},
+	Organization = {Association for Computing Machinery},
+	Publisher = {ACM},
+	Title = {Task-parallel Analysis of Molecular Dynamics Trajectories},
+	Year = {2018},
+	Bdsk-File-1 = {YnBsaXN0MDDSAQIDBFxyZWxhdGl2ZVBhdGhZYWxpYXNEYXRhXxBNLi4vLi4vLi4vLi4vLi4vRG9jdW1lbnRzL1B1YmxpY2F0aW9ucy9wZGYvQmliRGVzay9JQ1BQX1BhcmFza2V2YWtvc18yMDE4YS5wZGZPEQHQAAAAAAHQAAIAAAREYXRhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADTJAwMSCsAAAAWMkAbSUNQUF9QYXJhc2tldmFrb3NfMjAxOGEucGRmAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHVAkNbs4U4AAAAAAAAAAAAFAAUAAAkAAAAAAAAAAAAAAAAAAAAAB0JpYkRlc2sAABAACAAA0yRufAAAABEACAAA1u1DvgAAAAEAFAAWMkAAFjI+ABYvWAAVPgwAABnhAAIAT0RhdGE6b2xpdmVyOgBEb2N1bWVudHM6AFB1YmxpY2F0aW9uczoAcGRmOgBCaWJEZXNrOgBJQ1BQX1BhcmFza2V2YWtvc18yMDE4YS5wZGYAAA4AOAAbAEkAQwBQAFAAXwBQAGEAcgBhAHMAawBlAHYAYQBrAG8AcwBfADIAMAAxADgAYQAuAHAAZABmAA8ACgAEAEQAYQB0AGEAEgBGL29saXZlci9Eb2N1bWVudHMvUHVibGljYXRpb25zL3BkZi9CaWJEZXNrL0lDUFBfUGFyYXNrZXZha29zXzIwMThhLnBkZgATAA0vVm9sdW1lcy9EYXRhAP//AAAACAANABoAJAB0AAAAAAAAAgEAAAAAAAAABQAAAAAAAAAAAAAAAAAAAkg=}}
+
+@article{Mache:2005aa,
+	Abstract = {Network contention hotspots can limit network throughput for parallel disk I/O, even when the interconnection network appears to be sufficiently provisioned. We studied I/O hotspots in mesh networks as a function of the spatial layout of an application's compute nodes relative to the I/O nodes. Our analytical modeling and dynamic simulations show that when I/O nodes are configured on one side of a two-dimensional mesh, realizable I/O throughput is at best bounded by four times the network bandwidth per link. Maximal performance depends on the spatial layout of jobs, and cannot be further improved by adding I/O nodes. Applying these results, we devised a new parallel layout allocation strategy (PLAS) which minimizes I/O hotspots, and approaches the theoretical best case for parallel I/O throughput. Our I/O performance analysis and processor allocation strategy are applicable to a wide range of contemporary and emerging high-performance computing systems.},
+	Author = {Jens Mache and Virginia Lo and Sharad Garg},
+	Date-Added = {2018-12-12 14:21:33 -0700},
+	Date-Modified = {2018-12-12 14:21:33 -0700},
+	Doi = {10.1016/j.jpdc.2005.04.020},
+	Issn = {0743-7315},
+	Journal = {Journal of Parallel and Distributed Computing},
+	Keywords = {Mesh interconnection networks, Network contention, Parallel I/O, Job scheduling, Processor allocation},
+	Note = {Design and Performance of Networks for Super-, Cluster-, and Grid-Computing Part I},
+	Number = {10},
+	Pages = {1190 - 1203},
+	Title = {The impact of spatial layout of jobs on {I/O} hotspots in mesh networks},
+	Url = {http://www.sciencedirect.com/science/article/pii/S0743731505001048},
+	Volume = {65},
+	Year = {2005},
+	Bdsk-Url-1 = {http://www.sciencedirect.com/science/article/pii/S0743731505001048},
+	Bdsk-Url-2 = {https://doi.org/10.1016/j.jpdc.2005.04.020}}
+
 @article{scalable-IO1,
 	Author = {Seung Woo Son and Saba Sehrish and Wei-keng Liao and Ron Oldfield and Alok Choudhary},
 	Date-Added = {2018-12-05 16:34:07 -0700},
 	Date-Modified = {2018-12-05 16:43:06 -0700},
-	Journal = {Journal of Supercomputing },
+	Journal = {Journal of Supercomputing},
 	Number = {5},
 	Pages = {pp 2069--2097},
 	Title = {Reducing I/O Variability using Dynamic I/O Path Characterization in Petascale Storage Systems},
@@ -33,24 +81,11 @@
 	Author = {Kuan-Wu Lin and Jerry Chou and Surendra Byna and Kesheng Wu and},
 	Booktitle = {SSDBM Proceedings of the 25th International Conference on Scientific and Statistical Database Management},
 	Date-Added = {2018-09-16 15:16:34 -0700},
-	Date-Modified = {2018-09-30 21:51:23 -0700},
+	Date-Modified = {2018-12-12 11:35:34 -0700},
 	Month = {July 29 - 31},
 	Number = {Article No. 29},
-	Title = {Optimizing Fast query Performance on Lustre File System},
+	Title = {Optimizing Fast query Performance on {Lustre} File System},
 	Year = {2013}}
-
-@article{2018arXiv180107630P,
-	Adsnote = {Provided by the SAO/NASA Astrophysics Data System},
-	Adsurl = {http://adsabs.harvard.edu/abs/2018arXiv180107630P},
-	Archiveprefix = {arXiv},
-	Author = {{Paraskevakos}, I. and {Luckow}, A. and {Chantzialexiou}, G. and {Khoshlessan}, M. and {Beckstein}, O. and {Fox}, G.~C. and {Jha}, S.},
-	Eprint = {1801.07630},
-	Journal = {ArXiv e-prints},
-	Keywords = {Computer Science - Distributed, Parallel, and Cluster Computing},
-	Month = jan,
-	Primaryclass = {cs.DC},
-	Title = {{Task-parallel Analysis of Molecular Dynamics Trajectories}},
-	Year = 2018}
 
 @inproceedings{Nguyen2017,
 	Annote = {not needed},
