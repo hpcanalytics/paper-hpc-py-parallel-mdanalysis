@@ -216,26 +216,24 @@ their total time far exceeds the mean of the all ranks. \textbf{Note:} In serial
 
 \subsection{I/O Cost}
 \label{I/O}
-We previously showed that the I/O system can have a large effect on the parallel performance of the RMSD task \cite{Khoshlessan:2017ab},
-especially because time to perform the computation \tcomp (about 0.09 ms) is about three times smaller than the I/O time \tIO (about 0.3 ms) (Figures \ref{fig:ScalingComputeIO} and \ref{fig:ScalingComputeIO}). 
-In fact, poor I/O performance resulting from small compute to I/O ratio contribute to stragglers and prevents us from effectively utilizing HPC resources. 
-In MDAnalysis, all the information describing the system are stored in \emph{Universe}.
-\emph{Universe} includes thousands of frames and each frame stores system information at a specific instance of time.
-Due to the large file size and memory limit, processes are not able to load all the frames assigned to them into memory at once and as a result each process is only allowed to load one frame into memory at a time.
-The test trajectory has $2,512,200$ frames in total and size of each frame is about 11 MB.
-This means that 2,512,200 I/O need to be performed for our RMSD calculation task.
-Since each I/O request is to read/write a single Lustre stripe \cite{optimize_lustre}, and the default stripe size value is 1MB in Lustre, therefore, there will be about 11 I/O requests per frame of the trajectory.
-Many small I/O requests have a high overhead. 
-\obnote{How many requests per second? What can Lustre handle?}
-\mknote{That depends on the file server.} 
-In addition, read throughput might be limited by the available bandwidth (56 Gbs on Comet \& SuperMIC) on the Infini-band network interface that serves the Lustre file system.
-Excessive number of I/O requests, from one or more users and one or more jobs, can lead to contention for storage resources and access to files (30 GB for trajectory file 11 MB per frame) might be throttled.
-\obnote{We need at least some numbers for a plausibility argument here: what is the bandwidth and how much data would be communicated.}\mknote{You mean the file size and frame size in I/O. I just added them to the text. Is that what you mean?}
-We show that depending on the cluster and its capabilities the throughput might become a problem for achieving good performance and we also show ways to overcome this problem and improve performance.
-In fact, we need to employ strategies to avoid the competition over file access across different ranks when \tcomp/\tIO ratio is small.
-To this aim, we experimented two different ways for reducing I/O cost and examined their effect on the performance.
-These two ways include: Splitting the trajectory file into as many segments as number of processes and using the MPI-based Parallel HDF5 file format instead of the XTC trajectory format.
-We discuss these two approaches in detail in the following sections.
+
+We previously showed that the I/O system can have a large effect on the parallel performance of the RMSD task \cite{Khoshlessan:2017ab} and the results above show that in the I/O-bound problem stragglers prevent us from effectively utilizing HPC resources (see Figure \ref{fig:ScalingComputeIO}, for $\tcomp/\tIO \approx 0.3$).
+The root cause for this behavior is not immediately obvious but by analyzing the flow of data in the context of the Lustre filesystem on which the trajectory files are stored  we can get a sense of possible problem areas.
+
+In MDAnalysis, individual trajectory frames are loaded into memory, which ensures that even systems with tens of millions of atoms can be efficiently analyzed on resources with moderate RAM sizes. 
+The test trajectory (file size 30 GB) has $2,512,200$ frames in total so each frame is about 0.011 MB in size.
+With $\tIO \approx 0.3~\text{ms}$ per frame, the data are ingested at a rate of about $40$~MB/s for a single process.
+For 24 MPI ranks (one \emph{SDSC Comet} node), the aggregated reading rate would be about 1 GB/s, which seems to be well within the the available bandwidth of 56 Gb/s of the Infiniband network interface that serves the Lustre file system.
+The default Lustre stripe size value is 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
+Each I/O request reads a single Lustre stripe but because the I/O size (0.011~MB) is smaller than the stripe size, many of these I/O requests are likely just accessing the same stripe on the same OST but nevertheless have to acquire a new reading lock for each request.
+Such a situation can incur locking overheads \cite{optimize_lustre}, although it is not clear how severely the performance is generally affected in such cases.
+More generally, contention for the interconnect between OSTs and compute nodes due to MPI communication may lead to variable performance in I/O measurements \cite{Mache:2005aa}.
+Conversely, our data suggest that naive single-shared-file I/O on Lustre can negatively affect the MPI communication, even at moderate numbers (tens to hundreds) of concurrent requests.
+
+In order to improve performance, we therefore need to employ strategies to avoid the competition over file access across different ranks when the \tcomp/\tIO ratio is small.
+To this end we experimented with two different ways for reducing the I/O cost:
+splitting the trajectory file into as many segments as the number of processes, thus using file-per-process access, and using the HDF5 file format together with MPI-IO parallel reads instead of the XTC trajectory format.
+We discuss these two approaches and the resulting performance improvements in detail in the following sections.
 
 \subsubsection{Splitting the Trajectories}
 \label{splitting-traj}
