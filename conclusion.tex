@@ -38,7 +38,7 @@ With splitting the trajectories, effect of communication was still apparent on t
 Global Arrays toolkit we could achieve near ideal scaling (Figure \ref{fig:MPIwithIO-split}).
 \obnote{I actually do not understand why we need GA for splitting but not for parallel MPI.}
 \mknote{I believe this is because in splitting we still have some sort of IO requests contention. The main reason might be because with parallel IO type of IO requests is totally different as opposed to what we have for normal IO.
-ofcourse this is only a hypothesize and need to be validated.}
+ofcourse this is only a hypothesize and need to be validated. One other point is that in phdf5 both IO and communication are using MPI, but in splitting the trajectory IO and MPI communication are separate and they interfere with each other.}
 
 All the above strategies, provide guidelines for parallel analyses on data generated from MD simulations in \package{MDAnalysis} library.
 The analysis indicates that it is feasible to run an I/O bound task on HPC resources and achieve near ideal scaling behavior up to 8 nodes.
