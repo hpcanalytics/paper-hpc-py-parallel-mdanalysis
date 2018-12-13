@@ -244,7 +244,7 @@ This scheme reduces the file system control overhead by decreasing the number of
 Subfiling is known to improve programming flexibility and performance of parallel shared-file I/O. 
 In the present study, we employ a similar approach through which, if we have $N$ processes, the trajectory file is split into $N$ segments and each segment will have $N_{b}$ frames in it. 
 In fact, each process will have access to its own trajectory segment and there should be no competition for file accesses. 
-For reference, we benchmarked the necessary time for splitting the trajectory using different number of processes (\ref{tab:timing-splitting}).
+For reference, we benchmarked the necessary time for splitting the trajectory using different number of processes (Table \ref{tab:timing-splitting}).
 
 \subsubsection*{Performance without Global Arrays}
 We ran a benchmark up to 8 nodes (192 cores) and, we observed rather better scaling behavior with efficiencies above 0.6 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with the delay time for stragglers reduced from 65 s to about 10 s for 72 processes. 

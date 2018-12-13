@@ -18,8 +18,7 @@ Garraghan et al. \cite{Garraghan2016} reported high CPU utilization, disk utiliz
 Tuning resource allocation and tuning parallelism such as breaking the workload into many small tasks that are dynamically scheduled at runtime \cite{Rosen2012}, slow Node-Threshold \cite{Dean2004}, speculative execution \cite{Dean2004}, sampling or data distribution estimation techniques, SkewTune to avoid data imbalance \cite{Kwon2012}, dynamic work rebalancing \cite{Schmidt2016}, blocked time analysis \cite{Ousterhout2015}, and intelligent scheduling \cite{AWE-WQ2014} are among a wide variety of approaches that are trying to detect and mitigate stragglers. 
 
 In the present study, we identify the root-cause of the straggler tasks in the context of analyzing large MD trajectories and provide solutions through which we can improve performance and scaling.
-Even though the proposed solutions to avoid stragglers are specifically applied to the analysis of MD trajectory in the \package{MDAnalysis} library, all of these principles and implementation techniques are potentially applicable to data analysis in other Python-based libraries.
-
+Even though the proposed solutions to avoid stragglers are specifically applied to the analysis of MD trajectories in the \package{MDAnalysis} library, all of these principles and implementation techniques are potentially applicable to data analysis in other Python-based libraries.
 
 \subsection{Other packages with parallel analysis capabilities}
 \label{sec:otherparallel}
