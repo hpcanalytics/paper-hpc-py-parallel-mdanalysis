@@ -55,8 +55,8 @@ This initial analysis indicated that communication is a major issue that prevent
 
 \caption{Performance of the RMSD task (I/O-bound with $\tcomp/\tIO \approx 0.3$) with MPI on \emph{SDSC Comet}.
 Results were communicated back to rank 0. Five independent repeats were performed to collect statistics. (a-c) The error bars show
-standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
-  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (see Table \ref{tab:notation} for the definition).
+standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
+  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (see Table \ref{tab:notation} for the definition).
 These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 are stragglers. \textbf{Note:} In serial, there is no communication.}
 \label{fig:MPIwithIO}
 \end{figure} 
@@ -136,7 +136,7 @@ Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} show that
   \label{fig:E_tcomp_tIO_effect}
 \end{subfigure}
 %
-\caption{Effect of \text{$\tcomp/\tIO$} ratio on performance of the RMSD task with MPI performed on \emph{SDSC Comet}. We tested performance for $\tcomp/\tIO$ ratios of 0.3, 11, 19, 27 \obnote{FIX THESE GRAPHS, should correspond to measured numbers in Table \protect\ref{tab:load-ratio}, see \protect\href{https://github.com/hpcanalytics/paper-hpc-py-parallel-mdanalysis/issues/8}{issue \#8}}
+\caption{Effect of $\tcomp/\tIO$ ratio on performance of the RMSD task with MPI performed on \emph{SDSC Comet}. We tested performance for $\tcomp/\tIO$ ratios of 0.3, 11, 19, 27 \obnote{FIX THESE GRAPHS, should correspond to measured numbers in Table \protect\ref{tab:load-ratio}, see \protect\href{https://github.com/hpcanalytics/paper-hpc-py-parallel-mdanalysis/issues/8}{issue \#8}}
 which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively. (a) Effect of \tcomp/\tIO on the Speed-Up
 (b) Change in the Speed-Up with respect to $\tcomp/\tIO$ for different processor counts (c) Change in the efficiency with respect to $\tcomp/\tIO$ for different processor counts}
 \label{fig:tcomp_tIO_effect}
@@ -152,16 +152,16 @@ No stragglers were observed although an increase in communication time prevented
 Although in practice I/O cannot be avoided, this experiment demonstrated that accessing the trajectory file on the Lustre file system is at least one cause for the observed stragglers.
 
 
-\subsection{Communication Cost and Application of Global Arrays}
+\subsection{Reducing Communication Cost: Application of Global Arrays}
 \label{Global-Array}
-As discussed in the previous sections, Figure \ref{fig:MPIranks}, for small \tcomp/\tIO, communication acts as the scalability bottleneck. 
+As seen in Figure \ref{fig:MPIranks} for small \tcomp/\tIO, communication acted as a scalability bottleneck. 
 When the processes communicated result arrays back to the master process (rank 0), some processes took much longer as compared to other processes. 
-Here we investigate strategies to reduce communication cost. 
+We therefore investigated strategies to reduce communication cost. 
 
 We used Global Arrays (GA) \cite{GA, GAiN} instead of collective communication in MPI and examined the change in the performance. 
-In GA, we define one large RMSD array called \emph{global array}, and each MPI rank updates its associated block in the global RMSD array using \text{ga\_put()}. 
-At the end, when all the processes exit \text{block\_rmsd()} function and update their local block in the global array, rank 0 will access the whole global array using \text{ga\_access()}.
-In GA, the time for communication is \text{$t_{\text{ga\_put()}}+t_{\text{ga\_access()}}$}.
+In GA, we define one large RMSD array called \emph{global array}, and each MPI rank updates its associated block in the global RMSD array using \texttt{ga\_put()}. 
+At the end, when all the processes exit \texttt{block\_rmsd()} function and update their local block in the global array, rank 0 will access the whole global array using \texttt{ga\_access()}.
+In GA, the time for communication is $t_{\text{ga\_put()}}+t_{\text{ga\_access()}}$.
 Given the speed up plots (Figure \ref{fig:MPIspeedup-ga4py}) and total time scaling (Figure \ref{fig:MPIscaling-ga4py}) Global Arrays improves strong scaling performance.
 Although, communication time has significantly decreased using Global Arrays (compare Figure \ref{fig:MPIranks-ga4py} to Figure \ref{fig:MPIranks}),
 the existing variation in the dominant I/O part of the calculation plus two delayed MPI ranks due to the delay in opening the trajectory would still prevent ideal scaling (Figure \ref{fig:ScalingComputeIO-ga4py}).
@@ -203,10 +203,10 @@ In fact, although communication time significantly reduced using Global Arrays, 
 \end{subfigure}
 
 \caption{Performance of the RMSD task with MPI using Global Arrays ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
-All ranks update the Global Arrays (\text{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\text{ga\_get()}) (communications included).
+All ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}) (communications included).
 Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
-(d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, \text{$t_{\text{Access\_Global\_Array}}$}, ending the for loop \text{$t_{\text{end\_loop}}$},
-  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition). 
+(d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
+  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition). 
   This is typical data from one run of the 5 repeats. MPI ranks 20 and 56 are stragglers, i.e., 
 their total time far exceeds the mean of the all ranks. \textbf{Note:} In serial, there is no communication.}
 \label{fig:MPIwithIO-ga4py}
@@ -287,17 +287,17 @@ These delayed tasks impacted performance and as a result speed-up was far from i
   \label{fig:MPIranks-split-ga}
 \end{subfigure}
 
-\caption{Comparison on the performance of the RMSD task with MPI when the trajectories are split using Global Arrays and without Global Arrays (\text{$\tcomp/\tIO \approx 0.3$}) on SDSC Comet.
-In case of Global Arrays, all ranks update the Global Arrays (\text{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\text{ga\_get()}).
-Five repeats were performed to collect statistics. (a) Compute \& I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean. (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, \text{$t_{\text{Access\_Global\_Array}}$}, ending the for loop \text{$t_{\text{end\_loop}}$},
-  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition). When Global Arrays is not used, the performance is affected due to the non-uniform communication time across different ranks. However, when Global Arrays is used communication time has significantly reduced and scaling is close to ideal. \textbf{Note:} In serial, there is no communication.}
+\caption{Comparison on the performance of the RMSD task with MPI when the trajectories are split using Global Arrays and without Global Arrays ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
+In case of Global Arrays, all ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+Five repeats were performed to collect statistics. (a) Compute \& I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean. (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
+  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition). When Global Arrays is not used, the performance is affected due to the non-uniform communication time across different ranks. However, when Global Arrays is used communication time has significantly reduced and scaling is close to ideal. \textbf{Note:} In serial, there is no communication.}
 \label{fig:MPIwithIO-split}
 \end{figure}
 
 \subsubsection*{Performance using Global Arrays}
 \gpnote{This is very confusing. In a previous paragraph you say that GA passes data over the IB network. Here you say there is no congestion? Don't they, MPI communication, MPI I/O, and GA communication, use the same network? Also, I do not think you have the data to support that clearly, unless you know how many Bytes are moved around, how many packets and their type. If that is the case include it. Or are you using the Local filesystem on the nodes and IO has nothing to do with the IB?}
 \mknote{I think there is something different in the way GA use IB that when we use GA there is no contention. That is mainly because there is no synchronization and that reduces the traffic a lot. GA uses IB but the way it uses is very different from MPI Gather. it defines a pointer and that is very different from what happens in MPI for communication.}
-\gpnote{So there are no similarities between GA communication and asynchronous MPI communication? Asynchronous MPI communication does not block anything and there is no need for synchronization when done correctly. It is still confusing for me at least.}\mknote{No,  there are no similarities. MPI.Gather is collective communication and collective communications are blocking in MPI, right?}\gpnote{For synchronous, yes you are right. I am asking about asynchronous MPI communication.}\mknote{Maybe using Isend and Ireceive can be helpful but I do not think it will be comparable with GA. DO you volunteer to give it a shot and replace \text{mpi.Gather} with asynchronous communication and run it so that we can compare with GA?}
+\gpnote{So there are no similarities between GA communication and asynchronous MPI communication? Asynchronous MPI communication does not block anything and there is no need for synchronization when done correctly. It is still confusing for me at least.}\mknote{No,  there are no similarities. MPI.Gather is collective communication and collective communications are blocking in MPI, right?}\gpnote{For synchronous, yes you are right. I am asking about asynchronous MPI communication.}\mknote{Maybe using Isend and Ireceive can be helpful but I do not think it will be comparable with GA. DO you volunteer to give it a shot and replace \texttt{mpi.Gather} with asynchronous communication and run it so that we can compare with GA?}
 Previously, we showed that Global Arrays significantly reduces the communication cost (Section \ref{Global-Array}). 
 We want to examine effect of splitting the trajectory file and using Global Arrays on the performance.
 Again, we ran our benchmark up to 8 nodes (192 cores) and observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with no straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
@@ -396,10 +396,10 @@ In the current implementation of ChainReader, each process opens all the traject
 \end{subfigure}
 
 \caption{Comparison on the performance of ChainReader for RMSD task with MPI when the trajectories are split using Global Arrays and without Global Arrays ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
-In case of Global Arrays, all ranks update the Global Arrays (\text{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\text{ga\_get()}).
-Five repeats were performed to collect statistics. (a) Compute \& I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean. (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0 \text{$t_{\text{Access\_Global\_Array}}$}, ending the for loop \text{$t_{\text{end\_loop}}$},
-  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition). When Global Arrays is not used, the performance is affected due to the non-uniform communication time across different ranks. However, when Global Arrays is used communication time has significantly reduced and scaling is close to ideal. In addition, time for ending the for loop \text{t\_end\_loop} and 
-opening the trajectory \text{$t_{\text{opening\_trajectory}}$} is a bottleneck as opposed to our calculation without ChainReader. We obtained the results for the ChainReader with a \emph{patched version} of the MDAnalysis that avoid race condition. \textbf{Note:} In serial, there is no communication.}
+In case of Global Arrays, all ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+Five repeats were performed to collect statistics. (a) Compute \& I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean. (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0 $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
+  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition). When Global Arrays is not used, the performance is affected due to the non-uniform communication time across different ranks. However, when Global Arrays is used communication time has significantly reduced and scaling is close to ideal. In addition, time for ending the for loop $t_{\text{end\_loop}}$ and 
+opening the trajectory $t_{\text{opening\_trajectory}}$ is a bottleneck as opposed to our calculation without ChainReader. We obtained the results for the ChainReader with an unreleased patched version of MDAnalysis that avoids a race condition. Note: In serial, there is no communication.}
 \label{fig:MPIwithIO-split-chain-reader}
 \end{figure}
 
@@ -419,7 +419,7 @@ We obtained the results for the ChainReader with a \emph{patched version} of \pa
 Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance of ChainReader for RMSD task using GA and without GA. 
 As shown in Figure \ref{fig:MPIspeedup-chain-reader} the cases with GA and without GA scale up to 144 and 92 cores respectively.
 The scaling is not close to ideal as opposed to what we achieved in Section \ref{splitting-traj}. 
-However, in this case I/O and compute time are scaling very well (Figure \ref{fig:MPIscaling-chain-reader} as compared to Figure \ref{fig:ScalingComputeIO-split}) and the time for ending the for loop \text{$t_{\text{end\_loop}}$} (which includes the time for closing the trajectory file) and opening the trajectory \text{$t_{\text{opening\_trajectory}}$} appear to be the performance bottleneck as opposed to the results shown in Section \ref{splitting-traj} (i.e. Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 
+However, in this case I/O and compute time are scaling very well (Figure \ref{fig:MPIscaling-chain-reader} as compared to Figure \ref{fig:ScalingComputeIO-split}) and the time for ending the for loop $t_{\text{end\_loop}}$ (which includes the time for closing the trajectory file) and opening the trajectory $t_{\text{opening\_trajectory}}$ appear to be the performance bottleneck as opposed to the results shown in Section \ref{splitting-traj} (i.e. Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 
 One possible explanation for this behavior is because in ChainReader, each rank opens and closes all individual trajectory segments, i.e., for $N$ ranks and $M$ file segments, in total, $N M$ file opening/closing operations have to be performed. 
 Each server that is part of a Lustre filesystem can only handle a limited number of I/O requests (read, write, stat, open, close, etc.) per second.
 An excessive number of such requests, from one or more users and one or more jobs, can lead to contention for storage resources. 
@@ -467,10 +467,10 @@ However, both methods scale very well up to 8 nodes and have comparable performa
   \label{fig:MPIranks-hdf5}
 \end{subfigure}
 %
-\caption{Performance of the RMSD task with MPI-based parallel HDF5 (\text{$\tcomp/\tIO \approx 0.3$}) on SDSC Comet.
+\caption{Performance of the RMSD task with MPI-based parallel HDF5 ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
 Data are read from the file system from a shared HDF5 file format instead of XTC format (Independent I/O) and results are communicated back to rank 0 (communications included). 
-Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
-  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition).
+Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
+  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition).
   This is typical data from one run of the 5 repeats. No straggler is observed. \textbf{Note:} In serial, there is no communication. I am reporting the slowest rank per timing, and that is averaged over all repeats.}
 \label{fig:MPIwithIO-hdf5}
 \end{figure}
