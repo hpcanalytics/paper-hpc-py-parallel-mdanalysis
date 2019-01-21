@@ -210,23 +210,24 @@ their total time far exceeds the mean of the all ranks. \textbf{Note:} In serial
 \label{fig:MPIwithIO-ga4py}
 \end{figure}
 
-\subsection{I/O Cost}
-\label{I/O}
+\subsection{Reducing I/O Cost}
+\label{sec:I/O}
 
-We previously showed that the I/O system can have a large effect on the parallel performance of the RMSD task \cite{Khoshlessan:2017ab} and the results above show that in the I/O-bound problem stragglers prevent us from effectively utilizing HPC resources (see Figure \ref{fig:ScalingComputeIO}, for $\tcomp/\tIO \approx 0.3$).
-The root cause for this behavior is not immediately obvious but by analyzing the flow of data in the context of the Lustre filesystem on which the trajectory files are stored  we can get a sense of possible problem areas.
+We previously showed that the I/O system can have a large effect on the parallel performance of the RMSD task \cite{Khoshlessan:2017ab} and the results above showed that in the I/O-bound problem stragglers prevent us from effectively utilizing HPC resources (see Figure \ref{fig:ScalingComputeIO}, for $\tcomp/\tIO \approx 0.3$).
+The root cause for this behavior was not immediately obvious but by analyzing the flow of data in the context of the Lustre filesystem on which the trajectory files were stored  we could get a sense of possible problem areas.
 
 In MDAnalysis, individual trajectory frames are loaded into memory, which ensures that even systems with tens of millions of atoms can be efficiently analyzed on resources with moderate RAM sizes. 
-The test trajectory (file size 30 GB) has $2,512,200$ frames in total so each frame is about 0.011 MB in size.
-With $\tIO \approx 0.3~\text{ms}$ per frame, the data are ingested at a rate of about $40$~MB/s for a single process.
-For 24 MPI ranks (one \emph{SDSC Comet} node), the aggregated reading rate would be about 1 GB/s, which seems to be well within the the available bandwidth of 56 Gb/s of the Infiniband network interface that serves the Lustre file system.
-The default Lustre stripe size value is 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
-Each I/O request reads a single Lustre stripe but because the I/O size (0.011~MB) is smaller than the stripe size, many of these I/O requests are likely just accessing the same stripe on the same OST but nevertheless have to acquire a new reading lock for each request.
-Such a situation can incur locking overheads \cite{optimize_lustre}, although it is not clear how severely the performance is generally affected in such cases.
+The test trajectory (file size 30 GB) had $2,512,200$ frames in total so each frame was about 0.011 MB in size.
+With $\tIO \approx 0.3~\text{ms}$ per frame, the data were ingested at a rate of about $40$~MB/s for a single process.
+For 24 MPI ranks (one \emph{SDSC Comet} node), the aggregated reading rate would have been about 1 GB/s, which seemed to be well within the the available bandwidth of 56 Gb/s of the Infiniband network interface that served the Lustre file system.
+The default Lustre stripe size value was 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
+Each I/O request read a single Lustre stripe but because the I/O size (0.011~MB) was smaller than the stripe size, many of these I/O requests were likely just accessing the same stripe on the same OST but nevertheless had to acquire a new reading lock for each request.
+Such a situation can incur locking overheads \cite{optimize_lustre} although it is not clear how severely the performance is generally affected in such cases.
 More generally, contention for the interconnect between OSTs and compute nodes due to MPI communication may lead to variable performance in I/O measurements \cite{Mache:2005aa}.
-Conversely, our data suggest that naive single-shared-file I/O on Lustre can negatively affect the MPI communication, even at moderate numbers (tens to hundreds) of concurrent requests.
+Conversely, our data suggest that naive single-shared-file I/O on Lustre can negatively affect the MPI communication, even at moderate numbers (tens to hundreds) of concurrent requests, similar to recent network simulations that predicted interference between MPI and I/O traffic on fat-tree networks \cite{Brown:2018ab} (such as the networks on the supercomputers used in this work).
+This work indicates that MPI traffic can be strongly adversely affected by increasing I/O, and in particular, a few MPI messages are always delayed by 1-2 orders of magnitude more than the median time, thus suggesting that our observed stragglers with large variance in the MPI communication might be due to interference with the I/O requests on the same network.
 
-In order to improve performance, we therefore need to employ strategies to avoid the competition over file access across different ranks when the \tcomp/\tIO ratio is small.
+In order to improve performance we therefore needed to employ strategies to avoid the competition over file access across different ranks when the \tcomp/\tIO ratio was small.
 To this end we experimented with two different ways for reducing the I/O cost:
 splitting the trajectory file into as many segments as the number of processes, thus using file-per-process access, and using the HDF5 file format together with MPI-IO parallel reads instead of the XTC trajectory format.
 We discuss these two approaches and the resulting performance improvements in detail in the following sections.
@@ -306,7 +307,7 @@ The present results suggest that contention for file access impacts performance.
 \mknote{What do you mean by different loads? tcomp/tio is constant for all number of processes and as a result we were able to see the changes with the change in the ratio. 
 tcomp/tcomm is not constant with number of processes (fig 5). A better experiment would be to change size of the arrays to be communicated for RMSD 100X for example and evaluate performance. If you agree with that let me know and I wlll go ahead and run those cases.}
 In addition to the compute to I/O ratio we define another important performance parameter called compute to communication ratio.
-Based on the results shown in the section \ref{I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without Global Arrays.
+Based on the results shown in the section \ref{sec:I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without Global Arrays.
 This means that the task remains communication bound (Figure \ref{fig:MPIwithIO-split}). 
 When the task is communication bound, i.e.,
 
