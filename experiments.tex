@@ -232,20 +232,15 @@ To this end we experimented with two different ways for reducing the I/O cost:
 splitting the trajectory file into as many segments as the number of processes, thus using file-per-process access, and using the HDF5 file format together with MPI-IO parallel reads instead of the XTC trajectory format.
 We discuss these two approaches and the resulting performance improvements in detail in the following sections.
 
-\subsubsection{Splitting the Trajectories}
+\subsubsection{Splitting the Trajectories (``subfiling'')}
 \label{splitting-traj}
 In all the previous benchmarks all processes were using a shared trajectory file but work on ``subfiling'', a mechanism previously used for splitting a large multi-dimensional global array to a number of smaller subarrays with each one saved in a separate file, reduced the file system control overhead by decreasing the number of processes concurrently accessing a shared file \cite{scalable-IO, scalable-IO1}.
 Because subfiling is known to improve programming flexibility and performance of parallel shared-file I/O we investigated splitting our trajectory file into as many trajectory segments as the number of processes.
 For $N$ processes the trajectory file was split into $N$ segments with each segment having $N_{b}$ frames in it. 
 In this way each  process would access its own trajectory segment file without competition for file accesses. 
 
-Such an approach requires preprocessing of trajectory files and additional storage space for the segments.
-We benchmarked the necessary time for splitting the trajectory using different number of MPI processes (Table \ref{tab:timing-splitting}).
-These preprocessing times were not included in the following estimates because we are focusing on better understanding the principle causes of stragglers and we wanted to make the results directly comparable to the results of the previous sections.
-Nevertheless, from a pure end user perspective, preprocessing of trajectories can be integrated in workflows (especially as the data in Table \ref{tab:timing-splitting} indicate good scaling) and the preprocessing time can be quickly amortized if the trajectories are analyzed repeatedly, which is common practice.
 
-
-\subsubsection*{Performance with MPI communication}
+\paragraph{Performance with MPI communication}
 We ran a benchmark up to 8 nodes (192 cores) and observed rather better scaling behavior with efficiencies above 0.6 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with the delay time for stragglers reduced from 65~s to about 10~s for 72 processes. 
 However, scaling is still far from ideal due to communication (using MPI). 
 Although the delay due to communication was much smaller than compared to parallel RMSD with shared-file I/O (compare Figure \ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure \ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and resulted in longer job completion times (Figure \ref{fig:MPIranks-split}). 
@@ -292,135 +287,24 @@ These delayed tasks impacted performance so that speed-up remained far from idea
 \label{fig:MPIwithIO-split}
 \end{figure}
 
-\subsubsection*{Performance using Global Arrays}
+\paragraph{Performance using Global Arrays}
 In Section \ref{Global-Array} we showed that Global Arrays substantially reduced the communication cost. 
 We wanted to quantify the performance when splitting the trajectory file while using Global Arrays.
 Under otherwise identical conditions as in the previous section we now observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) without any straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
 Although the reason why in our case Global Arrays appeared to be more efficient than direct MPI-based communication remains unclear, these results showed that contention for file access clearly impacted performance and by removing the contention, near ideal scaling could be achieved.
 
-\subsection{Effect of \tcomp/\tcomm on Performance}
-\obnote{Analyze the RMSD with different load. See if t\_comp/t\_comm is also important in that case. Can you still draw the same conclusions?}
-\mknote{What do you mean by different loads? tcomp/tio is constant for all number of processes and as a result we were able to see the changes with the change in the ratio. 
-tcomp/tcomm is not constant with number of processes (fig 5). A better experiment would be to change size of the arrays to be communicated for RMSD 100X for example and evaluate performance. If you agree with that let me know and I wlll go ahead and run those cases.}
-In addition to the compute to I/O ratio we define another important performance parameter called compute to communication ratio.
-Based on the results shown in the section \ref{sec:I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without Global Arrays.
-This means that the task remains communication bound (Figure \ref{fig:MPIwithIO-split}). 
-When the task is communication bound, i.e.,
+\paragraph{Further considerations for splitting trajectories}
+The subfiling approach appears promising but it requires preprocessing of trajectory files and additional storage space for the segments.
+We benchmarked the necessary time for splitting the trajectory using different number of MPI processes (Table \ref{tab:timing-splitting}).
+These preprocessing times were not included in the following estimates because we are focusing on better understanding the principle causes of stragglers and we wanted to make the results directly comparable to the results of the previous sections.
+Nevertheless, from a pure end user perspective, preprocessing of trajectories can be integrated in workflows (especially as the data in Table \ref{tab:timing-splitting} indicate good scaling) and the preprocessing time can be quickly amortized if the trajectories are analyzed repeatedly, which is common practice.
 
-\begin{gather*}
-  \frac{t_{\text{comp}}}{t_{\text{comm}}} \ll 1.
-\end{gather*}
+Often trajectories from MD simulations on HPC machines are produced and kept in small chunks that would need to be concatenated to form a trajectory but that might be useful for the subfiling approach.
+However, it might not be feasible to have exactly one trajectory segment per MPI rank.
+In \ref{sec:chainreader} we investigated if existing functionality in MDAnalysis that can create virtual trajectories from trajectory segments could benefit from the subfiling approach.
+We found some improvements in performance but discovered limitations in the design that first have to be overcome before equivalent performance can be reached.
 
-If the computational load is more than communication load then the work became compute bound, i.e.,
 
-\begin{gather*}
-  \frac{t_{\text{comp}}}{t_{\text{comm}}} \gg 1.
-\end{gather*}
-
-Figure \ref{fig:tcom_tcomm_effect} shows the relationship of performance with \tcomp/\tcomm ratio.
-When \tcomp/\tcomm ratio is higher, performance is better even if communication time is larger (Figure \ref{fig:tcomp_tcomm_ratio} and Figure \ref{fig:S2_tcomp_tIO_effect}).
-Although, there are stragglers due to communication, their effect on performance is not crucial mainly because compute to communication ratio is very large. 
-We therefore, conclude that higher compute to communication loads would lead to better performance. 
-
-It should be noted that within one node, communication is not usually a problem because of the shared memory environment. 
-As a result, communication time would not be problematic even if compute to communication ratio is small (Figure \ref{fig:tcomp_tcomm_ratio}, 1-24 cores represent a single compute node on SDSC Comet).
-However, beyond a single node, communication overhead becomes a bottleneck and effect of \tcomp/\tcomm becomes very important (Figure \ref{fig:tcomp_tcomm_ratio}, 24-72 cores represent multiple compute nodes on SDSC Comet).
-
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/Compute_to_comm_ratio_on_performance_v17.pdf}
-  \captionsetup{format=hang}
-\caption{Compute to communication ratio}
-\label{fig:tcomp_tcomm_ratio}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/comm_comparison_different_RMSD_overload.pdf}
-  \caption{Communication time}
-  \label{fig:MPItottime-chain-reader}
-\end{subfigure}
-\caption{(a) Change in compute to communication ratio with number of processes for different RMSD workload on SDSC Comet. 
-(b) Comparison of communication time for different RMSD workload on SDSC Comet.
-Five repeats were performed to collect statistics and error bars show standard deviation with respect to mean.}
-\label{fig:tcom_tcomm_effect}
-\end{figure}
-
-\subsubsection{ChainReader}
-In Section \ref{splitting-traj} we showed how splitting the trajectories would help to overcome I/O and improve scaling. 
-However, the number of trajectories may not necessarily be equal to the number of processes.
-For example, trajectories from MD simulations on HPC resources are often kept in small chunks and making sure that the number of processes is equal to the number of trajectory files will not be feasible for the typical users. 
-The ChainReader, is used in \package{MDAnalysis} to represent multiple trajectories as one virtual trajectory. 
-Here, we want to use ChainReader and measure its performance. 
-In the current implementation of ChainReader, each process opens all the trajectories but I/O will only happen from a specific block of the trajectory specific to that process only.
- 
- \begin{figure}[ht!]
-\centering
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting-chain-reader.pdf}
-  \captionsetup{format=hang}
-  \caption{Scaling for different components}
-  \label{fig:MPIscaling-chain-reader}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting-chain-reader.pdf}
-  \caption{Scaling total}
-  \label{fig:MPItottime-chain-reader}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting-chain-reader.pdf}
-  \caption{Speed-up}
-  \label{fig:MPIspeedup-chain-reader}
-\end{subfigure}
-\bigskip
-
-\begin{subfigure} {.45\textwidth}
-  \includegraphics[width=\linewidth]{figures/chain-reader-no-ga-BarPlot-rank-comparison_192_5.pdf}
-  \captionsetup{format=hang}
-   \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader without Global Arrays}
-  \label{fig:MPIranks-split-chain-reader}
-\end{subfigure}
-\hfill
-\begin{subfigure} {.45\textwidth}
-  \includegraphics[width=\linewidth]{figures/chain-reader-ga-BarPlot-rank-comparison_192_3.pdf}
-  \captionsetup{format=hang}
-  \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader using Global Arrays}
-  \label{fig:MPIranks-split-ga-chain-reader}
-\end{subfigure}
-
-\caption{Comparison on the performance of ChainReader for RMSD task with MPI when the trajectories are split using Global Arrays and without Global Arrays ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
-In case of Global Arrays, all ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
-Five repeats were performed to collect statistics. (a) Compute \& I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean. (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0 $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
-  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition). When Global Arrays is not used, the performance is affected due to the non-uniform communication time across different ranks. However, when Global Arrays is used communication time has significantly reduced and scaling is close to ideal. In addition, time for ending the for loop $t_{\text{end\_loop}}$ and 
-opening the trajectory $t_{\text{opening\_trajectory}}$ is a bottleneck as opposed to our calculation without ChainReader. We obtained the results for the ChainReader with an unreleased patched version of MDAnalysis that avoids a race condition. Note: In serial, there is no communication.}
-\label{fig:MPIwithIO-split-chain-reader}
-\end{figure}
-
-XDR based readers such as the reader for the XTC format that we use in this study store persistent offsets on disk \citep{Gowers:2016aa}. 
-The offsets are used to enable access to random frames efficiently. 
-The advantage of these offset files is that after opening the trajectory for the first time, opening the same file will be very fast afterward. 
-These offsets will be generated automatically the first time the trajectory is opened and are stored in hidden $\ast.xtc\_offsets.npz$ files. 
-
-It sometimes can happen that the stored offsets get out of sync with the trajectory they refer to. 
-For this, the offsets also store the number of atoms, size of the file and last modification time. 
-If any of these parameters change, the offsets are recalculated. 
-If the XTC changes and any of the number of atoms, size of the file and last modification time changes but the offset file is not updated, then the offset file can be detected as invalid.
-With ChainReader in parallel, each process opens all the trajectories; therefore in case of invalid offset file, several processes might want to recalculate these parameters and rebuild the offset file which will lead to race condition.
-In order to avoid race condition, we removed this check from MDAnalysis, but this comes at the price of not checking the validity of the offset files at all; future versions of MDAnalysis will lift this limitation.
- 
-We obtained the results for the ChainReader with a \emph{patched version} of \package{MDAnalysis} that eliminates the race condition by assuming that XTC index files are present and valid. 
-Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance of ChainReader for RMSD task using GA and without GA. 
-As shown in Figure \ref{fig:MPIspeedup-chain-reader} the cases with GA and without GA scale up to 144 and 92 cores respectively.
-The scaling is not close to ideal as opposed to what we achieved in Section \ref{splitting-traj}. 
-However, in this case I/O and compute time are scaling very well (Figure \ref{fig:MPIscaling-chain-reader} as compared to Figure \ref{fig:ScalingComputeIO-split}) and the time for ending the for loop $t_{\text{end\_loop}}$ (which includes the time for closing the trajectory file) and opening the trajectory $t_{\text{opening\_trajectory}}$ appear to be the performance bottleneck as opposed to the results shown in Section \ref{splitting-traj} (i.e. Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 
-One possible explanation for this behavior is because in ChainReader, each rank opens and closes all individual trajectory segments, i.e., for $N$ ranks and $M$ file segments, in total, $N M$ file opening/closing operations have to be performed. 
-Each server that is part of a Lustre filesystem can only handle a limited number of I/O requests (read, write, stat, open, close, etc.) per second.
-An excessive number of such requests, from one or more users and one or more jobs, can lead to contention for storage resources. 
-For $N=M=100$, the Lustre file system has to perform 10,000 of these operations almost simultaneously, which might degrade performance. 
-\obnote{Lustre will have to deal with ~10,000 file open and file close operations. Do we know its performance for file open/close?}
-\mknote{This https://hpcf.umbc.edu/general-productivity/lustre-best-practices/ says that Opening a file keeps a lock on the parent directory. When many files in the same directory are to be opened, it creates contention. A better practice is to split a large number of files (in the thousands or more) into multiple subdirectories to minimize contention. It might be useful that put files in several subdirectories to avoid overhead}
  
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
@@ -468,4 +352,53 @@ Five repeats were performed to collect statistics. (a-c) The error bars show sta
   opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition).
   This is typical data from one run of the 5 repeats. No straggler is observed. \textbf{Note:} In serial, there is no communication. I am reporting the slowest rank per timing, and that is averaged over all repeats.}
 \label{fig:MPIwithIO-hdf5}
+\end{figure}
+
+
+\subsection{Effect of \tcomp/\tcomm on Performance}
+\obnote{Analyze the RMSD with different load. See if t\_comp/t\_comm is also important in that case. Can you still draw the same conclusions?}
+\mknote{What do you mean by different loads? tcomp/tio is constant for all number of processes and as a result we were able to see the changes with the change in the ratio. 
+tcomp/tcomm is not constant with number of processes (fig 5). A better experiment would be to change size of the arrays to be communicated for RMSD 100X for example and evaluate performance. If you agree with that let me know and I wlll go ahead and run those cases.}
+In addition to the compute to I/O ratio we define another important performance parameter called compute to communication ratio.
+Based on the results shown in the section \ref{sec:I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without Global Arrays.
+This means that the task remains communication bound (Figure \ref{fig:MPIwithIO-split}). 
+When the task is communication bound, i.e.,
+
+\begin{gather*}
+  \frac{t_{\text{comp}}}{t_{\text{comm}}} \ll 1.
+\end{gather*}
+
+If the computational load is more than communication load then the work became compute bound, i.e.,
+
+\begin{gather*}
+  \frac{t_{\text{comp}}}{t_{\text{comm}}} \gg 1.
+\end{gather*}
+
+Figure \ref{fig:tcom_tcomm_effect} shows the relationship of performance with \tcomp/\tcomm ratio.
+When \tcomp/\tcomm ratio is higher, performance is better even if communication time is larger (Figure \ref{fig:tcomp_tcomm_ratio} and Figure \ref{fig:S2_tcomp_tIO_effect}).
+Although, there are stragglers due to communication, their effect on performance is not crucial mainly because compute to communication ratio is very large. 
+We therefore, conclude that higher compute to communication loads would lead to better performance. 
+
+It should be noted that within one node, communication is not usually a problem because of the shared memory environment. 
+As a result, communication time would not be problematic even if compute to communication ratio is small (Figure \ref{fig:tcomp_tcomm_ratio}, 1-24 cores represent a single compute node on SDSC Comet).
+However, beyond a single node, communication overhead becomes a bottleneck and effect of \tcomp/\tcomm becomes very important (Figure \ref{fig:tcomp_tcomm_ratio}, 24-72 cores represent multiple compute nodes on SDSC Comet).
+
+\begin{figure}[ht!]
+\centering
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/Compute_to_comm_ratio_on_performance_v17.pdf}
+  \captionsetup{format=hang}
+\caption{Compute to communication ratio}
+\label{fig:tcomp_tcomm_ratio}
+\end{subfigure}
+\hfill
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/comm_comparison_different_RMSD_overload.pdf}
+  \caption{Communication time}
+  \label{fig:MPItottime-chain-reader}
+\end{subfigure}
+\caption{(a) Change in compute to communication ratio with number of processes for different RMSD workload on SDSC Comet. 
+(b) Comparison of communication time for different RMSD workload on SDSC Comet.
+Five repeats were performed to collect statistics and error bars show standard deviation with respect to mean.}
+\label{fig:tcom_tcomm_effect}
 \end{figure}
