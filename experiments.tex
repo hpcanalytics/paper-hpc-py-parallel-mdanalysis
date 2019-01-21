@@ -7,20 +7,20 @@ We showed previously that the RMSD task only scaled well up to 24 cores, on a si
 
 Here we focus on the MPI implementation (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}), in order to better understand the cause for the lack of scaling across nodes.
 As in the previous work we also observed very poor strong scaling performance (Figures \ref{fig:MPIscaling}, \ref{fig:MPIspeedup} and \ref{fig:MPIscaling-Bridges} and \ref{fig:MPIspeedup-Bridges}) beyond a single node.
-A more detailed analysis showed that the RMSD computation itself and to a lesser degree the I/O considered on their own scale well beyond 50 cores (yellow and blue lines in Figure \ref{fig:ScalingComputeIO}) but the communication (red line in Figure \ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure \ref{fig:ScalingComputeIO}) start to dominate.
+A more detailed analysis showed that the RMSD computation itself and to a lesser degree the I/O considered on their own scaled well beyond 50 cores (yellow and blue lines in Figure \ref{fig:ScalingComputeIO}) but the communication (red line in Figure \ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure \ref{fig:ScalingComputeIO}) started to dominate.
 Communication cost and initial time for opening the trajectory were distributed unevenly across the MPI ranks, as shown in the example in Figure \ref{fig:MPIranks}. 
 The ranks that took much longer to complete than the mean execution time of all other ranks were the stragglers that hurt performance.
 
 \subsubsection*{Identification of Scalability Bottlenecks}
 
 In the example run in Figure \ref{fig:MPIranks}, 62 ranks out of 72 took about 60~s whereas the remaining ranks only took about 20~s. 
-The detailed breakdown of the time spent on each rank (Figure \ref{fig:MPIranks}) shows that time
+The detailed breakdown of the time spent on each rank (Figure \ref{fig:MPIranks}) showed that time
 for the actual computation, \tcomp, was fairly constant across ranks. 
-The time spent on reading data from the shared trajectory file on the Lustre file system into memory, \tIO, shows variability across different ranks. 
-The stragglers, however, appear to be defined by occasional much larger \emph{communication} times, \tcomm (line 16 in Algorithm \ref{alg:RMSD}), which were on the order of 30~s in this example, and by larger times to initially open the trajectory (line 2 in Algorithm \ref{alg:RMSD}).
+The time spent on reading data from the shared trajectory file on the Lustre file system into memory, \tIO, showed variability across different ranks. 
+The stragglers, however, appeared to be defined by occasional much larger \emph{communication} times, \tcomm (line 16 in Algorithm \ref{alg:RMSD}), which were on the order of 30~s in this example, and by larger times to initially open the trajectory (line 2 in Algorithm \ref{alg:RMSD}).
 For other ranks, \tcomm varied across different ranks and was barely measurable for a few ranks.
-Although the data in Figure \ref{fig:MPIranks} only represent one example and in other instances perhaps only ten ranks were stragglers, the overall picture is confirmed by the averages over five independent repeats and all ranks (Figure \ref{fig:ScalingComputeIO}).
-This initial analysis indicates that communication is a major issue that prevents good scaling beyond a single node, but the problems related to file I/O also play an important role in limiting performance.
+Although the data in Figure \ref{fig:MPIranks} only represented one example and in other instances perhaps only ten ranks were stragglers, the overall picture was confirmed by the averages over five independent repeats and all ranks (Figure \ref{fig:ScalingComputeIO}).
+This initial analysis indicated that communication is a major issue that prevents good scaling beyond a single node, but the problems related to file I/O also played an important role in limiting performance.
 
 \begin{figure}
 \centering
@@ -53,10 +53,10 @@ This initial analysis indicates that communication is a major issue that prevent
   \label{fig:MPIranks}
 \end{subfigure}
 
-\caption{Performance of the RMSD task with MPI which is I/O-bound $\tcomp/\tIO \approx 0.3$ on SDSC Comet.
-Results are communicated back to rank 0 (communications included). Five independent repeats were performed to collect statistics. (a-c) The error bars show
+\caption{Performance of the RMSD task (I/O-bound with $\tcomp/\tIO \approx 0.3$) with MPI on \emph{SDSC Comet}.
+Results were communicated back to rank 0. Five independent repeats were performed to collect statistics. (a-c) The error bars show
 standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
-  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition).
+  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (see Table \ref{tab:notation} for the definition).
 These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 are stragglers. \textbf{Note:} In serial, there is no communication.}
 \label{fig:MPIwithIO}
 \end{figure} 
@@ -64,57 +64,57 @@ These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 
 \subsubsection*{Influence of Hardware}
 We ran the same benchmarks on multiple HPC systems (XSEDE resources \emph{PSC Bridges} (Fig.~\ref{fig:MPIwithIO-Bridges}) and \emph{LSU SuperMIC} (Fig.~\ref{fig:MPIwithIO-SuperMIC})) and observed the occurrence of stragglers, in a manner very similar to the results already described for \emph{SDSC Comet}.
 There was no clear pattern in which certain MPI ranks would always be a straggler and neither could we trace stragglers to specific cores or nodes. 
-Therefore, the phenomenon of stragglers in the RMSD test appears to be independent from the cluster and thus the underlying hardware.
+Therefore, the phenomenon of stragglers in the RMSD test appeared to be independent from the cluster and thus the underlying hardware.
 
 
 \subsection{Effect of \tcomp/\tIO on Performance}
 \label{bound}
 
-Previously, we showed that communication and I/O are two important factors that lead to stragglers. 
-However, our study showed that the effect of communication and I/O on performance is more pronounced for some tasks as compared to others.
-Therefore, we hypothesized that there should be another parameter that affect performance.
-The RMSD task turned out to be I/O bound, i.e.,
+The results in the previous section indicated communication and I/O to be two important factors that appeared to correlate with stragglers. 
+In order to better characterize the RMSD task, we computed the ratio between the time to complete the computation and the time spent on I/O, $\tcomp/\tIO = 0.3$, and found that this task was I/O bound, i.e.,
 \begin{gather*}
-  \frac{\tcomp}{\tIO} \ll 1
+  \frac{\tcomp}{\tIO} \ll 1.
 \end{gather*}
-and we were not able to achieve good scaling beyond a single node. 
+For such a compute-bound task we were not able to achieve good scaling beyond a single node. 
 We hypothesized that decreasing the relative I/O load with respect to the compute load would also reduce the impact of stragglers by interleaving I/O with longer periods of computation and thus reducing the impact of I/O contention.
-We therefore increased the computational load so that the work became compute bound, i.e.,
+We therefore set out to measure compute bound tasks, i.e.\ ones with
 \begin{gather*}
   \frac{\tcomp}{\tIO} \gg 1.
 \end{gather*}
+To measure the effect of the $\tcomp/\tIO$ ratio on performance but leaving other parameters the same, we artificially increased the computational load by repeating the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop, resulting in forty-fold (``$40\times$''), seventy-fold (``$70\times$''), and one hundred-fold (``$100\times$'') load increases.
 
-In order to artificially increase the computational load we repeated the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop.
 
 \subsubsection{Effect of Increased Compute workload for RMSD Task}
-The RMSD workload was artificially increased forty-fold (``$40\times$'' ), seventy-fold (``$70\times$'' ), and hundred-fold (``$100\times$'' ) and we measured performance as before. 
-These workloads corresponded to \tcomp/\tIO ratios of 12, 21, 30 respectively as shown in Table \ref{tab:load-ratio}.
-We performed this experiment to show the effect of the $\tcomp/\tIO$ ratio on performance (Figure \ref{fig:tcomp_tIO_effect}).
-On average, the workload of each rank is $N_{\text{b}} \times \tIO $ (where $N_{\text{b}} = N_{\text{frames}}^{total}/N$ is the number of frames per trajectory block, i.e., the number of frames processed by each MPI rank for $N$ processes) for I/O, and $X \times N_{\text{b}} \times \tcomp$ for the RMSD calculation, where $X$ is the factor by which we increased the RMSD compute workload.
+
+The increased computational workloads corresponded to $\tcomp/\tIO$ ratios of 11, 19, 27 respectively as shown in Table \ref{tab:load-ratio}.
+These generally agreed with the simple theoretical prediction in Table \ref{tab:load-ratio} that the $\tcomp/\tIO$ ratio for the higher workloads (with factor $X$) should be $X$ times the $\tcomp/\tIO$ for the $1\times$ workload because on average the I/O workload of each rank is $N_{\text{b}} \times \tIO $ (where $N_{\text{b}} = N_{\text{frames}}^{total}/N$ is the number of frames per trajectory block, i.e., the number of frames processed by each MPI rank for $N$ processes), which is independent of $X$, while the workload for the computation is $X \times N_{\text{b}} \times \tcomp$, and hence the ratio is $X \times \tcomp/\tIO$.
 
 \begin{table}[ht!]
 \centering
-\begin{tabular}{c c c c}
+\begin{tabular}{rrrrr}
   \toprule
-           \bfseries\thead{Workload} &  \bfseries\thead{$\tcomp$} &  \bfseries\thead{$\tIO$} &\bfseries\thead{$\tcomp/\tIO$}\\
+  \bfseries\thead{Workload} &  \bfseries\thead{$\tcomp$} &  \bfseries\thead{$\tIO$}
+  & \multicolumn{2}{c}{\bfseries\thead{$\tcomp/\tIO$}}\\
+  & & & \thead{measured} & \thead{theoretical}\\
   \midrule
-    $1\times$ & 226 & 791 & 0.3\\  
-    $40\times$ & 8655 & 791 &12\\    
-    $70\times$ &15148 & 791 & 21\\  
-    $100\times$ & 21639 & 791 & 30\\  
+    $1\times$   &   226 & 791 &  0.29 &   \\  
+    $40\times$  &  8655 & 791 & 11   & 11\\    
+    $70\times$  & 15148 & 791 & 19   & 20\\  
+    $100\times$ & 21639 & 791 & 27   & 29\\  
   \bottomrule
 \end{tabular}
-\caption[Change in load-ratio with RMSD workload]
-{Change in \tcomp/\tIO ratio with change in the RMSD workload. We artificially increased the RMSD workload in order to
-examine the effect of compute to I/O ratio on the performance. The reported compute and I/O time are calculated based on serial version using one core.}
+\caption[Change in load-ratio with RMSD workload]{Change in $\tcomp/\tIO$ ratio with change in the RMSD workload.
+  The RMSD workload was artificially increased in order to examine the effect of compute to I/O ratio on the performance.
+  The reported compute and I/O time were calculated based on the serial version using one core and used to calculate the measured $\tcomp/\tIO$.
+  The theoretical $\tcomp/\tIO$ (see text) is provided for comparison.}
 \label{tab:load-ratio}
 \end{table}
 
-As the $\tcomp/\tIO$ ratio increases, speed-up and performance improves and 
-show overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure \ref{fig:S1_tcomp_tIO_effect}).
-When $\tcomp/\tIO$ ratio increases, the RMSD calculation consistently scales up to larger numbers of cores ($N=56$ for $70\times$ RMSD).
-Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} shows the improvement in performance more clearly.
-In fact, as the $\tcomp/\tIO$ ratio increases, the values of speed-up and efficiency get closer to their ideal value for each number of processor count.  
+We performed this experiment to show the effect of the $\tcomp/\tIO$ ratio on performance (Figure \ref{fig:tcomp_tIO_effect}).
+As the $\tcomp/\tIO$ ratio increased, speed-up and performance improved and 
+showed overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure \ref{fig:S1_tcomp_tIO_effect}).
+When $\tcomp/\tIO$ ratio increased, the RMSD calculation consistently scaled up to larger numbers of cores ($N=56$ for $70\times$ RMSD).
+Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} show that speed-up and efficiency approach their ideal value for each processor count with increasing $\tcomp/\tIO$ ratio.
 
 \begin{figure}[ht!]
 \centering
@@ -136,22 +136,20 @@ In fact, as the $\tcomp/\tIO$ ratio increases, the values of speed-up and effici
   \label{fig:E_tcomp_tIO_effect}
 \end{subfigure}
 %
-\caption{Effect of \text{$\tcomp/\tIO$} ratio on performance of the RMSD task with MPI performed on SDSC Comet. We tested performance for $\tcomp/\tIO$ ratios of 0.3, 12, 21, 30
-which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively (communication is included). (a) Effect of \tcomp/\tIO on the Speed-Up
-(b) Change in the Speed-Up with respect to \tcomp/\tIO for different processor counts (c) Change in the efficiency with respect to \tcomp/\tIO for different processor counts}
+\caption{Effect of \text{$\tcomp/\tIO$} ratio on performance of the RMSD task with MPI performed on \emph{SDSC Comet}. We tested performance for $\tcomp/\tIO$ ratios of 0.3, 11, 19, 27 \obnote{FIX THESE GRAPHS, should correspond to measured numbers in Table \protect\ref{tab:load-ratio}, see \protect\href{https://github.com/hpcanalytics/paper-hpc-py-parallel-mdanalysis/issues/8}{issue \#8}}
+which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively. (a) Effect of \tcomp/\tIO on the Speed-Up
+(b) Change in the Speed-Up with respect to $\tcomp/\tIO$ for different processor counts (c) Change in the efficiency with respect to $\tcomp/\tIO$ for different processor counts}
 \label{fig:tcomp_tIO_effect}
 \end{figure}
 
-Even for moderately compute-bound workloads such
-as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even
-though they still contribute to large variations in timing across different ranks and thus irregular scaling due to the fluctuations.
+Even for moderately compute-bound workloads such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contribute to large variations in timing across different ranks and thus irregular scaling due to the fluctuations.
 
-When we removed I/O from RMSD calculation performance significantly improved (Figure \ref{fig:MPIwithoutIO}).
-Given the results for the RMSD algorithm (Algorithm \ref{alg:RMSD}) and $X\times$ RMSD (Figure \ref{fig:tcomp_tIO_effect}) and RMSD without I/O (Figure \ref{fig:MPIwithoutIO})
-it seems possible that MPI competes with Lustre on the same network interface, which would explain why communication appears to
-be primarily a problem in the presence of I/O when \tcomp/\tIO is small.
+\subsubsection{I/O leads to stragglers}
+
+When we removed I/O from the RMSD calculation by generating comparable input data randomly, performance significantly improved (Figure \ref{fig:MPIwithoutIO}).
+Given the results for the RMSD algorithm (Algorithm \ref{alg:RMSD}) and $X\times$ RMSD (Figure \ref{fig:tcomp_tIO_effect}) and RMSD without I/O (Figure \ref{fig:MPIwithoutIO}) it seems possible that MPI competes with Lustre on the same network interface, which would explain why communication appears to be primarily a problem in the presence of I/O when \tcomp/\tIO is small.
 In fact, these results suggest that decreasing the I/O load relative to the compute load should open up the network for communication.
-This can be confirmed from other previous studies as well \cite{VMD2013, Kevin2018}. 
+This can be confirmed from other previous studies as well \cite{VMD2013, Kevin2018}. % TODO: cite 2018 CPPC paper 
 
 \subsection{Communication Cost and Application of Global Arrays}
 \label{Global-Array}
