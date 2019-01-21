@@ -142,14 +142,15 @@ which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\t
 \label{fig:tcomp_tIO_effect}
 \end{figure}
 
-Even for moderately compute-bound workloads such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contribute to large variations in timing across different ranks and thus irregular scaling due to the fluctuations.
+Even for moderately compute-bound workloads such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contributed to large variations in timing across different ranks and thus irregular scaling due to the fluctuations.
 
 \subsubsection{I/O leads to stragglers}
 
-When we removed I/O from the RMSD calculation by generating comparable input data randomly, performance significantly improved (Figure \ref{fig:MPIwithoutIO}).
-Given the results for the RMSD algorithm (Algorithm \ref{alg:RMSD}) and $X\times$ RMSD (Figure \ref{fig:tcomp_tIO_effect}) and RMSD without I/O (Figure \ref{fig:MPIwithoutIO}) it seems possible that MPI competes with Lustre on the same network interface, which would explain why communication appears to be primarily a problem in the presence of I/O when \tcomp/\tIO is small.
-In fact, these results suggest that decreasing the I/O load relative to the compute load should open up the network for communication.
-This can be confirmed from other previous studies as well \cite{VMD2013, Kevin2018}. % TODO: cite 2018 CPPC paper 
+In order to study an extreme case of a compute-bound task, we eliminated all I/O from the RMSD task by generating artifical trajectory data randomly in memory.
+Without any I/O, performance improved markedly (Figure \ref{fig:MPIwithoutIO}), with reasonable scaling up to 72 cores (3 nodes).
+No stragglers were observed although an increase in communication time prevented ideal scaling performance.
+Although in practice I/O cannot be avoided, this experiment demonstrated that accessing the trajectory file on the Lustre file system is at least one cause for the observed stragglers.
+
 
 \subsection{Communication Cost and Application of Global Arrays}
 \label{Global-Array}
