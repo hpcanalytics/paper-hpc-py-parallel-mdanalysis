@@ -161,15 +161,13 @@ We therefore investigated strategies to reduce communication cost.
 We used Global Arrays (GA) \cite{GA, GAiN} instead of collective communication in MPI and examined the change in the performance. 
 In GA, we define one large RMSD array called \emph{global array}, and each MPI rank updates its associated block in the global RMSD array using \texttt{ga\_put()}. 
 At the end, when all the processes exit \texttt{block\_rmsd()} function and update their local block in the global array, rank 0 will access the whole global array using \texttt{ga\_access()}.
-In GA, the time for communication is $t_{\text{ga\_put()}}+t_{\text{ga\_access()}}$.
-Given the speed up plots (Figure \ref{fig:MPIspeedup-ga4py}) and total time scaling (Figure \ref{fig:MPIscaling-ga4py}) Global Arrays improves strong scaling performance.
-Although, communication time has significantly decreased using Global Arrays (compare Figure \ref{fig:MPIranks-ga4py} to Figure \ref{fig:MPIranks}),
-the existing variation in the dominant I/O part of the calculation plus two delayed MPI ranks due to the delay in opening the trajectory would still prevent ideal scaling (Figure \ref{fig:ScalingComputeIO-ga4py}).
-These slow processes due to opening the trajectory take about 50~s, which are slower than the mean execution time of all ranks, i.e. 17~s. 
-This figure shows only one repeat out of the five that we performed for our benchmark study. 
-In fact, although communication time significantly reduced using Global Arrays, scaling is still far from ideal as a result of slow processes due to I/O variation and the delay in opening the trajectory.
-\obnote{If these are not "typical data" then we should show more typical one. On the other hand, scaling is poor at high N, so clearly there are some stragglers even in the other cases. If it's not trajectory opening, then what are these stragglers?}
-\mknote{All other repeats are showing the similar behavior. I put them in a zip file and pushed in the repository. But opening the trajectory is part of I/O and file access. Is not it?}
+In GA, the time for communication is $t_{\text{ga\_put()}}+t_{\text{ga\_access()}}$. 
+
+Using Global Arrays improved the strong scaling performance (Figures \ref{fig:MPIscaling-ga4py} and \ref{fig:MPIspeedup-ga4py}) by reducing the communication time.
+Nevertheless, the remaining variation in the trajectory I/O part of the calculation and in particular the initial opening of the trajectory prevented ideal scaling (Figure \ref{fig:ScalingComputeIO-ga4py}).
+A typical example in Figure \ref{fig:MPIranks-ga4py} shows that stragglers were primarily due to the fact that all ranks had to open the same trajectory file at the beginning of the run.
+In this case these slow processes (due to opening the trajectory) took about 50~s, which was slower than the mean execution time of all other ranks of 17~s. 
+Trajectory opening was already problematic in the initial test (Figure \ref{fig:ScalingComputeIO}) but was still dominated by the communication cost; with a substantially reduced communication cost, the simultaneous trajectory opening by multiple ranks emerged as the next dominant cause for stragglers.
 
 \begin{figure}[ht!]
 \centering
@@ -203,7 +201,7 @@ In fact, although communication time significantly reduced using Global Arrays, 
 \end{subfigure}
 
 \caption{Performance of the RMSD task with MPI using Global Arrays ($\tcomp/\tIO \approx 0.3$) on SDSC Comet.
-All ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}) (communications included).
+All ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
 Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
 (d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
   opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition). 
