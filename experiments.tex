@@ -293,16 +293,10 @@ These delayed tasks impacted performance so that speed-up remained far from idea
 \end{figure}
 
 \subsubsection*{Performance using Global Arrays}
-\gpnote{This is very confusing. In a previous paragraph you say that GA passes data over the IB network. Here you say there is no congestion? Don't they, MPI communication, MPI I/O, and GA communication, use the same network? Also, I do not think you have the data to support that clearly, unless you know how many Bytes are moved around, how many packets and their type. If that is the case include it. Or are you using the Local filesystem on the nodes and IO has nothing to do with the IB?}
-\mknote{I think there is something different in the way GA use IB that when we use GA there is no contention. That is mainly because there is no synchronization and that reduces the traffic a lot. GA uses IB but the way it uses is very different from MPI Gather. it defines a pointer and that is very different from what happens in MPI for communication.}
-\gpnote{So there are no similarities between GA communication and asynchronous MPI communication? Asynchronous MPI communication does not block anything and there is no need for synchronization when done correctly. It is still confusing for me at least.}\mknote{No,  there are no similarities. MPI.Gather is collective communication and collective communications are blocking in MPI, right?}\gpnote{For synchronous, yes you are right. I am asking about asynchronous MPI communication.}\mknote{Maybe using Isend and Ireceive can be helpful but I do not think it will be comparable with GA. DO you volunteer to give it a shot and replace \texttt{mpi.Gather} with asynchronous communication and run it so that we can compare with GA?}
-%
-%
-%
-Previously, we showed that Global Arrays significantly reduces the communication cost (Section \ref{Global-Array}). 
-We want to examine effect of splitting the trajectory file and using Global Arrays on the performance.
-Again, we ran our benchmark up to 8 nodes (192 cores) and observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with no straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
-The present results suggest that contention for file access impacts performance. 
+In Section \ref{Global-Array} we showed that Global Arrays substantially reduced the communication cost. 
+We wanted to quantify the performance when splitting the trajectory file while using Global Arrays.
+Under otherwise identical conditions as in the previous section we now observed near ideal scaling behavior with efficiencies above 0.9 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) without any straggler tasks (Figure \ref{fig:MPIranks-split-ga}).  
+Although the reason why in our case Global Arrays appeared to be more efficient than direct MPI-based communication remains unclear, these results showed that contention for file access clearly impacted performance and by removing the contention, near ideal scaling could be achieved.
 
 \subsection{Effect of \tcomp/\tcomm on Performance}
 \obnote{Analyze the RMSD with different load. See if t\_comp/t\_comm is also important in that case. Can you still draw the same conclusions?}
