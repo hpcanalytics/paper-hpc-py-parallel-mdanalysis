@@ -55,7 +55,7 @@ opening the trajectory $t_{\text{opening\_trajectory}}$ became a bottleneck as o
 \label{fig:MPIwithIO-split-chain-reader}
 \end{figure}
 
-In order to perform our experiments we had to work around a design problem in the XTC format reader in MDAnalysis; the Gromacs XTC formal is a lossy-compression, XDR-based file format that was never designed for parallel file access.
+In order to perform our experiments we had to work around a design problem in the XTC format reader in MDAnalysis; the Gromacs XTC format \citep{Lindahl01} is a lossy-compression, XDR-based file format that was never designed for parallel file access.
 The XTCReader stores persistent offsets to disk \citep{Gowers:2016aa} in order to enable efficient access to random frames because the compressed XTC format itself does not support fast random seeking.
 These offsets will be generated automatically the first time the trajectory is opened and are stored in hidden $\ast.xtc\_offsets.npz$ files. 
 The advantage of these persistent offset files is that after opening the trajectory for the first time, opening the same file will be very fast afterward. 
