@@ -213,8 +213,6 @@ their total time far exceeds the mean of the all ranks. \textbf{Note:} In serial
 Motivated by the results in this section, we investigated the influence of the ratio of compute to communication costs ($\tcomp/t_{\text{comm}}$) on performance in \ref{sec:tcomm}.
 We found evidence for the obvious hypothesis that a larger ratio was beneficial, provided I/O costs could also be reduced, as discussed in the next section.
 
-
-
 \subsection{Reducing I/O Cost}
 \label{sec:I/O}
 
@@ -223,14 +221,22 @@ The root cause for this behavior was not immediately obvious but by analyzing th
 
 In MDAnalysis, individual trajectory frames are loaded into memory, which ensures that even systems with tens of millions of atoms can be efficiently analyzed on resources with moderate RAM sizes. 
 The test trajectory (file size 30 GB) had $2,512,200$ frames in total so each frame was about 0.011 MB in size.
+
 With $\tIO \approx 0.3~\text{ms}$ per frame, the data were ingested at a rate of about $40$~MB/s for a single process.
-For 24 MPI ranks (one \emph{SDSC Comet} node), the aggregated reading rate would have been about 1 GB/s, which seemed to be well within the the available bandwidth of 56 Gb/s of the Infiniband network interface that served the Lustre file system.
-The default Lustre stripe size value was 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
+For 24 MPI ranks (one \emph{SDSC Comet} node), the aggregated reading rate would have been about 1 GB/s, which seemed to be well within the available bandwidth of 56 Gb/s of the Infiniband network interface that served the Lustre file system.
+Studies show that the aggregated I/O bandwidth is very small for small request sizes for I/O read shared file performance \cite{ATPESC2016}.
+In our study, the default Lustre stripe size value was 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
 Each I/O request read a single Lustre stripe but because the I/O size (0.011~MB) was smaller than the stripe size, many of these I/O requests were likely just accessing the same stripe on the same OST but nevertheless had to acquire a new reading lock for each request.
-Such a situation can incur locking overheads \cite{optimize_lustre} although it is not clear how severely the performance is generally affected in such cases.
-More generally, contention for the interconnect between OSTs and compute nodes due to MPI communication may lead to variable performance in I/O measurements \cite{Mache:2005aa}.
-Conversely, our data suggest that naive single-shared-file I/O on Lustre can negatively affect the MPI communication, even at moderate numbers (tens to hundreds) of concurrent requests, similar to recent network simulations that predicted interference between MPI and I/O traffic on fat-tree networks \cite{Brown:2018ab} (such as the networks on the supercomputers used in this work).
-This work indicates that MPI traffic can be strongly adversely affected by increasing I/O, and in particular, a few MPI messages are always delayed by 1-2 orders of magnitude more than the median time, thus suggesting that our observed stragglers with large variance in the MPI communication might be due to interference with the I/O requests on the same network.
+The reason for this behavior is related to the pain of ensuring POSIX consistency.
+Parallel file systems like Lustre implement sophisticated distributed locking mechanisms to ensure that dirty pages are always flushed before another node is allowed to perform overlapping I/O. 
+Locking mechanisms can suffer from scalability limitations \cite{optimize_lustre} where multiple nodes are fighting over locks for overlapping extents.
+Lustre has to track the state of every lock on every region of each file.  
+Continuously keeping metadata updated in order to have fully consistent reads and writes, requires writing a new value for the file\textquotesingle s last-accessed time (POSIX atime) every time a file is read. 
+This imposes a significant burden on the part of the parallel file system that manages POSIX metadata \cite{POSIX2017}.
+
+Our data suggest that single-shared-file I/O on Lustre can negatively affect the MPI communication as well, even at moderate numbers (tens to hundreds) of concurrent requests, similar to recent network simulations that predicted interference between MPI and I/O traffic on fat-tree networks \cite{Brown:2018ab} (such as the networks on the supercomputers used in this work).
+Conversely, contention for the interconnect between OSTs and compute nodes due to MPI communication may lead to variable performance in I/O measurements \cite{Mache:2005aa}.
+This work indicates that MPI traffic (Inter-process communication) can be strongly adversely affected by increasing I/O, and in particular, a few MPI processes are always delayed by 1-2 orders of magnitude more than the median time, thus suggesting that our observed stragglers with large variance in the MPI communication might be due to interference with the I/O requests on the same network.
 
 In order to improve performance we therefore needed to employ strategies to avoid the competition over file access across different ranks when the \tcomp/\tIO ratio was small.
 To this end we experimented with two different ways for reducing the I/O cost:
