@@ -309,12 +309,15 @@ We found some improvements in performance but discovered limitations in the desi
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
 Another approach we examined to improve I/O scaling is MPI-based Parallel HDF5. 
-We converted our XTC trajectory file into HDF5 format so that we can test the performance of parallel IO with HDF5 file format.
+We converted our XTC trajectory file into a simple custom HDF5 format so that we could test the performance of parallel I/O with the HDF5 file format.
 The code for this file format conversion can be found in the GitHub repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis}.
-The time it took to convert our XTC file with $2,512,200$ frames into a simple custom HDF5 format was about $5400~s$ in our local resources with network file system (NFS).
-We ran our benchmark on up to 8 nodes (192 cores) and, we observed near ideal scaling behavior with parallel efficiencies above 0.8 (Figure \ref{fig:comparison_efficiency} and Figures \ref{fig:MPIscaling-hdf5} and \ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure \ref{fig:MPIranks-hdf5}).  
-When we split our trajectory, scaling is better as compared to that of parallel I/O (Compare Figure \ref{fig:MPIspeedup-hdf5} to Figure \ref{fig:MPIspeedup-split}). 
-However, both methods scale very well up to 8 nodes and have comparable performance.  
+The time it took to convert our XTC file with $2,512,200$ frames into HDF5 format was about $5,400~s$ on a local workstation with network file system (NFS).
+
+We ran our benchmark on up to 16 nodes (384 cores) and we observed near ideal scaling behavior with parallel efficiencies above 0.8 up to 8 nodes (Figure \ref{fig:comparison_efficiency} and Figures \ref{fig:MPIscaling-hdf5} and \ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure \ref{fig:MPIranks-hdf5}).
+The trajectory reading I/O (\tIO) was the dominant contribution, followed by compute (\tcomp), but because both contributions scaled well, overall scaling performance remained good, even for 384 cores.
+(We observed a low-performing outlier for 12 nodes (288 cores) with slower I/O than typical but did not further investigate.)
+Importantly, the trajectory opening cost remained negligible (in the millisecond range) and the cost for MPI communication also remained small (below 0.1 s, even for 16 nodes).
+Overall, parallel MPI with HDF5 appears to be a robust approach to obtain good scaling, even for I/O-bound tasks.
 
 \begin{figure}[ht!]
 \centering
