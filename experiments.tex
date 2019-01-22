@@ -68,7 +68,7 @@ Therefore, the phenomenon of stragglers in the RMSD test appeared to be independ
 
 
 \subsection{Effect of \tcomp/\tIO on Performance}
-\label{bound}
+\label{sec:bound}
 
 The results in the previous section indicated communication and I/O to be two important factors that appeared to correlate with stragglers. 
 In order to better characterize the RMSD task, we computed the ratio between the time to complete the computation and the time spent on I/O, $\tcomp/\tIO = 0.3$, and found that this task was I/O bound, i.e.,
@@ -210,6 +210,11 @@ their total time far exceeds the mean of the all ranks. \textbf{Note:} In serial
 \label{fig:MPIwithIO-ga4py}
 \end{figure}
 
+Motivated by the results in this section, we investigated the influence of the ratio of compute to communication costs ($\tcomp/t_{\text{comm}}$) on performance in \ref{sec:tcomm}.
+We found evidence for the obvious hypothesis that a larger ratio was beneficial, provided I/O costs could also be reduced, as discussed in the next section.
+
+
+
 \subsection{Reducing I/O Cost}
 \label{sec:I/O}
 
@@ -308,10 +313,10 @@ We found some improvements in performance but discovered limitations in the desi
  
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
-Another approach we examined to improve I/O scaling is MPI-based Parallel HDF5. 
+Another approach we examined to improve I/O scaling was MPI-based Parallel HDF5. 
 We converted our XTC trajectory file into a simple custom HDF5 format so that we could test the performance of parallel I/O with the HDF5 file format.
 The code for this file format conversion can be found in the GitHub repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis}.
-The time it took to convert our XTC file with $2,512,200$ frames into HDF5 format was about $5,400~s$ on a local workstation with network file system (NFS).
+The time it took to convert our XTC file with $2,512,200$ frames into HDF5 format was about $5,400$~s on a local workstation with network file system (NFS).
 
 We ran our benchmark on up to 16 nodes (384 cores) and we observed near ideal scaling behavior with parallel efficiencies above 0.8 up to 8 nodes (Figure \ref{fig:comparison_efficiency} and Figures \ref{fig:MPIscaling-hdf5} and \ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure \ref{fig:MPIranks-hdf5}).
 The trajectory reading I/O (\tIO) was the dominant contribution, followed by compute (\tcomp), but because both contributions scaled well, overall scaling performance remained good, even for 384 cores.
@@ -358,50 +363,3 @@ Five repeats were performed to collect statistics. (a-c) The error bars show sta
 \end{figure}
 
 
-\subsection{Effect of \tcomp/\tcomm on Performance}
-\obnote{Analyze the RMSD with different load. See if t\_comp/t\_comm is also important in that case. Can you still draw the same conclusions?}
-\mknote{What do you mean by different loads? tcomp/tio is constant for all number of processes and as a result we were able to see the changes with the change in the ratio. 
-tcomp/tcomm is not constant with number of processes (fig 5). A better experiment would be to change size of the arrays to be communicated for RMSD 100X for example and evaluate performance. If you agree with that let me know and I wlll go ahead and run those cases.}
-In addition to the compute to I/O ratio we define another important performance parameter called compute to communication ratio.
-Based on the results shown in the section \ref{sec:I/O}; although we overcame the I/O effect by splitting the trajectory, scaling is still far from ideal without Global Arrays.
-This means that the task remains communication bound (Figure \ref{fig:MPIwithIO-split}). 
-When the task is communication bound, i.e.,
-
-\begin{gather*}
-  \frac{t_{\text{comp}}}{t_{\text{comm}}} \ll 1.
-\end{gather*}
-
-If the computational load is more than communication load then the work became compute bound, i.e.,
-
-\begin{gather*}
-  \frac{t_{\text{comp}}}{t_{\text{comm}}} \gg 1.
-\end{gather*}
-
-Figure \ref{fig:tcom_tcomm_effect} shows the relationship of performance with \tcomp/\tcomm ratio.
-When \tcomp/\tcomm ratio is higher, performance is better even if communication time is larger (Figure \ref{fig:tcomp_tcomm_ratio} and Figure \ref{fig:S2_tcomp_tIO_effect}).
-Although, there are stragglers due to communication, their effect on performance is not crucial mainly because compute to communication ratio is very large. 
-We therefore, conclude that higher compute to communication loads would lead to better performance. 
-
-It should be noted that within one node, communication is not usually a problem because of the shared memory environment. 
-As a result, communication time would not be problematic even if compute to communication ratio is small (Figure \ref{fig:tcomp_tcomm_ratio}, 1-24 cores represent a single compute node on SDSC Comet).
-However, beyond a single node, communication overhead becomes a bottleneck and effect of \tcomp/\tcomm becomes very important (Figure \ref{fig:tcomp_tcomm_ratio}, 24-72 cores represent multiple compute nodes on SDSC Comet).
-
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/Compute_to_comm_ratio_on_performance_v17.pdf}
-  \captionsetup{format=hang}
-\caption{Compute to communication ratio}
-\label{fig:tcomp_tcomm_ratio}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/comm_comparison_different_RMSD_overload.pdf}
-  \caption{Communication time}
-  \label{fig:MPItottime-chain-reader}
-\end{subfigure}
-\caption{(a) Change in compute to communication ratio with number of processes for different RMSD workload on SDSC Comet. 
-(b) Comparison of communication time for different RMSD workload on SDSC Comet.
-Five repeats were performed to collect statistics and error bars show standard deviation with respect to mean.}
-\label{fig:tcom_tcomm_effect}
-\end{figure}
