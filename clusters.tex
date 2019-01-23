@@ -1,10 +1,10 @@
 \label{sec:clusters}
 In this section we compare the performance of the RMSD task on different HPC resources (Table \ref{tab:sys-config}) to examine the robustness of the methods we used for our performance study and to ensure that the results are general and independent from the specific HPC system.
-In \ref{sec:supplement} we already demonstrated that stragglers occur on \emph{PSC Bridges} and \emph{LSU SuperMIC} in a manner similar to the one observed on \emph{SDSC Comet}.
+In \ref{sec:supplement}, we already demonstrated that stragglers occur on \emph{PSC Bridges} and \emph{LSU SuperMIC} in a manner similar to the one observed on \emph{SDSC Comet}.
 We performed additional comparisons for several cases discussed previously, namely (1) splitting the trajectories with blocking collective communications in MPI, (2) splitting the trajectories with Global Arrays for communications, and (3) MPI-based parallel HDF5.
 
 \subsection{Splitting the Trajectories}
-Figure \ref{fig:MPI-splitting-clusters} shows the strong scaling of the RMSD task  with increasing numbers of cores on different HPC resources.  
+Figure \ref{fig:MPI-splitting-clusters} shows the strong scaling of the RMSD task on different HPC resources.  
 Splitting the trajectories with Global Arrays for communication resulted in very good scaling performance on \emph{SuperMIC}, similar to the results obtained on \emph{Comet}.
 The results with MPI blocking collective communication (instead of Global Arrays) were also comparable between the two clusters, with scaling far from ideal due to the communication cost (see section \ref{splitting-traj} and Figures \ref{fig:MPIranks-split} and \ref{fig:MPIwithIO-split-SuperMIC}). 
 Overal, the scaling of the RMSD task is better on \emph{SuperMIC} than on \emph{Comet} and the performance gap increased with increasing core numbers.
@@ -93,15 +93,15 @@ collect statistics. The error bars show standard deviation with respect to mean.
 \end{subfigure}
 %
 \caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 ($\tcomp/\tIO \approx 0.3$) on (a) \emph{PSC Bridges} and (b) \emph{LSU SuperMIC}.
-Five repeats were performed to collect statistics and these were typical data from one run of the 5 repeats. Compute \tcomp, I/O \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
-  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition).}
+Five repeats were performed to collect statistics and these were typical data from one run of the 5 repeats. Compute \tcomp, I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
+  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition).}
 \label{fig:MPIwithIO-clusters-rank}
 \end{figure} 
 
 \subsection{Comparison of Compute and I/O Scaling Across Different Clusters}
 A full comparison of compute and I/O scaling across different clusters for different test cases and algorithms is shown in Table \ref{tab:comp-IO-scaling}. 
 For MPI-based parallel HDF5, both the compute and I/O time on \emph{Bridges} were consistenly larger than their corresponding values on \emph{Comet} and \emph{SuperMIC}.
-For example, with one core the corresponding compute and I/O time were $\tcomp = 387~\text{s}$, $\tIO = 1318~\text{s}$) versus $225~\text{s}$, $423~\text{s}$ on \emph{Comet} and $273~\text{s}$, $503~\text{s}$ on \emph{SuperMIC}.
+For example, with one core the corresponding compute and I/O time were $\tcomp = 387~\text{s}$, $\tIO = 1318~\text{s}$ versus $225~\text{s}$, $423~\text{s}$ on \emph{Comet} and $273~\text{s}$, $503~\text{s}$ on \emph{SuperMIC}.
 This performance difference became more obvious with increasing core numbers.
 When the trajectories were split and Global Arrays was used for communication both \emph{Comet} and \emph{SuperMIC} showed similar performance.
 

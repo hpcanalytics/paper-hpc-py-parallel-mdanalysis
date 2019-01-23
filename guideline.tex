@@ -9,16 +9,15 @@ The \tcomp/\tcomm ratio determines whether the task is communication bound ($\fr
 
 As discussed in Section \ref{sec:bound}, for I/O bound problems the interference between MPI communication and I/O traffic can be problematic \cite{VMD2013, Kevin2018, Brown:2018ab} and the performance of the task will be affected by the straggler tasks which delay job completion time.
   
-\item[\textbf{Heuristic 2}] For $\frac{\tcomp}{\tIO} \geqslant 1$, one needs to consider the following cases: 
+\item[\textbf{Heuristic 2}] For $\frac{\tcomp}{\tIO} \geqslant 1$, single-shared-file I/O can be used safely and will not affect performance depending on how large is compute with respect to I/O. Therefore, one needs to consider the following cases: 
   \begin{description}
-  \item[\textbf{Heuristic 2.1}] If $\frac{\tcomp}{\tcomm} \gg 1$, the task is compute bound and will scale well as as shown in Figure \ref{fig:tcomp_tIO_effect}.
+  \item[\textbf{Heuristic 2.1}] If $\frac{\tcomp}{\tcomm} \gg 1$, the task is compute bound and will scale well as shown in Figure \ref{fig:tcomp_tIO_effect}. 
   \item[\textbf{Heuristic 2.2}] If $\frac{\tcomp}{\tcomm} \ll 1$, one might consider using Global Arrays to achieve near ideal scaling behavior (Section \ref{Global-Array}).  Application of Global Arrays replaces the message-passing interface with a distributed shared array where its blocks will be updated by the associated rank in the communication domain and collection of all data can be performed efficiently (Algorithm \ref{alg:GA}).
   \end{description}
-\item[\textbf{Heuristic 3}] For $\frac{\tcomp}{\tIO} \leqslant 1$ the task is I/O bound and one needs to take the following steps:  
+\item[\textbf{Heuristic 3}] For $\frac{\tcomp}{\tIO} \leqslant 1$ the task is I/O bound single-shared-file I/O should be avoided to remove unnecessary metadata operations. Therefore, one needs to take the following steps:  
   \begin{description}
-    \item[\textbf{Heuristic 3.1}] If there is access to HDF5 format the recommended way will be to use MPI-based Parallel HDF5 (Section \ref{HDF5}). If the trajectory file is not in HDF5 format then one might prefer to split the trajectories since converting the XTC file to HDF5 is expensive. MD trajectories are often re-analyzed and therefore we suggest to incorporate trajectory conversion into the beginning of standard workflows for MD simulations. 
- Alternatively, it could be beneficial to keep the trajectories in smaller chunks, e.g., when running simulations on HPC resources using Gromacs \cite{Gromacs3, Gromacs1}, users can run their simulations with the ``-noappend" option so that output trajectories  will be automatically stored in small chunks.
-    \item[\textbf{Heuristic 3.2}] If there is no access to HDF5, the trajectory file should be split into as many trajectory segments as the number of processes. Splitting the trajectories is cheap (because it can be performed in parallel) (see Section \ref{sec:splitting-timing}).
+    \item[\textbf{Heuristic 3.1}] If there is access to HDF5 format the recommended way will be to use MPI-based Parallel HDF5 (Section \ref{HDF5}). 
+    \item[\textbf{Heuristic 3.2}] If the trajectory file is not in HDF5 format then one might prefer to split into as many trajectory segments as the number of processes. Splitting the trajectories is cheap because it can be performed in parallel (see Section \ref{sec:splitting-timing}) as opposed to converting the XTC file to HDF5 which is expensive. MD trajectories are often re-analyzed and therefore we suggest to incorporate trajectory conversion into the beginning of standard workflows for MD simulations. Alternatively, it could be beneficial to keep the trajectories in smaller chunks, e.g., when running simulations on HPC resources using Gromacs \cite{Gromacs3, Gromacs1}, users can run their simulations with the ``-noappend" option so that output trajectories will be automatically stored in small chunks.
     \item[\textbf{Heuristic 3.3}] In case of $\frac{\tcomp}{\tcomm} \ll 1$, appropriate parallel implementation along with \emph{Global Arrays} should be used on the trajectory segments (Section \ref{splitting-traj}) to achieve near ideal scaling.
   \end{description}
 \end{description}

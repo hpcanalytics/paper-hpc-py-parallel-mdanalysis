@@ -252,7 +252,7 @@ In this way each  process would access its own trajectory segment file without c
 \paragraph{Performance with MPI communication}
 We ran a benchmark up to 8 nodes (192 cores) and observed rather better scaling behavior with efficiencies above 0.6 (Figure \ref{fig:MPIscaling-split} and \ref{fig:MPIspeedup-split}) with the delay time for stragglers reduced from 65~s to about 10~s for 72 processes. 
 However, scaling is still far from ideal due to communication (using MPI). 
-Although the delay due to communication was much smaller than compared to parallel RMSD with shared-file I/O (compare Figure \ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure \ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and resulted in longer job completion times (Figure \ref{fig:MPIranks-split}). 
+Although the delay due to communication was much smaller as compared to parallel RMSD with shared-file I/O (compare Figure \ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure \ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and resulted in longer job completion times (Figure \ref{fig:MPIranks-split}). 
 These delayed tasks impacted performance so that speed-up remained far from ideal (Figure \ref{fig:MPIspeedup-split}).
 
 \begin{figure}[ht!]
