@@ -9,18 +9,17 @@ Here we focus on the MPI implementation (via \package{mpi4py} \cite{Dalcin:2011a
 As in the previous work we also observed very poor strong scaling performance (Figures \ref{fig:MPIscaling}, \ref{fig:MPIspeedup} and \ref{fig:MPIscaling-Bridges} and \ref{fig:MPIspeedup-Bridges}) beyond a single node.
 A more detailed analysis showed that the RMSD computation itself and to a lesser degree the I/O considered on their own scaled well beyond 50 cores (yellow and blue lines in Figure \ref{fig:ScalingComputeIO}) but the communication (red line in Figure \ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure \ref{fig:ScalingComputeIO}) started to dominate.
 Communication cost and initial time for opening the trajectory were distributed unevenly across the MPI ranks, as shown in the example in Figure \ref{fig:MPIranks}. 
-The ranks that took much longer to complete than the mean execution time of all other ranks were the stragglers that hurt performance.
+The ranks that took much longer to complete than the typical execution time of the other ranks were the stragglers that hurt performance.
 
 \subsubsection*{Identification of Scalability Bottlenecks}
 
-In the example run in Figure \ref{fig:MPIranks}, 62 ranks out of 72 took about 60~s whereas the remaining ranks only took about 20~s. 
-The detailed breakdown of the time spent on each rank (Figure \ref{fig:MPIranks}) showed that time
-for the actual computation, \tcomp, was fairly constant across ranks. 
+In the example run in Figure \ref{fig:MPIranks}, 62 ranks out of 72 took about 60~s (the stragglers) whereas the remaining ranks only took about 20~s. 
+The detailed breakdown of the time spent on each rank (Figure \ref{fig:MPIranks}) showed that time for the actual computation, \tcomp, was fairly constant across ranks. 
 The time spent on reading data from the shared trajectory file on the Lustre file system into memory, \tIO, showed variability across different ranks. 
 The stragglers, however, appeared to be defined by occasional much larger \emph{communication} times, \tcomm (line 16 in Algorithm \ref{alg:RMSD}), which were on the order of 30~s in this example, and by larger times to initially open the trajectory (line 2 in Algorithm \ref{alg:RMSD}).
 For other ranks, \tcomm varied across different ranks and was barely measurable for a few ranks.
 Although the data in Figure \ref{fig:MPIranks} only represented one example and in other instances perhaps only ten ranks were stragglers, the overall picture was confirmed by the averages over five independent repeats and all ranks (Figure \ref{fig:ScalingComputeIO}).
-This initial analysis indicated that communication is a major issue that prevents good scaling beyond a single node, but the problems related to file I/O also played an important role in limiting performance.
+This initial analysis indicated that communication was a major issue that prevented good scaling beyond a single node but the problems related to file I/O also played an important role in limiting performance.
 
 \begin{figure}
 \centering
@@ -64,27 +63,7 @@ These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 
 \subsubsection*{Influence of Hardware}
 We ran the same benchmarks on multiple HPC systems (XSEDE resources \emph{PSC Bridges} (Fig.~\ref{fig:MPIwithIO-Bridges}) and \emph{LSU SuperMIC} (Fig.~\ref{fig:MPIwithIO-SuperMIC})) and observed the occurrence of stragglers, in a manner very similar to the results already described for \emph{SDSC Comet}.
 There was no clear pattern in which certain MPI ranks would always be a straggler and neither could we trace stragglers to specific cores or nodes. 
-Therefore, the phenomenon of stragglers in the RMSD test appeared to be independent from the cluster and thus the underlying hardware.
-
-\subsubsection*{What is bad about POSIX I/O?}
-In MDAnalysis, individual trajectory frames are loaded into memory, which ensures that even systems with tens of millions of atoms can be efficiently analyzed on resources with moderate RAM sizes. 
-The test trajectory (file size 30 GB) had $2,512,200$ frames in total so each frame was about 0.011 MB in size.
-
-With $\tIO \approx 0.3~\text{ms}$ per frame, the data were ingested at a rate of about $40$~MB/s for a single process.
-For 24 MPI ranks (one \emph{SDSC Comet} node), the aggregated reading rate would have been about 1 GB/s, which seemed to be well within the available bandwidth of 56 Gb/s of the Infini-band network interface that served the Lustre file system.
-Studies show that the aggregated I/O bandwidth is very small for small request sizes for I/O read shared file performance \cite{ATPESC2016}.
-In our study, the default Lustre stripe size value was 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
-Each I/O request read a single Lustre stripe but because the I/O size (0.011~MB) was smaller than the stripe size, many of these I/O requests were likely just accessing the same stripe on the same OST but nevertheless had to acquire a new reading lock for each request.
-The reason for this behavior is related to the pain of ensuring POSIX consistency.
-Parallel file systems like Lustre implement sophisticated distributed locking mechanisms to ensure that dirty pages are always flushed before another node is allowed to perform overlapping I/O. 
-Locking mechanisms can suffer from scalability limitations \cite{optimize_lustre} where multiple nodes are fighting over locks for overlapping extents.
-Lustre has to track the state of every lock on every region of each file.  
-Continuously keeping metadata updated in order to have fully consistent reads and writes, requires writing a new value for the file's last-accessed time (POSIX atime) every time a file is read. 
-This imposes a significant burden on the part of the parallel file system that manages POSIX metadata \cite{POSIX2017}.
-
-Our data suggest that single-shared-file I/O on Lustre can negatively affect the MPI communication as well, even at moderate numbers (tens to hundreds) of concurrent requests, similar to recent network simulations that predicted interference between MPI and I/O traffic on fat-tree networks \cite{Brown:2018ab} (such as the networks on the supercomputers used in this work).
-Conversely, contention for the interconnect between OSTs and compute nodes due to MPI communication may lead to variable performance in I/O measurements \cite{Mache:2005aa}.
-This work indicates that MPI traffic (Inter-process communication) can be strongly adversely affected by increasing I/O, and in particular, a few MPI processes are always delayed by 1-2 orders of magnitude more than the median time, thus suggesting that our observed stragglers with large variance in the MPI communication might be due to interference with the I/O requests on the same network.
+Therefore, the phenomenon of stragglers in the RMSD test was reproducible on different clusters and thus appeared to be independent from the underlying hardware.
 
 \subsection{Effect of \tcomp/\tIO on Performance}
 \label{sec:bound}
@@ -366,4 +345,30 @@ Five repeats were performed to collect statistics. (a-c) The error bars show sta
 \label{fig:MPIwithIO-hdf5}
 \end{figure}
 
+
+\subsection{Likely Causes of Stragglers}
+\label{sec:likelycauses}
+The data indicated that increases in the duration of both MPI communication and trajectory file access lead to large variability in the run time of individual MPI processes and ultimately poor scaling performance beyond a single node.
+A discussion of likely causes for the stragglers begins with the observation that opening and reading a single trajectory file from multiple MPI processes appeared to be at the center of the problem. 
+
+In MDAnalysis, individual trajectory frames are loaded into memory, which ensures that even systems with tens of millions of atoms can be efficiently analyzed on resources with moderate RAM sizes.
+The test trajectory (file size 30 GB) had $2,512,200$ frames in total so each frame was about 0.011 MB in size.
+With $\tIO \approx 0.3~\text{ms}$ per frame, the data were ingested at a rate of about $40$~MB/s for a single process.
+For 24 MPI ranks (one \emph{SDSC Comet} node), the aggregated reading rate would have been about 1 GB/s.
+Although such a value seemed to be well within the available bandwidth of 56 Gb/s of the Infini-band network interface that served the Lustre file system, in other cases the aggregated I/O bandwidth for reading from a shared file was actually fairly small \cite{ATPESC2016}.
+Furthermore, in our study the default Lustre stripe size value was 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
+Each I/O request read a single Lustre stripe but because the I/O size (0.011~MB) was smaller than the stripe size, many of these I/O requests were likely just accessing the same stripe on the same OST but nevertheless had to acquire a new reading lock for each request.
+%
+\obnote{Rewrite next few sentences, they are almost verbatim from \url{https://www.nextplatform.com/2017/09/11/whats-bad-posix-io/}}
+%
+The reason for this behavior is related to the pain of ensuring POSIX consistency.
+Parallel file systems like Lustre implement sophisticated distributed locking mechanisms to ensure that dirty pages are always flushed before another node is allowed to perform overlapping I/O.
+Locking mechanisms can suffer from scalability limitations \cite{optimize_lustre} where multiple nodes are fighting over locks for overlapping extents.
+Lustre has to track the state of every lock on every region of each file.  
+Continuously keeping metadata updated in order to have fully consistent reads and writes, requires writing a new value for the file's last-accessed time (POSIX atime) every time a file is read. 
+This imposes a significant burden on the part of the parallel file system that manages POSIX metadata \cite{POSIX2017}.
+
+It was observed that contention for the interconnect between OSTs and compute nodes due to MPI communication may lead to variable performance in I/O measurements \cite{Mache:2005aa}.
+Conversely, our data suggest that single-shared-file I/O on Lustre can negatively affect the MPI communication as well, even at moderate numbers (tens to hundreds) of concurrent requests, similar to recent network simulations that predicted interference between MPI and I/O traffic on fat-tree networks \cite{Brown:2018ab} (such as the networks on the supercomputers used in this work).
+This work indicated that MPI traffic (inter-process communication) can be strongly adversely affected by increasing I/O, and in particular, a few MPI processes were always delayed by 1-2 orders of magnitude more than the median time, thus suggesting that our observed stragglers with large variance in the MPI communication might be due to interference with the I/O requests on the same network.
 
