@@ -7,12 +7,12 @@ We focus on the \package{MDAnalysis} package \citep{Gowers:2016aa,Michaud-Agrawa
 Although \package{MDAnalysis} accelerates selected algorithms with Open-MP, distributed parallel trajectory analysis has not yet been implemented in the library.
 Here we discuss the challenges and lessons-learned for making parallel analysis on HPC resources feasible for MDAnalysis~\gpnote{ This makes me ask are there not other generel purpose libraries: a general purpose trajectory analysis library}.
 
-Previously we used a parallel map-reduce approach to study the performance of calculating of the minimal root mean squared distance (RMSD) of the positions of a subset of atoms to a reference conformation under optimization of rigid body translations and rotations \cite{Khoshlessan:2017ab, ICCP-2018}, also known as ``RMSD fitting'' \cite{Liu:2010kx, Mura:2014kx}. 
+Previously, we used a parallel map-reduce approach to study the performance of calculating of the minimal root mean squared distance (RMSD) of the positions of a subset of atoms to a reference conformation under optimization of rigid body translations and rotations \cite{Khoshlessan:2017ab, ICCP-2018}, also known as ``RMSD fitting'' \cite{Liu:2010kx, Mura:2014kx}. 
 We investigated \package{Dask}~\cite{Rocklin:2015aa} and MPI, using the \package{mpi4py}~\cite{Dalcin:2011aa, Dalcin:2005aa}, for parallelization. 
 For both \package{Dask} and MPI, we found that our benchmark only showed good strong scaling within a single node.
 Beyond a single node performance dropped due to \emph{straggler} tasks, a subset of processes that were significantly slower than the typical execution time of all tasks; the total execution time became dominated by stragglers and overall performance decreased.
 Stragglers are known to significantly impede job completion time~\cite{Garraghan2016} and have a high impact on performance and energy consumption on big data systems~\cite{Tien-2017}.
-In the present study, we analyzed the MPI case in more detail to better understand the origin of stragglers with the goal to find simple and robust parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library. 
+In the present study, we analyzed the MPI case in more detail to better understand the origin of stragglers with the goal to find simple and robust parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library.
 
 As in our previous study we selected the commonly used RMSD algorithm implemented in \package{MDAnalysis} as a typical use case.
 We used the single program multiple data (SPMD) paradigm to parallelize this algorithm on HPC resources.
