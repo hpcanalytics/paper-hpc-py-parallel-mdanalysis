@@ -25,7 +25,7 @@ To a lesser degree, $\tcomp/\tcomm$ also determined scaling and performance, wit
 We show that communication and I/O are the two main scalability bottlenecks.
 
 Taking advantage of Global Arrays toolkit \cite{GA, GAiN}, we were able to reduce communication cost noticeably.
-However, our data showed that then file access I/O (POSIX \texttt{open(}) became the cause for stragglers beyond a single node.
+However, our data showed that then file access I/O (POSIX \texttt{open()}) became the cause for stragglers beyond a single node.
 We examined two different approaches to mitigate I/O bottlenecks: subfiling (trajectory file splitting) with Global Arrays for communications and MPI parallel I/O with MPI for communications.
 Both approaches significantly improved the performance and lead to near ideal scaling.
 
