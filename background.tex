@@ -24,8 +24,7 @@ Even though the proposed solutions to avoid stragglers are specifically applied 
 \label{sec:otherparallel}
 
 There have been various attempts to parallelize the analysis of MD trajectories. 
-
-HiMach \cite{himach-2008} introduces scalable and flexible parallel Python framework to deal with massive MD trajectories, by combining and extending the strengths of Google's MapReduce and VMD analysis tool. 
+HiMach \cite{himach-2008} introduces scalable and flexible parallel Python framework to deal with massive MD trajectories, by combining and extending the strengths of Google's MapReduce and the VMD analysis tool \cite{Hum96}. 
 HiMach's runtime is responsible to parallelize and distribute the Map and Reduce classes to the assigned cores.
 HiMach uses parallel I/O for file access during the map tasks and \text{MPI\_Allgather} in the reduction process. 
 HiMach, however, does not discuss parallel analysis for the task types which can not be analyzed using a MapReduce implementation.
@@ -60,7 +59,7 @@ All of the above frameworks provide tools for parallel analysis of MD trajectori
 These frameworks, however, tend to fall short in providing parallelism in the context of a general and flexible library for the analysis of MD trajectories.
 Although straggler tasks are a common challenge arising in parallel analysis and are well-known in the data analysis community (see Section \ref{sec:stragglers}), there is, to our knowledge, little discussion about this problem in the biomolecular simulation community.
 Our own experience with a MapReduce approach in \package{MDAnalysis} \cite{Khoshlessan:2017ab} suggested that stragglers might be a somewhat under-appreciated problem.
-Therefore, in the present work we want to better understand general requirements for efficient parallel analysis of MD trajectories in \package{MDAnalysis}, but to also provide more general guidance that could benefit developments in other libraries inside and outside of the scope of molecular dynamic analysis.
+Therefore, in the present work we want to better understand requirements for efficient parallel analysis of MD trajectories in \package{MDAnalysis}, but to also provide more general guidance that could benefit developments in other libraries inside and outside of the scope of analysis of MD simulations.
 
 
 
