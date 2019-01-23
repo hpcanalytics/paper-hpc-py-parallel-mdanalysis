@@ -79,7 +79,7 @@ The reason for this behavior is related to the pain of ensuring POSIX consistenc
 Parallel file systems like Lustre implement sophisticated distributed locking mechanisms to ensure that dirty pages are always flushed before another node is allowed to perform overlapping I/O. 
 Locking mechanisms can suffer from scalability limitations \cite{optimize_lustre} where multiple nodes are fighting over locks for overlapping extents.
 Lustre has to track the state of every lock on every region of each file.  
-Continuously keeping metadata updated in order to have fully consistent reads and writes, requires writing a new value for the file\textquotesingle s last-accessed time (POSIX atime) every time a file is read. 
+Continuously keeping metadata updated in order to have fully consistent reads and writes, requires writing a new value for the file's last-accessed time (POSIX atime) every time a file is read. 
 This imposes a significant burden on the part of the parallel file system that manages POSIX metadata \cite{POSIX2017}.
 
 Our data suggest that single-shared-file I/O on Lustre can negatively affect the MPI communication as well, even at moderate numbers (tens to hundreds) of concurrent requests, similar to recent network simulations that predicted interference between MPI and I/O traffic on fat-tree networks \cite{Brown:2018ab} (such as the networks on the supercomputers used in this work).
