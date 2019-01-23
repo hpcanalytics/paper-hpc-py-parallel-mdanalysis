@@ -291,8 +291,6 @@ Often trajectories from MD simulations on HPC machines are produced and kept in 
 However, it might not be feasible to have exactly one trajectory segment per MPI rank.
 In \ref{sec:chainreader} we investigated if existing functionality in MDAnalysis that can create virtual trajectories from trajectory segments could benefit from the subfiling approach.
 We found some improvements in performance but discovered limitations in the design that first have to be overcome before equivalent performance can be reached.
-
-
  
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
@@ -344,7 +342,6 @@ Five repeats were performed to collect statistics. (a-c) The error bars show sta
   This is typical data from one run of the 5 repeats. No straggler is observed. \textbf{Note:} In serial, there is no communication. I am reporting the slowest rank per timing, and that is averaged over all repeats.}
 \label{fig:MPIwithIO-hdf5}
 \end{figure}
-
 
 \subsection{Likely Causes of Stragglers}
 \label{sec:likelycauses}
