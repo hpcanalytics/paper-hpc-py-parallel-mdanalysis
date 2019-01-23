@@ -7,7 +7,7 @@ As a concrete example we focus on the \package{MDAnalysis} package \citep{Gowers
 Although \package{MDAnalysis} accelerates selected algorithms with Open-MP, full scale parallel trajectory analysis has not yet been implemented in the library.
 Here we discuss the challenges and lessons-learned for making parallel analysis on HPC resources feasible for a general purpose trajectory analysis library.
 
-Previously we used a parallel map-reduce approach to study the performance of a common task in the analysis of the structural dynamics of proteins, the calculation of the minimal root mean squared distance (RMSD) of the positions of a subset of atoms to a reference conformation under optimization of rigid body translations and rotations \cite{Khoshlessan:2017ab, ICCP-2018}, also known as ``RMSD fitting'' \cite{Liu:2010kx, Mura:2014kx}. 
+Previously, we used a parallel map-reduce approach to study the performance of a common task in the analysis of the structural dynamics of proteins, the calculation of the minimal root mean squared distance (RMSD) of the positions of a subset of atoms to a reference conformation under optimization of rigid body translations and rotations \cite{Khoshlessan:2017ab, ICCP-2018}, also known as ``RMSD fitting'' \cite{Liu:2010kx, Mura:2014kx}. 
 We investigated the \package{Dask} library \cite{Rocklin:2015aa} and MPI, using the \package{mpi4py} package \cite{Dalcin:2011aa, Dalcin:2005aa}, for parallelization. 
 For both \package{Dask} and MPI we found that our benchmark task only showed good strong scaling within a single node.
 Beyond a single node performance dropped due to \emph{straggler} tasks, a subset of processes that were significantly slower than the typical execution time of all tasks; the total execution time became dominated by the stragglers and overall performance decreased.
@@ -25,7 +25,7 @@ To a lesser degree, $\tcomp/\tcomm$ also determined scaling and performance, wit
 We show that communication and I/O are the two main scalability bottlenecks.
 
 Taking advantage of Global Arrays toolkit \cite{GA, GAiN}, we were able to reduce communication cost noticeably.
-However, our data showed that then file access I/O (POSIX \texttt{open()}) became the cause for stragglers beyond a single node.
+However, our data showed that the file access I/O (POSIX \texttt{stat()}) became the cause for stragglers beyond a single node.
 We examined two different approaches to mitigate I/O bottlenecks: subfiling (trajectory file splitting) with Global Arrays for communications and MPI parallel I/O with MPI for communications.
 Both approaches significantly improved the performance and lead to near ideal scaling.
 
