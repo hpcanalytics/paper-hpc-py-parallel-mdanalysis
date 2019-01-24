@@ -1,10 +1,10 @@
 \label{system}
-Our benchmark environment consisted of three different XSEDE HPC resources (described in section \ref{sec:hpcresources}), the software stack (section \ref{sec:software}), which had to be compiled for each resource, and the common test data set (section \ref{sec:data}).
+Our benchmark environment consisted of three different XSEDE HPC resources (described in section~\ref{sec:hpcresources}), the software stack used (section~\ref{sec:software}), which had to be compiled for each resource, and the common test data set (section~\ref{sec:data}).
 
-\subsection{Hardware}
+\subsection{HPC Resources}
 \label{sec:hpcresources}
 
-The computational experiments were executed on standard compute nodes of three XSEDE supercomputers, \emph{SDSC Comet}, \emph{PSC Bridges}, and \emph{SuperMIC} (Table~\ref{tab:sys-config}).
+The computational experiments were executed on standard compute nodes of three XSEDE supercomputers, \emph{SDSC Comet}, \emph{PSC Bridges}, and \emph{LSU SuperMIC} (Table~\ref{tab:sys-config}).
 \emph{SDSC Comet} is a 2.7 PFlop/s cluster with 6,400 compute nodes in total. It is optimized for running a large number of medium-size calculations (up to 1,024 cores) to support the most prevalent type of calculation on XSEDE resources.
 \emph{PSC Bridges} is a 1.35 PFlop/s cluster with different types of computational nodes, including 16 GPU nodes, 8 large memory and 2 extreme memory nodes, and 752 regular nodes.
 It was designed to flexibly support both traditional (medium scale calculations) and non-traditional (data analytics) HPC uses.
@@ -32,7 +32,7 @@ It was designed to flexibly support both traditional (medium scale calculations)
 \label{sec:software}
 
 Table~\ref{tab:version} lists the tools and libraries that were required for our computational experiments.  Many domain specific packages are not available in the standard software installation on super-computers.
-We therefore had to compile them from source, which in some cases required substantial efforts due to non-standard building and installation procedures or lack of good documentation.
+We therefore had to compile them, which in some cases required substantial effort due to non-standard building and installation procedures or lack of good documentation.
 Because this is a common problem that hinders reproducibility we provide detailed version information, notes on the installation process, as well as comments on the ease of installation and the quality of the documentation in Table~\ref{tab:version}.
 Detailed instructions to create the computing environments can be found in the GitHub repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} together with the benchmarking code.
 Carefully setting up the same software stack on the three different supercomputers allowed us to clearly demonstrate the reproducibility of our results and showed that our findings were not dependent machine specifics.
@@ -72,10 +72,10 @@ Carefully setting up the same software stack on the three different supercompute
 \subsection{Data set}
 \label{sec:data}
 
-The test system contained the protein adenylate kinase with 214 amino acid residues and 3341 atoms in total \cite{Seyler:2014il} and the topology information (atoms types and bonds) was stored in a file in CHARMM PSF format.
-The test trajectory was created by concatenating 600 copies of a molecular dynamics trajectory with 4,187 time frames (saved every 240~ps for a total simulated time of 1.004~$\mu\text{s}$) in CHARMM DCD format \cite{Seyler:2017aa} and converting to Gromacs XTC format trajectory, as described for the ``600x'' trajectory in \citet{Khoshlessan:2017ab}.
+The test system contained the protein adenylate kinase with 214 amino acid residues and 3341 atoms in total~\cite{Seyler:2014il} and the topology information (atoms types and bonds) was stored in a file in CHARMM PSF format.
+The test trajectory was created by concatenating 600 copies of a molecular dynamics trajectory with 4,187 time frames (saved every 240~ps for a total simulated time of 1.004~$\mu\text{s}$) in CHARMM DCD format~\cite{Seyler:2017aa} and converting to Gromacs XTC format trajectory, as described for the ``600x'' trajectory in~\citet{Khoshlessan:2017ab}.
 The trajectory has a file size of about 30 GB and contains 2,512,200 frames (corresponding to 602.4~$\mu\text{s}$ simulated time).
 The file size is relatively small because water molecules that were also part of the original MD simulations were stripped to reduce the original file size by a factor of about 10; such preprocessing is a common approach if one is only interested in the protein behavior.
 Thus, the trajectory represents a small to medium system size in the number of atoms and coordinates that have to be loaded into memory for each time frame.
-The XTC format is a format with lossy compression, which also contributes to the compact file size and which trades lower I/O demands for higher CPU demands during decompression and therefore performed well in our previous study \citep{Khoshlessan:2017ab}.
-Although, 2,512,200 frames represents a long simulation for current standards, such trajectories will become increasingly common due to the use of special hardware \citep{Shaw:2009ly} and GPU-acceleration \citep{Salomon-Ferrer:2013cr, Glaser:2015ys}.
+The XTC format is a format with lossy compression, which also contributes to the compact file size and which trades lower I/O demands for higher CPU demands during decompression and therefore performed well in our previous study~\citep{Khoshlessan:2017ab}.
+Although, 2,512,200 frames represents a long simulation for current standards, such trajectories will become increasingly common due to the use of special hardware~\citep{Shaw:2009ly} and GPU-acceleration~\citep{Salomon-Ferrer:2013cr, Glaser:2015ys}.
