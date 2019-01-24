@@ -1,31 +1,31 @@
 \label{sec:introduction}
 Molecular dynamics (MD) simulations are a powerful method to generate new insights into the function of biomolecules \citep{Borhani:2012mi, Dror:2012cr, Orozco:2014dq, Perilla:2015kx, Bottaro:2018aa}.
 These simulations produce trajectories, timeseries of atomic coordinates, that now routinely include millions of timesteps and can be Terabytes in size.
-These trajectories need to be analyzed using statistical mechanics approaches \cite{Mura:2014kx} but because of the increasing size of the data, analysis of the trajectories is becoming a bottleneck in typical scientific workflows in the biomolecular simulation community \cite{Cheatham:2015}.
-Many data analysis tools and libraries have been developed to extract the desired information from the output trajectories from MD simulations ~\cite{nmoldyn, nmoldyn-2012, Hum96, Hinsen:2000kx, Grant:2006ud, himach-2008, Romo:2009zr, Romo:2014bh, Michaud-Agrawal:2011fu, Gowers:2016aa, cpptraj-2013, mdtraj-2015, pteros2015, Doerr:2016aa} but few can make efficient use of modern high performance computing (HPC) resources to accelerate the analysis stage.
-As a concrete example we focus on the \package{MDAnalysis} package \citep{Gowers:2016aa,Michaud-Agrawal:2011fu}, which is an open-source object-oriented Python library for structural and temporal analysis of molecular dynamics simulation trajectories and individual protein structures.
-Although \package{MDAnalysis} accelerates selected algorithms with Open-MP, full scale parallel trajectory analysis has not yet been implemented in the library.
-Here we discuss the challenges and lessons-learned for making parallel analysis on HPC resources feasible for a general purpose trajectory analysis library.
+These trajectories need to be analyzed using statistical mechanics approaches \cite{Mura:2014kx} but because of the increasing size of data, trajectory analysis is becoming a bottleneck in typical biomolecular simulation scientific workflows~\cite{Cheatham:2015}.
+Many data analysis tools and libraries have been developed to extract the desired information from the output trajectories from MD simulations ~\cite{nmoldyn, nmoldyn-2012, Hum96, Hinsen:2000kx, Grant:2006ud, himach-2008, Romo:2009zr, Romo:2014bh, Michaud-Agrawal:2011fu, Gowers:2016aa, cpptraj-2013, mdtraj-2015, pteros2015, Doerr:2016aa} but few can efficiently use modern High Performance Computing (HPC) resources to accelerate the analysis stage.
+We focus on \package{MDAnalysis}~\citep{Gowers:2016aa,Michaud-Agrawal:2011fu}, which is an open-source object-oriented Python library for structural and temporal analysis of molecular dynamics simulation trajectories and individual protein structures.
+Although \package{MDAnalysis} accelerates selected algorithms with Open-MP, distributed parallel trajectory analysis has not yet been implemented in the library.
+Here we discuss the challenges and lessons-learned for making parallel analysis on HPC resources feasible for MDAnalysis.
 
-Previously, we used a parallel map-reduce approach to study the performance of a common task in the analysis of the structural dynamics of proteins, the calculation of the minimal root mean squared distance (RMSD) of the positions of a subset of atoms to a reference conformation under optimization of rigid body translations and rotations \cite{Khoshlessan:2017ab, ICCP-2018}, also known as ``RMSD fitting'' \cite{Liu:2010kx, Mura:2014kx}. 
-We investigated the \package{Dask} library \cite{Rocklin:2015aa} and MPI, using the \package{mpi4py} package \cite{Dalcin:2011aa, Dalcin:2005aa}, for parallelization. 
-For both \package{Dask} and MPI we found that our benchmark task only showed good strong scaling within a single node.
-Beyond a single node performance dropped due to \emph{straggler} tasks, a subset of processes that were significantly slower than the typical execution time of all tasks; the total execution time became dominated by the stragglers and overall performance decreased.
-Stragglers are known to significantly impede job completion time \cite{Garraghan2016} and have a high impact on performance and energy consumption on big data systems \cite{Tien-2017}.
-In the present study, we analyzed the MPI case in more detail to better understand the origin of the stragglers with the goal to find simple and robust parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library. 
+Previously, we used a parallel map-reduce approach to study the performance of calculating the minimal root mean squared distance (RMSD) of the positions of a subset of atoms to a reference conformation under optimization of rigid body translations and rotations~\cite{Khoshlessan:2017ab, ICCP-2018}, also known as ``RMSD fitting''~\cite{Liu:2010kx, Mura:2014kx}. 
+We investigated two parallel implementations, one using \package{Dask}~\cite{Rocklin:2015aa} and one using \package{mpi4py}~\cite{Dalcin:2011aa, Dalcin:2005aa}. 
+For both \package{Dask} and MPI, we found that our benchmark only showed good strong scaling within a single node.
+Beyond a single node performance dropped due to \emph{straggler} tasks, a subset of processes that were significantly slower than the typical execution time of all tasks; the total execution time became dominated by stragglers and overall performance decreased.
+Stragglers are known to significantly impede job completion time~\cite{Garraghan2016} and have a high impact on performance and energy consumption on big data systems~\cite{Tien-2017}.
+In the present study, we analyzed the MPI case in more detail to better understand the origin of stragglers with the goal to find simple and robust parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library.
 
-As in our previous study we selected the commonly used RMSD algorithm implemented in \package{MDAnalysis} as a typical test case.
+As in our previous study we selected the commonly used RMSD algorithm implemented in \package{MDAnalysis} as a typical use case.
 We used the single program multiple data (SPMD) paradigm to parallelize this algorithm on HPC resources.
-With SPMD, each process executes essentially the same code but on a different part of the data. 
-We used Python, a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in HPC parallel environments \cite{GAiN}. 
-We show that there are two important performance parameters, $\tcomp/\tIO$ and $\tcomp/\tcomm$ which are the ratio of computational to I/O load, as measured by the time spent on the computation versus the time spent on reading data from the file system, and the ratio of computational to communication load respectively that determine whether we observe stragglers.
+With SPMD, each process executes essentially the same operations on different parts of the data. 
+We used Python, a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in HPC parallel community~\cite{GAiN}. 
+We show that there are two important performance parameters, $\tcomp/\tIO$ and $\tcomp/\tcomm$ which are the ratio of computation to I/O load, as measured by the time spent on computation versus the time spent on reading data from the file system, and the ratio of computation to communication load respectively, that determine whether we observe stragglers.
 If the problem was compute-bound ($\tcomp/\tIO \gg 1$), the algorithm scaled very well without modifications, but otherwise strong scaling performance beyond a single node was poor.  
-For the algorithms with small $\tcomp/\tIO$, we needed to come up with strategies to improve scaling and overcome problems with stragglers.
+For algorithms with small $\tcomp/\tIO$, we needed to come up with strategies to improve scaling and overcome problems with stragglers.
 To a lesser degree, $\tcomp/\tcomm$ also determined scaling and performance, with $\tcomp/\tcomm < 1$ predicting poor performance.
 We show that communication and I/O are the two main scalability bottlenecks.
 
-Taking advantage of Global Arrays toolkit \cite{GA, GAiN}, we were able to reduce communication cost noticeably.
-However, our data showed that the file access I/O (POSIX \texttt{stat()}) became the cause for stragglers beyond a single node.
+Taking advantage of Global Arrays~\cite{GA, GAiN}, we were able to reduce communication cost noticeably.
+However, our data showed that the file access I/O (POSIX \texttt{open()}) became the cause for stragglers beyond a single node.
 We examined two different approaches to mitigate I/O bottlenecks: subfiling (trajectory file splitting) with Global Arrays for communications and MPI parallel I/O with MPI for communications.
 Both approaches significantly improved the performance and lead to near ideal scaling.
 
