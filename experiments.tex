@@ -352,7 +352,7 @@ In MDAnalysis, individual trajectory frames are loaded into memory, which ensure
 The test trajectory (file size 30 GB) had $2,512,200$ frames in total so each frame was about 0.011 MB in size.
 With $\tIO \approx 0.3~\text{ms}$ per frame, the data were ingested at a rate of about $40$~MB/s for a single process.
 For 24 MPI ranks (one \emph{SDSC Comet} node), the aggregated reading rate would have been about 1 GB/s.
-Although, such a value seemed to be well within the available bandwidth of 56 Gb/s of the Infini-band network interface that served the Lustre file system, in practice the aggregated I/O bandwidth for reading from a shared file was actually fairly small \cite{ATPESC2016}.
+Although, such a value seemed to be well within the available bandwidth of 56 Gb/s of the Infini-band network interface that served the Lustre file system, in practice the aggregated I/O bandwidth for reading from a shared file was actually fairly small which was expected based on the studies in \cite{ATPESC2016}.
 Furthermore, in our study the default Lustre stripe size value was 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
 Each I/O request read a single Lustre stripe but because the I/O size (0.011~MB) was smaller than the stripe size, many of these I/O requests were likely just accessing the same stripe on the same OST but nevertheless had to acquire a new reading lock for each request.
 
