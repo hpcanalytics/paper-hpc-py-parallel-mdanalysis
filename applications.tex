@@ -3,22 +3,21 @@
 \subsection{MDAnalysis}
 \label{sec:mda}
 
-Simulation data exist in trajectories in the form of time series of atoms positions and sometimes velocities, and these come in a plethora of different and idiosyncratic file formats. 
-\package{MDAnalysis} \citep{Gowers:2016aa,Michaud-Agrawal:2011fu} is a widely used open source Python library to analyze these trajectory files with an object oriented interface. 
-The package is written in Python, with time critical code in C/Cython. 
+Simulation data exist in trajectories in the form of time series of atom positions and sometimes velocities. These come in a plethora of different and idiosyncratic file formats. 
+\package{MDAnalysis}~\citep{Gowers:2016aa,Michaud-Agrawal:2011fu} is a widely used open source library to analyze trajectory files with an object oriented interface. 
+The library is written in Python, with time critical code in C/Cython. 
 \package{MDAnalysis} supports most file formats of simulation packages including CHARMM, Gromacs, Amber, and NAMD and the Protein Data Bank format and enables accessing data stored in trajectories. 
  
 \subsubsection{Root Mean Square Distance (RMSD)}
-The calculation of the root mean square distance (\textbf{RMSD}) for C$_{\alpha}$ atoms for a subset of the residues after 
-optimal superposition with the QCPROT algorithm \cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython \cite{Gowers:2016aa}) is commonly required in the analysis of molecular dynamics simulations (Algorithm \ref{alg:RMSD}). 
-The task used for the purpose of our benchmark is the $\text{RMSD}=\sqrt{\frac{1}{N}\sum_{i=1}^{N}\delta_{i}^{2}}$ implemented in MDAnalysis.analysis.rms module where $\delta_{i}$ is the distance between atom $i$ and a reference structure.  
+The calculation of the Root Mean Square Distance (\textbf{RMSD}) for $C_{\alpha}$ atoms for a subset of residues after optimal superposition with the QCPROT algorithm~\cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython~\cite{Gowers:2016aa}) is commonly required in the analysis of molecular dynamics simulations (Algorithm~\ref{alg:RMSD}). 
+The task used for our benchmark is the $\text{RMSD}=\sqrt{\frac{1}{N}\sum_{i=1}^{N}\delta_{i}^{2}}$, where $\delta_{i}$ is the distance between atom $i$ and a reference structure, as it is implemented in MDAnalysis.analysis.rms module.  
 
 To this, the protein structure (selected C$_{\alpha}$ atoms) in the initial frame will be considered as the reference and as the mobile group at other time steps. 
 In the RMSD algorithm, a translation and rigid body rotation are found that minimize the RMSD between the mobile coordinates and the reference coordinates. 
 The RMSD of this optimum superposition is reported. 
 The process is repeated for each trajectory frame, with the output being a time series of RMSD values.
-The RMSD is used to show the rigidity of protein domains and more generally characterizes structural changes.
-The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$ \cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles in a frame.
+RMSD is used to show the rigidity of protein domains and more generally characterizes structural changes.
+The time complexity for RMSD Algorithm~\ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$~\cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles in a frame.
 
 \begin{algorithm}[ht!]
 	\scriptsize
@@ -51,27 +50,28 @@ The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \tim
 \end{algorithm}
 
 \subsection{MPI for Python (\package{mpi4py})}
-MPI for Python (\package{mpi4py}) is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to employ multiple processors \cite{Dalcin:2011aa, Dalcin:2005aa}.
+MPI for Python (\package{mpi4py}) is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to use multiple processors~\cite{Dalcin:2011aa, Dalcin:2005aa}.
 Python is widely used in the scientific community because it facilitates rapid development of small scripts and code prototypes as well as development of large applications and highly portable and reusable modules and libraries.
-Based on the efficiency tests \cite{Dalcin:2011aa, Dalcin:2005aa}, the performance degradation due to using \package{mpi4py} is not prohibitive and the overhead introduced by \package{mpi4py} is far smaller than the overhead associated to the use of interpreted versus compiled languages \cite{GAiN}.
-Overheads in \package{mpi4py} are small compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}.
+Based on efficiency tests~\cite{Dalcin:2011aa, Dalcin:2005aa}, the performance degradation due to using \package{mpi4py} is not prohibitive and the overhead introduced by \package{mpi4py} is far smaller than the overhead associated to the use of interpreted versus compiled languages~\cite{GAiN}.
+Overheads in \package{mpi4py} are small compared to C code if efficient raw memory buffers are used for communication~\cite{Dalcin:2011aa}.
 
 \subsection{Application of Global Arrays}
-The Global Arrays (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}. The Global Arrays toolkit allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
-Global Arrays in NumPy (GAiN) extends GA to Python through Numpy \cite{GAiN}. 
-The basic components of the Global Arrays toolkit are function calls to create Global Arrays (\texttt{ga\_create()}), copy data to (\texttt{ga\_put()}), from (\texttt{ga\_get()}), and between Global Arrays (\texttt{ga\_distribution()}, \texttt{ga\_scatter()}), and identify and access the portions of the Global Arrays data that are held locally (\texttt{ga\_access()}). 
-In addition, there are also functions to destroy arrays (\texttt{ga\_destroy()}) and free up the memory originally allocated to them \cite{GAiN}.
+The Global Arrays (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining a type of global index space and programming syntax similar to what is available when programming on a single processor~\cite{GA}. The Global Arrays toolkit allows manipulation of distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
+Global Arrays in NumPy (GAiN)~\cite{GAiN} extends GA to Python through Numpy. 
 
-When the Global Arrays is created (\texttt{ga\_create()}) each process will create an array of the same shape and size, physically located in the local memory space of that process \cite{GA}. 
-The GA library keeps track of all these memory locations by recording a list of them when a Global Arrays is created. 
-The user can get a pointer to this memory by using \texttt{ga\_access()} function.
-Using this pointer it is possible to directly modify the data that is local to each process.
-When a process tries to access a block of data, request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process (\textit{B. J. Palmer and J. Daily, personal communication}).
+The basic components of the Global Arrays toolkit are function calls to create (\texttt{ga\_create()}), copy data to (\texttt{ga\_put()}), from (\texttt{ga\_get()}), and between Global Arrays (\texttt{ga\_distribution()}, \texttt{ga\_scatter()}), and identify and access portions of Global Array data that are held locally (\texttt{ga\_access()}).
+In addition, there are functions to destroy arrays (\texttt{ga\_destroy()}) and free up the memory originally allocated~\cite{GAiN}.
+
+When a Global Array (GA) is created (\texttt{ga\_create()}) each process creates an array of the same shape and size, located in its memory space~\cite{GA}. 
+The GA library keeps track of all these memory locations by recording a list of individual arrays, which are part of the GA. 
+The user gets a pointer to the memory location of the GA by using \texttt{ga\_access()}.
+By using this pointer ,it is possible to directly modify the data that is local to each process.
+When a process tries to access a block of data, the request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process (\textit{B. J. Palmer and J. Daily, personal communication}).
 The requesting process then makes individual requests to each of the remote processes. 
-The way data communication within the node and between the nodes happens depends on which runtime is configured when installing the GA library.
+The way data communication within the node and between the nodes happens depends on the configured runtime during installation.
 
 Algorithm \ref{alg:GA} describes the RMSD algorithm in combination with a Global Arrays.
-In this algorithm, we use Global Arrays instead of the message passing paradigm to investigate if we can reduce the communication cost. 
+In this algorithm, we use Global Arrays instead of the message passing paradigm to investigate its effect to the communication cost. 
 
 \begin{algorithm}[ht!]
 	\scriptsize
@@ -97,14 +97,14 @@ In this algorithm, we use Global Arrays instead of the message passing paradigm 
 \end{algorithm}
 
 \subsection{MPI and Parallel HDF5}
-HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python (\url{http://www.hdfgroup.org/HDF5}, \cite{pythonhdf5}).
+HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python ~\cite{pythonhdf5}.
 Parallel HDF5 (\package{PHDF5}) typically sits on top of a MPI-IO layer and can use MPI-IO optimizations. 
-In \package{PHDF5}, all file accesses are coordinated through the MPI library; otherwise, multiple processes would compete over accessing over the same file on disk. 
+In \package{PHDF5} all file accesses are coordinated through the MPI library; otherwise, multiple processes would compete over accessing over the same file on disk. 
 MPI-based applications work by launching multiple parallel instances of the Python interpreter which communicate with each other via the MPI library. 
 \package{HDF5} itself handles nearly all the details involved with coordinating file access when the shared file is opened through the \emph{mpio} driver.
 In addition, MPI communicator should be supplied as well and the users also need to follow some constraints for data consistency \cite{pythonhdf5}.
 
-MPI has two flavors of operation: collective, which means that all processes have to participate in the same order, and independent, which means each process can perform the operation or not and the order also does not matter  \cite{pythonhdf5}.
-With \package{PHDF5}, modifications to file metadata must be done collectively and although all processes perform the same task, they do not wait until the others catch up \cite{pythonhdf5}. 
+MPI has two flavors of operation: collective, which means that all processes have to participate in the same order, and independent, which means each process can perform an operation or not and the order of execution does not matter~\cite{pythonhdf5}.
+With \package{PHDF5}, modifications to file metadata must be done collectively and although all processes perform the same task, they do not wait until the others catch up~\cite{pythonhdf5}. 
 Other tasks and any type of data operations can be performed independently by processes.
 In the present study, we use independent operations.
