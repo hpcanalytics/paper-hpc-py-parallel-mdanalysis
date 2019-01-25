@@ -18,10 +18,10 @@ As in our previous study we selected the commonly used RMSD algorithm implemente
 We used the single program multiple data (SPMD) paradigm to parallelize this algorithm on HPC resources.
 With SPMD, each process executes essentially the same operations on different parts of the data. 
 We used Python, a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in HPC parallel community~\cite{GAiN}. 
-We show that there are two important performance parameters, $\tcomp/\tIO$ and $\tcomp/\tcomm$ which are the ratio of computation to I/O load, as measured by the time spent on computation versus the time spent on reading data from the file system, and the ratio of computation to communication load respectively, that determine whether we observe stragglers.
-If the problem was compute-bound ($\tcomp/\tIO \gg 1$), the algorithm scaled very well without modifications, but otherwise strong scaling performance beyond a single node was poor.  
-For algorithms with small $\tcomp/\tIO$, we needed to come up with strategies to improve scaling and overcome problems with stragglers.
-To a lesser degree, $\tcomp/\tcomm$ also determined scaling and performance, with $\tcomp/\tcomm < 1$ predicting poor performance.
+We show that there are two important performance parameters, $\overline{\tcomp}/\overline{\tIO}$ and $\overline{\tcomp}/\overline{\tcomm}$ which are the ratio of computation to I/O load, as measured by the time spent on computation versus the time spent on reading data from the file system, and the ratio of computation to communication load respectively, that determine whether we observe stragglers.
+If the problem was compute-bound ($\overline{\tcomp}/\overline{\tIO} \gg 1$), the algorithm scaled very well without modifications, but otherwise strong scaling performance beyond a single node was poor.  
+For algorithms with small $\overline{\tcomp}/\overline{\tIO}$, we needed to come up with strategies to improve scaling and overcome problems with stragglers.
+To a lesser degree, $\overline{\tcomp}/\overline{\tcomm}$ also determined scaling and performance, with $\overline{\tcomp}/\overline{\tcomm} < 1$ predicting poor performance.
 We show that communication and I/O are the two main scalability bottlenecks.
 
 Taking advantage of Global Arrays~\cite{GA, GAiN}, we were able to reduce communication cost noticeably.
