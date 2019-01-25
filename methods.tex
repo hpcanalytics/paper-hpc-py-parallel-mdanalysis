@@ -16,7 +16,7 @@ The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMS
 There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO. 
 To measure the un-accounted time we define the ``overheads''.
 $t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ are the overhead of the calculations and they should be ideally very small (see Table \ref{tab:notation} for the definition).  
-The total time to completion for a single process on $N$ cores is $t_{N}$, which is mathematically equivalent to
+The total time to completion for a single process is $t_{N}$, which is mathematically equivalent to
 $ t_{\text{RMSD}} + \tcomm \equiv t_{N}$.
 
 \subsection{Performance Measurement}
@@ -45,7 +45,7 @@ The ratio of compute to communication time is defined by the ratio of total comp
 \end{gather}
 as shown in Table \ref{tab:notation}.
  
-All code used in the present study is available from \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the open source MIT license. 
+All code used in the present study is available in our Github repository. 
  
 \begin{table}[ht!]
 \centering
