@@ -84,7 +84,9 @@ To measure the effect of the $\overline{\tcomp}/\overline{\tIO}$ ratio on perfor
 \subsubsection{Effect of Increased Compute workload for RMSD Task}
 
 The increased computational workloads corresponded to $\overline{\tcomp}/\overline{\tIO}$ ratios of 11, 19, 27 respectively as shown in Table \ref{tab:load-ratio}.
-These generally agreed with the simple theoretical prediction in Table \ref{tab:load-ratio} that the $\overline{\tcomp}/\overline{\tIO}$ ratio for the higher workloads (with factor $X$) should be $X$ times the $\overline{\tcomp}/\overline{\tIO}$ for the $1\times$ workload because on average the I/O workload of each rank is $N_{\text{b}} \times \tIO $ (where $N_{\text{b}} = N_{\text{frames}}^{total}/N$ is the number of frames per trajectory block, i.e., the number of frames processed by each MPI rank for $N$ processes), which is independent of $X$, while the workload for the computation is $X \times N_{\text{b}} \times \tcomp$, and hence the ratio is $X \times \overline{\tcomp}/\overline{\tIO}$.
+In fact, the $\overline{\tcomp}/\overline{\tIO}$ ratio for the higher workloads (with factor $X$) should be $X$ times the $\overline{\tcomp}/\overline{\tIO}$ for the $1\times$ workload (In agreement with theoretical prediction in Table \ref{tab:load-ratio}).
+This is since on average the I/O workload of each rank is $N_{\text{b}} \times \tIO $, which is independent of $X$. 
+However, the workload for the computation is $X \times N_{\text{b}} \times \tcomp$, and hence the ratio is $X \times \overline{\tcomp}/\overline{\tIO}$.
 
 \begin{table}[ht!]
 \centering
