@@ -214,10 +214,6 @@ We found evidence for the obvious hypothesis that a larger ratio was beneficial,
 
 \subsection{Reducing I/O Cost}
 \label{sec:I/O}
-
-We previously showed that the I/O system can have a large effect on the parallel performance of the RMSD task \cite{Khoshlessan:2017ab} and the results above showed that in the I/O-bound problem stragglers prevent us from effectively utilizing HPC resources (see Figure \ref{fig:ScalingComputeIO}, for $\overline{\tcomp}/\overline{\tIO} \approx 0.3$).
-The root cause for this behavior was not immediately obvious but by analyzing the flow of data in the context of the Lustre filesystem on which the trajectory files were stored  we could get a sense of possible problem areas.
-
 In order to improve performance we needed to employ strategies to avoid the competition over file access across different ranks when the $\overline{\tcomp}/\overline{\tIO}$ ratio was small.
 To this end, we experimented with two different ways for reducing the I/O cost:
 splitting the trajectory file into as many segments as the number of processes, thus using file-per-process access, and using the HDF5 file format together with MPI-IO parallel reads instead of the XTC trajectory format.
