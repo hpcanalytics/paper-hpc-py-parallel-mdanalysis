@@ -16,7 +16,7 @@ The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMS
 There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO. 
 To measure the un-accounted time we define the ``overheads''.
 $t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ are the overhead of the calculations and they should be ideally very small (see Table \ref{tab:notation} for the definition).  
-The total time to completion for a single process on $N$ cores is $t_{N}$, which is mathematically equivalent to
+The total time to completion for a single process is $t_{N}$, which is mathematically equivalent to
 $ t_{\text{RMSD}} + \tcomm \equiv t_{N}$.
 
 \subsection{Performance Measurement}
@@ -39,13 +39,13 @@ In the present study, we calculated this ratio using the serial version of our a
 The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
 \begin{gather}
   \label{eq:Compute-comm}
-  \frac{t_{\text{comp}}}{t_{\text{comm}}} = \frac{\frac{1}{N}
+  \frac{\overline{t_{\text{comp}}}}{\overline{t_{\text{comm}}}} = \frac{\frac{1}{N}
     \sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}}%
   {\overline{t_{\text{comm}}}},
 \end{gather}
 as shown in Table \ref{tab:notation}.
  
-All code used in the present study is available from \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the open source MIT license. 
+All code used in the present study is available in our Github repository. 
  
 \begin{table}[ht!]
 \centering
@@ -67,6 +67,7 @@ All code used in the present study is available from \url{https://github.com/hpc
     $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
     $t_{N}$ & $t_{\text{RMSD}}+t_{\text{Communication}}$ \\
    \midrule  
+    $\overline{t_{\text{comp}}}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}$ \\
     $\overline{t_{\text{comm}}}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}$ \\
     $t_{\text{total}}$ & $\max t_{N}$ \\
   \bottomrule
