@@ -102,7 +102,7 @@ Five repeats were performed to collect statistics and these were typical data fr
 A full comparison of compute and I/O scaling across different clusters for different test cases and algorithms is shown in Table \ref{tab:comp-IO-scaling}. 
 For MPI-based parallel HDF5, both the compute and I/O time on \emph{Bridges} were consistenly larger than their corresponding values on \emph{Comet} and \emph{SuperMIC}.
 For example, with one core the corresponding compute and I/O time were $\tcomp = 387~\text{s}$, $\tIO = 1318~\text{s}$ versus $225~\text{s}$, $423~\text{s}$ on \emph{Comet} and $273~\text{s}$, $503~\text{s}$ on \emph{SuperMIC}.
-This performance difference became more obvious with increasing core numbers.
+This performance difference became larger with increasing core numbers.
 When the trajectories were split and Global Arrays was used for communication both \emph{Comet} and \emph{SuperMIC} showed similar performance.
 
 Overall, the results from \emph{Comet} and \emph{SuperMIC} are consistent with each other.
