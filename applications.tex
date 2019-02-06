@@ -3,22 +3,22 @@
 \subsection{MDAnalysis}
 \label{sec:mda}
 
-Simulation data exist in trajectories in the form of time series of atoms positions and sometimes velocities, and these come in a plethora of different and idiosyncratic file formats. 
-\package{MDAnalysis} \citep{Gowers:2016aa,Michaud-Agrawal:2011fu} is a widely used open source Python library to analyze these trajectory files with an object oriented interface. 
-The package is written in Python, with time critical code in C/Cython. 
+Simulation data exist in trajectories in the form of time series of atom positions and sometimes velocities. These come in a plethora of different and idiosyncratic file formats. 
+\package{MDAnalysis}~\citep{Gowers:2016aa,Michaud-Agrawal:2011fu} is a widely used open source library to analyze trajectory files with an object oriented interface. 
+The library is written in Python, with time critical code in C/Cython. 
 \package{MDAnalysis} supports most file formats of simulation packages including CHARMM, Gromacs, Amber, and NAMD and the Protein Data Bank format and enables accessing data stored in trajectories. 
  
 \subsubsection*{Root Mean Square Distance (RMSD)}
 The calculation of the root mean square distance (\textbf{RMSD}) for C$_{\alpha}$ atoms for a subset of the residues after 
-optimal superposition with the QCPROT algorithm \cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython \cite{Gowers:2016aa}) is commonly required in the analysis of molecular dynamics simulations (Algorithm \ref{alg:RMSD}). 
+optimal superposition with the QCPROT algorithm~\cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython~\cite{Gowers:2016aa}) is commonly required in the analysis of molecular dynamics simulations (Algorithm~\ref{alg:RMSD}). 
 The task used for the purpose of our benchmark is the $\text{RMSD}=\sqrt{\frac{1}{N}\sum_{i=1}^{N}\delta_{i}^{2}}$ implemented in MDAnalysis.analysis.rms module where $\delta_{i}$ is the distance between atom $i$ and a reference structure.  
 
 To this, the protein structure (selected C$_{\alpha}$ atoms) in the initial frame will be considered as the reference and as the mobile group at other time steps. 
 In the RMSD algorithm, a translation and rigid body rotation are found that minimize the RMSD between the mobile coordinates and the reference coordinates. 
 The RMSD of this optimum superposition is reported. 
 The process is repeated for each trajectory frame, with the output being a time series of RMSD values.
-The RMSD is used to show the rigidity of protein domains and more generally characterizes structural changes.
-The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$ \cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles in a frame.
+RMSD is used to show the rigidity of protein domains and more generally characterizes structural changes.
+The time complexity for RMSD Algorithm~\ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$~\cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles in a frame.
 
 \begin{algorithm}[ht!]
 	\scriptsize
@@ -49,6 +49,7 @@ The order of complexity for RMSD algorithm \ref{alg:RMSD} is $\mathcal{O}(T \tim
 		\State MPI Finalize
 	\end{algorithmic}
 \end{algorithm}
+
 
 \subsection{MPI for Python (\package{mpi4py})}
 MPI for Python (\package{mpi4py}) is a Python wrapper written over Message Passing Interface (MPI) standard and allows any Python program to employ multiple processors \cite{Dalcin:2011aa, Dalcin:2005aa}.
@@ -108,4 +109,3 @@ MPI has two flavors of operation: collective, which means that all processes hav
 With \package{PHDF5}, modifications to file metadata must be done collectively and although all processes perform the same task, they do not wait until the others catch up \cite{pythonhdf5}. 
 Other tasks and any type of data operations can be performed independently by processes.
 In the present study, we use independent operations.
-
