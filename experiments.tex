@@ -7,12 +7,13 @@ We showed in~\cite{Khoshlessan:2017ab} that the RMSD task only scaled well up \g
 
 We focus on the MPI implementation (via \package{mpi4py}~\cite{Dalcin:2011aa, Dalcin:2005aa}) to better understand the cause for the lack of scaling across nodes.
 As in our previous work, we also observed very poor strong scaling performance (Figures~\ref{fig:MPIscaling},~\ref{fig:MPIspeedup} and~\ref{fig:MPIscaling-Bridges} and~\ref{fig:MPIspeedup-Bridges}) beyond a single node.
-A more detailed analysis showed that the RMSD computation, and to a lesser degree the I/O, considered on their own scaled well beyond 50 cores (yellow and blue lines in Figure~\ref{fig:ScalingComputeIO}). Communication (red line in Figure~\ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure~\ref{fig:ScalingComputeIO}) started to dominate beyond 50 cores.
+A more detailed analysis showed that the RMSD computation, and to a lesser degree the I/O, considered on their own scaled well beyond 50 cores (yellow and blue lines in Figure~\ref{fig:ScalingComputeIO}). 
+But, communication (red line in Figure~\ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure~\ref{fig:ScalingComputeIO}) started to dominate beyond 50 cores.
 Communication cost and initial time for opening the trajectory were distributed unevenly across MPI ranks, as shown in Figure~\ref{fig:MPIranks}. 
 The ranks that took much longer to complete than the typical execution time of the other ranks were the stragglers that hurt performance.
 
 \subsubsection*{Identification of Scalability Bottlenecks}
-In the run shown in Figure~\ref{fig:MPIranks}, 62 ranks out of 72 took about $60sec$ (the stragglers) whereas the remaining ranks only took about $20sec$. 
+In the example shown in Figure~\ref{fig:MPIranks}, 62 ranks out of 72 took about $60sec$ (the stragglers) whereas the remaining ranks only took about $20sec$. 
 The detailed breakdown of the time spent on each rank (Figure~\ref{fig:MPIranks}) showed that the computation, \tcomp, was relatively constant across ranks. 
 The time spent on reading data from the shared trajectory file on Lustre into memory, \tIO, showed variability across different ranks. 
 The stragglers, however, appeared to be defined by occasionally much larger \emph{communication} times, \tcomm (line 16 in Algorithm~\ref{alg:RMSD}), which were on the order of $30sec$, and by larger times to initially open the trajectory (line 2 in Algorithm~\ref{alg:RMSD}).
@@ -60,11 +61,11 @@ These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 
 \end{figure} 
 
 \subsubsection*{Influence of Hardware}
-We ran the same benchmarks on multiple HPC systems (XSEDE's \emph{PSC Bridges} (Fig.~\ref{fig:MPIwithIO-Bridges}) and \emph{LSU SuperMIC} (Fig.~\ref{fig:MPIwithIO-SuperMIC})) and observed the occurrence of stragglers, in a manner very similar to the results described for \emph{SDSC Comet}.
-There was no clear pattern in which MPI rank would be a straggler, neither could we trace stragglers to specific cores or nodes. 
+We ran the same benchmarks on multiple HPC systems (XSEDE's \emph{PSC Bridges} (Fig.~\ref{fig:MPIwithIO-Bridges}) and \emph{LSU SuperMIC} (Fig.~\ref{fig:MPIwithIO-SuperMIC})), and observed the occurrence of stragglers, in a manner very similar to the results described for \emph{SDSC Comet}.
+There was no clear pattern in which certain MPI ranks would always be a straggler, neither could we trace stragglers to specific cores or nodes.
 Therefore, the phenomenon of stragglers in the RMSD case was reproducible on different clusters and thus appeared to be independent from the underlying hardware.
 
-\subsection{Effect of average compute over average IO ration on Performance}
+\subsection{Effect of average compute over average IO ratio on Performance}
 \label{sec:bound}
 
 The results in section~\ref{sec:RMSD} indicated communication and I/O to be two important factors that appeared to correlate with stragglers. 
@@ -109,9 +110,8 @@ These generally agreed with the theoretical prediction in Table~\ref{tab:load-ra
 \end{table}
 
 We performed this experiment to show the effect of the $\overline{\tcomp}/\overline{\tIO}$ ratio on performance (Figure~\ref{fig:tcomp_tIO_effect}).
-As the $\overline{\tcomp}/\overline{\tIO}$ ratio increased, speed-up and performance improved, and 
-showed overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure~\ref{fig:S1_tcomp_tIO_effect}).
-The RMSD calculation consistently scaled up to larger numbers of cores ($N=56$ for $70\times$ RMSD).
+As the $\overline{\tcomp}/\overline{\tIO}$ ratio increased, speed-up and performance improved, and showed overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure~\ref{fig:S1_tcomp_tIO_effect}).
+The RMSD calculation consistently scaled up to larger numbers of cores ($N=56$ for $70\times$ RMSD) for higher $\overline{\tcomp}/\overline{\tIO}$ ratios.
 Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} show that speed-up and efficiency approach their ideal value for each processor count with increasing $\overline{\tcomp}/\overline{\tIO}$ ratio.
 
 \begin{figure}[ht!]
@@ -152,7 +152,7 @@ Although in practice I/O cannot be avoided, this experiment demonstrated that ac
 \subsection{Reducing Communication Cost: Application of Global Arrays}
 \label{Global-Array}
 As seen in Figure~\ref{fig:MPIranks} for small $\overline{\tcomp}/\overline{\tIO}$, communication acted as a scalability bottleneck. 
-When result arrays communicated back to the master process (rank 0), some processes took much longer as compared to others. 
+When the processes communicated result arrays back to the master process (rank 0), some processes took much longer as compared to others.
 We therefore investigated strategies to reduce communication cost. 
 
 We used Global Arrays (GA)~\cite{GA, GAiN} instead of collective communication in MPI and examined the change in the performance. 
@@ -227,9 +227,9 @@ We discuss these two approaches and their performance improvements in detail in 
 
 \subsubsection{Splitting the Trajectories (``subfiling'')}
 \label{splitting-traj}
-In all the previous benchmarks all processes were using a shared trajectory file. ``Subfiling'' is a mechanism previously used for splitting a large multi-dimensional global array to a number of smaller subarrays. Each smaller array is saved in a separate file. As a result, it reduces the file system control overhead by decreasing the number of processes concurrently accessing a shared file~\cite{scalable-IO, scalable-IO1}.
+Subfiling is a mechanism previously used for splitting a large multi-dimensional global array to a number of smaller subarrays in which each smaller array is saved in a separate file. Subfiling reduces the file system control overhead by decreasing the number of processes concurrently accessing a shared file~\cite{scalable-IO, scalable-IO1}.
 Because subfiling is known to improve programming flexibility and performance of parallel shared-file I/O, we investigated splitting our trajectory file into as many trajectory segments as the number of processes.
-Tthe trajectory file was split into $N$ segments, one for each process, with each segment having $N_{b}$ frames. 
+The trajectory file was split into $N$ segments, one for each process, with each segment having $N_{b}$ frames. 
 This way, each process would access its own trajectory segment file without competing for file accesses. 
 
 \paragraph{Performance with MPI communication}
@@ -303,7 +303,7 @@ We converted our XTC trajectory file into a simple custom HDF5 format so that we
 The code for this file format conversion can be found in the GitHub repository.
 The time it took to convert our XTC file with $2,512,200$ frames into HDF5 format was about $5,400sec$ on a local workstation with network file system (NFS).
 
-We ran our benchmark on up to 16 nodes (384 cores) and we observed near ideal scaling behavior with parallel efficiencies above 0.8 up to 8 nodes (Figure~\ref{fig:comparison_efficiency} and Figures!\ref{fig:MPIscaling-hdf5} and~\ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure~\ref{fig:MPIranks-hdf5}).
+We ran our benchmark on up to 16 nodes (384 cores) and we observed near ideal scaling behavior with parallel efficiencies above 0.8 up to 8 nodes (Figure~\ref{fig:comparison_efficiency} and Figures~\ref{fig:MPIscaling-hdf5} and~\ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure~\ref{fig:MPIranks-hdf5}).
 The trajectory reading I/O (\tIO) was the dominant contribution, followed by compute (\tcomp), but because both contributions scaled well, overall scaling performance remained good, even for 384 cores.
 We observed a low-performing outlier for 12 nodes (288 cores) with slower I/O than typical but did not further investigate.
 Importantly, the trajectory opening cost remained negligible (in the millisecond range) and the cost for MPI communication also remained small (below 0.1 s, even for 16 nodes).
@@ -368,5 +368,6 @@ Continuously keeping metadata updated in order to have fully consistent reads an
 
 It was observed that contention for the interconnect between OSTs and compute nodes due to MPI communication may lead to variable performance in I/O measurements~\cite{Mache:2005aa}.
 Conversely, our data suggest that single-shared-file I/O on Lustre can negatively affect MPI communication as well, even at moderate numbers (tens to hundreds) of concurrent requests, similar to recent network simulations that predicted interference between MPI and I/O traffic~\cite{Brown:2018ab}.
-This work indicated that MPI traffic (inter-process communication) can be affected by increasing I/O, and in particular, a few MPI processes were always delayed by 1-2 orders of magnitude more than the median time. Thus suggesting that our observed stragglers with large variance in the MPI communication might be due to interference with the I/O requests on the same network.
+This work indicated that MPI traffic (inter-process communication) can be affected by increasing I/O, and in particular, a few MPI processes were always delayed by 1-2 orders of magnitude more than the median time.
+Thus, suggesting that our observed stragglers with large variance in the MPI communication might be due to interference with the I/O requests on the same network.
 
