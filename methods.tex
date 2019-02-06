@@ -16,7 +16,9 @@ The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMS
 There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO.
 
 Unaccounted time is considered as ``overhead''. We define
-$t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ as the overhead of the calculations. They should ideally be very small (see Table \ref{tab:notation} for the definition). Finally, the total time to completion of a single process, when utilizing $N$ cores for the execution of the overall experiment, is $t_{N}$, as a result $t_{\text{RMSD}} + \tcomm \equiv t_{N}$.
+$t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ as the overhead of the calculations. 
+They should ideally be very small (see Table \ref{tab:notation} for the definition). 
+Finally, the total time to completion of a single process, when utilizing $N$ cores for the execution of the overall experiment, is $t_{N}$, as a result $t_{\text{RMSD}} + \tcomm \equiv t_{N}$.
 
 \subsection{Performance Measurement}
 We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
@@ -34,7 +36,7 @@ and efficiency
 \end{equation}
 Additionally, we introduced two performance parameters that we will show are indicative of the occurrence of stragglers.
 We define the ratio of compute time to I/O time as $t_{\text{Compute}}/t_{\text{IO}}$. 
-In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we have observed previously~\cite{Khoshlessan:2017ab}.
+In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed previously~\cite{Khoshlessan:2017ab}.
 The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
 \begin{gather}
   \label{eq:Compute-comm}
