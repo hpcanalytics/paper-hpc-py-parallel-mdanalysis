@@ -39,7 +39,7 @@ In the present study, we calculated this ratio using the serial version of our a
 The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
 \begin{gather}
   \label{eq:Compute-comm}
-  \frac{t_{\text{comp}}}{t_{\text{comm}}} = \frac{\frac{1}{N}
+  \frac{\overline{t_{\text{comp}}}}{\overline{t_{\text{comm}}}} = \frac{\frac{1}{N}
     \sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}}%
   {\overline{t_{\text{comm}}}},
 \end{gather}
@@ -67,6 +67,7 @@ All code used in the present study is available in our Github repository.
     $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
     $t_{N}$ & $t_{\text{RMSD}}+t_{\text{Communication}}$ \\
    \midrule  
+    $\overline{t_{\text{comp}}}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}$ \\
     $\overline{t_{\text{comm}}}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}$ \\
     $t_{\text{total}}$ & $\max t_{N}$ \\
   \bottomrule

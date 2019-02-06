@@ -6,13 +6,13 @@ This is because the task remained communication bound (Figure \ref{fig:MPIwithIO
   \frac{t_{\text{comp}}}{t_{\text{comm}}} \ll 1.
 \end{gather*}
 
-Figure \ref{fig:tcom_tcomm_effect} shows the relationship of performance with \tcomp/\tcomm ratio.
-When the \tcomp/\tcomm ratio is higher (Figure \ref{fig:tcomp_tcomm_ratio}), performance is better (Figure \ref{fig:S1_tcomp_tcomm_effect}) even if communication time is larger (Figure \ref{fig:Comm_time_tcomp_tcomm_effect}).
-Although, we still observed stragglers due to communication at larger \tcomp/\tcomm ratios ($70\times$ RMSD and $100\times$ RMSD), their effect on performance remained modest because the overall performance was dominated by the compute load. 
+Figure \ref{fig:tcom_tcomm_effect} shows the relationship of performance with $\overline{\tcomp}/\overline{\tcomm}$ ratio.
+When the $\overline{\tcomp}/\overline{\tcomm}$ ratio is higher (Figure \ref{fig:tcomp_tcomm_ratio}), performance is better (Figure \ref{fig:S1_tcomp_tcomm_effect}) even if communication time is larger (Figure \ref{fig:Comm_time_tcomp_tcomm_effect}).
+Although, we still observed stragglers due to communication at larger $\overline{\tcomp}/\overline{\tcomm}$ ratios ($70\times$ RMSD and $100\times$ RMSD), their effect on performance remained modest because the overall performance was dominated by the compute load. 
 Evidently, if overall performance is dominated by a component such as compute that scales well, then performance problems with components such as communication will be masked and overall acceptable performance can still be achieved (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}).
 
 Communication is usually not problematic within one node because of the shared memory environment (for less than 24 processes (single compute node on \emph{SDSC Comet}) the scaling is good and $\frac{\tcomp}{\tcomm} \gg 1$ for all RMSD loads) (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}).
-However, beyond a single compute node, scaling appears to get better as the \tcomp/\tcomm ratio increases and communication overhead becomes less dominant (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}, 24-72 cores represent multiple compute nodes on \emph{SDSC Comet}).
+However, beyond a single compute node, scaling appears to get better as the $\overline{\tcomp}/\overline{\tcomm}$ ratio increases and communication overhead becomes less dominant (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}, 24-72 cores represent multiple compute nodes on \emph{SDSC Comet}).
 
 \begin{figure}[ht!]
 \centering
