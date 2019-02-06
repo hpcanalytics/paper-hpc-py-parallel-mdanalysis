@@ -28,9 +28,7 @@ HiMach~\cite{himach-2008} introduces scalable and flexible parallel Python frame
 HiMach's runtime is responsible to parallelize and distribute Map and Reduce classes to assigned cores.
 HiMach uses parallel I/O for file access during map tasks and \text{MPI\_Allgather} in the reduction process. 
 HiMach, however, does not discuss parallel analysis of analysis types that cannot be implemented via MapReduce.
-\gpnote{I do not understand this sentence at all. I do not think it is needed at all here. I suggest to remove it. :
-The analysis needs by MD community, however, tend to be varied and a generalized parallel framework should be able to provide parallel analysis for a variety of task types.}
-\gpnote{ Arguing about open source does not have to do with the problem this paper addresses. I suggest to remove: Furthermore, HiMach is not available under an open source license, which does not allow community contributions and continuous integration with state-of-the-art methods.}
+Furthermore, HiMach is not available under an open source license, which does not allow community contributions and continuous integration with state-of-the-art methods.
 
 Wu et. al.~\cite{Wu_et.al} present a scalable parallel framework for distributed-memory post-simulation data analysis.
 This work consists of an interface that allows a user to write analysis programs sequentially, and the machinery that ensures these programs execute in parallel automatically. 
