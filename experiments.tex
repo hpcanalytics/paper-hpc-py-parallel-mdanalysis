@@ -86,7 +86,9 @@ To measure the effect of the $\overline{\tcomp}/\overline{\tIO}$ ratio on perfor
 
 The increased computational workloads corresponded to $\overline{\tcomp}/\overline{\tIO}$ ratios of 11, 19, 27 respectively as shown in Table \ref{tab:load-ratio}.
 \gpnote{I am not sure if this breaking passes the same message. It needs fixing.}
-These generally agreed with the theoretical prediction in Table~\ref{tab:load-ratio}. The $\overline{\tcomp}/\overline{\tIO}$ ratio for higher workloads (with factor $X$) should be $X$ times the $\overline{\tcomp}/\overline{\tIO}$ of the intial workload. On average, the I/O workload of each rank is $N_{\text{b}} \times \tIO $, where $N_{\text{b}} = N_{\text{frames}}^{total}/N$ is the number of frames processed by each MPI rank for $N$ processes, is independent of $X$. While the workload for the computation is $X \times N_{\text{b}} \times \tcomp$, and hence the ratio is $X \times \overline{\tcomp}/\overline{\tIO}$.
+In fact, the $\overline{\tcomp}/\overline{\tIO}$ ratio for the higher workloads (with factor $X$) should be $X$ times the $\overline{\tcomp}/\overline{\tIO}$ for the $1\times$ workload (in agreement with theoretical prediction in Table \ref{tab:load-ratio}).
+This is since on average the I/O workload of each rank is $N_{\text{b}} \times \tIO $, which is independent of $X$. 
+However, the workload for the computation is $X \times N_{\text{b}} \times \tcomp$, and hence the ratio is $X \times \overline{\tcomp}/\overline{\tIO}$.
 
 \begin{table}[ht!]
 \centering
@@ -213,11 +215,15 @@ We found evidence for the hypothesis that a larger ratio was beneficial, provide
 
 \subsection{Reducing I/O Cost}
 \label{sec:I/O}
+<<<<<<< HEAD
 
 We previously showed that the I/O system can have a large effect on the parallel performance of the RMSD task \cite{Khoshlessan:2017ab} and the results above showed that in the I/O-bound problem stragglers prevent us from effectively utilizing HPC resources (see Figure \ref{fig:ScalingComputeIO}, for $\overline{\tcomp}/\overline{\tIO} \approx 0.3$).
 The root cause for this behavior was not immediately obvious but by analyzing the flow of data in the context of the Lustre filesystem on which the trajectory files were stored  we could get a sense of possible problem areas.
 
 In order to improve performance we employed strategies to avoid file access competition across ranks when the $\overline{\tcomp}/\overline{\tIO}$ ratio was small.
+=======
+In order to improve performance we needed to employ strategies to avoid the competition over file access across different ranks when the $\overline{\tcomp}/\overline{\tIO}$ ratio was small.
+>>>>>>> master
 To this end, we experimented with two different ways for reducing the I/O cost:
 \begin{inparaenum}[1)]
 	\item splitting the trajectory file into as many segments as the number of processes, thus using file-per-process access, and
