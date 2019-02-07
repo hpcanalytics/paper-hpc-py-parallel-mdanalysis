@@ -13,10 +13,10 @@ Communication cost and initial time for opening the trajectory were distributed 
 The ranks that took much longer to complete than the typical execution time of the other ranks were the stragglers that hurt performance.
 
 \subsubsection*{Identification of Scalability Bottlenecks}
-In the example shown in Figure~\ref{fig:MPIranks}, 62 ranks out of 72 took about $60sec$ (the stragglers) whereas the remaining ranks only took about $20sec$. 
+In the example shown in Figure~\ref{fig:MPIranks}, 62 ranks out of 72 took about 60~s (the stragglers) whereas the remaining ranks only took about 20~s. 
 The detailed breakdown of the time spent on each rank (Figure~\ref{fig:MPIranks}) showed that the computation, \tcomp, was relatively constant across ranks. 
 The time spent on reading data from the shared trajectory file on Lustre into memory, \tIO, showed variability across different ranks. 
-The stragglers, however, appeared to be defined by occasionally much larger \emph{communication} times, \tcomm (line 16 in Algorithm~\ref{alg:RMSD}), which were on the order of $30sec$, and by larger times to initially open the trajectory (line 2 in Algorithm~\ref{alg:RMSD}).
+The stragglers, however, appeared to be defined by occasionally much larger \emph{communication} times, \tcomm (line 16 in Algorithm~\ref{alg:RMSD}), which were on the order of 30~s, and by larger times to initially open the trajectory (line 2 in Algorithm~\ref{alg:RMSD}).
 \tcomm varied across different ranks and was barely measurable for a few of them.
 Although the data in Figure~\ref{fig:MPIranks} represent one run and in other instances different number of ranks were stragglers, the overall hypothesis was confirmed by the averages over five independent repeats and all ranks (Figure~\ref{fig:ScalingComputeIO}).
 This initial analysis indicated that communication was a major issue that prevented good scaling beyond a single node but the problems related to file I/O also played an important role in limiting performance.
@@ -165,7 +165,7 @@ In GA, the time for communication is $t_{\text{ga\_put()}}+t_{\text{ga\_access()
 Using Global Arrays improved the strong scaling performance (Figures~\ref{fig:MPIscaling-ga4py} and~\ref{fig:MPIspeedup-ga4py}) by reducing the communication time.
 Nevertheless, the remaining variation in the trajectory I/O part of the calculation and in particular the initial opening of the trajectory prevented ideal scaling (Figure~\ref{fig:ScalingComputeIO-ga4py}).
 Figure~\ref{fig:MPIranks-ga4py} shows that stragglers were primarily due to the fact that all ranks had to open the same trajectory file at the beginning of the execution.
-In this case, these slow processes took about $50sec$, which was slower than the mean execution time of all other ranks of $17sec$. 
+In this case, these slow processes took about 50~s, which was slower than the mean execution time of all other ranks of 17~s. 
 Trajectory opening was already problematic in the initial test (Figure~\ref{fig:ScalingComputeIO}), which was still dominated by the communication cost. By substantially reducing communication cost, the simultaneous trajectory opening by multiple ranks emerged as the next dominant cause for stragglers.
 The improvement in performance can be attributed to the mitigation in the interference of MPI traffic with IO traffic as also studied in~\cite{Brown:2018ab}.
 
@@ -231,7 +231,7 @@ The trajectory file was split into $N$ segments, one for each process, with each
 This way, each process would access its own trajectory segment file without competing for file accesses. 
 
 \paragraph{Performance with MPI communication}
-We ran a benchmark up to 8 nodes (192 cores) and observed rather better scaling behavior with efficiencies above 0.6 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) with the delay time for stragglers reduced from $65sec$ to about $10sec$ for 72 processes. 
+We ran a benchmark up to 8 nodes (192 cores) and observed rather better scaling behavior with efficiencies above 0.6 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) with the delay time for stragglers reduced from 65~s to about 10~s for 72 processes. 
 However, scaling is still far from ideal due to communication (using MPI). 
 Although the delay due to communication was much smaller as compared to parallel RMSD with shared-file I/O (compare Figure~\ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure~\ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and resulted in longer job completion times (Figure~\ref{fig:MPIranks-split}). 
 These delayed tasks impacted performance so that speed-up remained far from ideal (Figure~\ref{fig:MPIspeedup-split}).
@@ -299,7 +299,7 @@ We found some improvements in performance but discovered limitations in the desi
 Another approach we examined to improve I/O scaling was MPI-based Parallel HDF5. 
 We converted our XTC trajectory file into a simple custom HDF5 format so that we could test the performance of parallel I/O with the HDF5 file format.
 The code for this file format conversion can be found in the GitHub repository.
-The time it took to convert our XTC file with $2,512,200$ frames into HDF5 format was about $5,400sec$ on a local workstation with network file system (NFS).
+The time it took to convert our XTC file with $2,512,200$ frames into HDF5 format was about 5,400~s on a local workstation with network file system (NFS).
 
 We ran our benchmark on up to 16 nodes (384 cores) and we observed near ideal scaling behavior with parallel efficiencies above 0.8 up to 8 nodes (Figure~\ref{fig:comparison_efficiency} and Figures~\ref{fig:MPIscaling-hdf5} and~\ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure~\ref{fig:MPIranks-hdf5}).
 The trajectory reading I/O (\tIO) was the dominant contribution, followed by compute (\tcomp), but because both contributions scaled well, overall scaling performance remained good, even for 384 cores.
