@@ -3,10 +3,10 @@
 \subsection{RMSD Benchmark}
 \label{sec:RMSD}
 The RMSD algorithm represents a task whose computational load is smaller than the I/O load per frame (typical values $t_{\text{compute}}^{\text{frame}} = 0.09\ \text{ms}$, $t_{\text{IO}}^{\text{frame}} = 0.3\ \text{ms}$, thus $\overline{\tcomp}/\overline{\tIO} \approx 0.3$). 
-We showed in~\cite{Khoshlessan:2017ab} that the RMSD task only scaled well up \gpnote{I removed the number of cores because Stampede had 16 cores and Comet has 24}on a single compute node on \emph{SDSC Comet}, and \emph{TACC Stampede}, using either Dask or MPI.
+We showed in~\cite{Khoshlessan:2017ab} that the RMSD task only scaled well up on a single compute node on \emph{SDSC Comet} and \emph{TACC Stampede}, using either Dask or MPI.
 
 We focus on the MPI implementation (via \package{mpi4py}~\cite{Dalcin:2011aa, Dalcin:2005aa}) to better understand the cause for the lack of scaling across nodes.
-As in our previous work, we also observed very poor strong scaling performance (Figures~\ref{fig:MPIscaling},~\ref{fig:MPIspeedup} and~\ref{fig:MPIscaling-Bridges} and~\ref{fig:MPIspeedup-Bridges}) beyond a single node.
+As in our previous work, we also observed poor strong scaling performance (Figures~\ref{fig:MPIscaling},~\ref{fig:MPIspeedup} and~\ref{fig:MPIscaling-Bridges} and~\ref{fig:MPIspeedup-Bridges}) beyond a single node.
 A more detailed analysis showed that the RMSD computation, and to a lesser degree the I/O, considered on their own scaled well beyond 50 cores (yellow and blue lines in Figure~\ref{fig:ScalingComputeIO}). 
 But, communication (red line in Figure~\ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure~\ref{fig:ScalingComputeIO}) started to dominate beyond 50 cores.
 Communication cost and initial time for opening the trajectory were distributed unevenly across MPI ranks, as shown in Figure~\ref{fig:MPIranks}. 
@@ -85,9 +85,7 @@ To measure the effect of the $\overline{\tcomp}/\overline{\tIO}$ ratio on perfor
 \subsubsection{Effect of Increased Compute workload for RMSD Task}
 
 The increased computational workloads corresponded to $\overline{\tcomp}/\overline{\tIO}$ ratios of 11, 19, 27 respectively as shown in Table \ref{tab:load-ratio}.
-\gpnote{I am not sure if this breaking passes the same message. It needs fixing.}
-In fact, the $\overline{\tcomp}/\overline{\tIO}$ ratio for the higher workloads (with factor $X$) should be $X$ times the $\overline{\tcomp}/\overline{\tIO}$ for the $1\times$ workload (in agreement with theoretical prediction in Table \ref{tab:load-ratio}).
-This is since on average the I/O workload of each rank is $N_{\text{b}} \times \tIO $, which is independent of $X$. 
+In fact, the $\overline{\tcomp}/\overline{\tIO}$ ratio for the higher workloads (with factor $X$) should be $X$ times the $\overline{\tcomp}/\overline{\tIO}$ for the $1\times$ workload (in agreement with the theoretical prediction in Table \ref{tab:load-ratio}) because the average the I/O workload of each rank is $N_{\text{b}} \times \tIO $, which is independent of $X$. 
 However, the workload for the computation is $X \times N_{\text{b}} \times \tcomp$, and hence the ratio is $X \times \overline{\tcomp}/\overline{\tIO}$.
 
 \begin{table}[ht!]
@@ -142,7 +140,7 @@ which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\t
 \label{fig:tcomp_tIO_effect}
 \end{figure}
 
-Even for moderately compute-bound workloads, such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers. Although, they still contributed to large variations in timing across different ranks and thus irregular scaling.
+Even for moderately compute-bound workloads, such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contributed to large variations in timing across different ranks and thus irregular scaling.
 
 \subsubsection{I/O leads to stragglers}
 
