@@ -112,7 +112,7 @@ The data in Table \ref{tab:load-ratio} agree with this theoretical analysis.
 
 We performed the experiments with increased workload to measure the effect of the $\overline{\tcomp}/\overline{\tIO}$ ratio on performance (Figure~\ref{fig:tcomp_tIO_effect}).
 As the $\overline{\tcomp}/\overline{\tIO}$ ratio increased, speed-up and performance improved, and showed overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure~\ref{fig:S1_tcomp_tIO_effect}).
-The RMSD calculation consistently scaled up to larger numbers of cores ($N=56$ for $70\times$ RMSD) for higher $\overline{\tcomp}/\overline{\tIO}$ ratios.
+The RMSD calculation consistently scaled well up to larger numbers of cores ($N=56$ for $70\times$ RMSD) for higher $\overline{\tcomp}/\overline{\tIO}$ ratios.
 Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} show that speed-up and efficiency approach their ideal value for each processor count with increasing $\overline{\tcomp}/\overline{\tIO}$ ratio.
 
 \begin{figure}[ht!]
@@ -157,7 +157,7 @@ When the processes communicated result arrays back to the master process (rank 0
 We therefore investigated strategies to reduce communication cost. 
 
 We used Global Arrays (GA)~\cite{GA, GAiN} instead of collective communication in MPI and examined the change in the performance. 
-In GA, we define one large RMSD array called \emph{global array}, and each MPI rank updates its associated block in the global RMSD array using \texttt{ga\_put()}. 
+In GA, we define one large RMSD array called \emph{global array} and each MPI rank updates its associated block in the global RMSD array using \texttt{ga\_put()}. 
 At the end, when all the processes exit \texttt{block\_rmsd()} function and update their local block in the global array, rank 0 will access the whole global array using \texttt{ga\_access()}.
 In GA, the time for communication is $t_{\text{ga\_put()}}+t_{\text{ga\_access()}}$. 
 

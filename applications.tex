@@ -8,17 +8,13 @@ Simulation data exist in trajectories in the form of time series of atom positio
 The library is written in Python, with time critical code in C/Cython. 
 \package{MDAnalysis} supports most file formats of simulation packages including CHARMM, Gromacs, Amber, and NAMD and the Protein Data Bank format and enables accessing data stored in trajectories. 
  
-\subsubsection*{Root Mean Square Distance (RMSD)}
-The calculation of the root mean square distance (\textbf{RMSD}) for C$_{\alpha}$ atoms for a subset of the residues after 
-optimal superposition with the QCPROT algorithm~\cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython~\cite{Gowers:2016aa}) is commonly required in the analysis of molecular dynamics simulations (Algorithm~\ref{alg:RMSD}). 
-The task used for the purpose of our benchmark is the $\text{RMSD}=\sqrt{\frac{1}{N}\sum_{i=1}^{N}\delta_{i}^{2}}$ implemented in MDAnalysis.analysis.rms module where $\delta_{i}$ is the distance between atom $i$ and a reference structure.  
-
-To this, the protein structure (selected C$_{\alpha}$ atoms) in the initial frame will be considered as the reference and as the mobile group at other time steps. 
-In the RMSD algorithm, a translation and rigid body rotation are found that minimize the RMSD between the mobile coordinates and the reference coordinates. 
-The RMSD of this optimum superposition is reported. 
-The process is repeated for each trajectory frame, with the output being a time series of RMSD values.
-RMSD is used to show the rigidity of protein domains and more generally characterizes structural changes.
-The time complexity for RMSD Algorithm~\ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$~\cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles in a frame.
+As a test case that is representative of a common task in the analysis of biomolecular simulation trajectories we chose the calculation of a timeseries of the minimal structural root mean square distance $\text{RMSD}(t)=\sqrt{\frac{1}{N}\sum_{i=1}^{N}\delta_{i}(t)^{2}}$ (\textbf{RMSD}), where $\delta_{i}$ is the distance between atom $i$ at time $t$ and its position in a reference structure \cite{Lea96, Mura:2014kx}. 
+The RMSD is calculated for the  C$_{\alpha}$ atoms of a subset of protein residues after 
+optimal superposition with the QCPROT algorithm~\cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython and available through the \texttt{MDAnalysis.analysis.rms} module \cite{Gowers:2016aa}), as outlined in Algorithm~\ref{alg:RMSD}. 
+In the RMSD algorithm, a translation and rigid body rotation are found that minimize the RMSD between the coordinates at time $t$ and the reference coordinates \cite{Liu:2010kx}. 
+The RMSD of this optimum superposition is reported for each time step $t$.
+The RMSD is used to show the rigidity of protein domains and more generally characterizes structural changes.
+The time complexity for the RMSD Algorithm~\ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$~\cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles included in the RMSD calculation.
 
 \begin{algorithm}[ht!]
 	\scriptsize
