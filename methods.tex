@@ -34,18 +34,30 @@ and efficiency
   \label{eq:efficiency}
   E = \frac{S}{N}.
 \end{equation}
+
+All averages are defined as
+\begin{equation}
+\overline{t_{comp}} = \frac{1}{N}
+\sum_{\text{rank}=1}^{N}t_{\text{comp}} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_\text{b}}t_{\text{comp}}^{\text{frame}},
+\end{equation}
+\begin{equation}
+\overline{t_{\text{comm}}} = \frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}
+\end{equation}
+\begin{equation}
+\overline{\tIO} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tIO = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{I/O}}^{\text{frame}}
+\end{equation}
+
 Additionally, we introduced two performance parameters that we will show are indicative of the occurrence of stragglers.
 We define the ratio of compute time to I/O time as $t_{\text{Compute}}/t_{\text{IO}}$. 
 In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed previously~\cite{Khoshlessan:2017ab}.
 The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
-\begin{gather}
+\begin{equation}
   \label{eq:Compute-comm}
-  \frac{\overline{t_{\text{comp}}}}{\overline{t_{\text{comm}}}} = \frac{\frac{1}{N}
-    \sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}}%
-  {\overline{t_{\text{comm}}}},
-\end{gather}
-as shown in Table~\ref{tab:notation}.
- 
+  \frac{\overline{t_{\text{comp}}}}{\overline{t_{\text{comm}}}}
+\end{equation}
+
+Table~\ref{tab:notation} offers a summary of all notation.
+
 All code used in the present study is available in our Github repository. 
  
 \begin{table}[ht!]
@@ -70,6 +82,7 @@ All code used in the present study is available in our Github repository.
    \midrule  
     $\overline{t_{\text{comp}}}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}$ \\
     $\overline{t_{\text{comm}}}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}$ \\
+    $\overline{\tIO}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{I/O}}^{\text{frame}}$\\
     $t_{\text{total}}$ & $\max t_{N}$ \\
   \bottomrule
 \end{tabular}
