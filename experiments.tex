@@ -2,7 +2,7 @@
 
 \subsection{RMSD Benchmark}
 \label{sec:RMSD}
-The RMSD algorithm represents a task whose computational load is smaller than the I/O load per frame (typical values $t_{\text{compute}}^{\text{frame}} = 0.09\ \text{ms}$, $t_{\text{IO}}^{\text{frame}} = 0.3\ \text{ms}$, thus $\overline{\tcomp}/\overline{\tIO} \approx 0.3$). 
+The RMSD algorithm represents a task whose computational load is smaller than the I/O load per frame (typical values $\tcomp^{\text{frame}} = 0.09\ \text{ms}$, $t_{\text{IO}}^{\text{frame}} = 0.3\ \text{ms}$, thus $\overline{\tcomp}/\overline{\tIO} \approx 0.3$). 
 We showed in~\cite{Khoshlessan:2017ab} that the RMSD task only scaled well up on a single compute node on \emph{SDSC Comet} and \emph{TACC Stampede}, using either Dask or MPI.
 
 We focus on the MPI implementation (via \package{mpi4py}~\cite{Dalcin:2011aa, Dalcin:2005aa}) to better understand the cause for the lack of scaling across nodes.
