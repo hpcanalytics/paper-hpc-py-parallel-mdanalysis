@@ -7,8 +7,8 @@ We abbreviate the timings in the following as variables $t_{\text{L}_{\text{n}}}
 
 We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``I/O'' time for
 ingesting the data from the file system into memory, ($t_{\text{I/O}}^{\text{frame}} = t_{\text{L4}}$) and the ``compute'' time per
-trajectory frame to perform the computation ($t_{\text{comp}}^{\text{frame}} = t_{\text{L5}}$).
-The total I/O time for a rank  $\tIO = \sum_{\text{frame}=1}^{N_{\text{b}}} t_{\text{I/O}}^{\text{frame}}$ is the sum over all I/O times for all the $N_{\text{frames}}$ frames assigned to the rank; similarly, the total compute time for a rank is $\tcomp = \sum_{\text{frame}=1}^{N_{\text{b}}} t_{\text{comp}}^{\text{frame}}$. 
+trajectory frame to perform the computation ($\tcomp^{\text{frame}} = t_{\text{L5}}$).
+The total I/O time for a rank  $\tIO = \sum_{\text{frame}=1}^{N_{\text{b}}} \tIO^{\text{frame}}$ is the sum over all I/O times for all the $N_{\text{frames}}$ frames assigned to the rank; similarly, the total compute time for a rank is $\tcomp = \sum_{\text{frame}=1}^{N_{\text{b}}} \tcomp^{\text{frame}}$. 
 The time delay between the end of the last iteration and exiting the \texttt{for} loop is $t_{\text{end\_loop}} = t_{\text{L6}}+t_{\text{L7}}$.
 The time $t_{\text{opening\_trajectory}} = t_{\text{L2}}+t_{\text{L3}}$ measures the problem setup, which includes data structure initialization and opening of topology and trajectory files.
 $t_{\text{Communication\_{MPI}}} = t_{\text{L16}}$ is the time to gather (``reduce'') all data from all processor ranks to rank zero.
@@ -24,7 +24,6 @@ Finally, the total time to completion of a single process, when utilizing $N$ co
 We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
 $t_{\text{total}}(N) \approx \max(t_{N})$). 
 Strong scaling was quantified by calculating the speed-up relative to performance on a single core
-
 \begin{equation}
   \label{eq:speedup}
   S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
@@ -34,18 +33,29 @@ and efficiency
   \label{eq:efficiency}
   E = \frac{S}{N}.
 \end{equation}
+All averages are defined as
+\begin{equation}
+\overline{t_{comp}} = \frac{1}{N}
+\sum_{\text{rank}=1}^{N}\tcomp = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_\text{b}}\tcomp^{\text{frame}},
+\end{equation}
+\begin{equation}
+\overline{\tcomm} = \frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}
+\end{equation}
+\begin{equation}
+\overline{\tIO} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tIO = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}
+\end{equation}
+
 Additionally, we introduced two performance parameters that we will show are indicative of the occurrence of stragglers.
-We define the ratio of compute time to I/O time as $t_{\text{Compute}}/t_{\text{IO}}$. 
+We define the ratio of compute time to I/O time as $\tcomp/\tIO$. 
 In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed previously~\cite{Khoshlessan:2017ab}.
 The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
-\begin{gather}
+\begin{equation}
   \label{eq:Compute-comm}
-  \frac{\overline{t_{\text{comp}}}}{\overline{t_{\text{comm}}}} = \frac{\frac{1}{N}
-    \sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}}%
-  {\overline{t_{\text{comm}}}},
-\end{gather}
-as shown in Table~\ref{tab:notation}.
- 
+  \frac{\overline{\tcomp}}{\overline{\tcomm}}
+\end{equation}
+
+Table~\ref{tab:notation} offers a summary of all notation.
+
 All code used in the present study is available in our Github repository. 
  
 \begin{table}[ht!]
@@ -58,8 +68,8 @@ All code used in the present study is available in our Github repository.
     $N_{\text{b}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
     $t_{\text{end\_loop}}$ & $t_{\text{L6}}+t_{\text{L7}}$\\
     $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ \\
-    $t_{\text{comp}}$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}$\\
-    $t_{\text{I/O}}$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{I/O}}^{\text{frame}}$\\
+    $\tcomp$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$\\
+    $\tIO$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$\\
     $t_{\text{all\_frame}}$ & $t_{\text{L4}}+t_{\text{L5}}+t_{\text{L6}}$  \\
     $t_{\text{RMSD}}$ &  $t_{\text{L1}} + ...+ t_{\text{L8}}$ \\
     $t_{\text{Communication}_{\text{MPI}}}$ &  $t_{\text{L16}}$  \\
@@ -68,8 +78,9 @@ All code used in the present study is available in our Github repository.
     $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
     $t_{N}$ & $t_{\text{RMSD}}+t_{\text{Communication}}$ \\
    \midrule  
-    $\overline{t_{\text{comp}}}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}t_{\text{comp}}^{\text{frame}}$ \\
-    $\overline{t_{\text{comm}}}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}$ \\
+    $\overline{\tcomp}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$ \\
+    $\overline{\tcomm}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}$ \\
+    $\overline{\tIO}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$\\
     $t_{\text{total}}$ & $\max t_{N}$ \\
   \bottomrule
 \end{tabular}
