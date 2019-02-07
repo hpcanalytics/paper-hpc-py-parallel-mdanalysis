@@ -85,8 +85,9 @@ To measure the effect of the $\overline{\tcomp}/\overline{\tIO}$ ratio on perfor
 \subsubsection{Effect of Increased Compute workload for RMSD Task}
 
 The increased computational workloads corresponded to $\overline{\tcomp}/\overline{\tIO}$ ratios of 11, 19, 27 respectively as shown in Table \ref{tab:load-ratio}.
-In fact, the $\overline{\tcomp}/\overline{\tIO}$ ratio for the higher workloads (with factor $X$) should be $X$ times the $\overline{\tcomp}/\overline{\tIO}$ for the $1\times$ workload (in agreement with the theoretical prediction in Table \ref{tab:load-ratio}) because the average the I/O workload of each rank is $N_{\text{b}} \times \tIO $, which is independent of $X$. 
-However, the workload for the computation is $X \times N_{\text{b}} \times \tcomp$, and hence the ratio is $X \times \overline{\tcomp}/\overline{\tIO}$.
+Theoretically, the $\overline{\tcomp}/\overline{\tIO}$ ratio for the higher workloads (with factor $X$) should be $X$ times the $\overline{\tcomp}/\overline{\tIO}$ for the $1\times$ workload because the average I/O workload of each rank is $N_{\text{b}} \times \tIO $ (independent of $X$) while the workload for the computation is $X \times N_{\text{b}} \times \tcomp$.
+Therefore the ratio at higher $X$ should be $X$ times the  $\overline{\tcomp}/\overline{\tIO}$ at $1\times$.
+The data in Table \ref{tab:load-ratio} agree with this theoretical analysis.
 
 \begin{table}[ht!]
 \centering
@@ -109,7 +110,7 @@ However, the workload for the computation is $X \times N_{\text{b}} \times \tcom
 \label{tab:load-ratio}
 \end{table}
 
-We performed this experiment to show the effect of the $\overline{\tcomp}/\overline{\tIO}$ ratio on performance (Figure~\ref{fig:tcomp_tIO_effect}).
+We performed the experiments with increased workload to measure the effect of the $\overline{\tcomp}/\overline{\tIO}$ ratio on performance (Figure~\ref{fig:tcomp_tIO_effect}).
 As the $\overline{\tcomp}/\overline{\tIO}$ ratio increased, speed-up and performance improved, and showed overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure~\ref{fig:S1_tcomp_tIO_effect}).
 The RMSD calculation consistently scaled up to larger numbers of cores ($N=56$ for $70\times$ RMSD) for higher $\overline{\tcomp}/\overline{\tIO}$ ratios.
 Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} show that speed-up and efficiency approach their ideal value for each processor count with increasing $\overline{\tcomp}/\overline{\tIO}$ ratio.
