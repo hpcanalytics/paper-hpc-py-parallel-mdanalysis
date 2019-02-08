@@ -55,8 +55,8 @@ Overheads in \package{mpi4py} are small compared to C code if efficient raw memo
 
 \subsection{Application of Global Arrays}
 The \emph{Global Arrays} (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}. The Global Arrays toolkit allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
-Communication is configured by a runtime, which defaults to the \emph{Communication runtime for Extreme Scale} (ComEx) \cite{Daily:2014aa}.
-ComEx uses shared memory for intra-node communication. Inter-node communication employs ComEx with MPI.
+The underlying communication is determined by a runtime environment, which defaults to the \emph{Communication runtime for Extreme Scale} (ComEx) \cite{Daily:2014aa}.
+ComEx uses shared memory for intra-node communication and inter-node communication employs ComEx with MPI.
 \emph{Global Arrays in NumPy} (GAiN) extends GA to Python through Numpy \cite{GAiN}. 
 The basic components of the Global Arrays toolkit are function calls to create Global Arrays (\texttt{ga\_create()}), copy data to (\texttt{ga\_put()}), from (\texttt{ga\_get()}), and between Global Arrays (\texttt{ga\_distribution()}, \texttt{ga\_scatter()}), and identify and access the portions of the Global Arrays data that are held locally (\texttt{ga\_access()}). 
 It also contains functions to destroy arrays (\texttt{ga\_destroy()}) and to free up the memory originally allocated to them \cite{GAiN}.
