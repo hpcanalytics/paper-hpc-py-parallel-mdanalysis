@@ -323,3 +323,20 @@
 	Year = 2017,
 	Bdsk-Url-1 = {https://doi.org/10.25080/shinma-7f4c6e7-00a},
 	Bdsk-Url-2 = {http://dx.doi.org/10.25080/shinma-7f4c6e7-00a}}
+
+
+@inproceedings{Daily:2014aa,
+	Abstract = {Partitioned Global Address Space (PGAS) models are emerging as a popular alternative to MPI models for designing scalable applications. At the same time, MPI remains a ubiquitous communication subsystem due to its standardization, high performance, and availability on leading platforms. In this paper, we explore the suitability of using MPI as a scalable PGAS communication subsystem. We focus on the Remote Memory Access (RMA) communication in PGAS models which typically includes get, put, and atomic memory operations. We perform an in-depth exploration of design alternatives based on MPI. These alternatives include using a semantically-matching interface such as MPI-RMA, as well as not-so-intuitive interfaces such as MPI two-sided with a combination of multi-threading and dynamic process management. With an in-depth exploration of these alternatives and their shortcomings, we propose a novel design which is facilitated by the data-centric view in PGAS models. This design leverages a combination of highly tuned MPI two-sided semantics and an automatic, user-transparent split of MPI communicators to provide asynchronous progress. We implement the asynchronous progress ranks approach and other approaches within the Communication Runtime for Exascale which is a communication subsystem for Global Arrays. Our performance evaluation spans pure communication benchmarks, graph community detection and sparse matrix-vector multiplication kernels, and a computational chemistry application. The utility of our proposed PR-based approach is demonstrated by a 2.17x speedup on 1008 processors over the other MPI-based designs.},
+	Author = {J. Daily and A. Vishnu and B. Palmer and H. van Dam and D. Kerbyson},
+	Booktitle = {2014 21st International Conference on High Performance Computing (HiPC)},
+	Date-Added = {2019-02-07 09:06:51 -0700},
+	Date-Modified = {2019-02-07 09:07:24 -0700},
+	Doi = {10.1109/HiPC.2014.7116712},
+	Issn = {1094-7256},
+	Keywords = {chemistry computing;graph theory;matrix multiplication;message passing;multi-threading;sparse matrices;PGAS runtime;partitioned global address space models;scalable applications;standardization;scalable PGAS communication subsystem;remote memory access communication;RMA;atomic memory operations;semantically-matching interface;MPI-RMA;not-so-intuitive interfaces;multithreading;dynamic process management;user-transparent split;global arrays;pure communication benchmarks;graph community detection;sparse matrix-vector multiplication kernels;computational chemistry application;MPI-based designs;Electronics packaging;Semantics;Protocols;Message systems;Runtime;Synchronization;Computational modeling; global arrays; MPI},
+	Month = {Dec},
+	Pages = {1-10},
+	Title = {On the suitability of {MPI} as a {PGAS} runtime},
+	Year = {2014},
+	Bdsk-Url-1 = {https://doi.org/10.1109/HiPC.2014.7116712},
+	}
