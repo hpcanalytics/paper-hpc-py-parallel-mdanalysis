@@ -8,9 +8,11 @@ We found that straightforward implementation of simple parallelization with a Ma
 However, the cause for these \emph{straggler} tasks remained obscure.
 Here, we perform a detailed study of the straggler problem (also called a long tail phenomenon) and address solutions to overcome it.
 Long tail phenomena, whereby a small proportion of tasks significantly impede job completion time, are a challenge for improving performance~\cite{Garraghan2016} on HPC resources.
-It is a known problem in other frameworks such as Google's MapReduce~\cite{Dean2004}, Spark~\cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop~\cite{Dean2004}, and cloud data centers~\cite{Schmidt2016}. Both internal and external factors contribute to stragglers. 
-Internal factors include heterogeneous capacity of worker nodes, and resource competition due to other tasks running on the same worker node. 
-External factors include resource competition due to co-hosted applications, input data skew, remote input or output source being too slow and faulty hardware~\cite{Chen2014,Dean2004}, and node mis-configuration~\cite{Dean2004}. 
+It is a known problem in other frameworks such as Google's MapReduce~\cite{Dean2004}, Spark~\cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop~\cite{Dean2004}, and cloud data centers~\cite{Schmidt2016}.
+Both internal and external factors contribute to stragglers. 
+Internal factors include heterogeneous capacity of worker nodes, and resource competition due to other tasks running on the same worker node.
+External factors include resource competition due to co-hosted applications, input data skew, remote input or output source being too slow,  faulty hardware~\cite{Chen2014,Dean2004}, and node mis-configuration~\cite{Dean2004}.
+Competition over scarce resources, in particular the network bandwidth, was found to lead to stragglers in writing on Lustre file systems \cite{Xie:2012aa}.
 Garbage collection~\cite{Kyong2017,Ousterhout2017}, JVM positioning to cores~\cite{Kyong2017}, delays introduced while the tasks move from the scheduler to execution~\cite{Gittens2016}, disk I/O during shuffling, Java's just-in-time compilation~\cite{Ousterhout2017}, and output skew~\cite{Ousterhout2017} have also been found to introduce stragglers.
 In addition to these reasons, stragglers on Spark have been attributed to the overall performance of workers or competition between resources~\cite{Yang2016}.
 Garraghan et al.~\cite{Garraghan2016} reported high CPU utilization, disk utilization, unhandled I/O access requests and network package loss as the most frequent reasons for stragglers on Virtualized Cloud Data-centers.
