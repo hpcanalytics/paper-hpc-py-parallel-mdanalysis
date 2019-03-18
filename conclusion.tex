@@ -11,7 +11,6 @@ In this model, I/O interferes much less often with communication for a sufficien
 This analysis also suggested ways to improve performance by improving I/O or improving communication.
 
 When we used the Global Arrays toolkit instead of the message-passing interface for communication, then the communication cost was significantly reduced and there were no delayed task due to communication.
-This suggests that Global Arrays is a very useful way to avoid the effects of I/O traffic on the MPI traffic.
 Despite these improvements, overall performance remained less than ideal because initial opening of the shared trajectory file became the performance bottleneck which is due to the POSIX consistency requirements.
 We were able to eliminate this I/O problem by subfiling (splitting the shared trajectory file) and achieved nearly ideal scaling up to 192 cores (8 nodes).
 Alternatively, we used MPI-based parallel I/O through HDF5 and MPI for communications with comparable performance up to 384 cores (16 nodes). 
