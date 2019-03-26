@@ -145,7 +145,29 @@ Even for moderately compute-bound workloads, such as the $40\times$ and $70\time
 
 \subsubsection{I/O leads to stragglers}
 
-In order to study an extreme case of a compute-bound task, we eliminated all I/O from the RMSD task by generating artificial trajectory data randomly in memory.
+ \begin{figure}
+\centering
+\begin{subfigure}{.35\textwidth}
+  \includegraphics[width=\linewidth]{figures/speed_up-effect-of-IO.pdf}
+  \caption{Speed up comparison}
+  \label{fig:MPIspeedup-no-IO}
+\end{subfigure}
+\hfill
+\begin{subfigure}{.45\textwidth}
+  \includegraphics[width=\linewidth]{figures/BarPlot-rank-comparison-no-IO.pdf}
+  \captionsetup{format=hang}
+  \caption{Time comparison on different parts of the calculations per MPI rank when I/O is removed}
+  \label{fig:MPIranks-no-IO}
+\end{subfigure}
+
+\caption{Comparison on the performance of RMSD task with MPI with I/O and without I/O ($\overline{\tcomp}/\overline{\tIO} \approx 0.3$) on SDSC Comet.
+Five repeats were performed to collect statistics. (a) Speed-up. The error bars show standard deviation with respect to mean.
+(b) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
+  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition).}
+\label{fig:MPIwithoutIO}
+\end{figure}
+
+In order to study an extreme case of a compute-bound task, we eliminated all I/O from the RMSD task by generating artificial trajectory data randomly in memory of the same size as would have been obtained from the trajectory; the time for the data generation was excluded and no file access was necessary. 
 Without any I/O, performance improved markedly (Figure~\ref{fig:MPIwithoutIO}), with reasonable scaling up to 72 cores (3 nodes).
 No stragglers were observed although an increase in communication time prevented ideal scaling performance.
 Although in practice I/O cannot be avoided, this experiment demonstrated that accessing the trajectory file on the Lustre file system is at least one cause for the observed stragglers.
