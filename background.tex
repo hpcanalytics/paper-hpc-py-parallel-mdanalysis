@@ -4,7 +4,7 @@
 \label{sec:stragglers}
 
 
-We found that straightforward implementation of simple parallelization with a Map-Reduce scheme in Python failed to scale beyond a single compute node~\cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask~\citep{Rocklin:2015aa} processes) took much longer than the typical task and so limited the overall performance.
+We found that straightforward implementation of simple parallelization with a split-apply-combine algorithm in Python failed to scale beyond a single compute node~\cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask~\citep{Rocklin:2015aa} processes) took much longer than the typical task and so limited the overall performance.
 However, the cause for these \emph{straggler} tasks remained obscure.
 Here, we perform a detailed study of the straggler problem (also called a long tail phenomenon) and address solutions to overcome it.
 Long tail phenomena, whereby a small proportion of tasks significantly impede job completion time, are a challenge for improving performance~\cite{Garraghan2016} on HPC resources.

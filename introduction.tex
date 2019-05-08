@@ -1,35 +1,33 @@
 \label{sec:introduction}
 Molecular dynamics (MD) simulations are a powerful method to generate new insights into the function of biomolecules \citep{Borhani:2012mi, Dror:2012cr, Orozco:2014dq, Perilla:2015kx, Bottaro:2018aa}.
-These simulations produce trajectories, timeseries of atomic coordinates, that now routinely include millions of timesteps and can be Terabytes in size.
-These trajectories need to be analyzed using statistical mechanics approaches \cite{Mura:2014kx} but because of the increasing size of data, trajectory analysis is becoming a bottleneck in typical biomolecular simulation scientific workflows~\cite{Cheatham:2015}.
+These simulations produce trajectories---time series of atomic coordinates---that now routinely include millions of time steps and can measure Terabytes in size.
+These trajectories need to be analyzed using statistical mechanics approaches \cite{Tuckerman:2010cr, Mura:2014kx} but because of the increasing size of data, trajectory analysis is becoming a bottleneck in typical biomolecular simulation scientific workflows~\cite{Cheatham:2015}.
 Many data analysis tools and libraries have been developed to extract the desired information from the output trajectories from MD simulations ~\cite{nmoldyn, nmoldyn-2012, Hum96, Hinsen:2000kx, Grant:2006ud, himach-2008, Romo:2009zr, Romo:2014bh, Michaud-Agrawal:2011fu, Gowers:2016aa, cpptraj-2013, mdtraj-2015, pteros2015, Doerr:2016aa} but few can efficiently use modern High Performance Computing (HPC) resources to accelerate the analysis stage.
-MD trajectory analysis primarily requires \emph{reading} of data from the file system; the processed output data are typically neglibible in size compared to the input data and therefore we exclusively investigate the reading aspects of trajectory I/O (i.e., the ``I'').
-We focus on the \package{MDAnalysis} package \citep{Gowers:2016aa,Michaud-Agrawal:2011fu}, which is an open-source object-oriented Python library for structural and temporal analysis of molecular dynamics simulation trajectories and individual protein structures.
-Although \package{MDAnalysis} accelerates selected algorithms with Open-MP, distributed parallel trajectory analysis has not yet been implemented in the library.
-Here we discuss the challenges and lessons-learned for making parallel analysis on HPC resources feasible in a general purpose trajectory analysis library such as \package{MDAnalysis}.
+MD trajectory analysis primarily requires \emph{reading} of data from the file system; the processed output data are typically negligible in size compared to the input data and therefore we exclusively investigate the reading aspects of trajectory I/O (i.e., the ``I'').
+We focus on the \package{MDAnalysis} package \cite{Gowers:2016aa,Michaud-Agrawal:2011fu}, which is an open-source object-oriented Python library for structural and temporal analysis of molecular dynamics simulation trajectories and individual protein structures.
+Although \package{MDAnalysis} accelerates selected algorithms with OpenMP, it is not clear how to best use it for scaling-up analysis on multi-node supercomputers.
+Here we discuss the challenges and lessons-learned for making parallel analysis on HPC resources feasible with \package{MDAnalysis}, which should also be broadly applicable to other general purpose trajectory analysis libraries.
 
-Previously, we used a parallel map-reduce approach to study the performance of calculating the minimal root mean squared distance (RMSD) of the positions of a subset of atoms to a reference conformation under optimization of rigid body translations and rotations~\cite{Khoshlessan:2017ab, ICCP-2018}, also known as ``RMSD fitting''~\cite{Liu:2010kx, Mura:2014kx}. 
-We investigated two parallel implementations, one using \package{Dask}~\cite{Rocklin:2015aa} and one using \package{mpi4py}~\cite{Dalcin:2011aa, Dalcin:2005aa}. 
-For both \package{Dask} and MPI, we found that our benchmark only showed good strong scaling within a single node.
+Previously, we used a parallel split-apply-combine  approach to study the performance of the commonly performed ``RMSD fitting'' analysis task~\cite{Khoshlessan:2017ab, ICCP-2018}, which calculates the minimal root mean squared distance (RMSD) of the positions of a subset of atoms to a reference conformation under optimization of rigid body translations and rotations \cite{Liu:2010kx, Mura:2014kx}.
+We investigated two parallel implementations, one using \package{Dask}~\cite{Rocklin:2015aa} and one using the message passing interface (MPI) with \package{mpi4py}~\cite{Dalcin:2011aa, Dalcin:2005aa}. 
+For both \package{Dask} and MPI, we could previously only obtain good strong scaling performance within a single node.
 Beyond a single node performance dropped due to \emph{straggler} tasks, a subset of processes that were significantly slower than the typical execution time of all tasks; the total execution time became dominated by stragglers and overall performance decreased.
 Stragglers are known to significantly impede job completion time~\cite{Garraghan2016} and have a high impact on performance and energy consumption on big data systems~\cite{Tien-2017}.
-In the present study, we analyzed the MPI case in more detail to better understand the origin of stragglers with the goal to find simple and robust parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library.
+In the present study, we analyzed the MPI case in more detail to better understand the origin of stragglers with the goal to find  parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library.
 
 As in our previous study we selected the commonly used RMSD algorithm implemented in \package{MDAnalysis} as a typical use case.
-We used the single program multiple data (SPMD) paradigm to parallelize this algorithm on three different HPC resources (XSEDE's \emph{SDSC Comet}, \emph{LSU SuperMic}, and \emph{PSC Bridges}).
+We employed the single program multiple data (SPMD) paradigm to parallelize this algorithm on three different HPC resources (XSEDE's \emph{SDSC Comet}, \emph{LSU SuperMic}, and \emph{PSC Bridges}).
 With SPMD, each process executes essentially the same operations on different parts of the data.
-The three clusters differ in their architecture except that each uses a shared Lustre parallel file system.
-We used Python, a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in the biomolecular simulation and HPC parallel communities~\cite{Dalcin:2011aa, GAiN}. 
-We show that there are two important performance parameters, $\overline{\tcomp}/\overline{\tIO}$ and $\overline{\tcomp}/\overline{\tcomm}$ which are the ratio of computation to the I/O load, as measured by the time spent on computation versus the time spent on reading data from the file system, and the ratio of computation to communication load respectively, that determine whether we observe stragglers.
-If the problem was compute-bound ($\overline{\tcomp}/\overline{\tIO} \gg 1$), the algorithm scaled very well without modifications, but otherwise strong scaling performance beyond a single node was poor.  
-For algorithms with small $\overline{\tcomp}/\overline{\tIO}$, we needed to come up with strategies to improve scaling and overcome problems with stragglers.
-To a lesser degree, $\overline{\tcomp}/\overline{\tcomm}$ also determined scaling and performance, with $\overline{\tcomp}/\overline{\tcomm} < 1$ predicting poor performance.
-We show that communication and reading I/O are the two main scalability bottlenecks.
-
-Taking advantage of Global Arrays~\cite{GA, GAiN}, we were able to reduce communication cost noticeably.
-However, our data showed that the initial opening of the trajectory file became the cause for stragglers beyond a single node.
-We examined two different approaches to mitigate I/O bottlenecks: subfiling (trajectory file splitting) with Global Arrays for communications and MPI parallel I/O with MPI for communications.
-Both approaches significantly improved the performance and lead to near ideal scaling.
+The three clusters differ in their architecture except that each uses a shared Lustre parallel file system (\url{http://lustre.org/}).
+We used Python (\url{https://www.python.org/}), a machine-independent, byte-code interpreted, object-oriented programming (OOP) language, which is well-established in the biomolecular simulation and HPC parallel communities~\cite{Dalcin:2011aa, GAiN}. 
+We show that there are two important performance parameters that determine whether we observe stragglers: the ratio of computation to the read I/O load, as measured by the time spent on computation versus the time spent on reading data from the file system, and the ratio of computation to communication load respectively.
+For problems dominated by the computation (ratio much larger than one) the algorithm scaled well without modifications but otherwise strong scaling performance beyond a single node was poor.
+To a lesser degree, a compute-to-communication ratio less than one also predicted poor performance.
+We found that communication and reading I/O were the two main scalability bottlenecks and, focusing on these two areas, we investigated strategies to improve scaling performance by reducing stragglers. 
+We were able to reduce communication cost noticeably by employing the \package{Global Arrays}~\cite{GA, GAiN} approach.
+However, then the initial opening of the shared trajectory file became the cause for stragglers beyond a single node.
+We examined two different approaches to mitigate I/O bottlenecks: subfiling (trajectory file splitting) with Global Arrays for communications and MPI parallel I/O (MPI-IO) reading with MPI for communications.
+Both approaches improved the performance and lead to near ideal scaling.
 
 Documentation and benchmark codes are made available in the code repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the GNU General Public License v3.0 (code) and the Creative Commons Attribution-ShareAlike (documentation). 
 These materials should enable users to recreate the computational environment on the tested XSEDE HPC resources (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}), prepare data files, and run the computational experiments.
