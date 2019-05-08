@@ -1,5 +1,11 @@
 \label{methods}
 
+Documentation and benchmark codes are made available in the code repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the GNU General Public License v3.0 (code) and the Creative Commons Attribution-ShareAlike (documentation). 
+These materials should enable users to recreate the computational environment on the tested XSEDE HPC resources (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}), prepare data files, and run the computational experiments.
+
+In the following we define the quantities used for our measurements, with a full summary in Table~\ref{tab:notation}.
+
+
 \subsection{Timing observables}
 We evaluate MPI performance based on the RMSD algorithm~\ref{alg:RMSD}. 
 The notation for our models is summarized in Table~\ref{tab:notation}.
@@ -21,19 +27,20 @@ They should ideally be very small (see Table \ref{tab:notation} for the definiti
 Finally, the total time to completion of a single process, when utilizing $N$ cores for the execution of the overall experiment, is $t_{N}$, as a result $t_{\text{RMSD}} + \tcomm \equiv t_{N}$.
 
 \subsection{Performance Measurement}
-We also recorded the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
+
+We measured the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
 $t_{\text{total}}(N) \approx \max(t_{N})$). 
-Strong scaling was quantified by calculating the speed-up relative to performance on a single core
+Strong scaling was quantified by the speed-up
 \begin{equation}
   \label{eq:speedup}
-  S = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
+  S(N) = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
 \end{equation}
-and efficiency
+relative to performance on a single core and the efficiency
 \begin{equation}
   \label{eq:efficiency}
-  E = \frac{S}{N}.
+  E(N) = \frac{S(N)}{N}.
 \end{equation}
-All averages are defined as
+All averages were defined as
 \begin{equation}
 \overline{t_{comp}} = \frac{1}{N}
 \sum_{\text{rank}=1}^{N}\tcomp = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_\text{b}}\tcomp^{\text{frame}},
@@ -45,18 +52,18 @@ All averages are defined as
 \overline{\tIO} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tIO = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}
 \end{equation}
 
-Additionally, we introduced two performance parameters that we will show are indicative of the occurrence of stragglers.
-We define the ratio of compute time to I/O time as $\tcomp/\tIO$. 
-In the present study, we calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed previously~\cite{Khoshlessan:2017ab}.
-The ratio of compute to communication time is defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
+Additionally, we introduced two performance parameters that will be shown to be indicative of the occurrence of stragglers.
+We define the ratio of compute time to read I/O time as
+\begin{equation}
+  R_{\text{comp/IO}} = \frac{\tcomp}{\tIO}.
+  \label{eq:Compute-IO}
+\end{equation}
+We calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed previously~\cite{Khoshlessan:2017ab}.
+The ratio of compute to communication time was defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
 \begin{equation}
   \label{eq:Compute-comm}
-  \frac{\overline{\tcomp}}{\overline{\tcomm}}
+  R_{\text{comp/comm}} = \frac{\overline{\tcomp}}{\overline{\tcomm}}.
 \end{equation}
-
-Table~\ref{tab:notation} offers a summary of all notation.
-
-All code used in the present study is available in our Github repository. 
  
 \begin{table}[ht!]
 \centering

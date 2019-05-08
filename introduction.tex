@@ -28,6 +28,3 @@ We were able to reduce communication cost noticeably by employing the \package{G
 However, then the initial opening of the shared trajectory file became the cause for stragglers beyond a single node.
 We examined two different approaches to mitigate I/O bottlenecks: subfiling (trajectory file splitting) with Global Arrays for communications and MPI parallel I/O (MPI-IO) reading with MPI for communications.
 Both approaches improved the performance and lead to near ideal scaling.
-
-Documentation and benchmark codes are made available in the code repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the GNU General Public License v3.0 (code) and the Creative Commons Attribution-ShareAlike (documentation). 
-These materials should enable users to recreate the computational environment on the tested XSEDE HPC resources (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}), prepare data files, and run the computational experiments.
