@@ -53,8 +53,11 @@ pyPcazip is MPI parallelised and is specific to PCA-based investigations of MD t
 pyPcazip can take one or many input MD trajectory files and converts them into a highly compressed, HDF5-based, .pcz format with insignificant loss of information.
 However, the package does not support general purpose analysis.
 
-\textit{In situ} analysis is an approach to simultaneously execute analysis while the MD simulations are running so that I/O bottlenecks are potentially mitigated~\cite{Malakar-etal}.
-Malakar et al. studied the scalability challenges of time --- and space --- shared modes of analyzing large-scale MD simulations through a topology-aware mapping for simulation and analysis by using LAMMPS code.
+\textit{In situ} analysis is an approach to simultaneously execute analysis while the MD simulations are running so that I/O bottlenecks are potentially mitigated~\cite{Malakar-etal, Johnston:2017aa}.
+Malakar \textit{et al.} studied the scalability challenges of time and space shared modes of analyzing large-scale MD simulations through a topology-aware mapping for simulation and analysis using the LAMMPS code \cite{Malakar-etal}.
+Similarly, Taufer and colleagues \cite{Johnston:2017aa} presented their own framework for \textit{in situ} analysis, which is based on the fast on-the-fly calculation of metadata that characterizes protein substructures via maximum eigenvalues of distance matrices.
+These metadata are used to index trajectory frames and enable targeted analysis of trajectory subsets.
+Both studies provide important ideas and approaches towards moving towards online-analysis in conjunction with a running simulation but are limited in generality.
 
 All of the above frameworks provide tools for parallel analysis of MD trajectories. 
 These frameworks, however, tend to fall short in providing parallelism in the context of a general and flexible library for the analysis of MD trajectories.
