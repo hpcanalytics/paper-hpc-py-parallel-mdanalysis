@@ -133,7 +133,7 @@ Figure \ref{fig:MPIwithIO-split-SuperMIC} shows how RMSD task scales with the in
 
 \caption{Comparison on the performance of the RMSD task with MPI when the trajectories are split using global array and without global array ($\overline{\tcomp}/\overline{\tIO} \approx 0.3$) on SuperMIC.
 In case of global array, all ranks update the global array (\text{$ga_{\text{put}}$}) and rank 0 accesses the whole RMSD array through the global memory address (\text{$ga_{\text{get}}$}).
-Five repeats were performed to collect statistics. (a) Compute \& I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean.}
+Five repeats were performed to collect statistics. (a) Compute and I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean.}
 \label{fig:MPIwithIO-split-SuperMIC}
 \end{figure}
 
