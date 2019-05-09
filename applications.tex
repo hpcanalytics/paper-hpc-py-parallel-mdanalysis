@@ -1,12 +1,15 @@
 \label{sec:packages}
 
+
+
 \subsection{MDAnalysis}
 \label{sec:mda}
 
-Simulation data exist in trajectories in the form of time series of atom positions and sometimes velocities. These come in a plethora of different and idiosyncratic file formats. 
-\package{MDAnalysis}~\citep{Gowers:2016aa,Michaud-Agrawal:2011fu} is a widely used open source library to analyze trajectory files with an object oriented interface. 
-The library is written in Python, with time critical code in C/Cython. 
-\package{MDAnalysis} supports most file formats of simulation packages including CHARMM, Gromacs, Amber, and NAMD and the Protein Data Bank format and enables accessing data stored in trajectories. 
+Simulation data exist in trajectories in the form of time series of atom positions and sometimes velocities.
+Trajectories come in a plethora of different and idiosyncratic file formats. 
+\package{MDAnalysis} \cite{Gowers:2016aa, Michaud-Agrawal:2011fu} is a widely used open source library to analyze trajectory files with an object oriented interface. 
+The library is written in Python, with time critical code in C/C++/Cython. 
+\package{MDAnalysis} supports most file formats of simulation packages including CHARMM \cite{Brooks:2009pt}, Gromacs \cite{Abraham:2015aa}, Amber \cite{Case:2005uq}, and NAMD \cite{Phillips:2005ek} and the Protein Data Bank \cite{Burley:2018aa} format and enables accessing data stored in trajectories. 
  
 As a test case that is representative of a common task in the analysis of biomolecular simulation trajectories we chose the calculation of a timeseries of the minimal structural root mean square distance $\text{RMSD}(t)=\sqrt{\frac{1}{N}\sum_{i=1}^{N}\delta_{i}(t)^{2}}$ (\textbf{RMSD}), where $\delta_{i}$ is the distance between atom $i$ at time $t$ and its position in a reference structure \cite{Lea96, Mura:2014kx}. 
 The RMSD is calculated for the  C$_{\alpha}$ atoms of a subset of protein residues after 
