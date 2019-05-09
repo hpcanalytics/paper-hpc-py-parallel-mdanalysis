@@ -1,4 +1,5 @@
-\label{concl} 
+\label{sec:conclusions}
+
 We analyzed the strong scaling performance of a typical task when analysing MD trajectories, the calculation of the time series of the RMSD of a protein, with the widely used Python-based \package{MDAnalysis} library.
 The task was parallelized with MPI by having each MPI process analyze a contiguous segment of the trajectory.
 This approach did not scale beyond a single node because straggler processes exhibited large upward variations in runtime.

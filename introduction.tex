@@ -15,7 +15,7 @@ Beyond a single node performance dropped due to \emph{straggler} tasks, a subset
 Stragglers are known to significantly impede job completion time~\cite{Garraghan2016} and have a high impact on performance and energy consumption on big data systems~\cite{Tien-2017}.
 In the present study, we analyzed the MPI case in more detail to better understand the origin of stragglers with the goal to find  parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library.
 
-As in our previous study we selected the commonly used RMSD algorithm implemented in \package{MDAnalysis} as a typical use case.
+As in our previous study ~\cite{Khoshlessan:2017ab} we selected the commonly used RMSD algorithm implemented in \package{MDAnalysis} as a typical use case.
 We employed the single program multiple data (SPMD) paradigm to parallelize this algorithm on three different HPC resources (XSEDE's \emph{SDSC Comet}, \emph{LSU SuperMic}, and \emph{PSC Bridges}).
 With SPMD, each process executes essentially the same operations on different parts of the data.
 The three clusters differ in their architecture except that each uses a shared Lustre parallel file system (\url{http://lustre.org/}).
@@ -25,6 +25,13 @@ For problems dominated by the computation (ratio much larger than one) the algor
 To a lesser degree, a compute-to-communication ratio less than one also predicted poor performance.
 We found that communication and reading I/O were the two main scalability bottlenecks and, focusing on these two areas, we investigated strategies to improve scaling performance by reducing stragglers. 
 We were able to reduce communication cost noticeably by employing the \package{Global Arrays}~\cite{GA, GAiN} approach.
-However, then the initial opening of the shared trajectory file became the cause for stragglers beyond a single node.
-We examined two different approaches to mitigate I/O bottlenecks: subfiling (trajectory file splitting) with Global Arrays for communications and MPI parallel I/O (MPI-IO) reading with MPI for communications.
+The initial opening of the shared trajectory file emerged as the second leading cause for stragglers beyond a single node.
+We examined two different approaches to mitigate such I/O bottlenecks: subfiling (trajectory file splitting) with Global Arrays for communications and MPI parallel I/O (MPI-IO) reading with MPI for communications.
 Both approaches improved the performance and lead to near ideal scaling.
+
+The paper is organized as follows:
+We first review stragglers and existing approaches to parallelizing MD trajectory analysis in section \ref{sec:background}.
+We describe the software packages and algorithms in section \ref{sec:packages} and the benchmarking environment in section \ref{sec:system}.
+Section \ref{sec:methods} explains how we measured performance.
+The main results are presented in section \ref{sec:experiments}, with section \ref{sec:clusters} demonstrating reproducibility on different supercomputers.
+We provide general guidelines and lessons-learned in section \ref{sec:guidelines} and finish with conclusions in section \ref{sec:conclusions}.
