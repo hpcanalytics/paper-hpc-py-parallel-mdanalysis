@@ -74,7 +74,7 @@ Carefully setting up the same software stack on the three different supercompute
 \label{sec:data}
 
 The test system contained the protein adenylate kinase with 214 amino acid residues and 3341 atoms in total~\cite{Seyler:2014il} and the topology information (atoms types and bonds) was stored in a file in CHARMM PSF format.
-The test trajectory was created by concatenating 600 copies of a molecular dynamics trajectory with 4,187 time frames (saved every 240~ps for a total simulated time of 1.004~$\mu\text{s}$) in CHARMM DCD format~\cite{Seyler:2017aa} and converting to Gromacs XTC format trajectory, as described for the ``600x'' trajectory in~\citet{Khoshlessan:2017ab}.
+The test trajectory was created by concatenating 600 copies of a MD trajectory with 4,187 time frames (saved every 240~ps for a total simulated time of 1.004~$\mu\text{s}$) in CHARMM DCD format~\cite{Seyler:2017aa} and converting to Gromacs XTC format trajectory, as described for the ``600x'' trajectory in~\citet{Khoshlessan:2017ab}.
 The trajectory has a file size of about 30 GB and contains 2,512,200 frames (corresponding to 602.4~$\mu\text{s}$ simulated time).
 The file size is relatively small because water molecules that were also part of the original MD simulations were stripped to reduce the original file size by a factor of about 10; such preprocessing is a common approach if one is only interested in the protein behavior.
 Thus, the trajectory represents a small to medium system size in the number of atoms and coordinates that have to be loaded into memory for each time frame.
