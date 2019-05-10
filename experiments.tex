@@ -65,8 +65,8 @@ These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 
 \end{figure} 
 
 \subsubsection*{Influence of Hardware}
-We ran the same benchmarks on multiple HPC systems (XSEDE's \emph{PSC Bridges} (Fig.~\ref{fig:MPIwithIO-Bridges}) and \emph{LSU SuperMIC} (Fig.~\ref{fig:MPIwithIO-SuperMIC})), and observed the occurrence of stragglers, in a manner very similar to the results described for \emph{SDSC Comet}.
-There was no clear pattern in which certain MPI ranks would always be a straggler, neither could we trace stragglers to specific cores or nodes.
+We ran the same benchmarks on multiple HPC systems that were equipped with a Lustre parallel file system [XSEDE's \emph{PSC Bridges} (Fig.~\ref{fig:MPIwithIO-Bridges}) and \emph{LSU SuperMIC} (Fig.~\ref{fig:MPIwithIO-SuperMIC})], and observed the occurrence of stragglers, in a manner very similar to the results described for \emph{SDSC Comet}.
+There was no clear pattern in which certain MPI ranks would always be a straggler, and neither could we trace stragglers to specific cores or nodes.
 Therefore, the phenomenon of stragglers in the RMSD case was reproducible on different clusters and thus appeared to be independent from the underlying hardware.
 
 \subsection{Effect of compute to I/O ratio on Performance}
@@ -165,7 +165,7 @@ Even for moderately compute-bound workloads, such as the $40\times$ and $70\time
   \label{fig:MPIranks-no-IO}
 \end{subfigure}
 
-\caption{Comparison on the performance of RMSD task with MPI with I/O and without I/O ($\RcompIO \approx 0.3$) on SDSC Comet.
+\caption{Comparison on the performance of RMSD task with MPI with I/O and without I/O ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
 Five repeats were performed to collect statistics. (a) Speed-up. The error bars show standard deviation with respect to mean.
 (b) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
   opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition).}
@@ -226,7 +226,7 @@ The improvement in performance can be attributed to the mitigation in the interf
   \label{fig:MPIranks-ga4py}
 \end{subfigure}
 
-\caption{Performance of the RMSD task with MPI using Global Arrays ($\RcompIO \approx 0.3$) on SDSC Comet.
+\caption{Performance of the RMSD task with MPI using Global Arrays ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
 All ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
 Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
 (d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
@@ -388,7 +388,7 @@ Overall, parallel MPI with HDF5 appears to be a robust approach to obtain good s
   \label{fig:MPIranks-hdf5}
 \end{subfigure}
 %
-\caption{Performance of the RMSD task with MPI-based parallel HDF5 ($\RcompIO \approx 0.3$) on SDSC Comet.
+\caption{Performance of the RMSD task with MPI-based parallel HDF5 ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
 Data are read from the file system from a shared HDF5 file format instead of XTC format (Independent I/O) and results are communicated back to rank 0 (communications included). 
 Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
   opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition).
