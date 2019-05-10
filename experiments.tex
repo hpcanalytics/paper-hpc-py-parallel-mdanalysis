@@ -1,21 +1,25 @@
 \label{sec:experiments}
 
+We had previously measured the performance of the MPI-parallelized RMSD analysis task on two different HPC resources (\emph{SDSC Comet} and \emph{TACC Stampede}) and had found that it only scaled well up to a single node due to the presence of stragglers \cite{Khoshlessan:2017ab}.
+However, the ultimate cause for the stragglers could not be ascertained.
+We therefore performed more measurements with more detailed timing information (see section \ref{sec:methods}) on \emph{SDSC Comet} (described in this section) and two other supercomputers (summarized in section \ref{sec:clusters}) in order to better understand the origin of the stragglers. 
+
+
 \subsection{RMSD Benchmark}
 \label{sec:RMSD}
 
-The RMSD algorithm (see section \ref{sec:mda}) represents a task whose computational load is smaller than the read I/O load per frame, as indicated by typical average values $\tcomp^{\text{frame}} = 0.09\ \text{ms}$, $t_{\text{IO}}^{\text{frame}} = 0.3\ \text{ms}$, and thus a compute-to-I/O ratio $\RcompIO \approx 0.3$ (Eq.~\ref{eq:Compute-IO}).
-
-We showed in~\cite{Khoshlessan:2017ab} that the RMSD task only scaled well up on a single compute node on \emph{SDSC Comet} and \emph{TACC Stampede}, using either Dask or MPI.
-As in our previous work, we also observed poor strong scaling performance (Figures~\ref{fig:MPIscaling},~\ref{fig:MPIspeedup} and~\ref{fig:MPIscaling-Bridges} and~\ref{fig:MPIspeedup-Bridges}) beyond a single node.
-A more detailed analysis showed that the RMSD computation, and to a lesser degree the I/O, considered on their own scaled well beyond 50 cores (yellow and blue lines in Figure~\ref{fig:ScalingComputeIO}). 
-But, communication (red line in Figure~\ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure~\ref{fig:ScalingComputeIO}) started to dominate beyond 50 cores.
+We measured strong scaling for the RMSD analysis task (Algorithm \ref{alg:RMSD}) with the 2,512,200 frame test trajectory (section \ref{sec:data}) on 1 to 72 cores (one to three nodes) of \emph{SDSC Comet} (Figures~\ref{fig:MPIscaling} and \ref{fig:MPIspeedup}). 
+We observed poor strong scaling performance beyond a single node (24 cores), comparable to our previous results \cite{Khoshlessan:2017ab}.
+A more detailed analysis showed that the RMSD computation, and to a lesser degree the read I/O, considered on their own scaled well beyond 50 cores (yellow and blue lines in Figure~\ref{fig:ScalingComputeIO}). 
+But communication (red line in Figure~\ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure~\ref{fig:ScalingComputeIO}) started to dominate beyond 50 cores.
 Communication cost and initial time for opening the trajectory were distributed unevenly across MPI ranks, as shown in Figure~\ref{fig:MPIranks}. 
 The ranks that took much longer to complete than the typical execution time of the other ranks were the stragglers that hurt performance.
 
 \subsubsection*{Identification of Scalability Bottlenecks}
+
 In the example shown in Figure~\ref{fig:MPIranks}, 62 ranks out of 72 took about 60~s (the stragglers) whereas the remaining ranks only took about 20~s. 
 The detailed breakdown of the time spent on each rank (Figure~\ref{fig:MPIranks}) showed that the computation, \tcomp, was relatively constant across ranks. 
-The time spent on reading data from the shared trajectory file on Lustre into memory, \tIO, showed variability across different ranks. 
+The time spent on reading data from the shared trajectory file on the Lustre filesystem into memory, \tIO, showed variability across different ranks. 
 The stragglers, however, appeared to be defined by occasionally much larger \emph{communication} times, \tcomm (line 16 in Algorithm~\ref{alg:RMSD}), which were on the order of 30~s, and by larger times to initially open the trajectory (line 2 in Algorithm~\ref{alg:RMSD}).
 \tcomm varied across different ranks and was barely measurable for a few of them.
 Although the data in Figure~\ref{fig:MPIranks} represent one run and in other instances different number of ranks were stragglers, the overall hypothesis was confirmed by the averages over five independent repeats and all ranks (Figure~\ref{fig:ScalingComputeIO}).
@@ -69,13 +73,14 @@ Therefore, the phenomenon of stragglers in the RMSD case was reproducible on dif
 \label{sec:bound}
 
 The results in section~\ref{sec:RMSD} indicated communication and I/O to be two important factors that appeared to correlate with stragglers. 
-In order to better characterize the RMSD task, we computed the ratio between the time to complete the computation and the time spent on I/O, $\RcompIO = 0.3$, and found that this task was I/O bound, i.e.,
+In order to better characterize the RMSD task, we computed the ratio between the time to complete the computation and the time spent on I/O per frame.
+The average values were $\tcomp^{\text{frame}} = 0.09\ \text{ms}$, $t_{\text{IO}}^{\text{frame}} = 0.3\ \text{ms}$, resulting in a compute-to-I/O ratio $\RcompIO \approx 0.3$ (Eq.~\ref{eq:Compute-IO}).
+Because
 \begin{gather*}
-  \RcompIO \ll 1.
+  \RcompIO \ll 1
 \end{gather*}
-
-For such a I/O-bound task we were not able to achieve good scaling beyond a single node. 
-We hypothesized that decreasing the relative I/O load with respect to the compute load would also reduce the impact of stragglers by interleaving I/O with longer periods of computation and thus reducing the impact of I/O contention.
+the RMSD analysis task was characterized as I/O bound.
+As we were not able to achieve good scaling beyond a single node, we hypothesized that decreasing the relative I/O load with respect to the compute load would also reduce the impact of stragglers by interleaving I/O with longer periods of computation and thus reducing the impact of I/O contention.
 We therefore set out to measure compute bound tasks, i.e.\ ones with
 \begin{gather*}
   \RcompIO \gg 1.
