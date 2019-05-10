@@ -3,53 +3,48 @@
 Documentation and benchmark codes are made available in the code repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the GNU General Public License v3.0 (code) and the Creative Commons Attribution-ShareAlike (documentation). 
 These materials should enable users to recreate the computational environment on the tested XSEDE HPC resources (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}), prepare data files, and run the computational experiments.
 
-In the following we define the quantities used for our measurements, with a full summary in Table~\ref{tab:notation}.
+In the following we define the quantities and approach used for our performance measurements, with a full summary of all definitions in Table~\ref{tab:notation}.
+We evaluated MPI performance of the parallel RMSD timeseries algorithm~\ref{alg:RMSD} by timing the total time to solution as well as the execution time for different parts of the code for individual MPI ranks with the help of the Python \texttt{time.time()} function.
 
 
 \subsection{Timing observables}
-We evaluate MPI performance based on the RMSD algorithm~\ref{alg:RMSD}. 
-The notation for our models is summarized in Table~\ref{tab:notation}.
-We abbreviate the timings in the following as variables $t_{\text{L}_{\text{n}}}$ where $L_{n}$ refers to the line number in algorithm~\ref{alg:RMSD}.
 
-We directly measured inside our code (in the function \texttt{block\_rmsd()}) the ``I/O'' time for
-ingesting the data from the file system into memory, ($t_{\text{I/O}}^{\text{frame}} = t_{\text{L4}}$) and the ``compute'' time per
-trajectory frame to perform the computation ($\tcomp^{\text{frame}} = t_{\text{L5}}$).
-The total I/O time for a rank  $\tIO = \sum_{\text{frame}=1}^{N_{\text{b}}} \tIO^{\text{frame}}$ is the sum over all I/O times for all the $N_{\text{frames}}$ frames assigned to the rank; similarly, the total compute time for a rank is $\tcomp = \sum_{\text{frame}=1}^{N_{\text{b}}} \tcomp^{\text{frame}}$. 
+We abbreviate the timings in the following as variables $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in algorithm~\ref{alg:RMSD}.
+We measured in the function \texttt{block\_rmsd()} the \emph{read I/O time} for ingesting the data of one trajectory frame from the file system into memory, $t_{\text{I/O}}^{\text{frame}} = t_{\text{L4}}$, and the \emph{compute time} per trajectory frame to perform the computation, $\tcomp^{\text{frame}} = t_{\text{L5}}$.
+The \emph{total read I/O time for a MPI rank},  $\tIO = \sum_{\text{frame}=1}^{N_{\text{b}}} \tIO^{\text{frame}}$, is the sum over all I/O times for all the $N_{\text{frames}}$ frames assigned to the rank; similarly, the \emph{total compute time for a MPI rank} is $\tcomp = \sum_{\text{frame}=1}^{N_{\text{b}}} \tcomp^{\text{frame}}$. 
 The time delay between the end of the last iteration and exiting the \texttt{for} loop is $t_{\text{end\_loop}} = t_{\text{L6}}+t_{\text{L7}}$.
 The time $t_{\text{opening\_trajectory}} = t_{\text{L2}}+t_{\text{L3}}$ measures the problem setup, which includes data structure initialization and opening of topology and trajectory files.
-$t_{\text{Communication\_{MPI}}} = t_{\text{L16}}$ is the time to gather (``reduce'') all data from all processor ranks to rank zero.
-The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMSD}} = \sum_{i=1}^{8}t_{\text{Li}}$. 
+The \emph{communication time}, $\tcomm = t_{\text{L16}}$, is the time to gather all data from all processor ranks to rank zero.
+The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMSD}} = \sum_{i=1}^{8}t_{\text{L$i$}}$. 
 There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO.
+Unaccounted time is considered as \emph{overhead}.
+We define $t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ as the overheads of the calculations (see Table \ref{tab:notation} for the definitions); both should ideally be negligible. 
+Finally, the \emph{total time to completion of a single MPI rank}, when utilizing $N$ cores for the execution of the overall experiment, is $t_{N}$, and as a result $t_{\text{RMSD}} + \tcomm \equiv t_{N}$.
 
-Unaccounted time is considered as ``overhead''. We define
-$t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ as the overhead of the calculations. 
-They should ideally be very small (see Table \ref{tab:notation} for the definition). 
-Finally, the total time to completion of a single process, when utilizing $N$ cores for the execution of the overall experiment, is $t_{N}$, as a result $t_{\text{RMSD}} + \tcomm \equiv t_{N}$.
+\subsection{Performance parameters}
 
-\subsection{Performance Measurement}
-
-We measured the total time to solution $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores (which is effectively
-$t_{\text{total}}(N) \approx \max(t_{N})$). 
+We measured the \emph{total time to solution} $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores, which is effectively
+$t_{\text{total}}(N) \approx \max(t_{N})$. 
 Strong scaling was quantified by the speed-up
 \begin{equation}
   \label{eq:speedup}
-  S(N) = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)}
+  S(N) = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)},
 \end{equation}
-relative to performance on a single core and the efficiency
+relative to performance on a single core, and the efficiency
 \begin{equation}
   \label{eq:efficiency}
   E(N) = \frac{S(N)}{N}.
 \end{equation}
-All averages were defined as
+Averages over ranks were calculated as
 \begin{equation}
-\overline{t_{comp}} = \frac{1}{N}
+\overline{\tcomp} = \frac{1}{N}
 \sum_{\text{rank}=1}^{N}\tcomp = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_\text{b}}\tcomp^{\text{frame}},
 \end{equation}
 \begin{equation}
-\overline{\tcomm} = \frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}
+\overline{\tcomm} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tcomm
 \end{equation}
 \begin{equation}
-\overline{\tIO} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tIO = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}
+\overline{\tIO} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tIO = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}.
 \end{equation}
 
 Additionally, we introduced two performance parameters that will be shown to be indicative of the occurrence of stragglers.
@@ -58,19 +53,18 @@ We define the ratio of compute time to read I/O time as
   R_{\text{comp/IO}} = \frac{\tcomp}{\tIO}.
   \label{eq:Compute-IO}
 \end{equation}
-We calculated this ratio using the serial version of our algorithms because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed previously~\cite{Khoshlessan:2017ab}.
-The ratio of compute to communication time was defined by the ratio of total compute time per rank averaged across all ranks to the total communication time per rank averaged across all ranks 
+$R_{\text{comp/IO}}$ was calculated with the serial version of our algorithms (on a single CPU core) because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed previously~\cite{Khoshlessan:2017ab}.
+The ratio of compute to communication time was defined by the ratio of average total compute time per rank to the average total communication time per rank  
 \begin{equation}
   \label{eq:Compute-comm}
   R_{\text{comp/comm}} = \frac{\overline{\tcomp}}{\overline{\tcomm}}.
 \end{equation}
  
-\begin{table}[ht!]
+\begin{table}
 \centering
 \begin{tabular}{c c}
   \toprule
-           \bfseries\thead{Item} & \bfseries\thead{Definition}\\
-  \midrule
+           \bfseries\thead{Quantity} & \bfseries\thead{Definition}\\
   \midrule
     $N_{\text{b}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
     $t_{\text{end\_loop}}$ & $t_{\text{L6}}+t_{\text{L7}}$\\
@@ -79,23 +73,26 @@ The ratio of compute to communication time was defined by the ratio of total com
     $\tIO$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$\\
     $t_{\text{all\_frame}}$ & $t_{\text{L4}}+t_{\text{L5}}+t_{\text{L6}}$  \\
     $t_{\text{RMSD}}$ &  $t_{\text{L1}} + ...+ t_{\text{L8}}$ \\
-    $t_{\text{Communication}_{\text{MPI}}}$ &  $t_{\text{L16}}$  \\
-    $t_{\text{Communication}_{\text{GA}}}$ &  $t_{\text{L5}}+t_{\text{L6}}+t_{\text{L7}}+t_{\text{L8}}$  \\
+    $t_{\text{comm/MPI}}$ &  $t_{\text{L16}}$  \\
+    $t_{\text{comm/GA}}$ &  $t_{\text{L5}}+t_{\text{L6}}+t_{\text{L7}}+t_{\text{L8}}$  \\
+    $\tcomm$  & $t_{\text{comm/MPI}}$ (Alg.~\ref{alg:RMSD}) or $t_{\text{comm/GA}}$ (Alg.~\ref{alg:GA})\\
     $t_{\text{Overhead1}}$ & $t_{\text{all\_frame}}-t_{\text{I/O\_final}}-t_{\text{comp\_final}}-t_{\text{end\_loop}}$  \\
     $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
-    $t_{N}$ & $t_{\text{RMSD}}+t_{\text{Communication}}$ \\
+    $t_{N}$ & $t_{\text{RMSD}}+\tcomm$ \\
    \midrule  
-    $\overline{\tcomp}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$ \\
-    $\overline{\tcomm}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}t_{\text{communication}}$ \\
-    $\overline{\tIO}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$\\
+    $\overline{\tcomp}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomp$ \\
+    $\overline{\tIO}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tIO$\\
+    $\overline{\tcomm}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomm$ \\
     $t_{\text{total}}$ & $\max t_{N}$ \\
   \bottomrule
 \end{tabular}
 \caption[Summary of the notation of our performance modeling]
-{Summary of the notation of our performance modeling. Relevant probes in the codes are taken and stored,
-which we will abbreviate in here as $t_{\text{Ln}}$ where {\text{Ln}} refers to the line number in the corresponding algorithm. 
-$t_{\text{Communication\_{\text{MPI}}}}$ and $t_{\text{Communication\_{\text{GA}}}}$ are both referred to $t_{\text{Communication}}$ in the text.
-All the timings on the first row are per rank.}
+{Summary of measured timing quantitities.
+Timings are collected for the specified line numbers in the code, labelled as $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in the corresponding algorithm. 
+$t_{\text{comm/MPI}}$ (in Algorithm~\protect\ref{alg:RMSD})and $t_{\text{comm/GA}}$ (in Algorithm~\protect\ref{alg:GA}) are both referred to as $\tcomm$ in the text.
+$t_{\text{I/O\_final}}$ and $t_{\text{comp\_final}}$ are the timings of the last frame in the block of frames that is processed by the MPI rank and are subtracted to avoid double counting.
+Variables in the top half of the table refer to measurements of an individual MPI rank.
+Variables in the bottom half are aggregates such as averages over all ranks or the total time to solution.}
 \label{tab:notation}
 \end{table}
 
