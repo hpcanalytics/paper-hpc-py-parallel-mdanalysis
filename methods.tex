@@ -91,9 +91,12 @@ and
 Additionally, we introduced two performance parameters that will be shown to be indicative of the occurrence of stragglers.
 We defined the ratio of compute time to read I/O time as
 \begin{equation}
-  \RcompIO = \frac{\tcomp}{\tIO}.
+  \RcompIO = \frac{\tcomp}{\tIO} = %
+  \frac{\tcomp/N_{\text{frames}}^{\text{total}}}{\tIO/N_{\text{frames}}^{\text{total}}}  = %
+  \frac{\overline{\tcomp^{\text{frame}}}}{\overline{\tIO^{\text{frame}}}}
   \label{eq:Compute-IO}
 \end{equation}
+where the last equality shows that the ratio can also be computed from the average times per frames.
 \RcompIO was calculated with the serial version of our algorithms (on a single CPU core) in order to characterize the computational problem in the absence of parallelization.
 The ratio of compute to communication time was defined by the ratio of average total compute time per rank to the average total communication time per rank  
 \begin{equation}

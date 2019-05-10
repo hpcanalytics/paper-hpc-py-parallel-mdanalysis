@@ -17,13 +17,14 @@ The ranks that took much longer to complete than the typical execution time of t
 
 \subsubsection*{Identification of Scalability Bottlenecks}
 
-In the example shown in Figure~\ref{fig:MPIranks}, 62 ranks out of 72 took about 60~s (the stragglers) whereas the remaining ranks only took about 20~s. 
+In the example shown in Figure~\ref{fig:MPIranks}, 62 ranks out of 72 took about 60~s (the stragglers) whereas the remaining ranks only took about 20~s.
+(In other instances, far fewer ranks were stragglers, as shown, for example, in Figure~\ref{fig:MPIranks-Bridges}.)
 The detailed breakdown of the time spent on each rank (Figure~\ref{fig:MPIranks}) showed that the computation, \tcomp, was relatively constant across ranks. 
 The time spent on reading data from the shared trajectory file on the Lustre filesystem into memory, \tIO, showed variability across different ranks. 
 The stragglers, however, appeared to be defined by occasionally much larger \emph{communication} times, \tcomm (line 16 in Algorithm~\ref{alg:RMSD}), which were on the order of 30~s, and by larger times to initially open the trajectory (line 2 in Algorithm~\ref{alg:RMSD}).
 \tcomm varied across different ranks and was barely measurable for a few of them.
-Although the data in Figure~\ref{fig:MPIranks} represent one run and in other instances different number of ranks were stragglers, the overall hypothesis was confirmed by the averages over five independent repeats and all ranks (Figure~\ref{fig:ScalingComputeIO}).
-This initial analysis indicated that communication was a major issue that prevented good scaling beyond a single node but the problems related to file I/O also played an important role in limiting performance.
+Although the data in Figure~\ref{fig:MPIranks} represented one run and in other instances different number of ranks were stragglers, the overall hypothesis was confirmed by the averages over all ranks in five independent repeats (Figure~\ref{fig:ScalingComputeIO}).
+This initial analysis indicated that communication was a major issue that prevented good scaling beyond a single node but the problems related to file I/O also played an important role in limiting scaling performance.
 
 \begin{figure}
 \centering
@@ -69,36 +70,29 @@ We ran the same benchmarks on multiple HPC systems that were equipped with a Lus
 There was no clear pattern in which certain MPI ranks would always be a straggler, and neither could we trace stragglers to specific cores or nodes.
 Therefore, the phenomenon of stragglers in the RMSD case was reproducible on different clusters and thus appeared to be independent from the underlying hardware.
 
-\subsection{Effect of compute to I/O ratio on Performance}
+\subsection{Effect of Compute to I/O Ratio on Performance}
 \label{sec:bound}
 
 The results in section~\ref{sec:RMSD} indicated communication and I/O to be two important factors that appeared to correlate with stragglers. 
 In order to better characterize the RMSD task, we computed the ratio between the time to complete the computation and the time spent on I/O per frame.
-The average values were $\tcomp^{\text{frame}} = 0.09\ \text{ms}$, $t_{\text{IO}}^{\text{frame}} = 0.3\ \text{ms}$, resulting in a compute-to-I/O ratio $\RcompIO \approx 0.3$ (Eq.~\ref{eq:Compute-IO}).
-Because
-\begin{gather*}
-  \RcompIO \ll 1
-\end{gather*}
-the RMSD analysis task was characterized as I/O bound.
-As we were not able to achieve good scaling beyond a single node, we hypothesized that decreasing the relative I/O load with respect to the compute load would also reduce the impact of stragglers by interleaving I/O with longer periods of computation and thus reducing the impact of I/O contention.
-We therefore set out to measure compute bound tasks, i.e.\ ones with
-\begin{gather*}
-  \RcompIO \gg 1.
-\end{gather*}
+The average values were $\overline{\tcomp^{\text{frame}}} = 0.09\ \text{ms}$, $\overline{t_{\text{IO}}^{\text{frame}}} = 0.3\ \text{ms}$, resulting in a compute-to-I/O ratio $\RcompIO \approx 0.3$ (Eq.~\ref{eq:Compute-IO}).
+Because $\RcompIO \ll 1$, the RMSD analysis task was characterized as I/O bound.
+
+As we were not able to achieve good scaling beyond a single node, we hypothesized that decreasing the I/O load relative to the compute load would interleave read I/O with longer periods of computation, thus reducing the impact of I/O contention and the impact of stragglers.
+We therefore set out to measure compute bound tasks, i.e.\ ones with $\RcompIO \gg 1$.
 To measure the effect of the $\RcompIO$ ratio on performance but leaving other parameters the same, we artificially increased the computational load by repeating the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop, resulting in forty-fold (``$40\times$''), seventy-fold (``$70\times$''), and one hundred-fold (``$100\times$'') load increases.
 
-\subsubsection{Effect of Increased Compute workload for RMSD Task}
+\subsubsection{Effect of Increased Compute Workload}
 
-The increased computational workloads corresponded to $\RcompIO$ ratios of 11, 19, 27 respectively as shown in Table \ref{tab:load-ratio}.
-Theoretically, the $\RcompIO$ ratio for the higher workloads (with factor $X$) should be $X$ times the $\RcompIO$ for the $1\times$ workload because the average I/O workload of each rank is $N_{\text{b}} \times \tIO $ (independent of $X$) while the workload for the computation is $X \times N_{\text{b}} \times \tcomp$.
-Therefore the ratio at higher $X$ should be $X$ times the  $\RcompIO$ at $1\times$.
-The data in Table \ref{tab:load-ratio} agree with this theoretical analysis.
+For an $X$-fold increase in workload, we expected the workload for the computation to scale with $X$ as $\tcomp(X) =  N_{\text{frames}}^{\text{total}} X \overline{\tcomp^{\text{frame}}}$ while the read I/O workload $\tIO(X) = N_{\text{frames}}^{\text{total}} \overline{\tIO^{\text{frame}}}$ (number of frames times the average time to read a frame) should remain independent of $X$.
+Therefore, the ratio for any $X$ should be $\RcompIO(X) = \tcomp(X)/\tIO(X) = X \RcompIO(X=1)$, i.e.,  $\RcompIO$ should just linearly scale with the workload factor $X$.
+The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational workloads agreed with this theoretical analysis, as shown in Table \ref{tab:load-ratio}.
 
-\begin{table}[ht!]
+\begin{table}
 \centering
 \begin{tabular}{rrrrr}
   \toprule
-  \bfseries\thead{Workload} &  \bfseries\thead{$\tcomp$} &  \bfseries\thead{$\tIO$}
+  \bfseries\thead{Workload $X$} &  \bfseries\thead{$\tcomp$ (s)} &  \bfseries\thead{$\tIO$ (s)}
   & \multicolumn{2}{c}{\bfseries\thead{$\RcompIO$}}\\
   & & & \thead{measured} & \thead{theoretical}\\
   \midrule
@@ -108,19 +102,20 @@ The data in Table \ref{tab:load-ratio} agree with this theoretical analysis.
     $100\times$ & 21639 & 791 & 27   & 29\\  
   \bottomrule
 \end{tabular}
-\caption[Change in load-ratio with RMSD workload]{Change in $\RcompIO$ ratio with change in the RMSD workload.
+\caption[Change in load-ratio with RMSD workload]{Change in $\RcompIO$ ratio with change in the RMSD workload $X$.
   The RMSD workload was artificially increased in order to examine the effect of compute to I/O ratio on the performance.
-  The reported compute and I/O time were calculated based on the serial version using one core and used to calculate the measured $\RcompIO$.
+  The reported compute and I/O time were measured based on the serial version using one core.
   The theoretical $\RcompIO$ (see text) is provided for comparison.}
 \label{tab:load-ratio}
 \end{table}
 
 We performed the experiments with increased workload to measure the effect of the $\RcompIO$ ratio on performance (Figure~\ref{fig:tcomp_tIO_effect}).
-As the $\RcompIO$ ratio increased, speed-up and performance improved, and showed overall better scaling than the I/O-bound workload, i.e. $1\times$ RMSD (Figure~\ref{fig:S1_tcomp_tIO_effect}).
-The RMSD calculation consistently scaled well up to larger numbers of cores ($N=56$ for $70\times$ RMSD) for higher $\RcompIO$ ratios.
+The strong scaling performance as measured by the speed-up $S(N)$ improved with increasing $\RcompIO$ ratio (Figure \ref{fig:S1_tcomp_tIO_effect}).
+The calculation consistently scaled well up to larger numbers of cores for higher $\RcompIO$ ratios, e.g., $N=56$ cores for $70\times$ RMSD task. 
 Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} show that speed-up and efficiency approach their ideal value for each processor count with increasing $\RcompIO$ ratio.
+Even for moderately compute-bound workloads, such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contributed to large variations in timing across different ranks and thus irregular scaling.
 
-\begin{figure}[ht!]
+\begin{figure}
 \centering
 \begin{subfigure} {.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf}
@@ -146,9 +141,8 @@ which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\t
 \label{fig:tcomp_tIO_effect}
 \end{figure}
 
-Even for moderately compute-bound workloads, such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contributed to large variations in timing across different ranks and thus irregular scaling.
 
-\subsubsection{I/O leads to stragglers}
+\subsubsection{I/O Leads to Stragglers}
 
  \begin{figure}
 \centering
@@ -256,7 +250,7 @@ Because subfiling is known to improve programming flexibility and performance of
 The trajectory file was split into $N$ segments, one for each process, with each segment having $N_{b}$ frames. 
 This way, each process would access its own trajectory segment file without competing for file accesses. 
 
-\paragraph{Performance with MPI communication}
+\paragraph{Performance with MPI Communication}
 We ran a benchmark up to 8 nodes (192 cores) and observed rather better scaling behavior with efficiencies above 0.6 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) with the delay time for stragglers reduced from 65~s to about 10~s for 72 processes. 
 However, scaling is still far from ideal due to communication (using MPI). 
 Although the delay due to communication was much smaller as compared to parallel RMSD with shared-file I/O (compare Figure~\ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure~\ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and resulted in longer job completion times (Figure~\ref{fig:MPIranks-split}). 
@@ -303,13 +297,13 @@ These delayed tasks impacted performance so that speed-up remained far from idea
 \label{fig:MPIwithIO-split}
 \end{figure}
 
-\paragraph{Performance using Global Arrays}
+\paragraph{Performance Using Global Arrays}
 In Section~\ref{Global-Array} we showed that Global Arrays substantially reduced the communication cost. 
 We wanted to quantify the performance when splitting the trajectory file while using Global Arrays.
 Under otherwise identical conditions as in the previous section we now observed near ideal scaling behavior with efficiencies above 0.9 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) without any straggler tasks (Figure~\ref{fig:MPIranks-split-ga}).
 Although the reason why in our case Global Arrays appeared to be more efficient than direct MPI-based communication remains unclear, these results showed that contention for file access clearly impacted performance. By removing the contention, near ideal scaling could be achieved.
 
-\paragraph{Further considerations for splitting trajectories}
+\paragraph{Further Considerations for Splitting Trajectories}
 The subfiling approach appears promising but it requires preprocessing of trajectory files and additional storage space for the segments.
 We benchmarked the necessary time for splitting the trajectory using different number of MPI processes (Table~\ref{tab:timing-splitting}); in general the operation scales well although performance can
 fluctuate, as seen for the case on 6 nodes.
