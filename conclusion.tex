@@ -4,7 +4,7 @@ We analyzed the strong scaling performance of a typical task when analysing MD t
 The task was parallelized with MPI by having each MPI process analyze a contiguous segment of the trajectory.
 This approach did not scale beyond a single node because straggler processes exhibited large upward variations in runtime.
 Stragglers were primarily caused by either excessive MPI communication costs or excessive time to open the single shared trajectory file whereas both the computation and the ingestion of data exhibited close to ideal strong scaling behavior.
-Stragglers were less prevalent for compute-bound workloads (i.e., $\overline{\tcomp}/\overline{\tIO} \gg 1$ and to a lesser degree $\overline{\tcomp}/\overline{\tcomm} \gg 1$), suggesting that file I/O was responsible for poor MPI communication.
+Stragglers were less prevalent for compute-bound workloads (i.e., $\RcompIO \gg 1$ and to a lesser degree $\overline{\tcomp}/\overline{\tcomm} \gg 1$), suggesting that file I/O was responsible for poor MPI communication.
 In particular, artifically removing all I/O substantially improved performance of the communication step and thus brought overall performance close to ideal.
 By performing benchmarks on three different XSEDE supercomputers we showed that our results were independent from the specifics of the hardware and local environment.
 Our results hint at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013, Kevin2018} and theoretical predictions \cite{Brown:2018ab}.

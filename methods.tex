@@ -74,26 +74,30 @@ relative to performance on a single core, and the efficiency
 \end{equation}
 Averages over ranks were calculated as
 \begin{equation}
-\overline{\tcomp} = \frac{1}{N}
-\sum_{\text{rank}=1}^{N}\tcomp = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_\text{b}}\tcomp^{\text{frame}},
+  \label{eq:avg-tcomp}
+  \overline{\tcomp} = \frac{1}{N}
+  \sum_{\text{rank}=1}^{N}\tcomp = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_\text{b}}\tcomp^{\text{frame}},
 \end{equation}
 \begin{equation}
-\overline{\tcomm} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tcomm
+  \label{eq:avg-tIO}
+  \overline{\tIO} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tIO = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}},
 \end{equation}
+and
 \begin{equation}
-\overline{\tIO} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tIO = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}.
+  \label{eq:avg-tcomm}
+  \overline{\tcomm} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tcomm.
 \end{equation}
 
 Additionally, we introduced two performance parameters that will be shown to be indicative of the occurrence of stragglers.
-We define the ratio of compute time to read I/O time as
+We defined the ratio of compute time to read I/O time as
 \begin{equation}
-  R_{\text{comp/IO}} = \frac{\tcomp}{\tIO}.
+  \RcompIO = \frac{\tcomp}{\tIO}.
   \label{eq:Compute-IO}
 \end{equation}
-$R_{\text{comp/IO}}$ was calculated with the serial version of our algorithms (on a single CPU core) because compute time per frame and I/O time per frame should ideally be the same for different runs using different processes, as we observed previously~\cite{Khoshlessan:2017ab}.
+\RcompIO was calculated with the serial version of our algorithms (on a single CPU core) in order to characterize the computational problem in the absence of parallelization.
 The ratio of compute to communication time was defined by the ratio of average total compute time per rank to the average total communication time per rank  
 \begin{equation}
   \label{eq:Compute-comm}
-  R_{\text{comp/comm}} = \frac{\overline{\tcomp}}{\overline{\tcomm}}.
+  \Rcompcomm = \frac{\overline{\tcomp}}{\overline{\tcomm}}.
 \end{equation}
- 
+Because \tcomm cannot be measured for a serial code, we estimated \Rcompcomm from the rank-averages Eqs.~\ref{eq:avg-tIO} and \ref{eq:avg-tcomm} for a given number of MPI ranks.
