@@ -7,6 +7,43 @@ In the following we define the quantities and approach used for our performance 
 We evaluated MPI performance of the parallel RMSD timeseries algorithm~\ref{alg:RMSD} by timing the total time to solution as well as the execution time for different parts of the code for individual MPI ranks with the help of the Python \texttt{time.time()} function.
 
 
+\begin{table}
+\centering
+\begin{tabular}{c c}
+  \toprule
+           \bfseries\thead{Quantity} & \bfseries\thead{Definition}\\
+  \midrule
+    $N_{\text{b}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
+    $t_{\text{end\_loop}}$ & $t_{\text{L6}}+t_{\text{L7}}$\\
+    $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ \\
+    $\tcomp$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$\\
+    $\tIO$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$\\
+    $t_{\text{all\_frame}}$ & $t_{\text{L4}}+t_{\text{L5}}+t_{\text{L6}}$  \\
+    $t_{\text{RMSD}}$ &  $t_{\text{L1}} + ...+ t_{\text{L8}}$ \\
+    $t_{\text{comm/MPI}}$ &  $t_{\text{L16}}$  \\
+    $t_{\text{comm/GA}}$ &  $t_{\text{L5}}+t_{\text{L6}}+t_{\text{L7}}+t_{\text{L8}}$  \\
+    $\tcomm$  & $t_{\text{comm/MPI}}$ (Alg.~\ref{alg:RMSD}) or $t_{\text{comm/GA}}$ (Alg.~\ref{alg:GA})\\
+    $t_{\text{Overhead1}}$ & $t_{\text{all\_frame}}-t_{\text{I/O\_final}}-t_{\text{comp\_final}}-t_{\text{end\_loop}}$  \\
+    $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
+    $t_{N}$ & $t_{\text{RMSD}}+\tcomm$ \\
+   \midrule  
+    $\overline{\tcomp}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomp$ \\
+    $\overline{\tIO}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tIO$\\
+    $\overline{\tcomm}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomm$ \\
+    $t_{\text{total}}$ & $\max t_{N}$ \\
+  \bottomrule
+\end{tabular}
+\caption[Summary of the notation of our performance modeling]
+{Summary of measured timing quantitities.
+Timings are collected for the specified line numbers in the code, labelled as $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in the corresponding algorithm. 
+$t_{\text{comm/MPI}}$ (in Algorithm~\protect\ref{alg:RMSD})and $t_{\text{comm/GA}}$ (in Algorithm~\protect\ref{alg:GA}) are both referred to as $\tcomm$ in the text.
+$t_{\text{I/O\_final}}$ and $t_{\text{comp\_final}}$ are the timings of the last frame in the block of frames that is processed by the MPI rank and are subtracted to avoid double counting.
+Variables in the top half of the table refer to measurements of an individual MPI rank.
+Variables in the bottom half are aggregates such as averages over all ranks or the total time to solution.}
+\label{tab:notation}
+\end{table}
+
+
 \subsection{Timing observables}
 
 We abbreviate the timings in the following as variables $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in algorithm~\ref{alg:RMSD}.
@@ -60,41 +97,3 @@ The ratio of compute to communication time was defined by the ratio of average t
   R_{\text{comp/comm}} = \frac{\overline{\tcomp}}{\overline{\tcomm}}.
 \end{equation}
  
-\begin{table}
-\centering
-\begin{tabular}{c c}
-  \toprule
-           \bfseries\thead{Quantity} & \bfseries\thead{Definition}\\
-  \midrule
-    $N_{\text{b}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
-    $t_{\text{end\_loop}}$ & $t_{\text{L6}}+t_{\text{L7}}$\\
-    $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ \\
-    $\tcomp$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$\\
-    $\tIO$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$\\
-    $t_{\text{all\_frame}}$ & $t_{\text{L4}}+t_{\text{L5}}+t_{\text{L6}}$  \\
-    $t_{\text{RMSD}}$ &  $t_{\text{L1}} + ...+ t_{\text{L8}}$ \\
-    $t_{\text{comm/MPI}}$ &  $t_{\text{L16}}$  \\
-    $t_{\text{comm/GA}}$ &  $t_{\text{L5}}+t_{\text{L6}}+t_{\text{L7}}+t_{\text{L8}}$  \\
-    $\tcomm$  & $t_{\text{comm/MPI}}$ (Alg.~\ref{alg:RMSD}) or $t_{\text{comm/GA}}$ (Alg.~\ref{alg:GA})\\
-    $t_{\text{Overhead1}}$ & $t_{\text{all\_frame}}-t_{\text{I/O\_final}}-t_{\text{comp\_final}}-t_{\text{end\_loop}}$  \\
-    $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
-    $t_{N}$ & $t_{\text{RMSD}}+\tcomm$ \\
-   \midrule  
-    $\overline{\tcomp}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomp$ \\
-    $\overline{\tIO}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tIO$\\
-    $\overline{\tcomm}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomm$ \\
-    $t_{\text{total}}$ & $\max t_{N}$ \\
-  \bottomrule
-\end{tabular}
-\caption[Summary of the notation of our performance modeling]
-{Summary of measured timing quantitities.
-Timings are collected for the specified line numbers in the code, labelled as $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in the corresponding algorithm. 
-$t_{\text{comm/MPI}}$ (in Algorithm~\protect\ref{alg:RMSD})and $t_{\text{comm/GA}}$ (in Algorithm~\protect\ref{alg:GA}) are both referred to as $\tcomm$ in the text.
-$t_{\text{I/O\_final}}$ and $t_{\text{comp\_final}}$ are the timings of the last frame in the block of frames that is processed by the MPI rank and are subtracted to avoid double counting.
-Variables in the top half of the table refer to measurements of an individual MPI rank.
-Variables in the bottom half are aggregates such as averages over all ranks or the total time to solution.}
-\label{tab:notation}
-\end{table}
-
-
-
