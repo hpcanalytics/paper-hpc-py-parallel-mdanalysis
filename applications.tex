@@ -6,7 +6,7 @@ We use the \package{MDAnalysis} library to calculate a ``RMSD timeseries'' (expl
 Further details on the software packages are provided in sections \ref{sec:methods-mpi4py}--\ref{sec:methods-hdf5}.
 
 
-\subsection{RMSD calculation with MDAnalysis}
+\subsection{RMSD Calculation with MDAnalysis}
 \label{sec:mda}
 
 Simulation data exist in trajectories in the form of time series of atom positions and sometimes velocities.
@@ -68,7 +68,7 @@ MPI for Python (\package{mpi4py}) is a Python wrapper for the Message Passing In
 Performance degradation due to using \package{mpi4py} is not prohibitive \cite{Dalcin:2011aa, Dalcin:2005aa} and the overhead is far smaller than the overhead associated with the use of interpreted versus compiled languages \cite{GAiN}.
 Overheads in \package{mpi4py} are small compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}, as used in the present study.
 
-\subsection{Global Arrays toolkit}
+\subsection{Global Arrays Toolkit}
 \label{sec:methods-ga}
 
 The \emph{Global Arrays} (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}.

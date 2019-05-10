@@ -44,7 +44,7 @@ Variables in the bottom half are aggregates such as averages over all ranks or t
 \end{table}
 
 
-\subsection{Timing observables}
+\subsection{Timing Observables}
 
 We abbreviate the timings in the following as variables $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in algorithm~\ref{alg:RMSD}.
 We measured in the function \texttt{block\_rmsd()} the \emph{read I/O time} for ingesting the data of one trajectory frame from the file system into memory, $t_{\text{I/O}}^{\text{frame}} = t_{\text{L4}}$, and the \emph{compute time} per trajectory frame to perform the computation, $\tcomp^{\text{frame}} = t_{\text{L5}}$.
@@ -58,7 +58,7 @@ Unaccounted time is considered as \emph{overhead}.
 We define $t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ as the overheads of the calculations (see Table \ref{tab:notation} for the definitions); both should ideally be negligible. 
 Finally, the \emph{total time to completion of a single MPI rank}, when utilizing $N$ cores for the execution of the overall experiment, is $t_{N}$, and as a result $t_{\text{RMSD}} + \tcomm \equiv t_{N}$.
 
-\subsection{Performance parameters}
+\subsection{Performance Parameters}
 
 We measured the \emph{total time to solution} $t_{\text{total}}(N)$ with $N$ MPI processes on $N$ cores, which is effectively
 $t_{\text{total}}(N) \approx \max(t_{N})$. 
