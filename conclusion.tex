@@ -12,7 +12,7 @@ In this model, I/O interferes much less often with communication for a sufficien
 This analysis also suggested ways to improve performance by improving I/O or improving communication.
 
 When we used the Global Arrays toolkit instead of the message-passing interface for communication, then the communication cost was significantly reduced and there were no delayed task due to communication.
-Despite these improvements, overall performance remained less than ideal because initial opening of the shared trajectory file became the performance bottleneck which is due to the POSIX consistency requirements.
+Despite these improvements, overall strong scaling behavior remained less than ideal because the initial opening of the shared trajectory file became the scaling bottleneck, possibly due to the POSIX consistency requirements for file access.
 We were able to eliminate this I/O problem by subfiling (splitting the shared trajectory file) and achieved nearly ideal scaling up to 192 cores (8 nodes on \emph{SDSC Comet}, Table~\ref{tab:comp-IO-scaling}).
 Alternatively, we used MPI-based parallel I/O through HDF5 and MPI for communications with comparable performance up to 384 cores (16 nodes on \emph{SDSC Comet}, Table~\ref{tab:comp-IO-scaling}). 
 The latter approach appears to be a promising way forward as it directly builds on very widely used technology (HDF5 and MPI-IO) and echoes the experience of the wider HPC community that parallel file I/O is necessary for efficient data handling.

@@ -71,9 +71,9 @@ Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance 
 As shown in Figure \ref{fig:MPIspeedup-chain-reader} the cases with GA and without GA scaled up to 144 and 92 cores respectively.
 The scaling was not close to ideal as opposed to what we achieved in Section \ref{splitting-traj} when each MPI process was assigned its own trajectory segment. 
 However, in this case I/O and compute time were scaling very well (Figure \ref{fig:MPIscaling-chain-reader} as compared to Figure \ref{fig:ScalingComputeIO-split}).
-The time for ending the \texttt{for} loop $t_{\text{end\_loop}}$ (which includes the time for closing the trajectory file) and opening the trajectory $t_{\text{opening\_trajectory}}$ appeared to be the performance bottleneck as opposed to the results shown in Section \ref{splitting-traj} (i.e. Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 
+The time for ending the \texttt{for} loop $t_{\text{end\_loop}}$ (which includes the time for closing the trajectory file) and opening the trajectory $t_{\text{opening\_trajectory}}$ appeared to be the scaling bottleneck as opposed to the results shown in Section \ref{splitting-traj} (i.e. Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 
 
-Although we did not further investigate the deeper cause for the reduced performance of the ChainReader, we speculate that the primary problem is related to each MPI rank having to open all trajectory files in their ChainReader instance even though they will only read from a small subset.
+Although we did not further investigate the deeper cause for the reduced scaling performance of the ChainReader, we speculate that the primary problem is related to each MPI rank having to open all trajectory files in their ChainReader instance even though they will only read from a small subset.
 For $N_{\text{p}}$ ranks and $N_{\text{seg}}$ file segments, in total, $N_{p } N_{\text{seg}}$ file opening/closing operations have to be performed. 
 Each server that is part of a Lustre filesystem can only handle a limited number of I/O requests (read, write, stat, open, close, etc.) per second.
 An excessive number of such requests, from one or more users and one or more jobs, can lead to contention for storage resources. 
