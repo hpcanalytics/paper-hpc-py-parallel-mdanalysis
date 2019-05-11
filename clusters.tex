@@ -1,6 +1,8 @@
 \label{sec:clusters}
 
 In this section we compare the performance of the RMSD task on different HPC resources (Table \ref{tab:sys-config}) to examine the robustness of the methods we used for our performance study and to ensure that the results are general and independent from the specific HPC system.
+Scripts and instructions to set up the computational environments and reproduce our computational experiments are provided in a git repository as described in section \ref{sec:methods}.
+
 In \ref{sec:supplement}, we demonstrated that stragglers occur on \emph{PSC Bridges} (Figure \ref{fig:MPIwithIO-Bridges}) and \emph{LSU SuperMIC} (Figure \ref{fig:MPIwithIO-SuperMIC}) in a manner similar to the one observed on \emph{SDSC Comet} (section \ref{sec:RMSD}).
 We performed additional comparisons for several cases discussed previously, namely (1) splitting the trajectories with blocking collective communications in MPI, (2) splitting the trajectories with Global Arrays for communications, and (3) MPI-based parallel HDF5.
 
