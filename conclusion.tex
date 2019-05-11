@@ -7,33 +7,22 @@ Stragglers were primarily caused by either excessive MPI communication costs or 
 Stragglers were less prevalent for compute-bound workloads (i.e., $\RcompIO \gg 1$ and to a lesser degree $\overline{\tcomp}/\overline{\tcomm} \gg 1$), suggesting that file I/O was responsible for poor MPI communication.
 In particular, artifically removing all I/O substantially improved performance of the communication step and thus brought overall performance close to ideal.
 By performing benchmarks on three different XSEDE supercomputers we showed that our results were independent from the specifics of the hardware and local environment.
-Our results hint at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013, Kevin2018} and theoretical predictions \cite{Brown:2018ab}.
-In this model, I/O interferes much less often with communication for a sufficiently large per-frame compute workload than for an I/O bound task.
-This analysis also suggested ways to improve performance by improving I/O or improving communication.
+Our results hint at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013, Kevin2018} and theoretical predictions by \citet{Brown:2018ab}.
+One possible interpretation of our results is that for a sufficiently large per-frame compute workload, read I/O interferes much less with communication than for an I/O bound task, which almost continuously accesses the file system.
+This intepretation suggested ways to improve performance by improving read I/O or by improving communication.
 
-When we used the Global Arrays toolkit instead of the message-passing interface for communication, then the communication cost was significantly reduced and there were no delayed task due to communication.
+When we used the {\em Global Arrays\/} toolkit instead of MPI for communication, the communication cost was significantly reduced and there were no delayed task due to communication.
 Despite these improvements, overall strong scaling behavior remained less than ideal because the initial opening of the shared trajectory file became the scaling bottleneck, possibly due to the POSIX consistency requirements for file access.
-We were able to eliminate this I/O problem by subfiling (splitting the shared trajectory file) and achieved nearly ideal scaling up to 192 cores (8 nodes on \emph{SDSC Comet}, Table~\ref{tab:comp-IO-scaling}).
-Alternatively, we used MPI-based parallel I/O through HDF5 and MPI for communications with comparable performance up to 384 cores (16 nodes on \emph{SDSC Comet}, Table~\ref{tab:comp-IO-scaling}). 
-The latter approach appears to be a promising way forward as it directly builds on very widely used technology (HDF5 and MPI-IO) and echoes the experience of the wider HPC community that parallel file I/O is necessary for efficient data handling.
+We were able to eliminate this I/O problem by subfiling (splitting the shared trajectory file) and achieved nearly ideal scaling up to 192 cores (8 nodes on \emph{SDSC Comet}).
+
+Alternatively, we used MPI-based parallel I/O through HDF5 together with MPI for communications with comparable performance up to 384 cores (16 nodes on \emph{SDSC Comet}, Table~\ref{tab:comp-IO-scaling}) and speed-ups of two orders of magnitude compared to the serial execution.
+The latter approach appears to be a promising way forward as it directly builds on very widely used technology (MPI-IO and HDF5) and echoes the experience of the wider HPC community that parallel file I/O is necessary for efficient data handling.
 The biomolecular simulation community suffers from a large number of trajectory file formats with very few being based on HDF5, with the exception of the H5MD format \cite{Buyl:2014aa} and the MDTraj HDF5 format \cite{McGibbon:2015aa}.
 Our work suggests that HDF5-based formats should be seriously considered as the default for MD simulations if users want to make efficient use of their HPC systems for analysis. 
+Alternatively, enabling MPI-IO for trajectory readers might also provide a path forward to better read performance.
 
-
-% OB: add H5MD trajectory format to MDAnalysis
-%     https://github.com/MDAnalysis/mdanalysis/issues/762
-%     https://github.com/pdebuyl/pyh5md
-
-% With splitting the trajectories, effect of communication was still apparent on the performance which was because $\frac{\tcomp}{\tcomm} \ll 1$; however together with 
-% Global Arrays toolkit we could achieve near ideal scaling (Figure \ref{fig:MPIwithIO-split}).
-% \obnote{I actually do not understand why we need GA for splitting but not for parallel MPI.}
-% \mknote{I believe this is because in splitting we still have some sort of IO requests contention. The main reason might be because with parallel IO type of IO requests is totally different as opposed to what we have for normal IO.
-% ofcourse this is only a hypothesize and need to be validated. One other point is that in phdf5 both IO and communication are using MPI, but in splitting the trajectory IO and MPI communication are separate and they interfere with each other.}
-%
-% \obnote{That might be an explanation. I am leaving it out but we can put it in as a suggestion if needed although we don't really have evidence.}
-
-These strategies also provide guidelines for parallel analysis on data generated from MD simulations.
-We showed that it is feasible to run an I/O bound analysis task on HPC resources and achieve good scaling behavior up to 16 nodes with an almost 300-fold speed-up compared to serial execution.
+We summarized our findings in a number of guidelines for improving the scaling of parallel analysis MD trajectory data.
+We showed that it is feasible to run an I/O bound analysis task on HPC resources with a Lustre parallel filesystem and achieve good scaling behavior up to 384 CPU cores with an almost 300-fold speed-up compared to serial execution.
 Although we focused on the \package{MDAnalysis} library, similar strategies are likely to be more generally applicable and useful to the wider biomolecular simulation community.
 
 
