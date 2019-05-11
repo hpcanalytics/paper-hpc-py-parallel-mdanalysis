@@ -15,30 +15,32 @@ Evidently, if overall performance is dominated by a component such as compute th
 Communication is usually not problematic within one node because of the shared memory environment (for less than 24 processes (single compute node on \emph{SDSC Comet}) the scaling is good and $\Rcompcomm \gg 1$ for all RMSD loads) (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}).
 However, beyond a single compute node, scaling appears to get better as the $\Rcompcomm$ ratio increases and communication overhead becomes less dominant (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}, 24-72 cores represent multiple compute nodes on \emph{SDSC Comet}).
 
-\begin{figure}[ht!]
-\centering
-\begin{subfigure} {.33\textwidth}
-  \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf}
-  \caption{Speed-Up}
-  \label{fig:S1_tcomp_tcomm_effect}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Compute_to_comm_ratio_on_performance_v17.pdf}
-  \captionsetup{format=hang}
-\caption{Compute to communication ratio}
-\label{fig:tcomp_tcomm_ratio}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.33\textwidth}
-  \includegraphics[width=\linewidth]{figures/comm_comparison_different_RMSD_overload.pdf}
-  \caption{Communication time}
-  \label{fig:Comm_time_tcomp_tcomm_effect}
-\end{subfigure}
-\caption{(a) Change in compute to communication ratio with number of processes for different RMSD workload on SDSC Comet. 
-(b) Comparison of communication time for different RMSD workload on \emph{SDSC Comet}.
-Five repeats were performed to collect statistics and error bars show standard deviation with respect to mean.}
-\label{fig:tcom_tcomm_effect}
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure} {.33\textwidth}
+    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf}
+    \caption{Speed-Up $S(N)$}
+    \label{fig:S1_tcomp_tcomm_effect}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\linewidth]{figures/Compute_to_comm_ratio_on_performance_v17.pdf}
+    \captionsetup{format=hang}
+    \caption{Compute to communication ratio \Rcompcomm}
+    \label{fig:tcomp_tcomm_ratio}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.33\textwidth}
+    \includegraphics[width=\linewidth]{figures/comm_comparison_different_RMSD_overload.pdf}
+    \caption{Communication time \tcomm}
+    \label{fig:Comm_time_tcomp_tcomm_effect}
+  \end{subfigure}
+  \caption{Effect of the ratio of compute to communication time \Rcompcomm on scaling performance on \emph{SDSC Comet}.
+    (a) Scaling for different computational workloads.
+    (b) Change in \Rcompcomm with the number of processes $N$ for different workloads. 
+    (c) Comparison of communication time for different RMSD workloads.
+    Five repeats were performed to collect statistics and error bars show standard deviation with respect to mean.}
+  \label{fig:tcom_tcomm_effect}
 \end{figure}
 
 %%% Local Variables:

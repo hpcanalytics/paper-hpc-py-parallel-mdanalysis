@@ -11,7 +11,7 @@ In the current implementation of ChainReader, each process opens all the traject
 We wanted to test if the ChainReader would benefit from the gains measured for the subfiling approach.
 Specifically, we measured if the MPI-parallelized RMSD task (with $N_{\text{p}}$ ranks) would benefit if the trajectory was split into $N_{\text{seg}} = N_{\text{p}}$ trajectory segments, corresponding to an ideal scenario.
  
- \begin{figure}[ht!]
+ \begin{figure}[!htb]
 \centering
 \begin{subfigure}{.3\textwidth}
   \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting-chain-reader.pdf}

@@ -11,31 +11,31 @@ The results with MPI blocking collective communication (instead of Global Arrays
 Overal, the scaling of the RMSD task is better on \emph{LSU SuperMIC} than on \emph{SDSC Comet} and the performance gap increased with increasing core numbers.
 The results on \emph{LSU SuperMIC} confirmed the conclusion obtained on \emph{SDSC Comet} that at least in this case Global Arrays performed better than MPI blocking collective communication.
 
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_t-tot-clusters_Splitting.pdf}
-  \caption{Scaling total}
-  \label{fig:MPIscaling-clusters-splitting}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_speed-up-clusters_Splitting.pdf}
-  \caption{Speed-up}
-  \label{fig:MPIspeedup-clusters-splitting}
-\end{subfigure}
-\bigskip
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/Comparison_t-tot-clusters_Splitting.pdf}
+    \caption{Scaling total}
+    \label{fig:MPIscaling-clusters-splitting}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/Comparison_speed-up-clusters_Splitting.pdf}
+    \caption{Speed-up}
+    \label{fig:MPIspeedup-clusters-splitting}
+  \end{subfigure}
+  \bigskip
 
-\begin{subfigure} {.8\textwidth}
-  \includegraphics[width=\linewidth]{figures/Clusters_IO_compute_scaling_splitting.pdf}
-  \captionsetup{format=hang}
-  \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI when the trajectories are split using Global Arrays and without Global Arrays.}
-  \label{fig:compute-IO-scaling-clusters-splitting}
-\end{subfigure}
-%
-\caption{Comparison of the performance of the RMSD task with MPI ($\RcompIO \approx 0.3$) when the trajectories are split using Global Arrays and without Global Arrays (using MPI for communications) across different clusters (\emph{SDSC Comet}, \emph{LSU SuperMIC}). 
-In case of Global Arrays, all ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
-Five repeats were performed to collect statistics. The error bars show standard deviation with respect to mean.}
+  \begin{subfigure} {.8\textwidth}
+    \includegraphics[width=\linewidth]{figures/Clusters_IO_compute_scaling_splitting.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI when the trajectories are split using Global Arrays and without Global Arrays.}
+    \label{fig:compute-IO-scaling-clusters-splitting}
+  \end{subfigure}
+  \caption{Comparison of the performance of the RMSD task with MPI ($\RcompIO \approx 0.3$) when the trajectories are split using \emph{Global Arrays} and without \emph{Global Arrays} (using MPI for communications) across different clusters (\emph{SDSC Comet}, \emph{LSU SuperMIC}). 
+    In case of Global Arrays, all ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+    Five repeats were performed to collect statistics.
+    The error bars show standard deviation with respect to mean.}
 \label{fig:MPI-splitting-clusters}
 \end{figure} 
 
@@ -49,54 +49,52 @@ The main difference between the runs on \emph{PSC Bridges} and \emph{SDSC Comet}
 The I/O time distribution was fairly small and uniform across all ranks on \emph{SDSC Comet} and \emph{LSU SuperMIC} (Figures \ref{fig:hdf5-SuperMIC} and \ref{fig:MPIranks-hdf5}).
 However, on \emph{PSC Bridges} the I/O time was on average about two and a half times larger and the I/O time distribution was also more variable across different ranks (Figure \ref{fig:hdf5-bridge}).  
 
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_t-tot-clusters.pdf}
-  \caption{Scaling total}
-  \label{fig:MPIscaling-clusters}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_speed-up-clusters.pdf}
-  \caption{Speed-up}
-  \label{fig:MPIspeedup-clusters}
-\end{subfigure}
-\bigskip
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/Comparison_t-tot-clusters.pdf}
+    \caption{Scaling total}
+    \label{fig:MPIscaling-clusters}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/Comparison_speed-up-clusters.pdf}
+    \caption{Speed-up}
+    \label{fig:MPIspeedup-clusters}
+  \end{subfigure}
+  \bigskip
 
-\begin{subfigure} {.8\textwidth}
-  \includegraphics[width=\linewidth]{figures/Clusters_IO_compute_scaling.pdf}
-  \captionsetup{format=hang}
-  \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI-based parallel HDF5 (Independent I/O)}
-  \label{fig:compute-IO-scaling-clusters}
-\end{subfigure}
-%
-\caption{Comparison of the performance of the RMSD task with MPI ($\RcompIO \approx 0.3$)
-across different clusters (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}). Data are read from a shared HDF5 file format instead of XTC format (independent I/O)
-and results are communicated back to rank 0. $N_{\text{P}}/N_{\text{nodes}}$ means that number of processes used for the task is equal on all compute nodes.
-Five repeats were performed to 
-collect statistics. The error bars show standard deviation with respect to mean.}
+  \begin{subfigure} {.8\textwidth}
+    \includegraphics[width=\linewidth]{figures/Clusters_IO_compute_scaling.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling of the \tcomp and \tIO of the RMSD task with MPI-based parallel HDF5 (Independent I/O)}
+    \label{fig:compute-IO-scaling-clusters}
+  \end{subfigure}
+  \caption{Comparison of the performance of the RMSD task with MPI ($\RcompIO \approx 0.3$)  across different clusters (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}).
+    Data were read from a shared HDF5 file instead of an XTC file, using MPI independent I/O.
+    Results were communicated back to rank 0.
+    $N_{\text{P}}/N_{\text{nodes}}$ indicates that number of processes used for the task were equal on all compute nodes.
+    Five repeats were performed to collect statistics.
+    The error bars show standard deviation with respect to mean.}
 \label{fig:MPIwithIO-clusters}
 \end{figure} 
 
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.45\textwidth}
-  \includegraphics[width=\linewidth]{figures/Bridge-MPI-IO-BarPlot-rank-comparison_78_5.pdf}
-  \caption{Bridges}
-  \label{fig:hdf5-bridge}
-\end{subfigure}
-\bigskip
-\begin{subfigure} {.45\textwidth}
-  \includegraphics[width=\linewidth]{figures/SuperMIC-MPI-IO-BarPlot-rank-comparison_80_5.pdf}
-  \caption{\emph{LSU SuperMIC}}
-  \label{fig:hdf5-SuperMIC}
-\end{subfigure}
-%
-\caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 ($\RcompIO \approx 0.3$) on (a) \emph{PSC Bridges} and (b) \emph{LSU SuperMIC}.
-Five repeats were performed to collect statistics and these were typical data from one run of the 5 repeats. Compute \tcomp, I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
-  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition).}
-\label{fig:MPIwithIO-clusters-rank}
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{.45\textwidth}
+    \includegraphics[width=\linewidth]{figures/Bridge-MPI-IO-BarPlot-rank-comparison_78_5.pdf}
+    \caption{Bridges}
+    \label{fig:hdf5-bridge}
+  \end{subfigure}
+  \bigskip
+  \begin{subfigure} {.45\textwidth}
+    \includegraphics[width=\linewidth]{figures/SuperMIC-MPI-IO-BarPlot-rank-comparison_80_5.pdf}
+    \caption{\emph{LSU SuperMIC}}
+    \label{fig:hdf5-SuperMIC}
+  \end{subfigure}
+  \caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 ($\RcompIO \approx 0.3$) on (a) \emph{PSC Bridges} and (b) \emph{LSU SuperMIC}.
+    Five repeats were performed to collect statistics and these were typical data from one run of the 5 repeats. Compute \tcomp, I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.}
+  \label{fig:MPIwithIO-clusters-rank}
 \end{figure} 
 
 \subsection{Comparison of Compute and I/O Scaling Across Different Clusters}
@@ -143,9 +141,10 @@ Thus, the findings described in the previous sections are valid for a range of d
   \bottomrule
 \end{tabular}
 \end{adjustbox}
-\caption[Notation of our performance modeling]
-{Comparison of the compute and I/O scaling for different test cases and number of processes. Five repeats were performed to collect statistics. The mean value and the
-standard deviation with respect to mean are reported for each case.}
+\caption
+{Comparison of the compute and I/O scaling for different test cases and number of processes.
+  Five repeats were performed to collect statistics.
+  The mean value and the standard deviation with respect to mean are reported for each case.}
 \label{tab:comp-IO-scaling}
 \end{sidewaystable}
 

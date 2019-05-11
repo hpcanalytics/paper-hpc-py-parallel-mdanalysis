@@ -4,7 +4,6 @@ We had previously measured the performance of the MPI-parallelized RMSD analysis
 However, the ultimate cause for the stragglers could not be ascertained.
 We therefore performed more measurements with more detailed timing information (see section \ref{sec:methods}) on \emph{SDSC Comet} (described in this section) and two other supercomputers (summarized in section \ref{sec:clusters}) in order to better understand the origin of the stragglers. 
 
-
 \subsection{RMSD Benchmark}
 \label{sec:RMSD}
 
@@ -14,6 +13,47 @@ A more detailed analysis showed that the RMSD computation, and to a lesser degre
 But communication (red line in Figure~\ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure~\ref{fig:ScalingComputeIO}) started to dominate beyond 50 cores.
 Communication cost and initial time for opening the trajectory were distributed unevenly across MPI ranks, as shown in Figure~\ref{fig:MPIranks}. 
 The ranks that took much longer to complete than the typical execution time of the other ranks were the stragglers that hurt performance.
+
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/main-RMSD-t_total.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling total (five repeats)}
+    \label{fig:MPIscaling}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/main-RMSD-speed_up.pdf}
+    \captionsetup{format=hang}
+    \caption{Speed-up (five repeats)}
+    \label{fig:MPIspeedup}
+  \end{subfigure}
+  \bigskip
+
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling for different components (five repeats)}
+    \label{fig:ScalingComputeIO}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure} {.5\textwidth}
+    \includegraphics[width=\linewidth]{figures/main-RMSD-BarPlot-rank-comparison_72_5.pdf}
+    \captionsetup{format=hang}
+    \caption{Time comparison on different parts of the calculations per MPI rank (example)}
+    \label{fig:MPIranks}
+  \end{subfigure}
+  \caption{Performance of the RMSD task (I/O-bound with $\RcompIO \approx 0.3$) with MPI on \emph{SDSC Comet}.
+    Results were communicated back to rank 0.
+    Five independent repeats were performed to collect statistics.
+    (a-c) The error bars show standard deviation with respect to mean.
+    (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.
+    These are data from one run of the five repeats.
+    MPI ranks 0, 12--27 and 29--72 are stragglers.
+    Note: In serial, there is no communication and no data points are shown for $N=1$.}
+  \label{fig:MPIwithIO}
+\end{figure} 
 
 \subsubsection*{Identification of Scalability Bottlenecks}
 
@@ -26,44 +66,6 @@ The stragglers, however, appeared to be defined by occasionally much larger \emp
 Although the data in Figure~\ref{fig:MPIranks} represented one run and in other instances different number of ranks were stragglers, the overall hypothesis was confirmed by the averages over all ranks in five independent repeats (Figure~\ref{fig:ScalingComputeIO}).
 This initial analysis indicated that communication was a major issue that prevented good scaling beyond a single node but the problems related to file I/O also played an important role in limiting scaling performance.
 
-\begin{figure}
-\centering
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-RMSD-t_total.pdf}
-  \captionsetup{format=hang}
-  \caption{Scaling total (five repeats)}
-  \label{fig:MPIscaling}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-RMSD-speed_up.pdf}
-  \captionsetup{format=hang}
-  \caption{Speed-up (five repeats)}
-  \label{fig:MPIspeedup}
-\end{subfigure}
-\bigskip
-
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison.pdf}
-  \captionsetup{format=hang}
-\caption{Scaling for different components (five repeats)}
-\label{fig:ScalingComputeIO}
-\end{subfigure}
-\hfill
-\begin{subfigure} {.5\textwidth}
-  \includegraphics[width=\linewidth]{figures/main-RMSD-BarPlot-rank-comparison_72_5.pdf}
-  \captionsetup{format=hang}
-  \caption{Time comparison on different parts of the calculations per MPI rank (example)}
-  \label{fig:MPIranks}
-\end{subfigure}
-
-\caption{Performance of the RMSD task (I/O-bound with $\RcompIO \approx 0.3$) with MPI on \emph{SDSC Comet}.
-Results were communicated back to rank 0. Five independent repeats were performed to collect statistics. (a-c) The error bars show
-standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
-  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (see Table \ref{tab:notation} for the definition).
-These are data from one run of the five repeats. MPI ranks 0, 12--27 and 29--72 are stragglers. \textbf{Note:} In serial, there is no communication.}
-\label{fig:MPIwithIO}
-\end{figure} 
 
 \subsubsection*{Influence of Hardware}
 We ran the same benchmarks on multiple HPC systems that were equipped with a Lustre parallel file system [XSEDE's \emph{PSC Bridges} (Fig.~\ref{fig:MPIwithIO-Bridges}) and \emph{LSU SuperMIC} (Fig.~\ref{fig:MPIwithIO-SuperMIC})], and observed the occurrence of stragglers, in a manner very similar to the results described for \emph{SDSC Comet}.
@@ -88,7 +90,7 @@ For an $X$-fold increase in workload, we expected the workload for the computati
 Therefore, the ratio for any $X$ should be $\RcompIO(X) = \tcomp(X)/\tIO(X) = X \RcompIO(X=1)$, i.e.,  $\RcompIO$ should just linearly scale with the workload factor $X$.
 The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational workloads agreed with this theoretical analysis, as shown in Table \ref{tab:load-ratio}.
 
-\begin{table}
+\begin{table}[!htb]
 \centering
 \begin{tabular}{rrrrr}
   \toprule
@@ -109,61 +111,63 @@ The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational wor
 \label{tab:load-ratio}
 \end{table}
 
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure} {.3\textwidth}
+    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf}
+    \caption{Speed-Up}
+    \label{fig:S1_tcomp_tIO_effect}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pdf}
+    \caption{Speed-Up}
+    \label{fig:S2_tcomp_tIO_effect}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pdf}
+    \caption{Efficiency}
+    \label{fig:E_tcomp_tIO_effect}
+  \end{subfigure}
+  \caption{Effect of $\RcompIO$ ratio on performance of the RMSD task with MPI performed on \emph{SDSC Comet}. We tested performance for $\RcompIO$ ratios of 0.3, 11, 19, 27, which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively.
+    (a) Effect of $\RcompIO$ on the speed-up.
+    (b) Change in speed-up with respect to $\RcompIO$ for different processor counts.
+    (c) Change in the efficiency with respect to $\RcompIO$ for different processor counts.}
+  \label{fig:tcomp_tIO_effect}
+\end{figure}
+
 We performed the experiments with increased workload to measure the effect of the $\RcompIO$ ratio on performance (Figure~\ref{fig:tcomp_tIO_effect}).
 The strong scaling performance as measured by the speed-up $S(N)$ improved with increasing $\RcompIO$ ratio (Figure \ref{fig:S1_tcomp_tIO_effect}).
 The calculation consistently scaled well up to larger numbers of cores for higher $\RcompIO$ ratios, e.g., $N=56$ cores for $70\times$ RMSD task. 
 Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} show that speed-up and efficiency approach their ideal value for each processor count with increasing $\RcompIO$ ratio.
 Even for moderately compute-bound workloads, such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contributed to large variations in timing across different ranks and thus irregular scaling.
 
-\begin{figure}
-\centering
-\begin{subfigure} {.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf}
-  \caption{Speed-Up}
-  \label{fig:S1_tcomp_tIO_effect}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pdf}
-  \caption{Speed-Up}
-  \label{fig:S2_tcomp_tIO_effect}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pdf}
-  \caption{Efficiency}
-  \label{fig:E_tcomp_tIO_effect}
-\end{subfigure}
-%
-\caption{Effect of $\RcompIO$ ratio on performance of the RMSD task with MPI performed on \emph{SDSC Comet}. We tested performance for $\RcompIO$ ratios of 0.3, 11, 19, 27.
-which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively. (a) Effect of $\RcompIO$ on the Speed-Up
-(b) Change in the Speed-Up with respect to $\RcompIO$ for different processor counts (c) Change in the efficiency with respect to $\RcompIO$ for different processor counts}
-\label{fig:tcomp_tIO_effect}
-\end{figure}
 
 
 \subsubsection{I/O Leads to Stragglers}
 
- \begin{figure}
-\centering
-\begin{subfigure}{.35\textwidth}
-  \includegraphics[width=\linewidth]{figures/speed_up-effect-of-IO.pdf}
-  \caption{Speed up comparison}
-  \label{fig:MPIspeedup-no-IO}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.45\textwidth}
-  \includegraphics[width=\linewidth]{figures/BarPlot-rank-comparison-no-IO.pdf}
-  \captionsetup{format=hang}
-  \caption{Time comparison on different parts of the calculations per MPI rank when I/O is removed}
-  \label{fig:MPIranks-no-IO}
-\end{subfigure}
-
-\caption{Comparison on the performance of RMSD task with MPI with I/O and without I/O ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
-Five repeats were performed to collect statistics. (a) Speed-up. The error bars show standard deviation with respect to mean.
-(b) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
-  opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank (See Table \ref{tab:notation} for the definition).}
-\label{fig:MPIwithoutIO}
+ \begin{figure}[!htb]
+   \centering
+   \begin{subfigure}{.35\textwidth}
+     \includegraphics[width=\linewidth]{figures/speed_up-effect-of-IO.pdf}
+     \caption{Speed up comparison}
+     \label{fig:MPIspeedup-no-IO}
+   \end{subfigure}
+   \hfill
+   \begin{subfigure}{.45\textwidth}
+     \includegraphics[width=\linewidth]{figures/BarPlot-rank-comparison-no-IO.pdf}
+     \captionsetup{format=hang}
+     \caption{Time comparison on different parts of the calculations per MPI rank when I/O is removed}
+     \label{fig:MPIranks-no-IO}
+   \end{subfigure}
+   \caption{Comparison on the performance of RMSD task with MPI with I/O and without I/O ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
+     Five repeats were performed to collect statistics.
+     (a) Speed-up. The error bars show standard deviation with respect to mean.
+     (b) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
+     opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank.
+     (See Table \ref{tab:notation} for definitions.)}
+   \label{fig:MPIwithoutIO}
 \end{figure}
 
 In order to study an extreme case of a compute-bound task, we eliminated all I/O from the RMSD task by generating artificial trajectory data randomly in memory of the same size as would have been obtained from the trajectory; the time for the data generation was excluded and no file access was necessary. 
@@ -173,6 +177,49 @@ Although in practice I/O cannot be avoided, this experiment demonstrated that ac
 
 \subsection{Reducing Communication Cost: Application of Global Arrays}
 \label{Global-Array}
+
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-t_total.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling total}
+    \label{fig:MPIscaling-ga4py}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-speed_up.pdf}
+    \captionsetup{format=hang}
+    \caption{Speed-up}
+    \label{fig:MPIspeedup-ga4py}
+  \end{subfigure}
+  \bigskip
+
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-time_IO_comparison.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling for different components}
+    \label{fig:ScalingComputeIO-ga4py}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure} {.5\textwidth}
+    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf}
+    \captionsetup{format=hang}
+    \caption{Time comparison on different parts of the calculations per MPI rank}
+    \label{fig:MPIranks-ga4py}
+  \end{subfigure}
+  \caption{Performance of the RMSD task with MPI using Global Arrays ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
+    All ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+    Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
+    In (d), compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
+    opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank are shown; see Table \ref{tab:notation} for definitions. 
+    This is typical data from one run of the 5 repeats.
+    MPI ranks 20 and 56 are stragglers, i.e., their total time far exceeds the mean of the all ranks.
+    Note: In serial, there is no communication and not data points are shown for $N=1$.}
+\label{fig:MPIwithIO-ga4py}
+\end{figure}
+
+
 As seen in Figure~\ref{fig:MPIranks} for small $\RcompIO$, communication acted as a scalability bottleneck. 
 When the processes communicated result arrays back to the master process (rank 0), some processes took much longer as compared to others.
 We therefore investigated strategies to reduce communication cost. 
@@ -188,47 +235,6 @@ Figure~\ref{fig:MPIranks-ga4py} shows that stragglers were primarily due to the 
 In this case, these slow processes took about 50~s, which was slower than the mean execution time of all other ranks of 17~s. 
 Trajectory opening was already problematic in the initial test (Figure~\ref{fig:ScalingComputeIO}), which was still dominated by the communication cost. By substantially reducing communication cost, the simultaneous trajectory opening by multiple ranks emerged as the next dominant cause for stragglers.
 The improvement in performance can be attributed to the mitigation in the interference of MPI traffic with IO traffic as also studied in~\cite{Brown:2018ab}.
-
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/RMSD-ga4py-t_total.pdf}
-  \captionsetup{format=hang}
-  \caption{Scaling total}
-  \label{fig:MPIscaling-ga4py}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/RMSD-ga4py-speed_up.pdf}
-  \captionsetup{format=hang}
-  \caption{Speed-up}
-  \label{fig:MPIspeedup-ga4py}
-\end{subfigure}
-\bigskip
-
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/RMSD-ga4py-time_IO_comparison.pdf}
-  \captionsetup{format=hang}
-\caption{Scaling for different components}
-\label{fig:ScalingComputeIO-ga4py}
-\end{subfigure}
-\hfill
-\begin{subfigure} {.5\textwidth}
-  \includegraphics[width=\linewidth]{figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf}
-  \captionsetup{format=hang}
-  \caption{Time comparison on different parts of the calculations per MPI rank}
-  \label{fig:MPIranks-ga4py}
-\end{subfigure}
-
-\caption{Performance of the RMSD task with MPI using Global Arrays ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
-All ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
-Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
-(d) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
-  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition). 
-  This is typical data from one run of the 5 repeats. MPI ranks 20 and 56 are stragglers, i.e., 
-their total time far exceeds the mean of the all ranks. \textbf{Note:} In serial, there is no communication.}
-\label{fig:MPIwithIO-ga4py}
-\end{figure}
 
 Motivated by the results in this section, we investigated the influence of the ratio of compute to communication costs ($\overline{\tcomp}/\overline{\tcomm}$) on performance in \ref{sec:tcomm}.
 We found evidence to support the hypothesis that a larger ratio was beneficial, provided I/O costs could also be reduced, as discussed in the next section.
@@ -256,44 +262,52 @@ However, scaling is still far from ideal due to communication (using MPI).
 Although the delay due to communication was much smaller as compared to parallel RMSD with shared-file I/O (compare Figure~\ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure~\ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and resulted in longer job completion times (Figure~\ref{fig:MPIranks-split}). 
 These delayed tasks impacted performance so that speed-up remained far from ideal (Figure~\ref{fig:MPIspeedup-split}).
 
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.32\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
-  \captionsetup{format=hang}
-  \caption{Scaling for different components}
-  \label{fig:ScalingComputeIO-split}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting.pdf}
-  \caption{Scaling total}
-  \label{fig:MPIscaling-split}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting.pdf}
-  \captionsetup{format=hang}
-  \caption{Speed-up}
-  \label{fig:MPIspeedup-split}
-\end{subfigure}
-\bigskip
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{.32\textwidth}
+    \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling for different components}
+    \label{fig:ScalingComputeIO-split}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting.pdf}
+    \caption{Scaling total}
+    \label{fig:MPIscaling-split}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting.pdf}
+    \captionsetup{format=hang}
+    \caption{Speed-up}
+    \label{fig:MPIspeedup-split}
+  \end{subfigure}
+  \bigskip
 
-\begin{subfigure} {.45\textwidth}
-  \includegraphics[width=\linewidth]{figures/split-BarPlot-rank-comparison_192_5.pdf}
-  \captionsetup{format=hang}
-   \caption{Time comparison on different parts of the calculations per MPI rank without Global Arrays}
-  \label{fig:MPIranks-split}
+  \begin{subfigure} {.45\textwidth}
+    \includegraphics[width=\linewidth]{figures/split-BarPlot-rank-comparison_192_5.pdf}
+    \captionsetup{format=hang}
+    \caption{Time comparison on different parts of the calculations per MPI rank without Global Arrays}
+    \label{fig:MPIranks-split}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure} {.5\textwidth}
+    \includegraphics[width=\linewidth]{figures/split-ga-BarPlot-rank-comparison_192_5.pdf}
+    \captionsetup{format=hang}
+    \caption{Time comparison on different parts of the calculations per MPI rank using Global Arrays}
+    \label{fig:MPIranks-split-ga}
 \end{subfigure}
-\hfill
-\begin{subfigure} {.5\textwidth}
-  \includegraphics[width=\linewidth]{figures/split-ga-BarPlot-rank-comparison_192_5.pdf}
-  \captionsetup{format=hang}
-  \caption{Time comparison on different parts of the calculations per MPI rank using Global Arrays}
-  \label{fig:MPIranks-split-ga}
-\end{subfigure}
-
-\caption{Comparison on the performance of the RMSD task ($\RcompIO \approx 0.3$) on \emph{SDSC Comet} when the trajectories are split. For communicating the results, either Global Arrays (``ga'') or MPI (no Global Arrays, ``No-ga'') was used.  In the case of Global Arrays, all ranks updates the Global Arrays (\texttt{ga\_put()}) and rank 0 accessed the whole RMSD array through the global memory address (\texttt{ga\_get()}).  Five repeats were performed to collect statistics. (a) Compute and I/O scaling versus number of processes (b) Total time scaling versus number of processes (c) Speed-up (a-c) The error bars show standard deviation with respect to mean. (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (see Table \ref{tab:notation} for the definitions). When Global Arrays was not used, the performance was decreased due to the non-uniform communication time across different ranks. However, with Global Arrays communication time was significantly reduced and scaling was close to ideal. \textbf{Note:} In serial, there is no communication.}
+\caption{Comparison on the performance of the RMSD task ($\RcompIO \approx 0.3$) on \emph{SDSC Comet} when the trajectories are split.
+  For communicating the results, either Global Arrays (``ga'') or MPI (no Global Arrays, ``No-ga'') was used.
+  In the case of Global Arrays, all ranks updates the Global Arrays (\texttt{ga\_put()}) and rank 0 accessed the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+  Five repeats were performed to collect statistics.
+  (a) Compute and I/O scaling versus number of processes.
+  (b) Total time scaling versus number of processes.
+  (c) Speed-up.
+  (a-c) The error bars show standard deviation with respect to mean.
+  (d-e) Compute \tcomp, IO \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for the definitions.
+  Note: In serial, there is no communication and no data points are shown for $N=1$.}
 \label{fig:MPIwithIO-split}
 \end{figure}
 
@@ -310,27 +324,26 @@ fluctuate, as seen for the case on 6 nodes.
 These preprocessing times were not included in the estimates because we are focusing on better understanding the principle causes of stragglers and we wanted to make the results directly comparable to the results of the previous sections.
 Nevertheless, from an end user perspective, preprocessing of trajectories can be integrated in workflows (especially as the data in Table~\ref{tab:timing-splitting} indicate good scaling) and the preprocessing time can be quickly amortized if the trajectories are analyzed repeatedly.
 
-\begin{table}
-\centering
-\begin{tabular}{rrrrrr}
-  \toprule
-            \thead{$N_{\text{seg}}$} & \thead{$N_{\text{p}}$} & \thead{nodes}
-          & \thead{time (s)} & \thead{$S$} & \thead{$E$}\\
-  \midrule
-     24 &  24 & 1 & 89.9 & 1.0 & 1.0\\
-     48 &  48 & 2 & 46.8 & 1.9 & 0.96\\
-     72 &  72 & 3 & 33.7 & 2.7 & 0.89\\
-     96 &  96 & 4 & 25.1 & 3.6 & 0.89\\
+\begin{table}[!htb]
+  \centering
+  \begin{tabular}{rrrrrr}
+    \toprule
+    \thead{$N_{\text{seg}}$} & \thead{$N_{\text{p}}$} & \thead{nodes}
+    & \thead{time (s)} & \thead{$S$} & \thead{$E$}\\
+    \midrule
+    24 &  24 & 1 & 89.9 & 1.0 & 1.0\\
+    48 &  48 & 2 & 46.8 & 1.9 & 0.96\\
+    72 &  72 & 3 & 33.7 & 2.7 & 0.89\\
+    96 &  96 & 4 & 25.1 & 3.6 & 0.89\\
     144 & 144 & 6 & 43.7 & 2.1 & 0.34\\
     192 & 192 & 8 & 13.5 & 6.7 & 0.83\\  
-  \bottomrule
-\end{tabular}
-\caption[Time necessary for writing the trajectory segments]
-{The wall-clock time spent for writing $N_{\text{seg}}$ trajectory
-  segments using $N_{\text{p}}$ processes using MPI on \emph{SDSC
-    Comet}. One set of runs was performed for the timings. Scaling $S$
-   and efficiency $E$ are relative to the 1 node case (24 MPI processes).}
-\label{tab:timing-splitting}
+    \bottomrule
+  \end{tabular}
+  \caption[Time necessary for writing the trajectory segments]
+  {The wall-clock time spent for writing $N_{\text{seg}}$ trajectory segments using $N_{\text{p}}$ processes using MPI on \emph{SDSC Comet}.
+    One set of runs was performed for the timings.
+    Scaling $S$ and efficiency $E$ are relative to the 1 node case (24 MPI processes).}
+  \label{tab:timing-splitting}
 \end{table}
 
 
@@ -341,10 +354,52 @@ We found some improvements in performance but discovered limitations in the desi
  
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
+
 Another approach we examined to improve I/O scaling was MPI-based Parallel HDF5. 
 We converted our XTC trajectory file into a simple custom HDF5 format so that we could test the performance of parallel I/O with the HDF5 file format.
 The code for this file format conversion can be found in the GitHub repository.
 The time it took to convert our XTC file with $2,512,200$ frames into HDF5 format was about 5,400~s on a local workstation with network file system (NFS).
+
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/hdf5-t_total.pdf}
+    \caption{Scaling total}
+    \label{fig:MPIscaling-hdf5}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.4\textwidth}
+    \includegraphics[width=\linewidth]{figures/hdf5-speed_up.pdf}
+    \caption{Speed-up}
+    \label{fig:MPIspeedup-hdf5}
+  \end{subfigure}
+  \bigskip
+
+  \begin{subfigure}{.4\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/hdf5-time_comp_IO_comparison.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling for different components}
+    \label{fig:ScalingComputeIO-hdf5}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure} {.5\textwidth}
+    \includegraphics[width=\linewidth]{figures/hdf5-BarPlot-rank-comparison_192_4.pdf}
+    \captionsetup{format=hang}
+    \caption{Time comparison on different parts of the calculations per MPI rank}
+    \label{fig:MPIranks-hdf5}
+  \end{subfigure}
+  \caption{Performance of the RMSD task with MPI-based parallel HDF5 ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
+    Data are read from the file system from a shared HDF5 file format instead of XTC format (independent I/O) and results are communicated back to rank 0. 
+    Five repeats were performed to collect statistics.
+    (a-c) The error bars show standard deviation with respect to mean.
+    (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
+    opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.
+    These are typical data from one run of the five repeats.
+    Note: In serial, there is no communication and no data points are shown for $N=1$.}
+  \label{fig:MPIwithIO-hdf5}
+  %  I am reporting the slowest rank per timing, and that is averaged over all repeats.
+\end{figure}
 
 We ran our benchmark on up to 16 nodes (384 cores) and we observed near ideal scaling behavior with parallel efficiencies above 0.8 up to 8 nodes (Figure~\ref{fig:comparison_efficiency} and Figures~\ref{fig:MPIscaling-hdf5} and~\ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure~\ref{fig:MPIranks-hdf5}).
 The trajectory reading I/O (\tIO) was the dominant contribution, followed by compute (\tcomp), but because both contributions scaled well, overall scaling performance remained good, even for 384 cores.
@@ -352,46 +407,10 @@ We observed a low-performing outlier for 12 nodes (288 cores) with slower I/O th
 Importantly, the trajectory opening cost remained negligible (in the millisecond range) and the cost for MPI communication also remained small (below 0.1 s, even for 16 nodes).
 Overall, parallel MPI with HDF5 appears to be a robust approach to obtain good scaling, even for I/O-bound tasks.
 
-\begin{figure}[ht!]
-\centering
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/hdf5-t_total.pdf}
-  \caption{Scaling total}
-  \label{fig:MPIscaling-hdf5}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/hdf5-speed_up.pdf}
-  \caption{Speed-up}
-  \label{fig:MPIspeedup-hdf5}
-\end{subfigure}
-\bigskip
-
-\begin{subfigure}{.4\textwidth}
-\centering
-  \includegraphics[width=\linewidth]{figures/hdf5-time_comp_IO_comparison.pdf}
-  \captionsetup{format=hang}
-\caption{Scaling for different components}
-\label{fig:ScalingComputeIO-hdf5}
-\end{subfigure}
-\hfill
-\begin{subfigure} {.5\textwidth}
-  \includegraphics[width=\linewidth]{figures/hdf5-BarPlot-rank-comparison_192_4.pdf}
-  \captionsetup{format=hang}
-  \caption{Time comparison on different parts of the calculations per MPI rank}
-  \label{fig:MPIranks-hdf5}
-\end{subfigure}
-%
-\caption{Performance of the RMSD task with MPI-based parallel HDF5 ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
-Data are read from the file system from a shared HDF5 file format instead of XTC format (Independent I/O) and results are communicated back to rank 0 (communications included). 
-Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. (d) Compute \tcomp, IO \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
-  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank (See Table \ref{tab:notation} for the definition).
-  This is typical data from one run of the 5 repeats. No straggler is observed. \textbf{Note:} In serial, there is no communication. I am reporting the slowest rank per timing, and that is averaged over all repeats.}
-\label{fig:MPIwithIO-hdf5}
-\end{figure}
 
 \subsection{Likely Causes of Stragglers}
 \label{sec:likelycauses}
+
 The data indicated that increases in the duration of both MPI communication and trajectory file access lead to large variability in the run time of individual MPI processes and ultimately poor scaling performance beyond a single node.
 A discussion of likely causes for stragglers begins with the observation that opening and reading a single trajectory file from multiple MPI processes appeared to be at the center of the problem. 
 
