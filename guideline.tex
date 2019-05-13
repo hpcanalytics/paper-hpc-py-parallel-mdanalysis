@@ -3,7 +3,7 @@
 Although the performance measurements were performed with \package{MDAnalysis} and therefore capture some details of this  library such as the sepecific timings for file reading, we believe that the broad picture is fairly general and applies to any Python-based approach that uses MPI for parallelizing trajectory access with a split-apply-combine approach.
 Based on the lessons that we learned, we suggest the following guidelines to improve strong scaling performance:
 \begin{description}
-\item[\textbf{Heuristic 1}] Calculate compute to I/O ratio ($\RcompIO$, Eq.~\ref{eq:Compute-IO}) and compute to communication ratio ($\Rcompcomm$, Eq.~\ref{eq:Compute-com}).
+\item[\textbf{Heuristic 1}] Calculate compute to I/O ratio ($\RcompIO$, Eq.~\ref{eq:Compute-IO}) and compute to communication ratio ($\Rcompcomm$, Eq.~\ref{eq:Compute-comm}).
   $\RcompIO$ determines whether the task is compute bound ($\RcompIO \gg 1$) or IO bound ($\RcompIO \ll 1$).
   $\Rcompcomm$ determines whether the task is communication bound ($\frac{\overline{\tcomp}}{\overline{\tcomm}} \ll 1$) or compute bound ($\RcompIO \gg 1$).
 
