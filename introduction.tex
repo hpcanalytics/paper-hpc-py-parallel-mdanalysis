@@ -12,7 +12,7 @@ Previously, we had used a parallel split-apply-combine  approach to study the pe
 We had investigated two parallel implementations, one using \package{Dask}~\cite{Rocklin:2015aa} and one using the message passing interface (MPI) with \package{mpi4py}~\cite{Dalcin:2011aa, Dalcin:2005aa}. 
 For both \package{Dask} and MPI, we had previously only been able obtain good strong scaling performance within a single node.
 Beyond a single node performance had dropped due to \emph{straggler} tasks, a subset of processes that had been significantly slower than the typical execution time of all tasks; the total execution time had become dominated by stragglers and overall performance had decreased.
-Stragglers are known to significantly impede job completion time~\cite{Garraghan2016} and have a high impact on performance and energy consumption on big data systems~\cite{Tien-2017}.
+Stragglers are a well-known challenge to improving performance on HPC resources \cite{Garraghan2016} but there has been little discussion of their impact in the biomolecular simulation community.
 
 In the present study, we analyzed the MPI case in more detail to better understand the origin of stragglers with the goal to find  parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library.
 We especially wanted to make efficient use of the resources provided by current supercomputers such as multiple nodes with hundreds of CPU cores and a Lustre parallel filesystem.
@@ -29,7 +29,7 @@ We found that communication and reading I/O were the two main scalability bottle
 We were able to reduce communication cost noticeably by employing the \package{Global Arrays}~\cite{GA, GAiN} approach.
 The initial opening of the shared trajectory file emerged as the second leading cause for stragglers beyond a single node.
 We examined two different approaches to mitigate such I/O bottlenecks: subfiling (trajectory file splitting) with Global Arrays for communications and MPI parallel I/O (MPI-IO) reading with MPI for communications.
-Both approaches improved the performance and lead to near ideal scaling.
+Both approaches improved the performance and lead to near ideal scaling, $S(N) = N$, i.e., the speed-up $S$ scaled linearly with the number $N$ of CPU cores while exhibiting a slope of one.
 
 The paper is organized as follows:
 We first review stragglers and existing approaches to parallelizing MD trajectory analysis in section \ref{sec:background}.
