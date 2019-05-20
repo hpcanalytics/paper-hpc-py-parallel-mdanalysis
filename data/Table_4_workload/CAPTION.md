@@ -1,0 +1,1 @@
+Change in Rcomp/IO ratio with change in the RMSD workload X. The RMSD workload was artificially increased in order to examine the effect of compute to I/O ratio on the performance. The reported compute and I/O time were measured based on the serial version using one core. The theoretical Rcomp/IO (see text) is provided for comparison.
