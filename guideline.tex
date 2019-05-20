@@ -7,7 +7,7 @@ Based on the lessons that we learned, we suggest the following guidelines to imp
   $\RcompIO$ determines whether the task is compute bound ($\RcompIO \gg 1$) or IO bound ($\RcompIO \ll 1$).
   $\Rcompcomm$ determines whether the task is communication bound ($\frac{\overline{\tcomp}}{\overline{\tcomm}} \ll 1$) or compute bound ($\RcompIO \gg 1$).
 
-  As discussed in Section \ref{sec:bound}, for I/O bound problems the interference between MPI communication and I/O traffic can be problematic \cite{VMD2013, Kevin2018, Brown:2018ab} and the performance of the task will be affected by the straggler tasks which delay job completion time.
+  As discussed in Section \ref{sec:bound}, for I/O bound problems the interference between MPI communication and I/O traffic can be problematic \cite{VMD2013, Brown:2018ab} and the performance of the task will be affected by the straggler tasks which delay job completion time.
   
 \item[\textbf{Heuristic 2}] For $\RcompIO \geqslant 1$, single-shared-file I/O can be used safely and will not affect performance depending on how large is compute with respect to I/O. Therefore, one needs to consider the following cases: 
   \begin{description}
