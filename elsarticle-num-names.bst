@@ -1,7 +1,7 @@
 %%
-%% This is file `model1-num-names.bst'  (Version 2.0),
+%% This is file `elsarticle-num-names.bst'  (Version 2.1),
 %% 
-%% Copyright 2009-2012 Elsevier Ltd
+%% Copyright 2009-2019 Elsevier Ltd
 %% 
 %% This file is part of the 'Elsarticle Bundle'.
 %% ---------------------------------------------
@@ -13,9 +13,9 @@
 %% and version 1.2 or later is part of all distributions of LaTeX
 %% version 1999/12/01 or later.
 %%
-%% $Id: model1-num-names.bst 206 2012-10-22 07:28:26Z rishi $
+%% $Id: elsarticle-num-names.bst 163 2019-01-14 09:54:24Z rishi $
 %%
-%% $URL: http://lenova.river-valley.com/svn/elsbst/trunk/New-Model-1/model1-num-names.bst $
+%% $URL: http://lenova.river-valley.com/svn/elsarticle/trunk/elsarticle-num-names.bst $
 %%
 %%
 
@@ -862,7 +862,7 @@ FUNCTION {print.eprint}
  {eprint duplicate$ empty$
    { pop$ "" }
    { new.sentence
-     duplicate$ "\href{http://arxiv.org/abs/" swap$ * "}{\tt arXiv:" * swap$ * "}" *
+     duplicate$ "\href{http://arxiv.org/abs/" swap$ * "}{{\tt arXiv:" * swap$ * "}}" *
    }
    if$
  }
@@ -921,6 +921,10 @@ FUNCTION {article}
   if$
   format.journal.pages
   new.sentence
+  print.url output
+  print.doi output
+  print.eprint output
+  print.pubmed output
   format.note output
   fin.entry
 }
@@ -1514,7 +1518,7 @@ FUNCTION {end.bib}
 EXECUTE {end.bib}
 %% End of customized bst file
 %%
-%% End of file `model1-num-names.bst'.
+%% End of file `elsarticle-num-names.bst'.
 %%
 %%
 %% Change log:
@@ -1527,3 +1531,4 @@ EXECUTE {end.bib}
 %%
 %% 30.08.2012
 %%   a. collaboration added.
+
