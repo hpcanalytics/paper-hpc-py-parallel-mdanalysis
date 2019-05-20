@@ -1,0 +1,1 @@
+Table 5: The wall-clock time spent for writing Nseg trajectory segments using Np processes using MPI on SDSC Comet. One set of runs was performed for the timings. Scaling S and efficiency E are relative to the 1 node case (24 MPI processes).
