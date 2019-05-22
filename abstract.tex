@@ -6,7 +6,7 @@ Stragglers were less prevalent for compute-bound workloads, thus pointing to fil
 However, a more complicated picture emerged in which both the computation and the ingestion of data exhibited close to ideal strong scaling behavior whereas stragglers were primarily caused by either large MPI communication costs or long times to open the single shared trajectory file.
 We improved overall strong scaling performance by two different approaches to file access, namely subfiling (splitting the trajectory into as many trajectory segments as number of processes) and MPI-IO with Parallel HDF5 trajectory files.
 Applying these strategies, we obtained near ideal strong scaling on up to 384 cores (16 nodes).
-We summarize our lessons-learned in guidelines and strategies on how to take advantage of the available HPC resources to gain good performance and potentially reduce trajectory analysis times by two orders of magnitude compared to the prevalent serial approach.
+We summarize our lessons-learned in guidelines and strategies on how to take advantage of the available HPC resources to gain good scalability and potentially reduce trajectory analysis times by two orders of magnitude compared to the prevalent serial approach.
 \end{abstract}
 
 

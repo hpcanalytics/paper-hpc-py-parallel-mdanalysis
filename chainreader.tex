@@ -61,14 +61,14 @@ Five repeats were performed to collect statistics.
 In order to perform our experiments we had to work around an issue with the XTC format reader in \package{MDAnalysis} that was related to the XTC random-access functionality that the \texttt{MDAnalysis.coordinates.XTC.XTCReader} class provides.
 The Gromacs XTC format \citep{Lindahl01, Spangberg:2011zr} is a lossy-compression, XDR-based file format that was never designed for random access and the compressed format itself does not support fast random seeking
 The \texttt{XTCReader} stores persistent offsets for trajectory frames to disk \citep{Gowers:2016aa} in order to enable efficient access to random frames.
-These offsets will be generated automatically the first time a trajectory is opened and and the offsets are stored in hidden $\ast.xtc\_offsets.npz$ files. 
+These offsets will be generated automatically the first time a trajectory is opened and the offsets are stored in hidden $\ast.xtc\_offsets.npz$ files. 
 The advantage of these persistent offset files is that after opening the trajectory for the first time, opening the same file will be very fast, and random access is immediately available. 
 However, stored offsets can get out of sync with the trajectory they refer to. 
 To prevent the use of stale offset data, trajectory file data (number of atoms, size of the file and last modification time) are also stored for validation.
 If any of these parameters change the offsets are recalculated. 
 If the XTC changes but the offset file is not updated then the offset file can be detected as invalid.
 With ChainReader in parallel, each process opens all the trajectories because each process builds its own \texttt{MDAnalysis.Universe} data structure.
-If an invalid offset file is detected (perhaps because of wrong file modification timestamps across nodes), several processes might want to recalculate these parameters and rebuild the offset file, which can lead to race conditions.
+If an invalid offset file is detected (perhaps because of wrong file modification timestamps across nodes), several processes might want to recalculate these parameters and rebuild the offset file, which can lead to race condition.
 In order to avoid the race condition, we removed this check from MDAnalysis for the purpose of the measurements presented here, but this comes at the price of not checking the validity of the offset files at all; future versions of MDAnalysis will lift this limitation.  
 We obtained the results for the ChainReader with a modified version of \package{MDAnalysis} that eliminates the race condition by assuming that XTC index files are always valid.
 
