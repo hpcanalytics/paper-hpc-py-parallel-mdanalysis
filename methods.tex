@@ -14,7 +14,7 @@ We evaluated MPI performance of the parallel RMSD timeseries algorithm~\ref{alg:
            \bfseries\thead{Quantity} & \bfseries\thead{Definition}\\
   \midrule
     $N_{\text{b}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
-    $t_{\text{end\_loop}}$ & $t_{\text{L6}}+t_{\text{L7}}$\\
+    $t_{\text{end\_loop}}$ & $t_{\text{L6}} $\\
     $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ \\
     $\tcomp$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$\\
     $\tIO$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$\\
@@ -23,7 +23,7 @@ We evaluated MPI performance of the parallel RMSD timeseries algorithm~\ref{alg:
     $t_{\text{comm/MPI}}$ &  $t_{\text{L16}}$  \\
     $t_{\text{comm/GA}}$ &  $t_{\text{L5}}+t_{\text{L6}}+t_{\text{L7}}+t_{\text{L8}}$  \\
     $\tcomm$  & $t_{\text{comm/MPI}}$ (Alg.~\ref{alg:RMSD}) or $t_{\text{comm/GA}}$ (Alg.~\ref{alg:GA})\\
-    $t_{\text{Overhead1}}$ & $t_{\text{all\_frame}}-t_{\text{I/O\_final}}-t_{\text{comp\_final}}-t_{\text{end\_loop}}$  \\
+    $t_{\text{Overhead1}}$ & $t_{\text{all\_frame}}-t_{\text{I/O}}-t_{\text{comp}}-t_{\text{end\_loop}}$  \\
     $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
     $t_{N}$ & $t_{\text{RMSD}}+\tcomm$ \\
    \midrule  
@@ -36,8 +36,7 @@ We evaluated MPI performance of the parallel RMSD timeseries algorithm~\ref{alg:
 \caption[Summary of the notation of our performance modeling]
 {Summary of measured timing quantitities.
 Timings are collected for the specified line numbers in the code, labelled as $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in the corresponding algorithm. 
-$t_{\text{comm/MPI}}$ (in Algorithm~\protect\ref{alg:RMSD})and $t_{\text{comm/GA}}$ (in Algorithm~\protect\ref{alg:GA}) are both referred to as $\tcomm$ in the text.
-$t_{\text{I/O\_final}}$ and $t_{\text{comp\_final}}$ are the timings of the last frame in the block of frames that is processed by the MPI rank and are subtracted to avoid double counting.
+$t_{\text{comm/MPI}}$ (in Algorithm~\protect\ref{alg:RMSD}) and $t_{\text{comm/GA}}$ (in Algorithm~\protect\ref{alg:GA}) are both referred to as $\tcomm$ in the text.
 Variables in the top half of the table refer to measurements of an individual MPI rank.
 Variables in the bottom half are aggregates such as averages over all ranks or the total time to solution.}
 \label{tab:notation}
@@ -92,8 +91,8 @@ Additionally, we introduced two performance parameters that will be shown to be 
 We defined the ratio of compute time to read I/O time as
 \begin{equation}
   \RcompIO = \frac{\tcomp}{\tIO} = %
-  \frac{\tcomp/N_{\text{frames}}^{\text{total}}}{\tIO/N_{\text{frames}}^{\text{total}}}  = %
-  \frac{\overline{\tcomp^{\text{frame}}}}{\overline{\tIO^{\text{frame}}}}
+  \frac{\tcomp/N_{\text{frames}}^{\text{total}}}{\tIO/N_{\text{frames}}^{\text{total}}}  \approx %
+  \frac{\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}}{\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}} \approx \left (\frac{\tcomp^{\text{frame}}}{\tIO^{\text{frame}}}\right )_{Serial}
   \label{eq:Compute-IO}
 \end{equation}
 where the last equality shows that the ratio can also be computed from the average times per frames.
