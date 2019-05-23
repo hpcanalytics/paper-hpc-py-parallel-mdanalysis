@@ -21,7 +21,7 @@ The biomolecular simulation community suffers from a large number of trajectory 
 Our work suggests that HDF5-based formats should be seriously considered as the default for MD simulations if users want to make efficient use of their HPC systems for analysis. 
 Alternatively, enabling MPI-IO for trajectory readers might also provide a path forward to better read performance.
 
-We summarized our findings in a number of guidelines for improving the scaling of parallel analysis MD trajectory data.
+We summarized our findings in a number of guidelines for improving the scaling of parallel analysis of MD trajectory data.
 We showed that it is feasible to run an I/O bound analysis task on HPC resources with a Lustre parallel filesystem and achieve good scaling behavior up to 384 CPU cores with an almost 300-fold speed-up compared to serial execution.
 Although we focused on the \package{MDAnalysis} library, similar strategies are likely to be more generally applicable and useful to the wider biomolecular simulation community.
 
