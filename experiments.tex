@@ -75,7 +75,7 @@ Therefore, the phenomenon of stragglers in the RMSD case was reproducible on dif
 \subsection{Effect of Compute to I/O Ratio on Performance}
 \label{sec:bound}
 
-The results in section~\ref{sec:RMSD} indicated opening the trajectory, communication and I/O to be two important factors that appeared to correlate with stragglers. 
+The results in section~\ref{sec:RMSD} indicated opening the trajectory, communication and I/O to be three important factors that appeared to correlate with stragglers. 
 In order to better characterize the RMSD task, we computed the ratio between the time to complete the computation and the time spent on I/O per frame.
 The average values were $\overline{\tcomp^{\text{frame}}} = 0.09\ \text{ms}$, $\overline{t_{\text{IO}}^{\text{frame}}} = 0.3\ \text{ms}$, resulting in a compute-to-I/O ratio $\RcompIO \approx 0.3$ (Eq.~\ref{eq:Compute-IO}).
 Because $\RcompIO \ll 1$, the RMSD analysis task was characterized as I/O bound.
@@ -142,8 +142,6 @@ The strong scaling performance as measured by the speed-up $S(N)$ improved with 
 The calculation consistently scaled well up to larger numbers of cores for higher $\RcompIO$ ratios, e.g., $N=56$ cores for $70\times$ RMSD task. 
 Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect} show that speed-up and efficiency approach their ideal value for each processor count with increasing $\RcompIO$ ratio.
 Even for moderately compute-bound workloads, such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contributed to large variations in timing across different ranks and thus irregular scaling.
-
-
 
 \subsubsection{I/O Leads to Stragglers}
 

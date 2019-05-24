@@ -13,7 +13,8 @@ We evaluated MPI performance of the parallel RMSD timeseries algorithm~\ref{alg:
   \toprule
            \bfseries\thead{Quantity} & \bfseries\thead{Definition}\\
   \midrule
-    $N_{\text{b}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
+    $N_{\text{repeats}}$ & Number of repeats\\
+    $N_{\text{b}}$ & $N_{\text{frames}}^{\text{total}}/N$\\    
     $t_{\text{end\_loop}}$ & $t_{\text{L6}} $\\
     $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ \\
     $\tcomp$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$\\
@@ -27,9 +28,9 @@ We evaluated MPI performance of the parallel RMSD timeseries algorithm~\ref{alg:
     $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
     $t_{N}$ & $t_{\text{RMSD}}+\tcomm$ \\
    \midrule  
-    $\overline{\tcomp}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomp$ \\
-    $\overline{\tIO}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tIO$\\
-    $\overline{\tcomm}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomm$ \\
+    $\overline{\tcomp}$ & $\sum_{1}^{N_{\text{repeats}}}\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomp$ \\
+    $\overline{\tIO}$ & $\sum_{1}^{N_{\text{repeats}}}\frac{1}{N}\sum_{\text{rank}=1}^{N} \tIO$\\
+    $\overline{\tcomm}$ & $\sum_{1}^{N_{\text{repeats}}}\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomm$ \\
     $t_{\text{total}}$ & $\max t_{N}$ \\
   \bottomrule
 \end{tabular}
@@ -74,29 +75,33 @@ relative to performance on a single core, and the efficiency
 Averages over ranks were calculated as
 \begin{equation}
   \label{eq:avg-tcomp}
-  \overline{\tcomp} = \frac{1}{N}
-  \sum_{\text{rank}=1}^{N}\tcomp = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_\text{b}}\tcomp^{\text{frame}},
+  \overline{\tcomp} = \frac{1}{N_{\text{repeats}}}\sum_{1}^{N_{\text{repeats}}}\frac{1}{N}
+  \sum_{\text{rank}=1}^{N}\tcomp = \frac{1}{N_{\text{repeats}}}\sum_{1}^{N_{\text{repeats}}}\frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_\text{b}}\tcomp^{\text{frame}},
 \end{equation}
 \begin{equation}
   \label{eq:avg-tIO}
-  \overline{\tIO} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tIO = \frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}},
+  \overline{\tIO} = \frac{1}{N_{\text{repeats}}}\sum_{1}^{N_{\text{repeats}}}\frac{1}{N}\sum_{\text{rank}=1}^{N}\tIO = \frac{1}{N_{\text{repeats}}}\sum_{1}^{N_{\text{repeats}}}\frac{1}{N}\sum_{\text{rank}=1}^{N}\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}},
 \end{equation}
 and
 \begin{equation}
   \label{eq:avg-tcomm}
-  \overline{\tcomm} = \frac{1}{N}\sum_{\text{rank}=1}^{N}\tcomm.
+  \overline{\tcomm} = \frac{1}{N_{\text{repeats}}}\sum_{1}^{N_{\text{repeats}}}\frac{1}{N}\sum_{\text{rank}=1}^{N}\tcomm.
 \end{equation}
 
 Additionally, we introduced two performance parameters that will be shown to be indicative of the occurrence of stragglers.
 We defined the ratio of compute time to read I/O time as
-\begin{equation}
+\begin{multline}
+%\begin{equation}
   \RcompIO = \frac{\tcomp}{\tIO} = %
-  \frac{\tcomp/N_{\text{frames}}^{\text{total}}}{\tIO/N_{\text{frames}}^{\text{total}}}  \approx %
-  \frac{\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}}{\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}} \approx \left (\frac{\tcomp^{\text{frame}}}{\tIO^{\text{frame}}}\right )_{Serial}
+  \frac{\tcomp/N_{\text{frames}}^{\text{total}}}{\tIO/N_{\text{frames}}^{\text{total}}} \approx \left (\frac{\tcomp^{\text{frame}}}{\tIO^{\text{frame}}}\right )_{Serial} \approx   \\
+  \left (\frac{\frac{1}{N_{\text{repeats}}}\sum_{1}^{N_{\text{repeats}}}\tcomp^{\text{frame}}}{\frac{1}{N_{\text{repeats}}}\sum_{1}^{N_{\text{repeats}}}\tIO^{\text{frame}}}\right )_{Serial} \approx 
+  \frac{\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}}{\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}} 
   \label{eq:Compute-IO}
-\end{equation}
+%\end{equation}
+\end{multline}
 where the last equality shows that the ratio can also be computed from the average times per frames.
-\RcompIO was calculated with the serial version of our algorithms (on a single CPU core) in order to characterize the computational problem in the absence of parallelization.
+Ideally, all these equalities should be equal to each other. 
+\RcompIO was calculated with the serial version of our algorithms (on a single CPU core) using $\left (\frac{\frac{1}{N_{\text{repeats}}}\sum_{1}^{N_{\text{repeats}}}\tcomp^{\text{frame}}}{\frac{1}{N_{\text{repeats}}}\sum_{1}^{N_{\text{repeats}}}\tIO^{\text{frame}}}\right )_{Serial}$ in order to characterize the computational problem in the absence of parallelization.
 The ratio of compute to communication time was defined by the ratio of average total compute time per rank to the average total communication time per rank  
 \begin{equation}
   \label{eq:Compute-comm}
