@@ -5,21 +5,19 @@
 \subsection{Stragglers}
 \label{sec:stragglers}
 
-
-In our previous work, we found that straightforward implementation of simple parallelization with a split-apply-combine algorithm in Python failed to scale beyond a single compute node~\cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask~\citep{Rocklin:2015aa} processes) took much longer than the typical task and so limited the overall performance.
+In our previous work, we found that straightforward implementation of simple parallelization with a split-apply-combine algorithm \mknote{Why did we replace MapReduce with split-apply-combine?} in Python failed to scale beyond a single compute node~\cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask~\citep{Rocklin:2015aa} processes) took much longer than the typical task and so limited the overall performance.
 However, the cause for these \emph{straggler} tasks remained obscure.
 Here, we performed a detailed study of the straggler problem (also called a long tail phenomenon) and investigated solutions to overcome it.
 
 Long tail phenomena, whereby a small proportion of tasks significantly impede job completion time, are a challenge for improving performance on HPC resources \cite{Garraghan2016}.
-It is a known problem in other frameworks such as Google's MapReduce~\cite{Dean2004}, Spark~\cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop~\cite{Dean2004}, cloud data centers~\cite{Schmidt2016}, and have a high impact on performance and energy consumption of big data systems~\cite{Tien-2017}.
+It is a known problem in other frameworks such as Google's MapReduce~\cite{Dean2004}, Spark~\cite{Kyong2017,Ousterhout2017,Gittens2016,Yang2016}, Hadoop~\cite{Dean2004}, cloud data centers~\cite{Schmidt2016, Garraghan2016}, and have a high impact on performance and energy consumption of big data systems~\cite{Tien-2017}.
 Both internal and external factors are known to contribute to stragglers. 
 Internal factors include heterogeneous capacity of worker nodes and resource competition due to other tasks running on the same worker node.
 External factors include resource competition due to co-hosted applications, input data skew, remote input or output source being too slow,  faulty hardware~\cite{Chen2014,Dean2004}, and node mis-configuration~\cite{Dean2004}.
-Competition over scarce resources, in particular the network bandwidth, was found to lead to stragglers in writing on Lustre file systems \cite{Xie:2012aa}.
-Garbage collection~\cite{Kyong2017,Ousterhout2017}, Java virtual machine (JVM) positioning to cores~\cite{Kyong2017}, delays introduced while the tasks move from the scheduler to execution~\cite{Gittens2016}, disk I/O during shuffling, Java's just-in-time compilation~\cite{Ousterhout2017}, and output skew~\cite{Ousterhout2017} were also found to introduce stragglers.
-In addition to these reasons, stragglers on Spark were attributed to the overall performance of workers or competition between resources~\cite{Yang2016}.
-Garraghan et al.~\cite{Garraghan2016} reported high CPU utilization, disk utilization, unhandled I/O access requests, and network package loss as the most frequent reasons for stragglers on Virtualized Cloud Data-centers.
-A wide variety of approaches have been investigated for detecting and mitigating stragglers, including tuning resource allocation and parallelism such as breaking the workload into many small tasks that are dynamically scheduled at runtime~\cite{Rosen2012}, slow Node-Threshold~\cite{Dean2004}, speculative execution~\cite{Dean2004}, sampling or data distribution estimation techniques, SkewTune to avoid data imbalance~\cite{Kwon2012}, dynamic work rebalancing~\cite{Schmidt2016}, blocked time analysis~\cite{Ousterhout2015}, and intelligent scheduling~\cite{AWE-WQ2014}. 
+Additionally, competition over scarce resources, in particular the network bandwidth, was found to lead to stragglers in writing on Lustre file systems \cite{Xie:2012aa}.
+Garbage collection~\cite{Kyong2017,Ousterhout2017}, Java virtual machine (JVM) positioning to cores~\cite{Kyong2017}, delays introduced while the tasks move from the scheduler to execution~\cite{Gittens2016}, disk I/O during shuffling, Java's just-in-time compilation~\cite{Ousterhout2017}, output skew~\cite{Ousterhout2017}, high CPU utilization, disk utilization, unhandled I/O access requests, and network package loss~\cite{Garraghan2016} were also among other external factors that might introduce stragglers.
+
+A wide variety of approaches have been investigated for handling stragglers, including tuning resource allocation and parallelism such as breaking the workload into many small tasks that are dynamically scheduled at runtime~\cite{Rosen2012}, slow Node-Threshold~\cite{Dean2004}, speculative execution~\cite{Dean2004}, sampling or data distribution estimation techniques, SkewTune to avoid data imbalance~\cite{Kwon2012}, dynamic work rebalancing~\cite{Schmidt2016}, blocked time analysis~\cite{Ousterhout2015}, and intelligent scheduling~\cite{AWE-WQ2014}. 
 
 In the present study, we identified the cause of straggler tasks in the context of analyzing large MD trajectories and investigated solutions for improving performance.
 Even though these solutions were specifically applied in the context of the \package{MDAnalysis} package, all these principles and  techniques are potentially applicable to data analysis in other Python-based libraries.
