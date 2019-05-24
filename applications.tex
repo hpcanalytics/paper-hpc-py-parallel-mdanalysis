@@ -143,6 +143,6 @@ Implementation is straightforward as long as the user supplies a MPI communicato
 \package{HDF5} itself handles nearly all the details involved with coordinating file access when the shared file is opened through the \emph{mpio} driver.
 
 MPI has two flavors of operation: collective (all processes have to participate in the same order) and independent (processes can perform the operation in any order or not at all) \cite{pythonhdf5}.
-With \package{PHDF5}, modifications to file metadata must be performed collectively and although all processes perform the same task, they do not wait until the others catch up \cite{pythonhdf5}. 
+With \package{PHDF5}, modifications to file metadata must be performed collectively and although all processes perform the same task, they do not need to be synchronized \cite{pythonhdf5}. 
 Other tasks and any type of data operations can be performed independently by processes.
 In the present study, we use independent operations.

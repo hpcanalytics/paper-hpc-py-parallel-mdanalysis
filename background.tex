@@ -43,7 +43,7 @@ This work does not discuss analysis methods which cannot be implemented using Ma
 
 Zazen~\cite{Zazen} is a novel task-assignment protocol to overcome the I/O bottleneck for many I/O bound tasks. This protocol caches a copy of simulation output files on the local disks of the compute nodes of a cluster, and uses co-located data access with computation. 
 Zazen is implemented in a parallel disk cache system and avoids the overhead associated with querying metadata servers by reading data in parallel from local disks.
-The approach has been used to improve the performance of HiMach~\cite{himach-2008}.
+This approach has also been used to improve the performance of HiMach~\cite{himach-2008}.
 It, however, advocates a specific architecture where a parallel supercomputer, which runs the simulations, immediately pushes the trajectory data to a local analysis cluster where trajectory fragments are cached on node-local disks.
 In the absence of such a specific  workflow, one would need to stage the trajectory across nodes, and the time for data distribution is likely to reduce any gains from the parallel analysis.
 
