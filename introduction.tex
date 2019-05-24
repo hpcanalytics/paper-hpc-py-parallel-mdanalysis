@@ -14,7 +14,8 @@ For both \package{Dask} and MPI, we had previously only been able obtain good st
 Beyond a single node performance had dropped due to \emph{straggler} tasks, a subset of processes that had been significantly slower than the typical execution time of all tasks; the total execution time had become dominated by stragglers and overall performance had decreased.
 Stragglers are a well-known challenge to improving performance on HPC resources \cite{Garraghan2016} but there has been little discussion of their impact in the biomolecular simulation community.
 
-In the present study, we analyzed the MPI case in more detail to better understand the origin of stragglers with the goal to find  parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library.
+Scaling diagnosing for HPC applications can be extremely difficult due to their complicated behaviors and combination of various parameters that might simultaneously affect their performance.
+In the present study, we applied strong and weak scaling diagnostics to better understand the origin of stragglers with the goal to find  parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library.
 We especially wanted to make efficient use of the resources provided by current supercomputers such as multiple nodes with hundreds of CPU cores and a Lustre parallel filesystem.
 
 As in our previous study ~\cite{Khoshlessan:2017ab} we selected the commonly used RMSD algorithm implemented in \package{MDAnalysis} as a typical use case.
