@@ -409,7 +409,7 @@ Overall, parallel MPI with HDF5 appears to be a robust approach to obtain good s
 \subsection{Likely Causes of Stragglers}
 \label{sec:likelycauses}
 
-The data indicated that increases in the duration of both MPI communication and trajectory file access lead to large variability in the run time of individual MPI processes and ultimately poor scaling performance beyond a single node.
+The data indicated that increase in the duration of both MPI communication and trajectory file access lead to large variability in the run time of individual MPI processes and ultimately poor scaling performance beyond a single node.
 A discussion of likely causes for stragglers begins with the observation that opening and reading a single trajectory file from multiple MPI processes appeared to be at the center of the problem. 
 
 In MDAnalysis, individual trajectory frames are loaded into memory, which ensures that even systems with tens of millions of atoms can be efficiently analyzed on resources with moderate RAM sizes.
@@ -420,7 +420,7 @@ Although, such a value seemed to be well within the available bandwidth of 56 Gb
 Furthermore, in our study the default Lustre stripe size value was 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
 Each I/O request read a single Lustre stripe but because the I/O size (0.011~MB) was smaller than the stripe size, many of these I/O requests were likely just accessing the same stripe on the same OST but nevertheless had to acquire a new reading lock for each request.
 
-The reason for this behavior is related to ensuring POSIX consistency that relates to POSIX I/O API and POSIX I/O semantics, which can have adverse effects on scalability and performance.
+The reason for this behavior is related to POSIX consistency requirement that relates to POSIX I/O API and POSIX I/O semantics, which can have adverse effects on scalability and performance.
 Parallel file systems like Lustre implement sophisticated distributed locking mechanisms to ensure consistency.
 For example, locking mechanisms ensures that a node can not read from a file or part of a file while it might be being modified by another node. 
 In fact, when the application I/O is not designed in a way to avoid scenarios where multiple nodes are fighting over locks for overlapping extents, Lustre can suffer from scalability limitations~\cite{optimize_lustre}.
