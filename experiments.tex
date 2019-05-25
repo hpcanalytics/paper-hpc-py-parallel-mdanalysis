@@ -2,7 +2,7 @@
 
 We had previously measured the performance of the MPI-parallelized RMSD analysis task on two different HPC resources (\emph{SDSC Comet} and \emph{TACC Stampede}) and had found that it only scaled well up to a single node due to the presence of stragglers \cite{Khoshlessan:2017ab}.
 However, the ultimate cause for the stragglers could not be ascertained.
-We therefore performed more measurements with more detailed timing information (see section \ref{sec:methods}) on \emph{SDSC Comet} (described in this section) and two other supercomputers (summarized in section \ref{sec:clusters}) in order to better understand the origin of the stragglers. 
+We therefore performed more experiments with more detailed timing information (see section \ref{sec:methods}) on \emph{SDSC Comet} (described in this section) and two other supercomputers (summarized in section \ref{sec:clusters}) in order to better understand the origin of the stragglers. 
 
 \subsection{RMSD Benchmark}
 \label{sec:RMSD}
@@ -12,7 +12,7 @@ We observed poor strong scaling performance beyond a single node (24 cores), com
 A more detailed analysis showed that the RMSD computation, and to a lesser degree the read I/O, considered on their own, scaled well beyond 50 cores (yellow and blue lines in Figure~\ref{fig:ScalingComputeIO}). 
 But communication (red line in Figure~\ref{fig:ScalingComputeIO}) and the initial file opening (gray line in Figure~\ref{fig:ScalingComputeIO}) started to dominate beyond 50 cores.
 Communication cost and initial time for opening the trajectory were distributed unevenly across MPI ranks, as shown in Figure~\ref{fig:MPIranks}. 
-The ranks that took much longer to complete than the typical execution time of the other ranks were the stragglers that hurt performance.
+The ranks that took much longer to complete than the typical execution time of the other ranks were the stragglers that hurt performance and prolong job completion.
 
 \begin{figure}[!htb]
   \centering
@@ -63,7 +63,7 @@ The detailed breakdown of the time spent on each rank (Figure~\ref{fig:MPIranks}
 The time spent on reading data from the shared trajectory file on the Lustre filesystem into memory, \tIO, showed variability across different ranks. 
 The stragglers, however, appeared to be defined by occasionally much larger \emph{communication} times, \tcomm (line 16 in Algorithm~\ref{alg:RMSD}), which were on the order of 30~s, and by larger times to initially open the trajectory (line 2 in Algorithm~\ref{alg:RMSD}).
 \tcomm varied across different ranks and was barely measurable for a few of them.
-Although the data in Figure~\ref{fig:MPIranks} represented one run and in other instances different number of ranks were stragglers, the overall hypothesis was confirmed by the averages over all ranks in five independent repeats (Figure~\ref{fig:ScalingComputeIO}).
+Although the data in Figure~\ref{fig:MPIranks} represented one repeat and in other repeats different number of ranks were stragglers, the overall hypothesis was confirmed by the averages over all ranks in five independent repeats (Figure~\ref{fig:ScalingComputeIO}).
 This initial analysis indicated that communication was a major issue that prevented good scaling beyond a single node but the problems related to file I/O also played an important role in limiting scaling performance.
 
 
@@ -252,12 +252,12 @@ We discuss these two approaches and their performance improvements in detail in 
 Subfiling is a mechanism previously used for splitting a large multi-dimensional global array to a number of smaller subarrays in which each smaller array is saved in a separate file. Subfiling reduces the file system control overhead by decreasing the number of processes concurrently accessing a shared file~\cite{scalable-IO, scalable-IO1}.
 Because subfiling is known to improve programming flexibility and performance of parallel shared-file I/O, we investigated splitting our trajectory file into as many trajectory segments as the number of processes.
 The trajectory file was split into $N$ segments, one for each process, with each segment having $N_{b}$ frames. 
-This way, each process would access its own trajectory segment file without competing for file accesses. 
+This way, each process would access its own trajectory segment file without competing for file access. 
 
 \paragraph{Performance with MPI Communication}
 We ran a benchmark up to 8 nodes (192 cores) and observed rather better scaling behavior with efficiencies above 0.6 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) with the delay time for stragglers reduced from 65~s to about 10~s for 72 processes. 
 However, scaling is still far from ideal due to communication (using MPI). 
-Although the delay due to communication was much smaller as compared to parallel RMSD with shared-file I/O (compare Figure~\ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure~\ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and resulted in longer job completion times (Figure~\ref{fig:MPIranks-split}). 
+Although, the delay due to communication was much smaller as compared to parallel RMSD with shared-file I/O (compare Figure~\ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure~\ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and resulted in longer job completion times (Figure~\ref{fig:MPIranks-split}). 
 These delayed tasks impacted performance so that speed-up remained far from ideal (Figure~\ref{fig:MPIspeedup-split}).
 
 \begin{figure}[!htb]
@@ -313,7 +313,7 @@ These delayed tasks impacted performance so that speed-up remained far from idea
 In Section~\ref{Global-Array} we showed that Global Arrays substantially reduced the communication cost. 
 We wanted to quantify the performance when splitting the trajectory file while using Global Arrays.
 Under otherwise identical conditions as in the previous section we now observed near ideal scaling behavior with efficiencies above 0.9 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) without any straggler tasks (Figure~\ref{fig:MPIranks-split-ga}).
-Although the reason why in our case Global Arrays appeared to be more efficient than direct MPI-based communication remains unclear, these results showed that contention for file access clearly impacted performance. By removing the contention, near ideal scaling could be achieved.
+Although, the reason why in our case Global Arrays appeared to be more efficient than direct MPI-based communication remains unclear, these results showed that contention for file access clearly impacted performance. By removing the contention, near ideal scaling could be achieved.
 
 \paragraph{Further Considerations for Splitting Trajectories}
 The subfiling approach appears promising but it requires preprocessing of trajectory files and additional storage space for the segments.
@@ -347,8 +347,8 @@ Nevertheless, from an end user perspective, preprocessing of trajectories can be
 
 Often trajectories from MD simulations on HPC machines are produced and kept in small chunks that would need to be concatenated to form a trajectory but that might be useful for the subfiling approach.
 However, it might not be feasible to have exactly one trajectory segment per MPI rank.
-In~\ref{sec:chainreader} we investigated if existing functionality in MDAnalysis that can create virtual trajectories from trajectory segments could benefit from the subfiling approach.
-We found some improvements in performance but discovered limitations in the design that first have to be overcome before equivalent performance can be reached.
+In~\ref{sec:chainreader} we investigated if existing functionality in MDAnalysis that can create virtual trajectories from trajectory segments could benefit from the subfiling approach. \mknote{The problem with chainreader was that each process was accessing all other segments although it did not need to use them for any calculations. This does not mean that if we have many more small segments than the Number of processes we can not achieve ideal scaling. I do believe that we can achieve ideal scaling by having a balance load and avoiding chain-reader. I have done this on Mashteryoda and I got very good scaling.}
+We found some improvements in performance but discovered limitations in the design that first have to be overcome before equivalent performance can be reached. \mknote{I believe we should remove this sentence. It is not true.}
  
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
