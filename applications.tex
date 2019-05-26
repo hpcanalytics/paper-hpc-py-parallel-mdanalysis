@@ -95,6 +95,7 @@ Overheads in \package{mpi4py} are small compared to C code if efficient raw memo
 \label{sec:methods-ga}
 
 The \package{Global Arrays} (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}.
+\emph{Global Arrays} is implemented with Fortran-77 and C bindings and provides C++ and Python interfaces.
 It allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
 The underlying communication is determined by a runtime environment, which defaults to the \emph{Communication runtime for Extreme Scale} (ComEx) \cite{Daily:2014aa}.
 ComEx uses shared memory for intra-node communication and inter-node communication employs ComEx with MPI.
