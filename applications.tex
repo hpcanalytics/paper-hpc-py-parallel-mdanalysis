@@ -84,7 +84,11 @@ Using a pointer returned by \texttt{ga\_access()}, one can directly modify the d
 When a process tries to access a block of data the request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process (\textit{B. J. Palmer and J. Daily, personal communication}).
 The requesting process then makes individual requests to each of the remote processes. 
 
-We investigated if communication cost could be reduced by using \emph{Global Arrays}.
+The key benefit of GA is that it allows independent, asynchronous, and efficient access to logical blocks of physically distributed matrices, with no need for explicit cooperation by other processes \cite{GA-NUMA}. 
+Concept of GA is similar to the shared-memory programming model.However, GA is similar to message passing acknowledging slower remote data access than local, and it allows data locality to be explicitly specified and used \cite{GA-NUMA}. 
+Our SPMD programming model uses high performance parallel computers that have physically distributed memories with Non-Uniform Memory Access (NUMA).
+Communication cost beyond a single compute node hinders achieving ideal scaling performance.
+We investigated if communication cost could be reduced by using concept of \emph{Global Arrays}.
 Algorithm \ref{alg:GA} describes the RMSD algorithm with \emph{Global Arrays} instead of MPI.
 
 \begin{algorithm}[ht!]
