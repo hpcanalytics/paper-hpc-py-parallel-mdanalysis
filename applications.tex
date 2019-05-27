@@ -86,9 +86,11 @@ The requesting process then makes individual requests to each of the remote proc
 
 The key benefit of GA is that it allows independent, asynchronous, and efficient access to logical blocks of physically distributed matrices, with no need for explicit cooperation by other processes \cite{GA-NUMA}. 
 Concept of GA is similar to the shared-memory programming model.However, GA is similar to message passing in the sense that it acknowledges slower remote data access than local, and allows data locality to be explicitly specified and used \cite{GA-NUMA}. 
+GA operation's are truly one-sided and will complete regardless of actions taken by the remote process that owns the referenced data \cite{GA-PNNL}. 
+MPI provides one-sided communication functionality and is available on virtually every parallel computing system.However, MPI's one-sided model is not rich enough to support higher-level global address space parallel programming models \cite{GA-PGAS}.
 Our SPMD programming model uses high performance parallel computers that have physically distributed memories with Non-Uniform Memory Access (NUMA).
 Communication cost beyond a single compute node hinders achieving ideal scaling performance.
-We investigated if communication cost could be reduced by using concept of \emph{Global Arrays}.
+Therefore, we investigated if communication cost could be reduced by using concept of \emph{Global Arrays}.
 Algorithm \ref{alg:GA} describes the RMSD algorithm with \emph{Global Arrays} instead of MPI.
 
 \begin{algorithm}[ht!]
