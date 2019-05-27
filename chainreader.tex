@@ -82,7 +82,7 @@ These results differ from the subfiling results (section \ref{splitting-traj}) w
 Although we did not further investigate the deeper cause for the reduced scaling performance of the ChainReader, we speculate that the primary problem is related to each MPI rank having to open all trajectory files in their ChainReader instance even though they will only read from a small subset.
 For $N_{\text{p}}$ ranks and $N_{\text{seg}}$ file segments, in total, $N_{p } N_{\text{seg}}$ file opening/closing operations have to be performed. 
 Each server that is part of a Lustre filesystem can only handle a limited number of I/O requests (read, write, stat, open, close, etc.) per second.
-An excessive number of such requests, from one or more users and one or more jobs, can lead to contention for storage resources. 
+A large number of such requests, from one or more users and one or more jobs, can lead to contention for storage resources. 
 For $N_{\text{p}} = N_{\text{seg}} = 100$, the Lustre file system has to perform 10,000 of these operations almost simultaneously, which might degrade performance. 
 
 
