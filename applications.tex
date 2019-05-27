@@ -107,8 +107,10 @@ Using a pointer returned by \texttt{ga\_access()}, one can directly modify the d
 When a process tries to access a block of data the request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process (\textit{B. J. Palmer and J. Daily, personal communication}).
 The requesting process then makes individual requests to each of the remote processes. 
 
+GA allows independent, asynchronous, and efficient access to logical blocks of physically distributed arrays, with no need for explicit cooperation by other processes; in particular, it allows data locality to be explicitly specified and used \cite{GA-NUMA}.
 We investigated if communication cost could be reduced by using \package{Global Arrays}.
 Algorithm \ref{alg:GA} describes the RMSD algorithm with \package{Global Arrays} instead of MPI.
+
 
 \begin{algorithm}[ht!]
 	\scriptsize
