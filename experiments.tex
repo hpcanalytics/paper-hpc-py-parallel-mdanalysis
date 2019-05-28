@@ -313,7 +313,8 @@ These delayed tasks impacted performance so that speed-up remained far from idea
 In Section~\ref{Global-Array} we showed that Global Arrays substantially reduced the communication cost. 
 We wanted to quantify the performance when splitting the trajectory file while using Global Arrays.
 Under otherwise identical conditions as in the previous section we now observed near ideal scaling behavior with efficiencies above 0.9 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) without any straggler tasks (Figure~\ref{fig:MPIranks-split-ga}).
-Although, the reason why in our case Global Arrays appeared to be more efficient than direct MPI-based communication remains unclear, these results showed that contention for file access clearly impacted performance. By removing the contention, near ideal scaling could be achieved.
+These results showed that contention for file access clearly impacted performance. 
+By removing the contention, near ideal scaling could be achieved.
 
 \paragraph{Further Considerations for Splitting Trajectories}
 The subfiling approach appears promising but it requires preprocessing of trajectory files and additional storage space for the segments.
