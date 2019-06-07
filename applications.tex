@@ -15,7 +15,19 @@ Trajectories come in a plethora of different and idiosyncratic file formats.
 The library is written in Python, with time critical code in C/C++/Cython. 
 \package{MDAnalysis} supports most file formats of simulation packages including CHARMM \cite{Brooks:2009pt}, Gromacs \cite{Abraham:2015aa}, Amber \cite{Case:2005uq}, and NAMD \cite{Phillips:2005ek} and the Protein Data Bank \cite{Burley:2018aa} format.
 At its core, it reads trajectory data in different formats and makes them available through a uniform API; specifically, coordinates are represented as standard NumPy arrays \cite{Van-Der-Walt:2011aa}.
- 
+
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=5cm]{figures/flowchart.pdf}
+  \caption{Flow chart of the MPI-parallelized RMSD algorithm, Algorithm~\ref{alg:RMSD}.
+    Each MPI process performs the same steps but reads trajectory frames from different blocks of the trajectory.
+    The color scheme and labels in italics correspond to the colors and labels for measured timing quantitities in the following graphs (e.g., Figs.~\protect\ref{fig:ScalingComputeIO} and \protect\ref{fig:MPIranks}).
+    The names of the corresponding timing quantitities from Table \protect\ref{tab:notation} are listed next to each step.
+  }
+  \label{fig:flowchart}
+\end{figure}
+
 As a test case that is representative of a common task in the analysis of biomolecular simulation trajectories we calculated the timeseries of the minimal structural root mean square distance  (\textbf{RMSD}) after rigid body superposition \cite{Lea96, Mura:2014kx}.
 The RMSD is used to show the rigidity of protein domains and more generally characterizes structural changes.
 It is calculated as a function of time $t$ as
@@ -26,7 +38,13 @@ It is calculated as a function of time $t$ as
       (\mathsf{R}\cdot\mathbf{x}_{i}(t) + \mathbf{t}) - \mathbf{x}_{i}^{\text{ref}} \right]^{2}}
 \end{equation}
 where $\mathbf{x}_{i}(t)$ is the position of atom $i$ at time $t$, $\mathbf{x}_{i}^{\text{ref}}$ is its position in a reference structure and the distance between these two is minimized by finding the optimum $3\times3$ rotation matrix $\mathsf{R}$ and translation vector $\mathbf{t}$. 
-The optimum rigid body superposition was calculated with the QCPROT algorithm~\cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython and available through the \texttt{MDAnalysis.analysis.rms} module \cite{Gowers:2016aa}), as outlined in Algorithm~\ref{alg:RMSD}. 
+The optimum rigid body superposition was calculated with the QCPROT algorithm~\cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython and available through the \texttt{MDAnalysis.analysis.rms} module \cite{Gowers:2016aa}).
+
+The RMSD trajectory analysis was parallelized as outlined in the flow chart in Figure~\ref{fig:flowchart}, with further details available in Algorithm~\ref{alg:RMSD}.
+Each MPI process loads the core MDAnalysis structure (called the \texttt{Universe}), which includes loading a shared ``topology'' file with the simulation system information and opening the shared trajectory file.
+Each process operates on a different block of frames and iterates through them by reading the coordinates of a single frame into memory and performing the RMSD computation with them.
+Once all frames in the block are processed, the trajectory file is closed and results are communicated to MPI rank 0 using \texttt{MPI\_Gather()}.
+
 The RMSD was determined for a subset of protein atoms, the $N=214$  C$_{\alpha}$ atoms of our test system (see section \ref{sec:data} for details).
 The time complexity for the RMSD Algorithm~\ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$~\cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles included in the RMSD calculation.
 
