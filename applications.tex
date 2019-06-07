@@ -19,11 +19,13 @@ At its core, it reads trajectory data in different formats and makes them availa
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=5cm]{figures/flowchart.pdf}
+  \includegraphics[width=7cm]{figures/flowchart.pdf}
   \caption{Flow chart of the MPI-parallelized RMSD algorithm, Algorithm~\ref{alg:RMSD}.
-    Each MPI process performs the same steps but reads trajectory frames from different blocks of the trajectory.
+    \textbf{(a)} Each MPI process performs the same steps but reads trajectory frames from different blocks of the trajectory.
     The color scheme and labels in italics correspond to the colors and labels for measured timing quantitities in the following graphs (e.g., Figs.~\protect\ref{fig:ScalingComputeIO} and \protect\ref{fig:MPIranks}).
     The names of the corresponding timing quantitities from Table \protect\ref{tab:notation} are listed next to each step.
+    \textbf{(b)} Steps that access the shared Lustre file system with read I/O are included in the black bars; steps that communicate via the shared InfiniBand network are included in the gray bars.
+    The Lustre file system is accessed through the network and hence all I/O steps also use the network.
   }
   \label{fig:flowchart}
 \end{figure}
