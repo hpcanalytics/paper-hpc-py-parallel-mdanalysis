@@ -59,8 +59,8 @@ Five repeats were performed to collect statistics.
 \end{figure}
 
 In order to perform our experiments we had to work around an issue with the XTC format reader in \package{MDAnalysis} that was related to the XTC random-access functionality that the \texttt{MDAnalysis.coordinates.XTC.XTCReader} class provides.
-The Gromacs XTC format \citep{Lindahl01, Spangberg:2011zr} is a lossy-compression, XDR-based file format that was never designed for random access and the compressed format itself does not support fast random seeking
-The \texttt{XTCReader} stores persistent offsets for trajectory frames to disk \citep{Gowers:2016aa} in order to enable efficient access to random frames.
+The Gromacs XTC format \cite{Lindahl01, Spangberg:2011zr} is a lossy-compression, XDR-based file format that was never designed for random access and the compressed format itself does not support fast random seeking
+The \texttt{XTCReader} stores persistent offsets for trajectory frames to disk \cite{Gowers:2016aa} in order to enable efficient access to random frames.
 These offsets will be generated automatically the first time a trajectory is opened and the offsets are stored in hidden $\ast.xtc\_offsets.npz$ files. 
 The advantage of these persistent offset files is that after opening the trajectory for the first time, opening the same file will be very fast, and random access is immediately available. 
 However, stored offsets can get out of sync with the trajectory they refer to. 

@@ -81,6 +81,6 @@ The test trajectory was created by concatenating 600 copies of a MD trajectory w
 The trajectory had a file size of about 30 GB and contained 2,512,200 frames (corresponding to 602.4~$\mu\text{s}$ simulated time).
 The file size was relatively small because water molecules that were also part of the original MD simulations were stripped to reduce the original file size by a factor of about 10; such preprocessing is a common approach if one is only interested in the protein behavior.
 Thus, the trajectory represents a small to medium system size in the number of atoms and coordinates that have to be loaded into memory for each time frame.
-The XTC format is a format with lossy compression \citep{Lindahl01, Spangberg:2011zr}, which also contributed to the compact file size.
-XTC trades lower I/O demands for higher CPU demands during decompression and therefore performed well in our previous study~\citep{Khoshlessan:2017ab}.
-Although 2,512,200 frames represents a long simulation for current standards, such trajectories will become increasingly common due to the use of special hardware~\citep{Shaw:2009ly, Shaw:2014aa} and GPU-acceleration~\citep{Salomon-Ferrer:2013cr, Glaser:2015ys, Abraham:2015aa}.
+The XTC format is a format with lossy compression \cite{Lindahl01, Spangberg:2011zr}, which also contributed to the compact file size.
+XTC trades lower I/O demands for higher CPU demands during decompression and therefore performed well in our previous study~\cite{Khoshlessan:2017ab}.
+Although 2,512,200 frames represents a long simulation for current standards, such trajectories will become increasingly common due to the use of special hardware~\cite{Shaw:2009ly, Shaw:2014aa} and GPU-acceleration~\cite{Salomon-Ferrer:2013cr, Glaser:2015ys, Abraham:2015aa}.

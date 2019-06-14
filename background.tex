@@ -1,6 +1,6 @@
 \label{sec:background}
 
-In our previous work we found that straightforward implementation of simple parallelization with a split-apply-combine algorithm in Python failed to scale beyond a single compute node~\cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask~\citep{Rocklin:2015aa} processes) took much longer than the typical task and so limited the overall performance.
+In our previous work we found that straightforward implementation of simple parallelization with a split-apply-combine algorithm in Python failed to scale beyond a single compute node~\cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask~\cite{Rocklin:2015aa} processes) took much longer than the typical task and so limited the overall performance.
 However, the cause for these \emph{straggler} tasks remained obscure.
 Here, we studied the straggler problem in the context of an MPI-parallelized trajectory analysis algorithm in Python and investigated solutions to overcome it.
 We briefly review stragglers in section~\ref{sec:stragglers} and summarize existing approaches to parallel trajectory analysis in section~\ref{sec:otherparallel}.
@@ -9,7 +9,7 @@ We briefly review stragglers in section~\ref{sec:stragglers} and summarize exist
 \label{sec:stragglers}
 
 
-\emph{Stragglers} or \emph{outliers} were traditionally considered in the context of MapReduce jobs that consist of multiple tasks that all have to finish for the job to succeed: A straggler was a task that took an ``unusually long time time to complete'' \cite{Dean2004} and therefore substantially impeded job completion.
+\emph{Stragglers} or \emph{outliers} were traditionally considered in the context of MapReduce jobs that consist of multiple tasks that all have to finish for the job to succeed: A straggler was a task that took an ``unusually long time to complete'' \cite{Dean2004} and therefore substantially impeded job completion.
 In general, any component of a parallel workflow whose runtime exceeds a typical run time (for example, 1.5 times the median runtime) can be considered a straggler \cite{Ananthanarayanan:2010aa}.
 Stragglers are a challenge for improving performance on HPC resources \cite{Garraghan2016}; they are a known problem in frameworks such as MapReduce~\cite{Dean2004, Ananthanarayanan:2010aa}, Spark~\cite{Kyong2017,Ousterhout2017,Gittens2016}, Hadoop~\cite{Dean2004}, cloud data centers~\cite{Schmidt2016}, and have a high impact on performance and energy consumption of big data systems~\cite{Tien-2017}.
 Both internal and external factors are known to contribute to stragglers. 
