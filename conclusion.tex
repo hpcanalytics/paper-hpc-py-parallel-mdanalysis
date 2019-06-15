@@ -2,16 +2,16 @@
 
 We analyzed the strong scaling performance of a typical task when analysing MD trajectories, the calculation of the time series of the RMSD of a protein, with the widely used Python-based \package{MDAnalysis} library.
 The task was parallelized with MPI by having each MPI process analyze a contiguous segment of the trajectory.
-This approach did not scale beyond a single node because straggler processes exhibited large upward variations in runtime.
+This approach did not scale beyond a single node because straggler MPI processes exhibited large upward variations in runtime.
 Stragglers were primarily caused by either increased MPI communication costs or increased time to open the single shared trajectory file whereas both the computation and the ingestion of data exhibited close to ideal strong scaling behavior.
-Stragglers were less prevalent for compute-bound workloads (i.e., $\RcompIO \gg 1$ and to a lesser degree $\overline{\tcomp}/\overline{\tcomm} \gg 1$), suggesting that file I/O was responsible for poor MPI communication.
-In particular, artifically removing all I/O substantially improved performance of the communication step and thus brought overall performance close to ideal.
+Stragglers were less prevalent for compute-bound workloads (i.e., $\RcompIO \gg 1$), suggesting that file I/O was responsible for poor MPI communication.
+In particular, artifically removing all I/O substantially improved performance of the communication step and thus brought overall performance close to ideal (i.e., linear increase in speed-up with processor count with slope one).
 By performing benchmarks on three different XSEDE supercomputers we showed that our results were independent from the specifics of the hardware and local environment.
 Our results hint at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013} and theoretical predictions by \citet{Brown:2018ab}.
 One possible interpretation of our results is that for a sufficiently large per-frame compute workload, read I/O interferes much less with communication than for an I/O bound task, which almost continuously accesses the file system.
 This intepretation suggested ways to improve performance by improving read I/O or by improving communication.
 
-When we used the {\em Global Arrays\/} toolkit instead of MPI for communication, the communication cost was significantly reduced and there were no delayed task due to communication.
+When we used the \emph{Global Arrays} toolkit instead of MPI (\texttt{MPI\_Gather()})for communication, somewhat surprisingly, the communication cost was reduced and there were no delayed task due to communication.
 Despite these improvements, overall strong scaling behavior remained less than ideal because the initial opening of the shared trajectory file became the scaling bottleneck, possibly due to the POSIX consistency requirements for file access.
 We were able to eliminate this I/O problem by subfiling (splitting the shared trajectory file) and achieved nearly ideal scaling up to 192 cores (8 nodes on \emph{SDSC Comet}).
 
