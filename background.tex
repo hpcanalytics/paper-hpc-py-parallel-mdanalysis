@@ -21,8 +21,10 @@ In addition to these reasons, stragglers on Spark were attributed to the overall
 Garraghan et al.~\cite{Garraghan2016} reported high CPU utilization, disk utilization, unhandled I/O access requests, and network package loss as the most frequent reasons for stragglers on Virtualized Cloud Data-centers.
 A wide variety of approaches have been investigated for detecting and mitigating stragglers, including tuning resource allocation and parallelism such as breaking the workload into many small tasks that are dynamically scheduled at runtime~\cite{Rosen2012}, slow Node-Threshold~\cite{Dean2004}, speculative execution~\cite{Dean2004} and cause/resource-aware task management \cite{Ananthanarayanan:2010aa}, sampling or data distribution estimation techniques, SkewTune to avoid data imbalance~\cite{Kwon2012}, dynamic work rebalancing~\cite{Schmidt2016}, blocked time analysis~\cite{Ousterhout2015}, and intelligent scheduling~\cite{AWE-WQ2014}. 
 
-In the present study, we identified the cause of straggler tasks in the context of analyzing large MD trajectories and investigated solutions for improving performance.
-Even though these solutions were specifically applied in the context of the \package{MDAnalysis} package, all these principles and  techniques are potentially applicable to data analysis in other Python-based libraries.
+In the present study, we analyzed large MD trajectories in parallel with MPI and Python and observed large variations in the completion time of individual MPI ranks.
+These variations bore some similarity to the straggler tasks observed in MapReduce frameworks so we approached analyzing and eliminating them in a similar fashion by systematically looking at different components of the problem, including read I/O from the shared Lustre file system and MPI communication.
+Even though we specifically worked in with the \package{MDAnalysis} package, all these principles and techniques are potentially applicable to MPI-parallelized data analysis in other Python-based libraries.
+
 
 \subsection{Other Packages with Parallel Analysis Capabilities}
 \label{sec:otherparallel}

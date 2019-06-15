@@ -53,17 +53,22 @@ The ranks that took much longer to complete than the typical execution time of t
     MPI ranks 0, 12--27 and 29--72 are stragglers.
     Note: In serial, there is no communication and no data points are shown for $N=1$.}
   \label{fig:MPIwithIO}
-\end{figure} 
+\end{figure}
+
+We qualitatively denoted by \emph{straggler} any MPI rank that took at least about twice as long as the group of ranks that finished fastest, roughly following the original description of a straggler as a task that took an ``unusually long time to complete'' \cite{Dean2004}.
+The fast-finishing ranks were generally clearly distinguishable in the per-rank timings such as in Figures~\ref{fig:MPIranks} and \ref{fig:MPIranks-Bridges}.
+Such a qualitative definition of stragglers was sufficient for our purpose to identify scalability bottlenecks, as shown in the following discussion.
+
 
 \subsubsection*{Identification of Scalability Bottlenecks}
 
 In the example shown in Figure~\ref{fig:MPIranks}, 62 ranks out of 72 took about 60~s (the stragglers) whereas the remaining ranks only took about 20~s.
-(In other instances, far fewer ranks were stragglers, as shown, for example, in Figure~\ref{fig:MPIranks-Bridges}.)
+In other instances, far fewer ranks were stragglers, as shown, for example, in Figure~\ref{fig:MPIranks-Bridges}.
 The detailed breakdown of the time spent on each rank (Figure~\ref{fig:MPIranks}) showed that the computation, \tcomp, was relatively constant across ranks. 
 The time spent on reading data from the shared trajectory file on the Lustre filesystem into memory, \tIO, showed variability across different ranks. 
 The stragglers, however, appeared to be defined by occasionally much larger \emph{communication} times, \tcomm (line 16 in Algorithm~\ref{alg:RMSD}), which were on the order of 30~s, and by larger times to initially open the trajectory (line 2 in Algorithm~\ref{alg:RMSD}).
 \tcomm varied across different ranks and was barely measurable for a few of them.
-Although the data in Figure~\ref{fig:MPIranks} represented one run and in other instances different number of ranks were stragglers, the overall hypothesis was confirmed by the averages over all ranks in five independent repeats (Figure~\ref{fig:ScalingComputeIO}).
+Although the data in Figure~\ref{fig:MPIranks} represented one run and in other instances different number of ranks were stragglers, the averages over all ranks in five independent repeats (Figure~\ref{fig:ScalingComputeIO}) showed that increased \tcomm were generally the reason for large variations in the run time for each rank.
 This initial analysis indicated that communication was a major issue that prevented good scaling beyond a single node but the problems related to file I/O also played an important role in limiting scaling performance.
 
 
