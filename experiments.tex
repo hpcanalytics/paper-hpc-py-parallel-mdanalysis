@@ -48,10 +48,11 @@ The ranks that took much longer to complete than the typical execution time of t
     Results were communicated back to rank 0.
     Five independent repeats were performed to collect statistics.
     (a-c) The error bars show standard deviation with respect to mean.
+    In serial, there is no communication and no data points are shown for $N=1$ in (c).
     (d) Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.
     These are data from one run of the five repeats.
     MPI ranks 0, 12--27 and 29--72 are stragglers.
-    Note: In serial, there is no communication and no data points are shown for $N=1$.}
+  }
   \label{fig:MPIwithIO}
 \end{figure}
 
@@ -181,72 +182,9 @@ However, read I/O ultimately seemed to be the key determinant for performance, a
 In order to study an extreme case of a compute-bound task, we eliminated all I/O from the RMSD task by randomly generating artificial trajectory data in memory; the data had the the same size as if they had been obtained from the trajectory file.
 The time for the data generation was excluded and no file access was necessary. 
 Without any I/O, performance improved markedly (Figure~\ref{fig:MPIwithoutIO}), with reasonable scaling up to 72 cores (3 nodes).
-No stragglers were observed although an increase in communication time prevented ideal scaling performance.
+No stragglers were observed because overall communication time decreased and showed less variability; nevertheless, an increase in communication time prevented ideal scaling performance.
 Although in practice I/O cannot be avoided, this experiment demonstrated that accessing the trajectory file on the Lustre file system is at least one cause for the observed stragglers.
 
-\subsection{Reducing Communication Cost: Application of Global Arrays}
-\label{Global-Array}
-
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{.49\textwidth}
-    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-t_total.pdf}
-    \captionsetup{format=hang}
-    \caption{Scaling total}
-    \label{fig:MPIscaling-ga4py}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.49\textwidth}
-    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-speed_up.pdf}
-    \captionsetup{format=hang}
-    \caption{Speed-up}
-    \label{fig:MPIspeedup-ga4py}
-  \end{subfigure}
-  \bigskip
-
-  \begin{subfigure}{.49\textwidth}
-    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-time_IO_comparison.pdf}
-    \captionsetup{format=hang}
-    \caption{Scaling for different components}
-    \label{fig:ScalingComputeIO-ga4py}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure} {.5\textwidth}
-    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf}
-    \captionsetup{format=hang}
-    \caption{Time comparison on different parts of the calculations per MPI rank}
-    \label{fig:MPIranks-ga4py}
-  \end{subfigure}
-  \caption{Performance of the RMSD task with MPI using Global Arrays ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
-    All ranks update the Global Arrays (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
-    Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
-    In (d), compute \tcomp, read I/O \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
-    opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank are shown; see Table \ref{tab:notation} for definitions. 
-    This is typical data from one run of the 5 repeats.
-    MPI ranks 20 and 56 are stragglers, i.e., their total time far exceeds the mean of the all ranks.
-    Note: In serial, there is no communication and not data points are shown for $N=1$.}
-\label{fig:MPIwithIO-ga4py}
-\end{figure}
-
-
-As seen in Figure~\ref{fig:MPIranks} for small $\RcompIO$, communication acted as a scalability bottleneck. 
-When the processes communicated result arrays back to the master process (rank 0), some processes took much longer as compared to others.
-We therefore investigated strategies to reduce communication cost. 
-
-We used Global Arrays (GA)~\cite{GA, GAiN} instead of collective communication in MPI and examined the change in the performance. 
-In GA, we define one large RMSD array called \emph{global array} and each MPI rank updates its associated block in the global RMSD array using \texttt{ga\_put()}. 
-At the end, when all the processes exit \texttt{block\_rmsd()} function and update their local block in the global array, rank 0 will access the whole global array using \texttt{ga\_access()}.
-In GA, the time for communication is $t_{\text{ga\_put()}}+t_{\text{ga\_access()}}$. 
-
-Using Global Arrays improved the strong scaling performance (Figures~\ref{fig:MPIscaling-ga4py} and~\ref{fig:MPIspeedup-ga4py}) by reducing the communication time.
-Nevertheless, the remaining variation in the trajectory I/O part of the calculation and in particular the initial opening of the trajectory prevented ideal scaling (Figure~\ref{fig:ScalingComputeIO-ga4py}).
-Figure~\ref{fig:MPIranks-ga4py} shows that stragglers were primarily due to the fact that all ranks had to open the same trajectory file at the beginning of the execution.
-In this case, these slow processes took about 50~s, which was slower than the mean execution time of all other ranks of 17~s. 
-Trajectory opening was already problematic in the initial test (Figure~\ref{fig:ScalingComputeIO}), which was still dominated by the communication cost. By substantially reducing communication cost, the simultaneous trajectory opening by multiple ranks emerged as the next dominant cause for stragglers.
-The improvement in performance can be attributed to the mitigation in the interference of MPI traffic with IO traffic as also studied in~\cite{Brown:2018ab}.
-
-Motivated by the results in this section, we investigated the influence of the ratio of compute to communication costs ($\overline{\tcomp}/\overline{\tcomm}$) on performance in \ref{sec:tcomm}.
-We found evidence to support the hypothesis that a larger ratio was beneficial, provided I/O costs could also be reduced, as discussed in the next section.
 
 \subsection{Reducing I/O Cost}
 \label{sec:I/O}
@@ -265,29 +203,28 @@ Because subfiling is known to improve programming flexibility and performance of
 The trajectory file was split into $N$ segments, one for each process, with each segment having $N_{b}$ frames. 
 This way, each process would access its own trajectory segment file without competing for file accesses. 
 
-\paragraph{Performance with MPI Communication}
 We ran a benchmark up to 8 nodes (192 cores) and observed rather better scaling behavior with efficiencies above 0.6 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) with the delay time for stragglers reduced from 65~s to about 10~s for 72 processes. 
-However, scaling is still far from ideal due to communication (using MPI). 
-Although the delay due to communication was much smaller as compared to parallel RMSD with shared-file I/O (compare Figure~\ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure~\ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)), it is still delaying several processes and resulted in longer job completion times (Figure~\ref{fig:MPIranks-split}). 
+However, scaling was still far from ideal due to the MPI communication costs. 
+Although the delay due to communication was much smaller than compared to parallel RMSD with shared-file I/O [compare Figure~\ref{fig:MPIranks-split} ($\tcomm^{\text{Straggler}} \gg \tcomp+\tIO$) to Figure~\ref{fig:MPIranks} ($\tcomm^{\text{Straggler}} \approx \tcomp+\tIO$)], it was still delaying several processes and resulted in longer job completion times (Figure~\ref{fig:MPIranks-split}). 
 These delayed tasks impacted performance so that speed-up remained far from ideal (Figure~\ref{fig:MPIspeedup-split}).
 
 \begin{figure}[!htb]
   \centering
   \begin{subfigure}{.32\textwidth}
-    \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting.pdf}
+    \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting_edited.pdf}
     \captionsetup{format=hang}
     \caption{Scaling for different components}
     \label{fig:ScalingComputeIO-split}
   \end{subfigure}
   \hfill
   \begin{subfigure}{.3\textwidth}
-    \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting.pdf}
+    \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting_edited.pdf}
     \caption{Scaling total}
     \label{fig:MPIscaling-split}
   \end{subfigure}
   \hfill
   \begin{subfigure}{.3\textwidth}
-    \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting.pdf}
+    \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting_edited.pdf}
     \captionsetup{format=hang}
     \caption{Speed-up}
     \label{fig:MPIspeedup-split}
@@ -297,7 +234,7 @@ These delayed tasks impacted performance so that speed-up remained far from idea
   \begin{subfigure} {.45\textwidth}
     \includegraphics[width=\linewidth]{figures/split-BarPlot-rank-comparison_192_5.pdf}
     \captionsetup{format=hang}
-    \caption{Time comparison on different parts of the calculations per MPI rank without Global Arrays}
+    \caption{Time comparison on different parts of the calculations per MPI rank with MPI collective communications.}
     \label{fig:MPIranks-split}
   \end{subfigure}
   \hfill
@@ -307,31 +244,25 @@ These delayed tasks impacted performance so that speed-up remained far from idea
     \caption{Time comparison on different parts of the calculations per MPI rank using Global Arrays}
     \label{fig:MPIranks-split-ga}
 \end{subfigure}
-\caption{Comparison on the performance of the RMSD task ($\RcompIO \approx 0.3$) on \emph{SDSC Comet} when the trajectories are split.
-  For communicating the results, either Global Arrays (``ga'') or MPI (no Global Arrays, ``No-ga'') was used.
-  In the case of Global Arrays, all ranks updates the Global Arrays (\texttt{ga\_put()}) and rank 0 accessed the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+\caption{Comparison on the performance of the RMSD task ($\RcompIO \approx 0.3$) on \emph{SDSC Comet} when the trajectories are split (subfiling).
+  The communication step used either MPI collective communications (``MPI'', with \texttt{MPI\_Gather()}) or  Global Arrays (``ga'', as described in Section~\protect\ref{Global-Array}).
+  In the case of Global Arrays, all ranks updated the global RMSD array (\texttt{ga\_put()}) and rank 0 accessed the whole RMSD array through the global memory address (\texttt{ga\_get()}).
   Five repeats were performed to collect statistics.
   (a) Compute and I/O scaling versus number of processes.
+  In serial, there is no communication and no data points are shown for $N=1$.
   (b) Total time scaling versus number of processes.
   (c) Speed-up.
   (a-c) The error bars show standard deviation with respect to mean.
   (d-e) Compute \tcomp, read I/O \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for the definitions.
-  Note: In serial, there is no communication and no data points are shown for $N=1$.}
+}
 \label{fig:MPIwithIO-split}
 \end{figure}
 
-\paragraph{Performance Using Global Arrays}
-In Section~\ref{Global-Array} we showed that Global Arrays substantially reduced the communication cost. 
-We wanted to quantify the performance when splitting the trajectory file while using Global Arrays.
-Under otherwise identical conditions as in the previous section we now observed near ideal scaling behavior with efficiencies above 0.9 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) without any straggler tasks (Figure~\ref{fig:MPIranks-split-ga}).
-Although the reason why in our case Global Arrays appeared to be more efficient than direct MPI-based communication remains unclear, these results showed that contention for file access clearly impacted performance. By removing the contention, near ideal scaling could be achieved.
 
-\paragraph{Further Considerations for Splitting Trajectories}
-The subfiling approach appears promising but it requires preprocessing of trajectory files and additional storage space for the segments.
-We benchmarked the necessary time for splitting the trajectory using different number of MPI processes (Table~\ref{tab:timing-splitting}); in general the operation scales well although performance can
-fluctuate, as seen for the case on 6 nodes.
-These preprocessing times were not included in the estimates because we are focusing on better understanding the principle causes of stragglers and we wanted to make the results directly comparable to the results of the previous sections.
-Nevertheless, from an end user perspective, preprocessing of trajectories can be integrated in workflows (especially as the data in Table~\ref{tab:timing-splitting} indicate good scaling) and the preprocessing time can be quickly amortized if the trajectories are analyzed repeatedly.
+The subfiling approach appeared promising but it required preprocessing of trajectory files and additional storage space for the segments.
+We benchmarked the necessary time for splitting the trajectory in parallel using different number of MPI processes (Table~\ref{tab:timing-splitting}); in general the operation scaled well, with efficiencies $> 0.8$ although performance fluctuated, as seen for the case on six nodes where the efficiency dropped to $0.34$ for the run.
+These preprocessing times were not included in the estimates because we focused on better understanding the principal causes of stragglers and we wanted to make the results directly comparable to the results of the previous sections.
+Nevertheless, from an end user perspective, preprocessing of trajectories can be integrated in workflows (especially as the data in Table~\ref{tab:timing-splitting} indicated good scaling) and the preprocessing time can be quickly amortized if the trajectories are analyzed repeatedly.
 
 \begin{table}[!htb]
   \centering
@@ -356,15 +287,18 @@ Nevertheless, from an end user perspective, preprocessing of trajectories can be
 \end{table}
 
 
-Often trajectories from MD simulations on HPC machines are produced and kept in small chunks that would need to be concatenated to form a trajectory but that might be useful for the subfiling approach.
-However, it might not be feasible to have exactly one trajectory segment per MPI rank.
-In~\ref{sec:chainreader} we investigated if existing functionality in MDAnalysis that can create virtual trajectories from trajectory segments could benefit from the subfiling approach.
-We found some improvements in performance but discovered limitations in the design that first have to be overcome before equivalent performance can be reached.
+Often trajectories from MD simulations on HPC machines are produced and kept in smaller files or segments that can be concatenated to form a full continuous trajectory file.
+These trajectory segments could be used for the subfiling approach.
+However, it might not be feasible to have exactly one segment per MPI rank, with all segments of equal size, which constitutes the ideal case for subfiling.
+MDAnalysis can create virtual trajectories from separate trajectory segment files that appear to the user as a single trajectory.
+In~\ref{sec:chainreader} we investigated if this so-called \emph{ChainReader} functionality could benefit from the subfiling approach.
+We found some improvements in performance but discovered limitations in the design of the ChainReader (namely that all segment files are initially opened) that will have to be addressed before equivalent performance can be reached.
  
 \subsubsection{MPI-based Parallel HDF5}
 \label{HDF5}
 
-Another approach we examined to improve I/O scaling was MPI-based Parallel HDF5. 
+In the HPC community, parallel I/O with MPI-IO is widely used in order to address I/O limitations.
+We investigated MPI-based Parallel HDF5 to improve I/O scaling. 
 We converted our XTC trajectory file into a simple custom HDF5 format so that we could test the performance of parallel I/O with the HDF5 file format.
 The code for this file format conversion can be found in the GitHub repository.
 The time it took to convert our XTC file with $2,512,200$ frames into HDF5 format was about 5,400~s on a local workstation with network file system (NFS).
@@ -402,19 +336,90 @@ The time it took to convert our XTC file with $2,512,200$ frames into HDF5 forma
     Data are read from the file system from a shared HDF5 file format instead of XTC format (independent I/O) and results are communicated back to rank 0. 
     Five repeats were performed to collect statistics.
     (a-c) The error bars show standard deviation with respect to mean.
+    In serial, there is no communication and no data points are shown for $N=1$ in (c).
     (d) Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
     opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.
     These are typical data from one run of the five repeats.
-    Note: In serial, there is no communication and no data points are shown for $N=1$.}
+  }
   \label{fig:MPIwithIO-hdf5}
   %  I am reporting the slowest rank per timing, and that is averaged over all repeats.
 \end{figure}
 
-We ran our benchmark on up to 16 nodes (384 cores) and we observed near ideal scaling behavior with parallel efficiencies above 0.8 up to 8 nodes (Figure~\ref{fig:comparison_efficiency} and Figures~\ref{fig:MPIscaling-hdf5} and~\ref{fig:MPIspeedup-hdf5}) with no straggler tasks (Figure~\ref{fig:MPIranks-hdf5}).
+We ran our benchmark on up to 16 nodes (384 cores) on \emph{SDSC Comet} and we observed near ideal scaling behavior Figures~\ref{fig:MPIscaling-hdf5} and~\ref{fig:MPIspeedup-hdf5}) with parallel efficiencies above 0.8 on up to 8 nodes (Figure~\ref{fig:comparison_efficiency}) with no straggler tasks (Figure~\ref{fig:MPIranks-hdf5}).
 The trajectory reading I/O (\tIO) was the dominant contribution, followed by compute (\tcomp), but because both contributions scaled well, overall scaling performance remained good, even for 384 cores.
 We observed a low-performing outlier for 12 nodes (288 cores) with slower I/O than typical but did not further investigate.
 Importantly, the trajectory opening cost remained negligible (in the millisecond range) and the cost for MPI communication also remained small (below 0.1 s, even for 16 nodes).
-Overall, parallel MPI with HDF5 appears to be a robust approach to obtain good scaling, even for I/O-bound tasks.
+Overall, parallel MPI with HDF5 appeared to be a robust approach to obtain good scaling, even for I/O-bound tasks.
+
+
+\subsection{Testing the Global Arrays Toolkit}
+\label{Global-Array}
+
+The \emph{Global Arrays} (GA) toolkit \cite{GA} is a convenient layer to represent and access arrays across multiple MPI ranks and nodes.
+Because of its convenience and possibly reduced communications overhead due to its use of shared memory on a physical node and MPI for inter-node communication (see Section~\ref{sec:methods-ga}) we wanted to compare parallel trajectory analysis with GA to the MPI-based implementation that was discussed in the previous sections.
+
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{.49\textwidth}
+    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-t_total.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling total}
+    \label{fig:MPIscaling-ga4py}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.49\textwidth}
+    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-speed_up.pdf}
+    \captionsetup{format=hang}
+    \caption{Speed-up}
+    \label{fig:MPIspeedup-ga4py}
+  \end{subfigure}
+  \bigskip
+
+  \begin{subfigure}{.49\textwidth}
+    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-time_IO_comparison.pdf}
+    \captionsetup{format=hang}
+    \caption{Scaling for different components}
+    \label{fig:ScalingComputeIO-ga4py}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure} {.5\textwidth}
+    \includegraphics[width=\linewidth]{figures/RMSD-ga4py-BarPlot-rank-comparison_72_1.pdf}
+    \captionsetup{format=hang}
+    \caption{Time comparison on different parts of the calculations per MPI rank}
+    \label{fig:MPIranks-ga4py}
+  \end{subfigure}
+  \caption{Performance of the RMSD task with MPI using Global Arrays ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
+    All ranks updated the global RMSD array (\texttt{ga\_put()}) and rank 0 accesseed the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+    Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
+    In serial, there is no communication and not data points are shown for $N=1$ in (c).
+    In (d), compute \tcomp, read I/O \tIO, communication \tcomm, access to the whole global array by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
+    opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank are shown; see Table \ref{tab:notation} for definitions. 
+    These are typical data from one run of the five repeats.
+    MPI ranks 20 and 56 were stragglers.
+  }
+\label{fig:MPIwithIO-ga4py}
+\end{figure}
+
+With GA, one large RMSD array called the \emph{global array} was defined and each MPI rank updated its associated block in the global RMSD array using \texttt{ga\_put()} (Algorithm~\ref{alg:GA}).
+At the end, when all the processes exited the \texttt{block\_rmsd()} function and updated their local block in the global array, rank 0  accessed the whole global array using \texttt{ga\_access()}.
+In GA, the time for communication is $t_{\text{ga\_put()}}+t_{\text{ga\_access()}}$. 
+We tested that the approach with GA (Algorithm~\ref{alg:GA}) gave the same results as the previously discussed approach with \texttt{MPI\_Gather()} (Algorithm~\ref{alg:RMSD}).
+
+
+\paragraph{Shared file}
+Using GA improved the strong scaling performance (Figures~\ref{fig:MPIscaling-ga4py} and~\ref{fig:MPIspeedup-ga4py}) by reducing the communication time.
+Nevertheless, the remaining variation in the trajectory I/O part of the calculation and in particular the initial opening of the trajectory prevented ideal scaling (Figure~\ref{fig:ScalingComputeIO-ga4py}).
+Stragglers were primarily due to the fact that all ranks had to open the same trajectory file at the beginning of the execution (Figure~\ref{fig:MPIranks-ga4py}).
+In this case, these slow processes took about 50~s, which was slower than the mean execution time of all other ranks of 17~s. 
+Trajectory opening was already problematic in the initial test (Figure~\ref{fig:ScalingComputeIO}), which was still dominated by the communication cost.
+By substantially reducing communication cost, the simultaneous trajectory opening by multiple ranks emerged as the next dominant cause for stragglers.
+
+
+\paragraph{Subfiling}
+We tested subfiling (see Section~\ref{splitting-traj}) with GA to reduce the initial delay due to trajectory opening.
+Under otherwise identical conditions as in the previous section we now observed near ideal scaling behavior with efficiencies above 0.9 (Figure~\ref{fig:MPIscaling-split} and~\ref{fig:MPIspeedup-split}) without any straggler tasks (Figure~\ref{fig:MPIranks-split-ga}).
+Although the reason why in our case GA appeared to be more efficient than direct MPI-based communication remained unclear, these results showed that contention for file access clearly impacted performance.
+By removing the contention, near ideal scaling could be achieved.
 
 
 \subsection{Likely Causes of Stragglers}
