@@ -148,6 +148,9 @@ The calculations consistently showed better scaling performance to larger number
 The speed-up and efficiency approached their ideal value for each processor count with increasing $\RcompIO$ ratio (Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect}).
 Even for moderately compute-bound workloads, such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contributed to large variations in timing across different ranks and thus irregular scaling.
 
+We also investigated the influence of the ratio of compute to communication costs ($\Rcompcomm$, Eq.~\ref{eq:Compute-comm}) on performance in \ref{sec:tcomm}.
+We found evidence to support the hypothesis that a larger ratio was beneficial, provided I/O costs could also be reduced.
+However, read I/O ultimately seemed to be the key determinant for performance, as discussed in the next sections.
 
 
 \subsubsection{Effect of Absence of Read I/O on Communication}
