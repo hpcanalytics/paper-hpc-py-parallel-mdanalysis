@@ -150,7 +150,7 @@ Even for moderately compute-bound workloads, such as the $40\times$ and $70\time
 
 
 
-\subsubsection{I/O Leads to Stragglers}
+\subsubsection{Effect of Absence of Read I/O on Communication}
 
  \begin{figure}[!htb]
    \centering
@@ -175,7 +175,8 @@ Even for moderately compute-bound workloads, such as the $40\times$ and $70\time
    \label{fig:MPIwithoutIO}
 \end{figure}
 
-In order to study an extreme case of a compute-bound task, we eliminated all I/O from the RMSD task by generating artificial trajectory data randomly in memory of the same size as would have been obtained from the trajectory; the time for the data generation was excluded and no file access was necessary. 
+In order to study an extreme case of a compute-bound task, we eliminated all I/O from the RMSD task by randomly generating artificial trajectory data in memory; the data had the the same size as if they had been obtained from the trajectory file.
+The time for the data generation was excluded and no file access was necessary. 
 Without any I/O, performance improved markedly (Figure~\ref{fig:MPIwithoutIO}), with reasonable scaling up to 72 cores (3 nodes).
 No stragglers were observed although an increase in communication time prevented ideal scaling performance.
 Although in practice I/O cannot be avoided, this experiment demonstrated that accessing the trajectory file on the Lustre file system is at least one cause for the observed stragglers.
