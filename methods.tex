@@ -64,9 +64,9 @@ $t_{\text{total}}(N) \approx \max(t_{N})$.
 Strong scaling was quantified by the speed-up
 \begin{equation}
   \label{eq:speedup}
-  S(N) = \frac{t_{\text{total}}(N)}{t_{\text{total}}(1)},
+  S(N) = \frac{t_{\text{total}}(1)}{t_{\text{total}}(N)},
 \end{equation}
-relative to performance on a single core, and the efficiency
+relative to performance on a single core ($t_{\text{total}}(1)$), and the efficiency
 \begin{equation}
   \label{eq:efficiency}
   E(N) = \frac{S(N)}{N}.
