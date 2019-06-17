@@ -1,8 +1,8 @@
 \label{sec:experiments}
 
-We had previously measured the performance of the MPI-parallelized RMSD analysis task on two different HPC resources (\emph{SDSC Comet} and \emph{TACC Stampede}) and had found that it only scaled well up to a single node due to the presence of stragglers \cite{Khoshlessan:2017ab}.
-However, the ultimate cause for the stragglers could not be ascertained.
-We therefore performed more measurements with more detailed timing information (see section \ref{sec:methods}) on \emph{SDSC Comet} (described in this section) and two other supercomputers (summarized in section \ref{sec:clusters}) in order to better understand the origin of the stragglers. 
+We had previously measured the performance of the MPI-parallelized RMSD analysis task on two different HPC resources (\emph{SDSC Comet} and \emph{TACC Stampede}) and had found that it only scaled well up to a single node due to high variance in the runtime of the MPI ranks, similar to the straggler phenomenon observed in big-data analytics \cite{Khoshlessan:2017ab}.
+However, the ultimate cause for this high variance could not be ascertained.
+We therefore performed more measurements with more detailed timing information (see section \ref{sec:methods}) on \emph{SDSC Comet} (described in this section) and two other supercomputers (summarized in section \ref{sec:clusters}) in order to better understand the origin of the stragglers and find solutions to overcome them. 
 
 \subsection{RMSD Benchmark}
 \label{sec:RMSD}
