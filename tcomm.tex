@@ -1,19 +1,18 @@
 \label{sec:tcomm}
 
+In Section \ref{sec:I/O}, we improved scaling limitations due to read I/O by splitting the trajectory, but scaling remained far from ideal when MPI communication was used; somewhat surprisingly, using \emph{Global Arrays} lead to better scaling (see Section \ref{Global-Array}) because the effective communication cost was reduced.
+Although we were not able to identify the reason for the better performance of \emph{Global Arrays} (it still uses MPI as a communicator), the results motivated an analysis in terms of the communication costs.
 In addition to the compute to I/O ratio \RcompIO discussed in Section \ref{sec:bound} we defined another performance parameter called the compute to communication ratio $\Rcompcomm$ (Eq.~\ref{eq:Compute-comm}).
-In Section \ref{sec:I/O}, we overcame the I/O effect by splitting the trajectory, but scaling remained far from ideal when MPI communication was used (instead of  Global Arrays).
-This is because the task remained communication bound (Figure \ref{fig:MPIwithIO-split}), i.e, 
-\begin{gather*}
-  \Rcompcomm \ll 1.
-\end{gather*}
 
-Figure \ref{fig:tcom_tcomm_effect} shows the relationship of performance with $\Rcompcomm$ ratio.
-When the $\Rcompcomm$ ratio is higher (Figure \ref{fig:tcomp_tcomm_ratio}), performance is better (Figure \ref{fig:S1_tcomp_tcomm_effect}) even if communication time is larger (Figure \ref{fig:Comm_time_tcomp_tcomm_effect}).
-Although, we still observed stragglers due to communication at larger $\Rcompcomm$ ratios ($70\times$ RMSD and $100\times$ RMSD), their effect on performance remained modest because the overall performance was dominated by the compute load. 
-Evidently, if overall performance is dominated by a component such as compute that scales well, then performance problems with components such as communication will be masked and overall acceptable performance can still be achieved (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}).
+We analyzed the data for variable workloads (see Section \ref{sec:bound}) in terms of the $\Rcompcomm$ ratio.
+The performance clearly depended on the $\Rcompcomm$ ratio (Figure \ref{fig:tcom_tcomm_effect}).
+Performance improved with increasing $\Rcompcomm$ ratios (Figure \ref{fig:tcomp_tcomm_ratio} and \ref{fig:S1_tcomp_tcomm_effect}) even if the communication time was larger (Figure \ref{fig:Comm_time_tcomp_tcomm_effect}).
+Although we still observed stragglers due to communication at larger $\Rcompcomm$ ratios ($70\times$ RMSD and $100\times$ RMSD), their effect on performance remained modest because the overall performance was dominated by the compute load. 
+Evidently, as long as overall performance is dominated by a component such as compute that scales well, then performance problems with components such as communication will be masked and overall acceptable performance can still be achieved (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}).
 
-Communication is usually not problematic within one node because of the shared memory environment (for less than 24 processes (single compute node on \emph{SDSC Comet}) the scaling is good and $\Rcompcomm \gg 1$ for all RMSD loads) (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}).
-However, beyond a single compute node, scaling appears to get better as the $\Rcompcomm$ ratio increases and communication overhead becomes less dominant (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}, 24-72 cores represent multiple compute nodes on \emph{SDSC Comet}).
+Communication was usually not problematic within one node because of the shared memory environment.
+For less than 24 processes, i.e., a single compute node on \emph{SDSC Comet}, the scaling was good and $\Rcompcomm \gg 1$ for all RMSD loads (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}).
+However, beyond a single compute node ($>$ 24 cores), scaling appeared to improve with increasing $\Rcompcomm$ ratio while the communication overhead decreased in importance (Figures \ref{fig:S1_tcomp_tcomm_effect} and \ref{fig:tcomp_tcomm_ratio}).
 
 \begin{figure}[!htb]
   \centering
@@ -36,7 +35,7 @@ However, beyond a single compute node, scaling appears to get better as the $\Rc
     \label{fig:Comm_time_tcomp_tcomm_effect}
   \end{subfigure}
   \caption{Effect of the ratio of compute to communication time \Rcompcomm on scaling performance on \emph{SDSC Comet}.
-    (a) Scaling for different computational workloads.
+    (a) Scaling for different computational workloads. (Same as Figure~\protect\ref{fig:S1_tcomp_tIO_effect}.)
     (b) Change in \Rcompcomm with the number of processes $N$ for different workloads. 
     (c) Comparison of communication time for different RMSD workloads.
     Five repeats were performed to collect statistics and error bars show standard deviation with respect to mean.}
