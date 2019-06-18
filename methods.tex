@@ -54,7 +54,7 @@ The \emph{communication time}, $\tcomm = t_{\text{L16}}$, is the time to gather 
 The total time (for all frames) spent in \texttt{block\_rmsd()} is $t_{\text{RMSD}} = \sum_{i=1}^{8}t_{\text{L$i$}}$. 
 There are parts of the code in \texttt{block\_rmsd()} that are not covered by the detailed timing information of \tcomp and \tIO.
 Unaccounted time is considered as \emph{overhead}.
-We define $t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ as the overheads of the calculations (see Table \ref{tab:notation} for the definitions); both should ideally be negligible. 
+We define $t_{\text{Overhead1}}$ and $t_{\text{Overhead2}}$ as the overheads of the calculations (see Table \ref{tab:notation} for the definitions); both are expected to be negligible, which was the case in all our measurements. 
 Finally, the \emph{total time to completion of a single MPI rank}, when utilizing $N$ cores for the execution of the overall experiment, is $t_{N}$, and as a result $t_{\text{RMSD}} + \tcomm \equiv t_{N}$.
 
 \subsection{Performance Parameters}
