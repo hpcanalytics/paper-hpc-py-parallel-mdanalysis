@@ -9,13 +9,13 @@ Figure \ref{fig:MPIwithIO-Bridges} shows performance of the RMSD task on \emph{P
   \centering
   \begin{subfigure}{.4\textwidth}
     \includegraphics[width=\linewidth]{figures/main-RMSD-t_total-Bridges.pdf}
-    \caption{Scaling total (five repeats)}
+    \caption{Scaling total}
     \label{fig:MPIscaling-Bridges}
   \end{subfigure}
   \hfill
   \begin{subfigure}{.4\textwidth}
     \includegraphics[width=\linewidth]{figures/main-RMSD-speed_up-Bridges.pdf}
-    \caption{Speed-up (five repeats)}
+    \caption{Speed-up}
     \label{fig:MPIspeedup-Bridges}
   \end{subfigure}
   \bigskip
@@ -23,7 +23,7 @@ Figure \ref{fig:MPIwithIO-Bridges} shows performance of the RMSD task on \emph{P
   \begin{subfigure}{.4\textwidth}
     \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison-Bridges.pdf}
     \captionsetup{format=hang}
-    \caption{Scaling for different components (five repeats)}
+    \caption{Scaling for different components}
     \label{fig:ScalingComputeIO-Bridges}
   \end{subfigure}
   \hfill
@@ -33,13 +33,15 @@ Figure \ref{fig:MPIwithIO-Bridges} shows performance of the RMSD task on \emph{P
     \caption{Time comparison on different parts of the calculations per MPI rank (example)}
     \label{fig:MPIranks-Bridges}
   \end{subfigure}
-  \caption{\emph{PSC Bridges}: Performance of the RMSD task with MPI.
+  \caption{\emph{PSC Bridges}: Performance of the RMSD task.
     Results are communicated back to rank 0.
     Five independent repeats were performed to collect statistics.
-    (a-c) The error bars show standard deviation with respect to mean. (d) Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.
+    (a-c) The error bars show standard deviation with respect to the mean.
+    In serial, there is no communication and hence no data point is shown for $N=1$ in (c).
+    (d) Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.
     These are data from one run of the five repeats.
     MPI ranks 0 and 70 are stragglers.
-    Note: In serial, there is no communication and hence no data point is shown for $N=1$.}
+  }
 \label{fig:MPIwithIO-Bridges}
 \end{figure} 
 
@@ -51,13 +53,13 @@ Figure \ref{fig:MPIwithIO-SuperMIC} shows performance of the RMSD task on \emph{
   \centering
   \begin{subfigure}{.4\textwidth}
     \includegraphics[width=\linewidth]{figures/main-RMSD-t_total-SuperMIC.pdf}
-    \caption{Scaling total (five repeats)}
+    \caption{Scaling total}
     \label{fig:MPIscaling-SuperMIC}
   \end{subfigure}
   \hfill
   \begin{subfigure}{.4\textwidth}
     \includegraphics[width=\linewidth]{figures/main-RMSD-speed_up-SuperMIC.pdf}
-    \caption{Speed-up (five repeats)}
+    \caption{Speed-up}
     \label{fig:MPIspeedup-SuperMIC}
   \end{subfigure}
   \bigskip
@@ -65,7 +67,7 @@ Figure \ref{fig:MPIwithIO-SuperMIC} shows performance of the RMSD task on \emph{
   \begin{subfigure}{.4\textwidth}
     \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison-SuperMIC.pdf}
     \captionsetup{format=hang}
-    \caption{Scaling for different components (five repeats)}
+    \caption{Scaling for different components}
     \label{fig:ScalingComputeIO-SuperMIC}
   \end{subfigure}
   \hfill
@@ -79,10 +81,10 @@ Figure \ref{fig:MPIwithIO-SuperMIC} shows performance of the RMSD task on \emph{
     Results are communicated back to rank 0.
     Five independent repeats were performed to collect statistics.
     (a-c) The error bars show standard deviation with respect to mean.
+    In serial, there is no communication and hence the data points for $N=1$ are not shown in (c).
     (d) Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.
     These are data from one run of the five repeats.
-    MPI ranks 0 and 70 are stragglers.
-    Note: In serial, there is no communication and hence the data points for $N=1$ are not shown.}
+  }
   \label{fig:MPIwithIO-SuperMIC}
 \end{figure} 
 
@@ -136,7 +138,7 @@ Figure \ref{fig:MPIwithIO-split-SuperMIC} shows how RMSD task scales with the in
     \label{fig:MPIspeedup-SuperMIC}
   \end{subfigure}
 
-  \caption{\emph{LSU SuperMIC}: Comparison on the performance of the RMSD task with MPI with subfiling and using either \emph{Global Arrays} for communication (``ga'') or using MPI as before (``No-ga'').
+  \caption{\emph{LSU SuperMIC}: Comparison of the performance of the RMSD task with subfiling and using either using MPI  (``No-ga'') or \package{Global Arrays} for communication (``ga'').
     For \emph{Global Arrays}, all ranks update the global array (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
     Five repeats were performed to collect statistics.
     (a) Compute and I/O scaling versus number of processes.

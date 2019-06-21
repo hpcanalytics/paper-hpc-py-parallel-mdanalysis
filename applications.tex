@@ -94,20 +94,20 @@ Overheads in \package{mpi4py} are small compared to C code if efficient raw memo
 \subsection{Global Arrays Toolkit}
 \label{sec:methods-ga}
 
-The \emph{Global Arrays} (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}.
+The \package{Global Arrays} (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}.
 It allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
 The underlying communication is determined by a runtime environment, which defaults to the \emph{Communication runtime for Extreme Scale} (ComEx) \cite{Daily:2014aa}.
 ComEx uses shared memory for intra-node communication and inter-node communication employs ComEx with MPI.
 \emph{Global Arrays in NumPy} (GAiN) extends GA to Python through Numpy \cite{GAiN}. 
-The \emph{Global Arrays} toolkit provides functions to create global arrays (\texttt{ga\_create()}) and to copy data to (\texttt{ga\_put()}) and from (\texttt{ga\_get()}) such a global array,  as well as additional functions for copying between arrays and freeing them \cite{GAiN}.
+The \package{Global Arrays} toolkit provides functions to create global arrays (\texttt{ga\_create()}) and to copy data to (\texttt{ga\_put()}) and from (\texttt{ga\_get()}) such a global array,  as well as additional functions for copying between arrays and freeing them \cite{GAiN}.
 When a global array is created (\texttt{ga\_create()}) each process will create an array of the same shape and size, physically located in the local memory space of that process \cite{GA}. 
 The GA library maintains a list of all these memory locations, which can be queried with the \texttt{ga\_access()} function.
 Using a pointer returned by \texttt{ga\_access()}, one can directly modify the data that is local to each process.
 When a process tries to access a block of data the request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process (\textit{B. J. Palmer and J. Daily, personal communication}).
 The requesting process then makes individual requests to each of the remote processes. 
 
-We investigated if communication cost could be reduced by using \emph{Global Arrays}.
-Algorithm \ref{alg:GA} describes the RMSD algorithm with \emph{Global Arrays} instead of MPI.
+We investigated if communication cost could be reduced by using \package{Global Arrays}.
+Algorithm \ref{alg:GA} describes the RMSD algorithm with \package{Global Arrays} instead of MPI.
 
 \begin{algorithm}[ht!]
 	\scriptsize

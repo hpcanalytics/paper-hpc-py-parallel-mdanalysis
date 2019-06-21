@@ -39,24 +39,24 @@ Specifically, we measured if the MPI-parallelized RMSD task (with $N_{\text{p}}$
 \begin{subfigure}{.45\textwidth}
   \includegraphics[width=\linewidth]{figures/chain-reader-no-ga-BarPlot-rank-comparison_192_5.pdf}
   \captionsetup{format=hang}
-   \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader without Global Arrays}
+   \caption{Time comparison of different parts of the calculations per MPI rank using ChainReader with MPI collective communications}
   \label{fig:MPIranks-split-chain-reader}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.45\textwidth}
   \includegraphics[width=\linewidth]{figures/chain-reader-ga-BarPlot-rank-comparison_192_3.pdf}
   \captionsetup{format=hang}
-  \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader using Global Arrays}
+  \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader using \package{Global Arrays}}
   \label{fig:MPIranks-split-ga-chain-reader}
 \end{subfigure}
 
-\caption{Comparison on the performance of the MDAnalysis ChainReader for the RMSD task ($\RcompIO \approx 0.3$)  with MPI on \emph{SDSC Comet} when the trajectories are split; for the communication step either collective MPI (``MPI'') or \emph{Global Arrays} (``ga'') was used.
-In case of \emph{Global Arrays}, all ranks update the global array (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+\caption{Comparison on the performance of the MDAnalysis ChainReader for the RMSD task on \emph{SDSC Comet} when the trajectories are split; for the communication step either collective MPI (``MPI'') or \package{Global Arrays} (``ga'') was used.
+In case of \package{Global Arrays}, all ranks update the global array (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
 Five repeats were performed to collect statistics.
 (a) Compute and I/O scaling versus number of processes.
 (b) Total time scaling versus number of processes.
 (c) Speed-up.
-(a-c) The error bars show standard deviation with respect to mean.
+(a-c) The error bars show standard deviation with respect to the mean.
 (d-e) Compute \tcomp, read I/O \tIO, communication \tcomm, access to the whole global array by rank 0 $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank. (See Table \ref{tab:notation} for the definitions.)}
 \label{fig:MPIwithIO-split-chain-reader}
 \end{figure}

@@ -47,10 +47,10 @@ The ranks that took much longer to complete than the typical execution time of t
     \caption{Time comparison on different parts of the calculations per MPI rank (example)}
     \label{fig:MPIranks}
   \end{subfigure}
-  \caption{Performance of the RMSD task (I/O-bound with $\RcompIO \approx 0.3$) with MPI on \emph{SDSC Comet}.
+  \caption{Performance of the RMSD task parallelized with MPI on \emph{SDSC Comet}.
     Results were communicated back to rank 0.
     Five independent repeats were performed to collect statistics.
-    (a-c) The error bars show standard deviation with respect to mean.
+    (a-c) The error bars show standard deviation with respect to the mean.
     In serial, there is no communication and no data points are shown for $N=1$ in (c).
     (d) Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.
     These are data from one run of the five repeats.
@@ -139,7 +139,7 @@ The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational wor
     \caption{Efficiency}
     \label{fig:E_tcomp_tIO_effect}
   \end{subfigure}
-  \caption{Effect of $\RcompIO$ ratio on performance of the RMSD task with MPI performed on \emph{SDSC Comet}. We tested performance for $\RcompIO$ ratios of 0.3, 11, 19, 27, which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively.
+  \caption{Effect of $\RcompIO$ ratio on performance of the RMSD task on \emph{SDSC Comet}. We tested performance for $\RcompIO$ ratios of 0.3, 11, 19, 27, which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively.
     (a) Effect of $\RcompIO$ on the speed-up.
     (b) Change in speed-up with respect to $\RcompIO$ for different processor counts.
     (c) Change in the efficiency with respect to $\RcompIO$ for different processor counts.}
@@ -173,9 +173,9 @@ However, read I/O ultimately seemed to be the key determinant for performance, a
      \caption{Time comparison on different parts of the calculations per MPI rank when I/O is removed}
      \label{fig:MPIranks-no-IO}
    \end{subfigure}
-   \caption{Comparison on the performance of RMSD task with MPI with I/O ($\RcompIO \approx 0.3$) and without I/O ($\RcompIO = +\infty$) on \emph{SDSC Comet}.
+   \caption{Comparison of the performance of the RMSD task with I/O ($\RcompIO \approx 0.3$) and without I/O ($\RcompIO = +\infty$) on \emph{SDSC Comet}.
      Five repeats were performed to collect statistics.
-     (a) Speed-up. The error bars show standard deviation with respect to mean.
+     (a) Speed-up. The error bars show standard deviation with respect to the mean.
      (b) Compute \tcomp, read I/O $\tIO=0$, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
      opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank.
      (See Table \ref{tab:notation} for definitions.)}
@@ -244,19 +244,19 @@ These delayed tasks impacted performance so that speed-up remained far from idea
   \begin{subfigure} {.5\textwidth}
     \includegraphics[width=\linewidth]{figures/split-ga-BarPlot-rank-comparison_192_5.pdf}
     \captionsetup{format=hang}
-    \caption{Time comparison on different parts of the calculations per MPI rank using Global Arrays}
+    \caption{Time comparison on different parts of the calculations per MPI rank using \package{Global Arrays}}
     \label{fig:MPIranks-split-ga}
 \end{subfigure}
-\caption{Comparison on the performance of the RMSD task ($\RcompIO \approx 0.3$) on \emph{SDSC Comet} when the trajectories are split (subfiling).
-  The communication step used either MPI collective communications (``MPI'', with \texttt{MPI\_Gather()}) or  Global Arrays (``ga'', as described in Section~\protect\ref{Global-Array}).
+\caption{Comparison of the performance of the RMSD task on \emph{SDSC Comet} when the trajectories are split (\emph{subfiling}).
+  The communication step used either MPI collective communications (``MPI'', with \texttt{MPI\_Gather()}) or  \package{Global Arrays} (``ga'', as described in Section~\protect\ref{Global-Array}).
   In the case of Global Arrays, all ranks updated the global RMSD array (\texttt{ga\_put()}) and rank 0 accessed the whole RMSD array through the global memory address (\texttt{ga\_get()}).
   Five repeats were performed to collect statistics.
   (a) Compute and I/O scaling versus number of processes.
   In serial, there is no communication and no data points are shown for $N=1$.
   (b) Total time scaling versus number of processes.
   (c) Speed-up.
-  (a-c) The error bars show standard deviation with respect to mean.
-  (d-e) Compute \tcomp, read I/O \tIO, communication \tcomm, access to the whole Global Arrays by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for the definitions.
+  (a-c) The error bars show standard deviation with respect to the mean.
+  (d-e) Compute \tcomp, read I/O \tIO, communication \tcomm, access to the whole global RMSD array by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$, opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for the definitions.
 }
 \label{fig:MPIwithIO-split}
 \end{figure}
@@ -335,10 +335,10 @@ The time it took to convert our XTC file with $2,512,200$ frames into HDF5 forma
     \caption{Time comparison on different parts of the calculations per MPI rank}
     \label{fig:MPIranks-hdf5}
   \end{subfigure}
-  \caption{Performance of the RMSD task with MPI-based parallel HDF5 ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
+  \caption{Performance of the RMSD task with MPI-based parallel HDF5 (MPI-IO) on \emph{SDSC Comet}.
     Data are read from the file system from a shared HDF5 file format instead of XTC format (independent I/O) and results are communicated back to rank 0. 
     Five repeats were performed to collect statistics.
-    (a-c) The error bars show standard deviation with respect to mean.
+    (a-c) The error bars show standard deviation with respect to the mean.
     In serial, there is no communication and no data points are shown for $N=1$ in (c).
     (d) Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
     opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.
@@ -358,7 +358,7 @@ Overall, parallel MPI with HDF5 appeared to be a robust approach to obtain good 
 \subsection{Testing the Global Arrays Toolkit}
 \label{Global-Array}
 
-The \emph{Global Arrays} (GA) toolkit \cite{GA} is a convenient layer to represent and access arrays across multiple MPI ranks and nodes.
+The \package{Global Arrays} (GA) toolkit \cite{GA} is a convenient layer to represent and access arrays across multiple MPI ranks and nodes.
 Because of its convenience and possibly reduced communications overhead due to its use of shared memory on a physical node and MPI for inter-node communication (see Section~\ref{sec:methods-ga}) we wanted to compare parallel trajectory analysis with GA to the MPI-based implementation that was discussed in the previous sections.
 
 \begin{figure}[!htb]
@@ -391,9 +391,9 @@ Because of its convenience and possibly reduced communications overhead due to i
     \caption{Time comparison on different parts of the calculations per MPI rank}
     \label{fig:MPIranks-ga4py}
   \end{subfigure}
-  \caption{Performance of the RMSD task with MPI using Global Arrays ($\RcompIO \approx 0.3$) on \emph{SDSC Comet}.
+  \caption{Performance of the RMSD task using \package{Global Arrays} on \emph{SDSC Comet}.
     All ranks updated the global RMSD array (\texttt{ga\_put()}) and rank 0 accesseed the whole RMSD array through the global memory address (\texttt{ga\_get()}).
-    Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to mean. 
+    Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to the mean. 
     In serial, there is no communication and not data points are shown for $N=1$ in (c).
     In (d), compute \tcomp, read I/O \tIO, communication \tcomm, access to the whole global array by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,
     opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank are shown; see Table \ref{tab:notation} for definitions. 

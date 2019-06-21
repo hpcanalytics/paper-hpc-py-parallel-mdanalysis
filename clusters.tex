@@ -37,8 +37,8 @@ The results on \emph{LSU SuperMIC} confirmed the conclusion obtained on \emph{SD
     \caption{Scaling of \tcomp and \tIO.}
     \label{fig:compute-IO-scaling-clusters-splitting}
   \end{subfigure}
-  \caption{Comparison of the performance of the RMSD task ($\RcompIO \approx 0.3$) when the trajectories are split (subfiling) across different clusters (\emph{SDSC Comet}, \emph{LSU SuperMIC}.
-    Results were communicated back to rank 0 either with MPI collective communications (label ``MPI'') or using \emph{Global Arrays} (label ``GA'').
+  \caption{Comparison of the performance of the RMSD task across different clusters (\emph{SDSC Comet}, \emph{LSU SuperMIC}) when the trajectories are split (\emph{subfiling}).
+    Results were communicated back to rank 0 either with MPI collective communications (label ``MPI'') or using \package{Global Arrays} (label ``GA'').
     Five repeats were performed to collect statistics.
     The error bars show the standard deviation with respect to the mean.}
 \label{fig:MPI-splitting-clusters}
@@ -76,8 +76,8 @@ However, on \emph{PSC Bridges} the I/O time was on average about two and a half 
     \caption{Scaling of \tcomp and \tIO}
     \label{fig:compute-IO-scaling-clusters}
   \end{subfigure}
-  \caption{Comparison of the performance of the RMSD task with MPI ($\RcompIO \approx 0.3$)  across different clusters (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}).
-    Data were read from a shared HDF5 file instead of an XTC file, using MPI independent I/O.
+  \caption{Comparison of the performance of the RMSD task across different clusters (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}) with MPI-IO.
+    Data were read from a shared HDF5 file instead of an XTC file, using MPI independent I/O in the PHDF5 library.
     Results were communicated back to rank 0.
     $N_{\text{P}}/N_{\text{nodes}}$ indicates that number of processes used for the task were equally distributed over all compute nodes.
     Five repeats were performed to collect statistics.
@@ -100,8 +100,8 @@ However, on \emph{PSC Bridges} the I/O time was on average about two and a half 
     \caption{\emph{LSU SuperMIC}}
     \label{fig:hdf5-SuperMIC}
   \end{subfigure}
-  \caption{Examples of timing per MPI rank for RMSD task with MPI-based parallel HDF5 ($\RcompIO \approx 0.3$) on (a) \emph{PSC Bridges} and (b) \emph{LSU SuperMIC}.
-    Five repeats were performed to collect statistics and these were typical data from one run of the 5 repeats. Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.}
+  \caption{Examples of timing per MPI rank for the RMSD task with MPI-based parallel HDF5 on (a) \emph{PSC Bridges} and (b) \emph{LSU SuperMIC}.
+    Five repeats were performed to collect statistics and these were typical data from one run of the five repeats. Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank; see Table \ref{tab:notation} for definitions.}
   \label{fig:MPIwithIO-clusters-rank}
 \end{figure} 
 
