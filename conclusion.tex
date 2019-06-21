@@ -4,25 +4,26 @@
 \label{sec:conclusions}
 
 We analyzed the strong scaling performance of a typical task when analysing MD trajectories, the calculation of the time series of the RMSD of a protein, with the widely used Python-based \package{MDAnalysis} library.
-The task was parallelized with MPI by having each MPI process analyze a contiguous segment of the trajectory.
+The task was parallelized with MPI following the \emph{split-apply-combine} approach by having each MPI process analyze a contiguous segment of the trajectory.
 This approach did not scale beyond a single node because straggler MPI processes exhibited large upward variations in runtime.
 Stragglers were primarily caused by either increased MPI communication costs or increased time to open the single shared trajectory file whereas both the computation and the ingestion of data exhibited close to ideal strong scaling behavior.
-Stragglers were less prevalent for compute-bound workloads (i.e., $\RcompIO \gg 1$), suggesting that file I/O was responsible for poor MPI communication.
+Stragglers were less prevalent for compute-bound workloads (i.e., $\RcompIO \gg 1$), suggesting that file read I/O was responsible for poor MPI communication.
 In particular, artifically removing all I/O substantially improved performance of the communication step and thus brought overall performance close to ideal (i.e., linear increase in speed-up with processor count with slope one).
 By performing benchmarks on three different XSEDE supercomputers we showed that our results were independent from the specifics of the hardware and local environment.
 Our results hint at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013} and theoretical predictions by \citet{Brown:2018ab}.
-One possible interpretation of our results is that for a sufficiently large per-frame compute workload, read I/O interferes much less with communication than for an I/O bound task, which almost continuously accesses the file system.
-This intepretation suggested ways to improve performance by improving read I/O or by improving communication.
+One possible interpretation of our results is that for a sufficiently large per-frame compute workload, read I/O interferes much less with communication than for an I/O bound task that almost continuously accesses the file system.
+This intepretation suggested we needed to improve read I/O to reduce interference.
 
-When we used the \emph{Global Arrays} toolkit instead of MPI (\texttt{MPI\_Gather()})for communication, somewhat surprisingly, the communication cost was reduced and there were no delayed task due to communication.
-Despite these improvements, overall strong scaling behavior remained less than ideal because the initial opening of the shared trajectory file became the scaling bottleneck, possibly due to the POSIX consistency requirements for file access.
-We were able to eliminate this I/O problem by subfiling (splitting the shared trajectory file) and achieved nearly ideal scaling up to 192 cores (8 nodes on \emph{SDSC Comet}).
-
-Alternatively, we used MPI-based parallel I/O through HDF5 together with MPI for communications with comparable performance up to 384 cores (16 nodes on \emph{SDSC Comet}, Table~\ref{tab:comp-IO-scaling}) and speed-ups of two orders of magnitude compared to the serial execution.
+We investigated subfiling (splitting of the trajectories into separate files, one for each MPI rank) and MPI-based parallel I/O.
+Subfiling improved scaling, especially when combined with the \package{Global Arrays} toolkit.
+Somewhat surprisingly, \package{Global Arrays} reduced the communication cost compared to MPI collective communications even though it only acts as programming layer to access data across multiple nodes in a convenient array form and also uses MPI for its inter-node data exchange.
+Subfiling with \package{Global Arrays} achieved nearly ideal scaling up to 192 cores (8 nodes on \emph{SDSC Comet}).
+When we used MPI-based parallel I/O through HDF5 together with MPI for communications we achieved nearly ideal performance up to 384 cores (16 nodes on \emph{SDSC Comet}) and speed-ups of two orders of magnitude compared to the serial execution.
 The latter approach appears to be a promising way forward as it directly builds on very widely used technology (MPI-IO and HDF5) and echoes the experience of the wider HPC community that parallel file I/O is necessary for efficient data handling.
+
 The biomolecular simulation community suffers from a large number of trajectory file formats with very few being based on HDF5, with the exception of the H5MD format \cite{Buyl:2014aa} and the MDTraj HDF5 format \cite{McGibbon:2015aa}.
 Our work suggests that HDF5-based formats should be seriously considered as the default for MD simulations if users want to make efficient use of their HPC systems for analysis. 
-Alternatively, enabling MPI-IO for trajectory readers might also provide a path forward to better read performance.
+Alternatively, enabling MPI-IO for trajectory readers in libraries such as \package{MDAnalysis} might also provide a path forward to better read performance.
 
 We summarized our findings in a number of guidelines for improving the scaling of parallel analysis of MD trajectory data.
 We showed that it is feasible to run an I/O bound analysis task on HPC resources with a Lustre parallel filesystem and achieve good scaling behavior up to 384 CPU cores with an almost 300-fold speed-up compared to serial execution.
