@@ -1,3 +1,5 @@
+% -*- mode: latex; mode: visual-line; fill-column: 9999; coding: utf-8 -*-
+
 \documentclass[review]{elsarticle}
 
 \usepackage{lineno,hyperref}
@@ -61,31 +63,14 @@ Python\sep MPI\sep HPC\sep MDAnalysis\sep MPI I/O\sep Global Arrays \sep HDF5\se
 
 \linenumbers
 
-\section{Introduction}
 \input{introduction.tex}
-
-\section{Background and Related Work}
 \input{background.tex}
-
-\section{Algorithms and Software Packages}
 \input{applications.tex}
-
-\section{Benchmark Environment}
 \input{system.tex}
-
-\section{Methods}
 \input{methods.tex}
-
-\section{Computational Experiments}
 \input{experiments.tex}
-
-\section{Reproducibility and Performance Comparison on Different Clusters}
 \input{clusters.tex}
-
-\section{Guidelines for Improving Parallel Trajectory Analysis Performance}
 \input{guideline.tex}
-
-\section{Conclusions}
 \input{conclusion.tex}
 
 
@@ -105,17 +90,8 @@ This work used the Extreme Science and Engineering Discovery Environment (XSEDE)
 \clearpage
 
 \appendix
-\section{Additional Data}
 \input{additional_data.tex}
-
-\section{Effect of \Rcompcomm on Performance}
 \input{tcomm.tex}
-
-\section{Performance of the ChainReader for Split Trajectories}
 \input{chainreader.tex}
-
-
-%\section{Python codes used for the benchmark study}
-%\input{codes.tex}
 
 \end{document}
