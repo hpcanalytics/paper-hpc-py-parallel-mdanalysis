@@ -1,0 +1,1 @@
+(e) Time comparison on different parts of the calculations per MPI rank using Global Arrays

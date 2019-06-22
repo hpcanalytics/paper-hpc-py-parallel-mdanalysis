@@ -1,0 +1,1 @@
+(d) Time comparison of different parts of the calculations per MPI rank using ChainReader with MPI col- lective communications

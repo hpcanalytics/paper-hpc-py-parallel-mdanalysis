@@ -1,0 +1,1 @@
+(b) Time comparison on different parts of the calculations per MPI rank when I/O is removed
