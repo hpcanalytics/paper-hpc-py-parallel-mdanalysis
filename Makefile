@@ -5,17 +5,27 @@ PARTS := preamble.tex commands.tex abstract.tex introduction.tex background.tex 
          guideline.tex conclusion.tex additional_data.tex chainreader.tex tcomm.tex \
          main.bib
 
+TARFILE := arxiv.tar.gz
+BBL     := main.bbl
+FIGDIR  := ./figures
+FIGURES := $(wildcard $(FIGDIR)/*.pdf)
+
+
 %.pdf : %.tex
 	pdflatex $<
 	-bibtex $(basename $<)
 	pdflatex $<
 	pdflatex $<
 
-.phony: all see clean
+.phony: all see clean arxiv
 
 all: $(PDF)
 
+arxiv: $(TARFILE)
+
 $(PDF): $(MAIN) $(PARTS)
+
+$(BBL): $(PDF)
 
 see: $(PDF)
 	open $<
@@ -23,3 +33,7 @@ see: $(PDF)
 clean:
 	-rm $(PDF)
 	-rm *.aux *.bbl *.blg *.log *.out
+	-rm $(TARFILE)
+
+$(TARFILE): $(MAIN) $(PARTS) $(BBL) $(FIGURES)
+	tar -zcvf $@ $^
