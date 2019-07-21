@@ -1,3 +1,0 @@
-(b) Compute to communication
-Rcomp/comm
-ratio

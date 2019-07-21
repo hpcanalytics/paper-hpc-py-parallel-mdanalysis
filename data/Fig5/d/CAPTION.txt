@@ -1,1 +1,2 @@
 (d) Time comparison on different parts of the calculations per MPI rank with MPI collective communica- tions.
+
