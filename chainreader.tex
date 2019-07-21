@@ -77,7 +77,7 @@ We obtained the results for the ChainReader with this modified version of \packa
 
 Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance of the ChainReader for the RMSD task using either collective MPI or Global Arrays (GA) for the communication step.
 With GA good strong scaling performance was observable up to 144 cores (Figure \ref{fig:MPIspeedup-chain-reader}); without GA, strong scaling plateaued for more than 92 cores.
-In both cases, strong scaling performance was worse than what was achieved when each MPI process was assigned its own trajectory segment as described in in Section \ref{splitting-traj}. 
+In both cases, strong scaling performance was worse than what was achieved when each MPI process was assigned its own trajectory segment as described in Section \ref{splitting-traj}. 
 The strong scaling performance did not suffer because of the computation and the read I/O because both \tcomp and \tIO showed excellent strong scaling up to 196 cores (Figure \ref{fig:MPIscaling-chain-reader}).
 Instead the time for ending the \texttt{for} loop $t_{\text{end\_loop}}$, which includes the time for closing the trajectory file, and opening the trajectory $t_{\text{opening\_trajectory}}$ appeared to be the scaling bottleneck.
 These results differed from the subfiling results (section \ref{splitting-traj}) where neither $t_{\text{end\_loop}}$ nor $t_{\text{opening\_trajectory}}$ limited scaling (Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 

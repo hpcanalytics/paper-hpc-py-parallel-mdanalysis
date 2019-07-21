@@ -3,7 +3,7 @@
 \section{Background and Related Work}
 \label{sec:background}
 
-In our previous work we found that straightforward implementation of simple parallelization with a split-apply-combine algorithm in Python failed to scale beyond a single compute node~\cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask~\cite{Rocklin:2015aa} processes) took much longer than the typical task and so limited the overall performance.
+In our previous work, we found that straightforward implementation of simple parallelization with a split-apply-combine algorithm in Python failed to scale beyond a single compute node~\cite{Khoshlessan:2017ab} because a few tasks (MPI-ranks or Dask~\cite{Rocklin:2015aa} processes) took much longer than the typical task and so limited the overall performance.
 However, the cause for these \emph{straggler} tasks remained obscure.
 Here, we studied the straggler problem in the context of an MPI-parallelized trajectory analysis algorithm in Python and investigated solutions to overcome it.
 We briefly review stragglers in section~\ref{sec:stragglers} and summarize existing approaches to parallel trajectory analysis in section~\ref{sec:otherparallel}.
