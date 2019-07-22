@@ -3,10 +3,10 @@
 \section{Performance of the ChainReader for Split Trajectories}
 \label{sec:chainreader}
 
-In section \ref{splitting-traj} we showed how subfiling (splitting the trajectories) would help to overcome I/O and improve scaling. 
+In section \ref{splitting-traj} we showed how subfiling (splitting the trajectories) would help to overcome I/O limitations and improve scaling. 
 However, the number of trajectories may not necessarily be equal to the number of processes.
 For example, trajectories from MD simulations on supercomputers are often kept in small segments in individual files that need to be concatenated later to form a trajectory that can be analyzed with common tools.
-For subfiling such segments might be useful but making sure that the number of processes is equal to the number of trajectory files will not always be feasible. 
+Such segments might be useful for subfiling but making sure that the number of processes is equal to the number of trajectory files will not always be feasible. 
 \package{MDAnalysis} can transparently represent multiple trajectories as one virtual trajectory using the \emph{ChainReader}.
 This feature is  convenient for serial analysis when trajectories are maintained as segments.
 In the current implementation of ChainReader, each process opens all the trajectory segment files but I/O will only happen from a specific block of the trajectory specific to that process only.
@@ -64,7 +64,7 @@ Five repeats were performed to collect statistics.
 In order to perform our experiments we had to work around an issue with the XTC format reader in \package{MDAnalysis} that was related to the XTC random-access functionality that the \texttt{MDAnalysis.coordinates.XTC.XTCReader} class provides:
 The Gromacs XTC format \cite{Lindahl01, Spangberg:2011zr} is a lossy-compression, XDR-based file format that was never designed for random access and the compressed format itself does not support fast random seeking.
 The \texttt{XTCReader} stores persistent offsets for trajectory frames to disk \cite{Gowers:2016aa} in order to enable efficient access to random frames.
-These offsets will be generated automatically the first time a trajectory is opened and the offsets are stored in hidden $\ast.xtc\_offsets.npz$ files. 
+These offsets will be generated automatically the first time a trajectory is opened and the offsets are stored in hidden \texttt{*.xtc\_offsets.npz} files. 
 The advantage of these persistent offset files is that after opening the trajectory for the first time, opening the same file will be very fast, and random access is immediately available. 
 However, stored offsets can get out of sync with the trajectory they refer to. 
 To prevent the use of stale offset data, trajectory file data (number of atoms, size of the file and last modification time) are also stored for validation.
