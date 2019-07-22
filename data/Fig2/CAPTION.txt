@@ -1,0 +1,4 @@
+(a) Scaling total (five repeats)
+(b) Speed-up (five repeats)
+(c) Scaling for different components (five repeats)
+(d) Time comparison on different parts of the calculations per MPI rank (example)

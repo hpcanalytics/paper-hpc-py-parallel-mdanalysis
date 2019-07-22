@@ -12,14 +12,14 @@ The computational experiments were executed on standard compute nodes of three X
 \emph{PSC Bridges} is a 1.35 PFlop/s cluster with different types of computational nodes, including 16 GPU nodes, 8 large memory and 2 extreme memory nodes, and 752 regular nodes.
 It was designed to flexibly support both traditional (medium scale calculations) and non-traditional (data analytics) HPC uses.
 \emph{LSU SuperMIC} offers 360 standard compute nodes with a peak performance of 557 TFlop/s.
-The parallel filesystem on all three machines is Lustre (\url{http://lustre.org/}) and is shared between the nodes of each cluster.
+The parallel file system on all three machines is Lustre (\url{http://lustre.org/}) and is shared between the nodes of each cluster.
 
 \begin{table}[ht!]
 	\centering
 	\begin{adjustbox}{max width=\textwidth}
 		\begin{tabular}{c c c c c c c c c}
 			\toprule
-			\bfseries\thead{Name} & \bfseries\thead{Nodes} & \makecell{\bfseries\thead{Number \\of Nodes}} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology} & \makecell{\bfseries\thead{Scheduler and  \\ Resource Manager}} & \makecell{\bfseries\thead{parallel\\filesystem}}\\
+			\bfseries\thead{Name} & \bfseries\thead{Nodes} & \makecell{\bfseries\thead{Number \\of Nodes}} & \bfseries\thead{CPUs} &  \bfseries\thead{RAM} & \bfseries\thead{Network Topology} & \makecell{\bfseries\thead{Scheduler and  \\ Resource Manager}} & \makecell{\bfseries\thead{parallel\\file system}}\\
 			\midrule
 			\bfseries \emph{SDSC Comet} & Compute & 6400 & \makecell{2 Intel Xeon (E5-2680v3) \\ 12 cores/CPU, 2.5 GHz} &128 GB DDR4 DRAM & 56 Gbps IB & SLURM & Lustre\\
 			\bfseries \emph{PSC Bridges} & RSM & 752 & \makecell{2 Intel Haswell (E5-2695 v3)  \\14 cores/CPU, 2.3 GHz} & 128 GB, DDR4-2133Mhz & 12.37 Gbps OPA & SLURM & Lustre\\

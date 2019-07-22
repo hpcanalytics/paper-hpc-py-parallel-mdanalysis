@@ -138,7 +138,7 @@ Figure \ref{fig:MPIwithIO-split-SuperMIC} shows how RMSD task scales with the in
     \label{fig:MPIspeedup-SuperMIC}
   \end{subfigure}
 
-  \caption{\emph{LSU SuperMIC}: Comparison of the performance of the RMSD task with subfiling and using either using MPI  (``MPI'') or \package{Global Arrays} (``ga'') for communication.
+  \caption{\emph{LSU SuperMIC}: Comparison of the performance of the RMSD task with subfiling and using either MPI (``MPI'') or \package{Global Arrays} (``ga'') for communication.
     For \emph{Global Arrays}, all ranks update the global array (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
     Five repeats were performed to collect statistics.
     (a) Compute and I/O scaling versus number of processes.

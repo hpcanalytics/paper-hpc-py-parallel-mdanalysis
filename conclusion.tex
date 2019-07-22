@@ -12,11 +12,11 @@ In particular, artifically removing all I/O substantially improved performance o
 By performing benchmarks on three different XSEDE supercomputers we showed that our results were independent from the specifics of the hardware and local environment.
 Our results hint at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013} and theoretical predictions by \citet{Brown:2018ab}.
 One possible interpretation of our results is that for a sufficiently large per-frame compute workload, read I/O interferes much less with communication than for an I/O bound task that almost continuously accesses the file system.
-This intepretation suggested we needed to improve read I/O to reduce interference.
+This intepretation suggested that we needed to improve read I/O to reduce interference.
 
 We investigated subfiling (splitting of the trajectories into separate files, one for each MPI rank) and MPI-based parallel I/O.
 Subfiling improved scaling, especially when combined with the \package{Global Arrays} toolkit.
-Somewhat surprisingly, \package{Global Arrays} reduced the communication cost compared to MPI collective communications even though it only acts as programming layer to access data across multiple nodes in a convenient array form and also uses MPI for its inter-node data exchange.
+\package{Global Arrays} reduced the communication cost compared to MPI collective communications even though it only acts as programming layer to access data across multiple nodes in a convenient array form and also uses MPI for its inter-node data exchange.
 Subfiling with \package{Global Arrays} achieved nearly ideal scaling up to 192 cores (8 nodes on \emph{SDSC Comet}).
 When we used MPI-based parallel I/O through HDF5 together with MPI for communications we achieved nearly ideal performance up to 384 cores (16 nodes on \emph{SDSC Comet}) and speed-ups of two orders of magnitude compared to the serial execution.
 The latter approach appears to be a promising way forward as it directly builds on very widely used technology (MPI-IO and HDF5) and echoes the experience of the wider HPC community that parallel file I/O is necessary for efficient data handling.
@@ -26,7 +26,7 @@ Our work suggests that HDF5-based formats should be seriously considered as the 
 Alternatively, enabling MPI-IO for trajectory readers in libraries such as \package{MDAnalysis} might also provide a path forward to better read performance.
 
 We summarized our findings in a number of guidelines for improving the scaling of parallel analysis of MD trajectory data.
-We showed that it is feasible to run an I/O bound analysis task on HPC resources with a Lustre parallel filesystem and achieve good scaling behavior up to 384 CPU cores with an almost 300-fold speed-up compared to serial execution.
+We showed that it is feasible to run an I/O bound analysis task on HPC resources with a Lustre parallel file system and achieve good scaling behavior up to 384 CPU cores with an almost 300-fold speed-up compared to serial execution.
 Although we focused on the \package{MDAnalysis} library, similar strategies are likely to be more generally applicable and useful to the wider biomolecular simulation community.
 
 
