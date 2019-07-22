@@ -19,7 +19,7 @@ Beyond a single node performance had dropped due to \emph{straggler} tasks, a su
 Stragglers are a well-known challenge to improving performance on HPC resources \cite{Garraghan2016} but there has been little discussion of their impact in the biomolecular simulation community.
 
 In the present study, we analyzed the MPI case in more detail to better understand the origin of stragglers with the goal to find  parallelization approaches to speed up parallel post-processing of MD trajectories in the \package{MDAnalysis} library.
-We especially wanted to make efficient use of the resources provided by current supercomputers such as multiple nodes with hundreds of CPU cores and a Lustre parallel file-system.
+We especially wanted to make efficient use of the resources provided by current supercomputers such as multiple nodes with hundreds of CPU cores and a Lustre parallel file system.
 
 As in our previous study ~\cite{Khoshlessan:2017ab} we selected the commonly used RMSD algorithm implemented in \package{MDAnalysis} as a typical use case.
 We employed the single program multiple data (SPMD) paradigm to parallelize this algorithm on three different HPC resources (XSEDE's \emph{SDSC Comet}, \emph{LSU SuperMic}, and \emph{PSC Bridges} \cite{xsede}).
