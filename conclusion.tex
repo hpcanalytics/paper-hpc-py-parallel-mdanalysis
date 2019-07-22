@@ -16,7 +16,7 @@ This intepretation suggested that we needed to improve read I/O to reduce interf
 
 We investigated subfiling (splitting of the trajectories into separate files, one for each MPI rank) and MPI-based parallel I/O.
 Subfiling improved scaling, especially when combined with the \package{Global Arrays} toolkit.
-Somewhat surprisingly\mknote{I really disagree we this sentence. I do not understand why the results of the GA is surprising for every one. I have tried to explain why GA lead to better perforance. What is not clear to you?}, \package{Global Arrays} reduced the communication cost compared to MPI collective communications even though it only acts as programming layer to access data across multiple nodes in a convenient array form and also uses MPI for its inter-node data exchange.
+\package{Global Arrays} reduced the communication cost compared to MPI collective communications even though it only acts as programming layer to access data across multiple nodes in a convenient array form and also uses MPI for its inter-node data exchange.
 Subfiling with \package{Global Arrays} achieved nearly ideal scaling up to 192 cores (8 nodes on \emph{SDSC Comet}).
 When we used MPI-based parallel I/O through HDF5 together with MPI for communications we achieved nearly ideal performance up to 384 cores (16 nodes on \emph{SDSC Comet}) and speed-ups of two orders of magnitude compared to the serial execution.
 The latter approach appears to be a promising way forward as it directly builds on very widely used technology (MPI-IO and HDF5) and echoes the experience of the wider HPC community that parallel file I/O is necessary for efficient data handling.

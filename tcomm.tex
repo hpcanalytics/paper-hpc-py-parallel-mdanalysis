@@ -3,7 +3,7 @@
 \section{Effect of \Rcompcomm on Performance}
 \label{sec:tcomm}
 
-In Section \ref{sec:I/O}, we improved scaling limitations due to read I/O by splitting the trajectory, but scaling remained far from ideal when MPI communication was used; somewhat surprisingly, using \emph{Global Arrays} lead to better scaling (see Section \ref{Global-Array}) because the effective communication cost was reduced \mknote{I really disagree we this sentence. I do not understand why the results of the GA is surprising for every one. I have tried to explain why GA lead to better perforance. What is not clear to you?}.
+In Section \ref{sec:I/O}, we improved scaling limitations due to read I/O by splitting the trajectory, but scaling remained far from ideal when MPI communication was used; the use of \emph{Global Arrays} lead to better scaling (see Section \ref{Global-Array}) because the effective communication cost was reduced.
 Although we were not able to identify the reason for the better performance of \emph{Global Arrays} (it still uses MPI as a communicator), the results motivated an analysis in terms of the communication costs.
 In addition to the compute to I/O ratio \RcompIO discussed in Section \ref{sec:bound} we defined another performance parameter called the compute to communication ratio $\Rcompcomm$ (Eq.~\ref{eq:Compute-comm}).
 
