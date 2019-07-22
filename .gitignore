@@ -7,3 +7,6 @@ auto
 *.out
 *.spl
 *.synctex.gz
+.ipynb_checkpoints
+.DS_Store
+arxiv.tar.gz
