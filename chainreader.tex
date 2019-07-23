@@ -3,10 +3,10 @@
 \section{Performance of the ChainReader for Split Trajectories}
 \label{sec:chainreader}
 
-In section \ref{splitting-traj} we showed how subfiling (splitting the trajectories) would help to overcome I/O and improve scaling. 
+In section \ref{splitting-traj} we showed how subfiling (splitting the trajectories) would help to overcome I/O limitations and improve scaling. 
 However, the number of trajectories may not necessarily be equal to the number of processes.
 For example, trajectories from MD simulations on supercomputers are often kept in small segments in individual files that need to be concatenated later to form a trajectory that can be analyzed with common tools.
-For subfiling such segments might be useful but making sure that the number of processes is equal to the number of trajectory files will not always be feasible. 
+Such segments might be useful for subfiling but making sure that the number of processes is equal to the number of trajectory files will not always be feasible. 
 \package{MDAnalysis} can transparently represent multiple trajectories as one virtual trajectory using the \emph{ChainReader}.
 This feature is  convenient for serial analysis when trajectories are maintained as segments.
 In the current implementation of ChainReader, each process opens all the trajectory segment files but I/O will only happen from a specific block of the trajectory specific to that process only.
@@ -64,7 +64,7 @@ Five repeats were performed to collect statistics.
 In order to perform our experiments we had to work around an issue with the XTC format reader in \package{MDAnalysis} that was related to the XTC random-access functionality that the \texttt{MDAnalysis.coordinates.XTC.XTCReader} class provides:
 The Gromacs XTC format \cite{Lindahl01, Spangberg:2011zr} is a lossy-compression, XDR-based file format that was never designed for random access and the compressed format itself does not support fast random seeking.
 The \texttt{XTCReader} stores persistent offsets for trajectory frames to disk \cite{Gowers:2016aa} in order to enable efficient access to random frames.
-These offsets will be generated automatically the first time a trajectory is opened and the offsets are stored in hidden $\ast.xtc\_offsets.npz$ files. 
+These offsets will be generated automatically the first time a trajectory is opened and the offsets are stored in hidden \texttt{*.xtc\_offsets.npz} files. 
 The advantage of these persistent offset files is that after opening the trajectory for the first time, opening the same file will be very fast, and random access is immediately available. 
 However, stored offsets can get out of sync with the trajectory they refer to. 
 To prevent the use of stale offset data, trajectory file data (number of atoms, size of the file and last modification time) are also stored for validation.
@@ -77,14 +77,14 @@ We obtained the results for the ChainReader with this modified version of \packa
 
 Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance of the ChainReader for the RMSD task using either collective MPI or Global Arrays (GA) for the communication step.
 With GA good strong scaling performance was observable up to 144 cores (Figure \ref{fig:MPIspeedup-chain-reader}); without GA, strong scaling plateaued for more than 92 cores.
-In both cases, strong scaling performance was worse than what was achieved when each MPI process was assigned its own trajectory segment as described in in Section \ref{splitting-traj}. 
+In both cases, strong scaling performance was worse than what was achieved when each MPI process was assigned its own trajectory segment as described in Section \ref{splitting-traj}. 
 The strong scaling performance did not suffer because of the computation and the read I/O because both \tcomp and \tIO showed excellent strong scaling up to 196 cores (Figure \ref{fig:MPIscaling-chain-reader}).
 Instead the time for ending the \texttt{for} loop $t_{\text{end\_loop}}$, which includes the time for closing the trajectory file, and opening the trajectory $t_{\text{opening\_trajectory}}$ appeared to be the scaling bottleneck.
 These results differed from the subfiling results (section \ref{splitting-traj}) where neither $t_{\text{end\_loop}}$ nor $t_{\text{opening\_trajectory}}$ limited scaling (Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 
 
 Although we did not further investigate the deeper cause for the reduced scaling performance of the ChainReader, we speculate that the primary problem is related to each MPI rank having to open all trajectory files in their ChainReader instance even though they will only read from a small subset.
 For $N_{\text{p}}$ ranks and $N_{\text{seg}}$ file segments, in total, $N_{p } N_{\text{seg}}$ file opening/closing operations have to be performed. 
-Each server that is part of a Lustre filesystem can only handle a limited number of I/O requests (read, write, stat, open, close, etc.) per second.
+Each server that is part of a Lustre file system can only handle a limited number of I/O requests (read, write, stat, open, close, etc.) per second.
 A large number of such requests, from one or more users and one or more jobs, can lead to contention for storage resources. 
 For $N_{\text{p}} = N_{\text{seg}} = 100$, the Lustre file system has to perform 10,000 of these operations almost simultaneously, which might degrade performance. 
 
