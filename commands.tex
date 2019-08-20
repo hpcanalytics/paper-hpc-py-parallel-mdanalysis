@@ -6,24 +6,25 @@
 \usepackage{breakurl}
 \usepackage{url}
 \usepackage{adjustbox}
-\usepackage{amsmath}
+
 \renewcommand{\ttdefault}{pcr}
 \usepackage{tabularx}
 \usepackage{textcomp}
 %\usepackage{natbib}
-\setcitestyle{square, comma, numbers,sort&compress, super}
+%\setcitestyle{square, comma, numbers,sort&compress, super}
 \usepackage{hypernat}
 %\bibpunct{}{}{,}{s}{,}{,}
 %% Remove brackets from numbering in List of References
-\makeatletter
-\renewcommand{\@biblabel}[1]{\quad#1.}
-\makeatother
+%\makeatletter
+%\renewcommand{\@biblabel}[1]{\quad#1.}
+%\makeatother
 %% no space
 \setlength{\bibsep}{0pt}
 
 %% use \carriagereturn from dingbats 
 % fix LaTeX Error: Command \checkmark already defined.
 \let\checkmark\undefined
+\let\carriagereturn\undefined
 \usepackage{dingbat}
 \usepackage{color}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
@@ -90,36 +91,6 @@
 \newcommand{\RcompIO}{\ensuremath{R_{\text{comp/IO}}}\xspace}
 \newcommand{\Rcompcomm}{\ensuremath{R_{\text{comp/comm}}}\xspace}
 %-------------------------------------------------------------------------------------------------------
-\ifdraft
-%\usepackage{textcomp}
-\usepackage{xcolor}
-\definecolor{ocolor}{rgb}{1,0,0.4}
-\newcommand{\terminology}[1]{ {\textcolor{red}{(Terminology used: \textbf{#1}) }}}
-\newcommand{\owave}[1]{ {\cyanuwave{#1}}}
-\newcommand{\jwave}[1]{ {\reduwave{#1}}}
-\newcommand{\alwave}[1]{ {\blueuwave{#1}}}
-\newcommand{\jhanote}[1]{ {\textcolor{red} { ***shantenu: #1 }}}
-\newcommand{\todo}[1]{ {\textcolor{brown} { TODO #1 }}}
-\newcommand{\obnote}[1]{ {\textcolor{cyan} { ***oliver: #1 }}}
-\definecolor{orange}{rgb}{1,.5,0}
-\definecolor{dandelion}{cmyk}{0,0.29,0.84,0}
-\newcommand{\mknote}[1]{ {\textcolor{blue} { ***mahzad: #1 }}}
-\newcommand{\gpnote}[1]{{\textcolor{green} {***giannis: #1}}}
-\newcommand{\note}[1]{ {\textcolor{magenta} { ***Note: #1 }}}
-\else
-\newcommand{\terminology}[1]{}
-\newcommand{\jwave}[1]{#1}
-\newcommand{\alnote}[1]{}
-\newcommand{\mknote}[1]{}
-\newcommand{\obnote}[1]{}
-\newcommand{\rthreenote}[1]{}
-\newcommand{\rfournote}[1]{}
-\newcommand{\todo}[1]{}
-\newcommand{\jhanote}[1]{}
-\newcommand{\rtwonote}[1]{}
-\newcommand{\gpnote}[1]{}
-\newcommand{\note}[1]{}
-\fi
 
 \newcommand{\yarn}{YARN\xspace}
 \newcommand{\rp}{RADICAL-Pilot\xspace}
@@ -245,4 +216,4 @@
 %}
 %{\endminipage}
 
-\defaultleftmargin{1em}{}{}{}
+%\defaultleftmargin{1em}{}{}{}

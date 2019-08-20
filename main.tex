@@ -3,65 +3,68 @@
 % D.1.3 Concurrent Programming (parallel)
 % J.2 PHYSICAL SCIENCES AND ENGINEERING
 
-\documentclass[review,sort&compress,times]{elsarticle}
-\pdfoutput=1
+\documentclass[AMA,STIX1COL]{WileyNJD-v2}
 
-\usepackage{hyperref}
 
-\journal{Computer Physics Communications}
+%\usepackage{hyperref}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%
-%% Elsevier bibliography styles
+%% Wiley bibliography styles
 %%%%%%%%%%%%%%%%%%%%%%%
 
-\bibliographystyle{elsarticle-num-names}
-\sloppy
+\bibliographystyle{WileyNJD-AMA}
+
+%------------------------------------------------------------
 
 \input{preamble.tex}
-
 \input{commands.tex}
+
+%------------------------------------------------------------
+
+
+%\articletype{Article Type}%
+
+\received{\color{red}Added at production}
+\revised{\color{red}Added at production}
+\accepted{\color{red}Added at production}
+        
+\raggedbottom
 
 %%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-\begin{frontmatter}    
 
 \title{Parallel Performance of Molecular Dynamics Trajectory Analysis}
 
 %% Group authors per affiliation:
-\author[ASUphysics]{Mahzad Khoshlessan}
-\ead{mkhoshle@asu.edu}
+\author[1]{Mahzad Khoshlessan}
+\author[2]{Ioannis Paraskevakos}
+\author[3]{Geoffrey C. Fox}
+\author[2]{Shantenu Jha}
+\author[1,4]{Oliver Beckstein*}
 
-\author[Rutgers]{Ioannis Paraskevakos}
-\ead{i.paraskev@rutgers.edu}
+\authormark{MAHZAD KHOSHLESSAN \textsc{et al}}
 
-\author[IndianaDSC]{Geoffrey C. Fox}
-\ead{gcf@indiana.edu}
+\address[1]{\orgdiv{Department of Physics}, \orgname{Arizona State University},
+  \orgaddress{Tempe, AZ 85281}, \country{USA}}
+\address[2]{\orgdiv{Department of Electrical \& Computer Engineering},
+  \orgname{Rutgers University}, \orgaddress{Piscataway, NJ 08854}, \country{USA}}
+\address[3]{\orgdiv{Digital Science Center}, \orgname{Indiana University},
+  \orgaddress{Bloomington, IN 47405}, \country{USA}}
+\address[4]{\orgdiv{Center for Biological Physics}, \orgname{Arizona State University},
+  \orgaddress{Tempe, AZ 85281}, \country{USA}}
 
-\author[Rutgers]{Shantenu Jha}
-\ead{shantenu.jha@rutgers.edu}
-
-\author[ASUphysics,ASUCBP]{Oliver Beckstein\corref{correspondingauthor}}
-\cortext[correspondingauthor]{Corresponding author}
-\ead{oliver.beckstein@asu.edu}
-
-\address[ASUphysics]{Department of Physics, Arizona State University,
-  Tempe, AZ 85281, USA}
-\address[Rutgers]{Department of Electrical \& Computer Engineering,
-  Rutgers University, Piscataway, NJ 08854, USA}
-\address[IndianaDSC]{Digital Science Center, Indiana University,
-  Bloomington, IN 47405}
-\address[ASUCBP]{Center for Biological Physics, Arizona State University,
-  Tempe, AZ 85281, USA}
-
+\corres{*Oliver Beckstein, \orgdiv{Department of Physics}, \orgname{Arizona State University},
+  \orgaddress{Tempe, AZ 85281}, \country{USA}. \email{oliver.beckstein@asu.edu}}
     
 \input{abstract.tex}
 
-\begin{keyword}
-Python\sep MPI\sep HPC\sep MDAnalysis\sep MPI I/O\sep Global Arrays \sep HDF5\sep Straggler\sep Molecular Dynamics\sep Big Data\sep Trajectory Analysis
-\end{keyword}
+\keywords{Python, MPI, HPC, MDAnalysis, MPI I/O, Global Arrays , HDF5, Straggler, Molecular Dynamics, Big Data, Trajectory Analysis}
 
-\end{frontmatter}
+\maketitle
+
 
 \input{introduction.tex}
 \input{background.tex}
