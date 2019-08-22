@@ -331,9 +331,11 @@
                    R. O. Dror and J. Gullingsrud and M. O. Jensen and
                    J. L. Klepeis and P. Maragakis and P. Miller and
                    K. A. Stafford and D. E. Shaw},
-  booktitle =     {2008 SC - International Conference for High
+  booktitle =      {2008 SC - International Conference for High
                    Performance Computing, Networking, Storage and
                    Analysis},
+  organization =  {IEEE},
+  address =       {Austin, TX, USA},
   month =         {Nov},
   pages =         {1-12},
   title =         {A scalable parallel framework for analyzing terascale
@@ -461,7 +463,7 @@
   pages =         {102 -- 109},
   title =         {{MDAnalysis}: A {Python} package for the Rapid
                    Analysis of Molecular Dynamics Simulations},
-  year =          {2016},
+  year =          2016,
   abstract =      {MDAnalysis (http://mdanalysis.org) is a library for
                    structural and temporal analysis of molecular
                    dynamics (MD) simulation trajectories and individual
@@ -493,7 +495,7 @@
                    for more specialized biomolecular simulation tools.
                    MDAnalysis is available under the GNU General Public
                    License v2.},
-  url =           {http://mdanalysis.org},
+   doi =           {10.25080/Majora-629e541a-00e},
 }
 
 @article{cpptraj-2013,
@@ -687,9 +689,13 @@
   year =          {1996},
 }
 
+
 @inproceedings{Rocklin:2015aa,
   author =        {Rocklin, Matthew},
-  booktitle =     {Proceedings of the 14th Python in Science Conference},
+  booktitle =     {Proceedings of the 14th Python in Science Conference (SciPy 2015)},
+  organization =  {SciPy},
+  address =       {Austin, TX},
+  editor =        {Kathryn Huff and James Bergstra},  
   pages =         {130--136},
   title =         {Dask: Parallel Computation with Blocked algorithms
                    and Task Scheduling},
@@ -701,7 +707,7 @@
                    effective scale of modern hardware to larger datasets
                    and discuss how these ideas can be more broadly
                    applied to other parallel collections.},
-  url =           {https://github.com/dask/dask},
+  doi =            {10.25080/Majora-7b98e3ed-013},		   
 }
 
 @article{Dalcin:2011aa,
@@ -744,7 +750,7 @@
 }
 
 @article{Dalcin:2005aa,
-  author =        {Dalc{\'\i}n, Lisandro and Paz, Rodrigo and
+  author =        {Dalc{\'\i}n, Lisandro D. and Paz, Rodrigo and
                    Storti, Mario},
   journal =       {Journal of Parallel and Distributed Computing},
   number =        {9},
@@ -800,10 +806,11 @@
 }
 
 @mastersthesis{GAiN,
-  author =        {JEFFREY ALAN DAILY},
+  author =        {Jeffrey Alan Daily},
   school =        {School of Electrical Engineering and Computer
-                   Science, WASHINGTON STATE UNIVERSITY},
-  title =         {GAIN: DISTRIBUTED ARRAY COMPUTATION WITH PYTHON},
+                   Science, Washington State University},
+  address =       {Pullman, WA},		   
+  title =         {{GAiN}: Distributed Array Computation with {Python}},
   year =          {2009},
 }
 
@@ -815,20 +822,25 @@
                    Computing Applications},
   number =        {2},
   pages =         {203-231},
-  title =         {ADVANCES, APPLICATIONS AND PERFORMANCE OF THE GLOBAL
-                   ARRAYS SHARED MEMORY PROGRAMMING TOOLKIT},
+  title =         {Advances, Applications and Performance of the Global
+                   Arrays Shared Memory Programming Toolkit},
   volume =        {20},
   year =          {2006},
 }
 
-@conference{Dean2004,
-  author =        {Jeffrey Dean and Sanjay Ghemawat},
-  booktitle =     {OSDI'04 Sixth Symposium on Operating System Design
-                   and Implementation},
-  pages =         {pp. 137-150},
-  title =         {MapReduce: Simplified Data Processing on Large
-                   Clusters},
-  year =          {2004},
+
+@article{Dean2008,
+	Abstract = {MapReduce is a programming model and an associated implementation for processing and generating large datasets that is amenable to a broad variety of real-world tasks. Users specify the computation in terms of a map and a reduce function, and the underlying runtime system automatically parallelizes the computation across large-scale clusters of machines, handles machine failures, and schedules inter-machine communication to make efficient use of the network and disks. Programmers find the system easy to use: more than ten thousand distinct MapReduce programs have been implemented internally at Google over the past four years, and an average of one hundred thousand MapReduce jobs are executed on Google's clusters every day, processing a total of more than twenty petabytes of data per day.},
+	Author = {Dean, Jeffrey and Ghemawat, Sanjay},
+	Doi = {10.1145/1327452.1327492},
+	Journal = {Communications of the ACM},
+	Keywords = {map reduce},
+	Number = 1,
+	Pages = {107--113},
+	Publisher = {ACM},
+	Title = {MapReduce: simplified data processing on large clusters},
+	Volume = 51,
+	Year = 2008,
 }
 
 @inproceedings{Kyong2017,
@@ -878,6 +890,7 @@
   url =           {http://ieeexplore.ieee.org/document/7840606/},
 }
 
+% FIXME: URL or DOI for Schmidt2016
 @conference{Schmidt2016,
   author =        {Eric Schmidt and Greg DeMichillie and Frances Perry and
                    Tyler Akidau and Dan Halperin},
@@ -1361,7 +1374,7 @@
 }
 
 @inproceedings{Daily:2014aa,
-  author =        {J. Daily and A. Vishnu and B. Palmer and H. van Dam and
+  author =        {J. Daily and A. Vishnu and B. Palmer and {van Dam}, H. and
                    D. Kerbyson},
   booktitle =     {2014 21st International Conference on High
                    Performance Computing (HiPC)},
@@ -1452,7 +1465,7 @@
 
 @article{Lindahl01,
   author =        {Lindahl, Erik and Hess, Berk and
-                   van der Spoel, David},
+                   {van der Spoel}, David},
   journal =       {J.~Mol.~Mod.},
   number =        {8},
   pages =         {306--317},
@@ -1494,7 +1507,7 @@
 
 @article{Spangberg:2011zr,
   author =        {Sp{\aa}ngberg, Daniel and Larsson, Daniel S D and
-                   van der Spoel, David},
+                   {van der Spoel}, David},
   journal =       {J Mol Model},
   month =         {Oct},
   number =        {10},
@@ -1735,12 +1748,12 @@
 }
 
 @article{scalable-IO,
-  author =        {Alok Choudhary and Wei-keng Liao and Kui Gao and
+  author =        {Alok Choudhary and Liao, Wei-keng and Kui Gao and
                    Arifa Nisar and Robert Ross and Rajeev Thakur and
                    Robert Latham},
   journal =       {Journal of Physics: Conference Series},
   number =        {012048},
-  title =         {Scalable I/O and analytics},
+  title =         {Scalable {I/O} and analytics},
   volume =        {180},
   year =          {2009},
 }
@@ -1759,7 +1772,7 @@
 
 @inproceedings{optimize_lustre,
   author =        {Kuan-Wu Lin and Jerry Chou and Surendra Byna and
-                   Kesheng Wu and},
+                   Kesheng Wu},
   booktitle =     {SSDBM Proceedings of the 25th International
                    Conference on Scientific and Statistical Database
                    Management},
@@ -1770,7 +1783,7 @@
   year =          {2013},
 }
 
-@webpage{POSIX2017,
+@unpublished{POSIX2017,
   title =  {What is So Bad About {POSIX} {I/O}?},
   author = {Glenn Lockwood},
   url =    {https://www.nextplatform.com/2017/09/11/whats-bad-posix-io/},
@@ -1778,6 +1791,7 @@
   date =   {Sept 11, 2017},
   month =  {Sep},
   howpublished = {online: The Next Platform},
+  note =   {The Next Platform \url{https://www.nextplatform.com/2017/09/11/whats-bad-posix-io/}}
 }
 
 @article{Mache:2005aa,
@@ -1818,7 +1832,7 @@
 }
 
 @article{Buyl:2014aa,
-  author =        {Pierre de Buyl and Peter H. Colberg and
+  author =        {{de Buyl}, Pierre and Peter H. Colberg and
                    Felix H{\"o}fling},
   journal =       {Computer Physics Communications},
   number =        {6},

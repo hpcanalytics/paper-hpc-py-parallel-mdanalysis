@@ -59,7 +59,7 @@ The ranks that took much longer to complete than the typical execution time of t
   \label{fig:MPIwithIO}
 \end{figure}
 
-We qualitatively denoted by \emph{straggler} any MPI rank that took at least about twice as long as the group of ranks that finished fastest, roughly following the original description of a straggler as a task that took an ``unusually long time to complete'' \cite{Dean2004}.
+We qualitatively denoted by \emph{straggler} any MPI rank that took at least about twice as long as the group of ranks that finished fastest, roughly following the original description of a straggler as a task that took an ``unusually long time to complete'' \cite{Dean2008}.
 The fast-finishing ranks were generally clearly distinguishable in the per-rank timings such as in Figures~\ref{fig:MPIranks} and \ref{fig:MPIranks-Bridges}.
 Such a qualitative definition of stragglers was sufficient for our purpose to identify scalability bottlenecks, as shown in the following discussion.
 

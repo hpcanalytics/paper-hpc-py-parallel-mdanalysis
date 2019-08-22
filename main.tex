@@ -9,13 +9,14 @@
 %
 
 \documentclass[AMA,LATO1COL]{WileyNJD-v2}
-
+\usepackage{NJDnatbib}
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Wiley bibliography styles
 %%%%%%%%%%%%%%%%%%%%%%%
+% included with AMA option
+%%\bibliographystyle{WileyNJD-AMA}
 
-\bibliographystyle{WileyNJD-AMA}
 
 %------------------------------------------------------------
 
@@ -78,8 +79,12 @@
 \input{conclusion.tex}
 
 
-\subsection*{Acknowledgements}
+
+\section*{Acknowledgements}
 \label{acknowledgements}
+% The \ack command is supposed to generate the Acknowledgements section but it doesn't.
+\ack
+
 
 
 We are grateful to Sarp Oral for insightful comments on this manuscript.
@@ -87,7 +92,6 @@ This work was supported by the National Science Foundation under grant numbers A
 This work used the Extreme Science and Engineering Discovery Environment (XSEDE), which is supported by National Science Foundation grant number ACI-1548562.
 \emph{SDSC Comet} at the San Diego Supercomputer Center, \emph{LSU SuperMic} at Louisiana State University, and \emph{PSC Bridges} at the Pittsburgh Supercomputing Center were used under allocations TG-MCB090174 and TG-MCB130177.
 
-\section*{References}
 
 \bibliography{main}
 
