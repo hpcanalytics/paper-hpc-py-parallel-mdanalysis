@@ -13,7 +13,7 @@ We performed additional comparisons for several cases discussed previously, name
 Figure \ref{fig:MPI-splitting-clusters} shows the strong scaling of the RMSD task on different HPC resources.  
 Splitting the trajectories with Global Arrays for communication resulted in very good scaling performance on \emph{LSU SuperMIC}, similar to the results obtained on \emph{SDSC Comet}.
 The results with MPI blocking collective communication (instead of Global Arrays) were also comparable between the two clusters, with scaling far from ideal due to the communication cost (see section \ref{splitting-traj} and Figures \ref{fig:MPIranks-split} and \ref{fig:MPIwithIO-split-SuperMIC}). 
-Overal, the scaling of the RMSD task is better on \emph{LSU SuperMIC} than on \emph{SDSC Comet} and the performance gap increased with increasing core number.
+Overall, the scaling of the RMSD task is better on \emph{LSU SuperMIC} than on \emph{SDSC Comet} and the performance gap increased with increasing core number.
 The results on \emph{LSU SuperMIC} confirmed the conclusion obtained on \emph{SDSC Comet} that at least in this case Global Arrays performed better than MPI blocking collective communication.
 
 \begin{figure}[!htb]
@@ -107,13 +107,13 @@ However, on \emph{PSC Bridges} the I/O time was on average about two and a half 
 
 \subsection{Comparison of Compute and I/O Scaling Across Different Clusters}
 A full comparison of compute and I/O scaling across different clusters for different test cases and algorithms is shown in Table \ref{tab:comp-IO-scaling}. 
-For MPI-based parallel HDF5, both the compute and I/O time on \emph{Bridges} were consistenly larger than their corresponding values on \emph{SDSC Comet} and \emph{LSU SuperMIC}.
+For MPI-based parallel HDF5, both the compute and I/O time on \emph{Bridges} were consistently larger than their corresponding values on \emph{SDSC Comet} and \emph{LSU SuperMIC}.
 For example, with one core the corresponding compute and I/O time were $\tcomp = 387~\text{s}$, $\tIO = 1318~\text{s}$ versus $225~\text{s}$, $423~\text{s}$ on \emph{SDSC Comet} and $273~\text{s}$, $503~\text{s}$ on \emph{LSU SuperMIC}.
 This performance difference became larger with increasing core number.
 When the trajectories were split and Global Arrays was used for communication both \emph{SDSC Comet} and \emph{LSU SuperMIC} showed similar performance.
 
 Overall, the results from \emph{SDSC Comet} and \emph{LSU SuperMIC} are consistent with each other.
-Performance on \emph{PSC Bridges} seemed sensitive to the exact allocation of cores on each node but nevertheless the approaches that decreased the occurence of stragglers on \emph{SDSC Comet} and \emph{LSU SuperMIC} also improved performace on \emph{PSC Bridges}.
+Performance on \emph{PSC Bridges} seemed sensitive to the exact allocation of cores on each node but nevertheless the approaches that decreased the occurrence of stragglers on \emph{SDSC Comet} and \emph{LSU SuperMIC} also improved performance on \emph{PSC Bridges}.
 Thus, the findings described in the previous sections are valid for a range of different HPC clusters with Lustre file systems.
 
 \begin{sidewaystable}[hp]

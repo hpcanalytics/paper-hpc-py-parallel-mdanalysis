@@ -391,7 +391,7 @@ Because of its convenience and possibly reduced communications overhead due to i
     \label{fig:MPIranks-ga4py}
   \end{subfigure}
   \caption{Performance of the RMSD task using \package{Global Arrays} on \emph{SDSC Comet}.
-    All ranks updated the global RMSD array (\texttt{ga\_put()}) and rank 0 accesseed the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+    All ranks updated the global RMSD array (\texttt{ga\_put()}) and rank 0 accessed the whole RMSD array through the global memory address (\texttt{ga\_get()}).
     Five repeats were performed to collect statistics. (a-c) The error bars show standard deviation with respect to the mean. 
     In serial, there is no communication and not data points are shown for $N=1$ in (c).
     In (d), compute \tcomp, read I/O \tIO, communication \tcomm, access to the whole global array by rank 0, $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,

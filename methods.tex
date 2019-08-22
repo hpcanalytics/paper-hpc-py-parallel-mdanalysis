@@ -7,7 +7,7 @@ Documentation and benchmark codes are made available in the code repository \url
 These materials should enable users to recreate the computational environment on the tested XSEDE HPC resources (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}), prepare data files, and run the computational experiments.
 
 In the following we define the quantities and approach used for our performance measurements, with a full summary of all definitions in Table~\ref{tab:notation}.
-We evaluated MPI performance of the parallel RMSD timeseries algorithm~\ref{alg:RMSD} by timing the total time to solution as well as the execution time for different parts of the code for individual MPI ranks with the help of the Python \texttt{time.time()} function.
+We evaluated MPI performance of the parallel RMSD time series algorithm~\ref{alg:RMSD} by timing the total time to solution as well as the execution time for different parts of the code for individual MPI ranks with the help of the Python \texttt{time.time()} function.
 
 
 \begin{table}[!htb]
@@ -37,8 +37,8 @@ We evaluated MPI performance of the parallel RMSD timeseries algorithm~\ref{alg:
   \bottomrule
 \end{tabular}
 \caption[Summary of the notation of our performance modeling]
-{Summary of measured timing quantitities.
-Timings are collected for the specified line numbers in the code, labelled as $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in the corresponding algorithm. 
+{Summary of measured timing quantities.
+Timings are collected for the specified line numbers in the code, labeled as $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in the corresponding algorithm. 
 $t_{\text{comm/MPI}}$ (in Algorithm~\protect\ref{alg:RMSD}) and $t_{\text{comm/GA}}$ (in Algorithm~\protect\ref{alg:GA}) are both referred to as $\tcomm$ in the text.
 Variables in the top half of the table refer to measurements of an individual MPI rank.
 Variables in the bottom half are aggregates such as averages over all ranks or the total time to solution.}
