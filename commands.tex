@@ -1,24 +1,16 @@
 % -*- mode: latex; mode: visual-line; fill-column: 9999; coding: utf-8 -*-
 
-\usepackage{breakurl}
-\usepackage{url}
-\usepackage{adjustbox}
 
-\renewcommand{\ttdefault}{pcr}
-\usepackage{tabularx}
-\usepackage{textcomp}
-\usepackage{hypernat}
-
-%% use \carriagereturn from dingbats 
-% fix LaTeX Error: Command \checkmark already defined.
-\let\checkmark\undefined
-\let\carriagereturn\undefined
-\usepackage{dingbat}
-\usepackage{color}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
-\renewcommand{\ttdefault}{pcr}
-\usepackage{listings}
+\definecolor{listinggray}{gray}{0.95}
+\definecolor{darkgray}{gray}{0.7}
+\definecolor{commentgreen}{rgb}{0, 0.4, 0}
+\definecolor{darkblue}{rgb}{0, 0, 0.4}
+\definecolor{middleblue}{rgb}{0, 0, 0.7}
+\definecolor{darkred}{rgb}{0.4, 0, 0}
+\definecolor{brown}{rgb}{0.5, 0.5, 0}
+
 
 % Python style for highlighting
 \newcommand\pythonstyle{\lstset{
@@ -50,7 +42,6 @@
 % Python for inline
 \newcommand{\pythoninline[1]}{{\pythonstyle\lstinline!#1!}}
 
-\usepackage{xspace}
 
 \newcommand{\package}[1]{\textsl{#1}}
 \newcommand{\class}[1]{\textrm{#1}}

@@ -1,66 +1,43 @@
+% -*- mode: latex; mode: visual-line; fill-column: 9999; coding: utf-8 -*-
+
+\usepackage[utf8]{inputenc}
+
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{amsmath}
-\usepackage{amsthm}
 \usepackage{color}
 \usepackage{ifpdf}
-\usepackage{booktabs} % For formal tables
-\usepackage{listings}
-
-%\setcopyright{rightsretained}
-
-\newcommand{\up}{\vspace*{-1em}}
-\newcommand{\upp}{\vspace*{-0.4em}}
-\newcommand{\uppp}{\vspace*{-0.2em}}
 
 \usepackage{hyperref}
+
+\usepackage{booktabs}
 \usepackage{float}
-\usepackage[utf8]{inputenc}
 \usepackage{multirow}
 \usepackage{rotating}
 \usepackage{setspace}
 \usepackage{makecell}
 \usepackage{moresize}
-\setlength{\textfloatsep}{5pt}
 \usepackage{tabularx}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-
-\usepackage{booktabs}
-%\usepackage{listings}
+\usepackage{listings}
 \usepackage{paralist}
-\usepackage{multirow}
-\usepackage{ifpdf}
+
 \usepackage{xspace}
 \usepackage{keyval}
-\usepackage{color}
 \usepackage{nicefrac}
-\usepackage{float}
 
-% \theoremstyle{definition}
-% \newtheorem{definition}{Definition}[section]
-
-\usepackage{xcolor}
 \usepackage{textcomp}
 
-\definecolor{listinggray}{gray}{0.95}
-\definecolor{darkgray}{gray}{0.7}
-\definecolor{commentgreen}{rgb}{0, 0.4, 0}
-\definecolor{darkblue}{rgb}{0, 0, 0.4}
-\definecolor{middleblue}{rgb}{0, 0, 0.7}
-\definecolor{darkred}{rgb}{0.4, 0, 0}
-\definecolor{brown}{rgb}{0.5, 0.5, 0}
+\usepackage{breakurl}
+\usepackage{url}
+\usepackage{adjustbox}
 
-% \usepackage[normalem]{ulem}
-% \def\cyanuwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{cyan}{\char58}}}\ULon}
-% \def\reduwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
-% \def\blueuwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{blue}{\char58}}}\ULon}
-% \font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
-% \makeatother
+\usepackage{textcomp}
+%% use \carriagereturn from dingbats 
+% fix LaTeX Error: Command \checkmark already defined.
+\let\checkmark\undefined
+\let\carriagereturn\undefined
+\usepackage{dingbat}
 
-% DOI
-%\acmDOI{ }
-
-% ISBN
-%\acmISBN{ }
