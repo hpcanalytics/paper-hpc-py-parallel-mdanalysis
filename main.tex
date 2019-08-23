@@ -8,15 +8,23 @@
 % J.2 PHYSICAL SCIENCES AND ENGINEERING
 %
 
-\documentclass[AMA,LATO1COL]{WileyNJD-v2}
-\usepackage{NJDnatbib}
+\documentclass[LATO1COL]{WileyNJD-v2}
+\usepackage[numbers,super,sort&compress]{NJDnatbib}
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Wiley bibliography styles
 %%%%%%%%%%%%%%%%%%%%%%%
 % included with AMA option
 %%\bibliographystyle{WileyNJD-AMA}
+%
+% use home-grown BST file with author-year capabilities, implementing
+% subset of AMA as in https://wol-prod-cdn.literatumonline.com/pb-assets/assets/15320634/amaguide-1509470359000.pdf
+% and derived from WileyNJD-AMA
+\bibliographystyle{WileyNJD-CCPE}
 
+\makeatletter
+\renewcommand{\@biblabel}[1]{\quad#1.}
+\makeatother
 
 %------------------------------------------------------------
 
