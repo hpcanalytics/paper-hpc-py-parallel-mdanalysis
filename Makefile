@@ -4,6 +4,7 @@ PARTS := preamble.tex commands.tex abstract.tex introduction.tex background.tex 
          applications.tex system.tex methods.tex experiments.tex clusters.tex \
          guideline.tex conclusion.tex additional_data.tex chainreader.tex tcomm.tex \
          main.bib
+AUX   := WileyNJD-v2.cls NJDnatbib.sty WileyNJD-CCPE.bst 
 
 TARFILE := arxiv.tar.gz
 BBL     := main.bbl
@@ -35,5 +36,5 @@ clean:
 	-rm *.aux *.bbl *.blg *.log *.out
 	-rm $(TARFILE)
 
-$(TARFILE): $(MAIN) $(PARTS) $(BBL) $(FIGURES)
+$(TARFILE): $(MAIN) $(PARTS) $(BBL) $(FIGURES) $(AUX)
 	tar -zcvf $@ $^
