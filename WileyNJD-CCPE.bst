@@ -4,7 +4,7 @@
 %%
 %% The original source files were:
 %%
-%% merlin.mbs  (with options: `ay,nat,seq-no,vonx,nm-rvx,ed-rev,jnrlst,nmlm,x6,m3,keyxyr,dt-jnl,yrp-semi,note-yr,jxper,volp-sp,num-xser,jnm-x,add-pub,doi,in-col,injnl,ppx,ed,abr,xedn,jabr,xand,em-it,nfss,')
+%% merlin.mbs  (with options: `ay,nat,seq-no,vonx,nm-rvx,ed-rev,jnrlst,nmlm,x6,m3,keyxyr,dt-jnl,yrp-semi,note-yr,jxper,volp-sp,num-xser,jnm-x,add-pub,doi,in-col,ppx,ed,abr,xedn,jabr,xand,url,url-blk,em-it,nfss,')
 %% ----------------------------------------
 %% *** Custom natbib (author-year enabled) for Wiley journal Concurrency and Computation Practice and Experience ***
 %% 
@@ -74,6 +74,7 @@ ENTRY
     series
     title
     type
+    url
     volume
     year
   }
@@ -375,6 +376,15 @@ FUNCTION {bibinfo.warn}
     }
   if$
 }
+FUNCTION {format.url}
+{
+  url
+  duplicate$ empty$
+    { pop$ "" }
+    { "\urlprefix\url{" swap$ * "}" * }
+  if$
+}
+
 INTEGERS { nameptr namesleft numnames }
 
 
@@ -918,7 +928,6 @@ FUNCTION {article}
       remove.dots
       "journal" bibinfo.check
       emphasize
-      word.in swap$ *
       "journal" output.check
       add.blank
       format.date "year" output.check
@@ -930,6 +939,8 @@ FUNCTION {article}
     }
   if$
   format.doi output
+  new.block
+  format.url output
   new.block
   format.note output
   fin.entry
@@ -965,6 +976,8 @@ FUNCTION {book}
   format.date "year" output.check
   format.doi output
   new.block
+  format.url output
+  new.block
   format.note output
   fin.entry
 }
@@ -979,6 +992,8 @@ FUNCTION {booklet}
   address "address" bibinfo.check output
   format.date "year" output.check
   format.doi output
+  new.block
+  format.url output
   new.block
   format.note output
   fin.entry
@@ -1019,6 +1034,8 @@ FUNCTION {inbook}
   date.block
   format.doi output
   new.block
+  format.url output
+  new.block
   format.note output
   fin.entry
 }
@@ -1046,6 +1063,8 @@ FUNCTION {incollection}
   format.date "year" output.check
   date.block
   format.doi output
+  new.block
+  format.url output
   new.block
   format.note output
   fin.entry
@@ -1078,6 +1097,8 @@ FUNCTION {inproceedings}
   format.pages "pages" output.check
   format.doi output
   new.block
+  format.url output
+  new.block
   format.note output
   fin.entry
 }
@@ -1094,6 +1115,8 @@ FUNCTION {manual}
   format.edition output
   format.date "year" output.check
   format.doi output
+  new.block
+  format.url output
   new.block
   format.note output
   fin.entry
@@ -1113,6 +1136,8 @@ FUNCTION {mastersthesis}
   format.date "year" output.check
   format.doi output
   new.block
+  format.url output
+  new.block
   format.note output
   fin.entry
 }
@@ -1127,6 +1152,8 @@ FUNCTION {misc}
   howpublished "howpublished" bibinfo.check output
   format.date "year" output.check
   format.doi output
+  new.block
+  format.url output
   new.block
   format.note output
   fin.entry
@@ -1144,6 +1171,8 @@ FUNCTION {phdthesis}
   address "address" bibinfo.check output
   format.date "year" output.check
   format.doi output
+  new.block
+  format.url output
   new.block
   format.note output
   fin.entry
@@ -1167,6 +1196,8 @@ FUNCTION {proceedings}
   format.date "year" output.check
   format.doi output
   new.block
+  format.url output
+  new.block
   format.note output
   fin.entry
 }
@@ -1185,6 +1216,8 @@ FUNCTION {techreport}
   format.date "year" output.check
   format.doi output
   new.block
+  format.url output
+  new.block
   format.note output
   fin.entry
 }
@@ -1197,6 +1230,8 @@ FUNCTION {unpublished}
   format.title "title" output.check
   format.date "year" output.check
   format.doi output
+  new.block
+  format.url output
   new.block
   format.note "note" output.check
   fin.entry
@@ -1494,6 +1529,10 @@ FUNCTION {begin.bib}
   "\begin{thebibliography}{" number.label int.to.str$ * "}" *
   write$ newline$
   "\providecommand{\natexlab}[1]{#1}"
+  write$ newline$
+  "\providecommand{\url}[1]{\texttt{#1}}"
+  write$ newline$
+  "\providecommand{\urlprefix}{URL }"
   write$ newline$
   "\expandafter\ifx\csname urlstyle\endcsname\relax"
   write$ newline$
