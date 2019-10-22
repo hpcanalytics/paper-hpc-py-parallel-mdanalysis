@@ -49,8 +49,9 @@ In the absence of such a specific  workflow, one would need to stage the traject
 
 VMD~\cite{Hum96, VMD2013} provides molecular visualization and analysis tool through algorithmic and memory efficiency improvements, vectorization of key CPU algorithms, GPU analysis and visualization algorithms, and good parallel I/O performance on supercomputers. It is one of the most advanced programs for the visualization and analysis of MD simulations. It is, however, a large monolithic program, that can only be driven through its built-in Tcl interface and thus is less well suited as a library that allows the rapid development of new algorithms or integration into workflows.
 
-CPPTraj~\cite{cpptraj-2013} offers multiple levels of parallelization (MPI and OpenMP) in a monolithic C++ implementation.
-CPPTraj allows parallel reads between frames of the same trajectory but is especially geared towards processing an ensemble of many trajectories in parallel.
+CPPTRAJ~\cite{cpptraj-2013} offers multiple levels of parallelization (MPI and OpenMP) in a monolithic C++ implementation.
+It can processes single, multiple, and ensembles of trajectories in parallel without changes to input scripts \cite{Roe:2018aa}. 
+A Python API exists in the form of the pytraj package (\url{https://github.com/Amber-MD/pytraj}), which has its own implementation of parallelization based on Python's multiprocessing or MPI (via \package{mpi4py} \cite{Dalcin:2011aa, Dalcin:2005aa}).
 
 pyPcazip~\cite{pyPcazip} is a suite of software tools written in Python for compression and analysis of MD simulation data, in particular ensembles of trajectories. 
 pyPcazip is MPI parallelized and is specific to PCA-based investigations of MD trajectories and supports a wide variety of trajectory file formats (based on the capabilities of the underlying MDTraj package~\cite{McGibbon:2015aa}).
