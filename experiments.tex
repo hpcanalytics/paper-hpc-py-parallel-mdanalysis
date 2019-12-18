@@ -293,7 +293,7 @@ Often trajectories from MD simulations on HPC machines are produced and kept in 
 These trajectory segments could be used for the subfiling approach.
 However, it might not be feasible to have exactly one segment per MPI rank, with all segments of equal size, which constitutes the ideal case for subfiling.
 MDAnalysis can create virtual trajectories from separate trajectory segment files that appear to the user as a single trajectory.
-In~\ref{sec:chainreader} we investigated if this so-called \emph{ChainReader} functionality could benefit from the subfiling approach.
+In Appendix~\ref{sec:chainreader} we investigated if this so-called \emph{ChainReader} functionality could benefit from the subfiling approach.
 We found some improvements in performance but discovered limitations in the design of the ChainReader (namely that all segment files are initially opened) that will have to be addressed before equivalent performance can be reached.
  
 \subsubsection{MPI-based Parallel HDF5}
@@ -424,7 +424,7 @@ Although the reason why in our case GA appeared to be more efficient than direct
 By removing the contention, near ideal scaling could be achieved.
 
 
-\subsection{Likely Causes of Stragglers}
+\subsection{Potential Causes of Stragglers}
 \label{sec:likelycauses}
 
 The data indicated that an increase in the duration of both MPI communication and trajectory file access lead to large variability in the run time of individual MPI processes and ultimately poor scaling performance beyond a single node.
@@ -442,8 +442,10 @@ Parallel file systems like Lustre implement sophisticated distributed locking me
 For example, locking mechanisms ensures that a node can not read from a file or part of a file while it might be being modified by another node. 
 In fact, when the application I/O is not designed in a way to avoid scenarios where multiple nodes are fighting over locks for overlapping extents, Lustre can suffer from scalability limitations~\cite{optimize_lustre}.
 Continuously keeping metadata updated in order to have fully consistent reads and writes (POSIX metadata management), requires writing a new value for the file's last-accessed time (POSIX atime) every time a file is read, imposing a significant burden on parallel file system~\cite{POSIX2017}. 
-It was observed that contention for the interconnect between OSTs and compute nodes due to MPI communication may lead to variable performance in I/O measurements~\cite{Mache:2005aa}.
-Conversely, our data suggest that single-shared-file I/O on Lustre can negatively affect MPI communication as well, even at moderate numbers (tens to hundreds) of concurrent requests, similar to recent network simulations that predicted interference between MPI and I/O traffic~\cite{Brown:2018ab}.
-This work indicated that MPI traffic (inter-process communication) can be affected by increasing I/O, and in particular, a few MPI processes were always delayed by one to two orders of magnitude more than the median time.
-In summary, these observations in the context of the work by \citet{Brown:2018ab} suggest that our observed stragglers with large variance in the communication step might be due to interference of MPI communications with the I/O requests on the same network.
+Mache \textit{et al.} observed that contention for the interconnect between OSTs and compute nodes due to MPI communication may lead to variable performance in I/O measurements~\cite{Mache:2005aa}.
+Conversely, our data suggest that single-shared-file I/O on Lustre can negatively affect MPI communication as well, even at moderate numbers (tens to hundreds) of concurrent requests, similar to the results from recent network simulations that predicted interference between MPI and I/O traffic~\cite{Brown:2018ab}.
+Brown \textit{et al.}'s  work \cite{Brown:2018ab} indicated that MPI traffic (inter-process communication) could be affected by increasing I/O.
+In particular, a few MPI processes were always delayed by one to two orders of magnitude more than the median time, which we would classify as stragglers.
+In summary, these observations in the context of the work by \citet{Brown:2018ab} suggest that our observed stragglers with large variance in the communication step could be due to interference of MPI communications with the I/O requests on the same network.
+Further detailed work will be needed to test this hypothesis.
 

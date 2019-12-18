@@ -10,8 +10,8 @@ Stragglers were primarily caused by either increased MPI communication costs or 
 Stragglers were less prevalent for compute-bound workloads (i.e., $\RcompIO \gg 1$), suggesting that file read I/O was responsible for poor MPI communication.
 In particular, artificially removing all I/O substantially improved performance of the communication step and thus brought overall performance close to ideal (i.e., linear increase in speed-up with processor count with slope one).
 By performing benchmarks on three different XSEDE supercomputers we showed that our results were independent from the specifics of the hardware and local environment.
-Our results hint at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013} and theoretical predictions by \citet{Brown:2018ab}.
-One possible interpretation of our results is that for a sufficiently large per-frame compute workload, read I/O interferes much less with communication than for an I/O bound task that almost continuously accesses the file system.
+Our results hinted at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013} and theoretical predictions by \citet{Brown:2018ab}, but further work would be needed to validate this specific hypothesis.
+One possible interpretation of our results was that for a sufficiently large per-frame compute workload, read I/O interfered much less with communication than for an I/O bound task that almost continuously accesses the file system.
 This interpretation suggested that we needed to improve read I/O to reduce interference.
 
 We investigated subfiling (splitting of the trajectories into separate files, one for each MPI rank) and MPI-based parallel I/O.
