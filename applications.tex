@@ -50,7 +50,7 @@ Each MPI process loads the core MDAnalysis structure (called the \texttt{Univers
 Each process operates on a different block of frames and iterates through them by reading the coordinates of a single frame into memory and performing the RMSD computation with them.
 Once all frames in the block are processed, the trajectory file is closed and results are communicated to MPI rank 0 using \texttt{MPI\_Gather()}.
 
-The RMSD was determined for a subset of protein atoms, the $N=214$  C$_{\alpha}$ atoms of our test system (see section \ref{sec:data} for details).
+The RMSD was determined for a subset of protein atoms, the $N=146$  C$_{\alpha}$ atoms in the so-called ``core'' domain of our test system, the protein adenylate kinase \cite{Seyler:2014il} (see section \ref{sec:data} for further details).
 The time complexity for the RMSD Algorithm~\ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$~\cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles included in the RMSD calculation.
 
 \begin{algorithm}[ht!]
