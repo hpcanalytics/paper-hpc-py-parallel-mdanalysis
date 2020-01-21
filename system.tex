@@ -86,4 +86,8 @@ The file size was relatively small because water molecules that were also part o
 Thus, the trajectory represents a small to medium system size in the number of atoms and coordinates that have to be loaded into memory for each time frame.
 The XTC format is a format with lossy compression \cite{Lindahl01, Spangberg:2011zr}, which also contributed to the compact file size.
 XTC trades lower I/O demands for higher CPU demands during decompression and therefore performed well in our previous study~\cite{Khoshlessan:2017ab}.
+In order to assess the performance of reading from an HDF5 file in parallel (see Section~\ref{sec:methods-hdf5}) we generated a trajectory-like HDF5 file with the data required to perform the RMSD calculation.
+This HDF5 file was created from the XTC file by sub-selecting the atoms for which the RMSD was calculated as detailed in Section~\ref{sec:mda}.
+The coordinates were stored as a two-dimensional $T \times 3N$ array where the first dimension contained $T=2,512,200$ frames and the second dimension the $3N = 438$ Cartesian coordinates.
 Although 2,512,200 frames represents a long simulation for current standards, such trajectories will become increasingly common due to the use of special hardware~\cite{Shaw:2009ly, Shaw:2014aa} and GPU-acceleration~\cite{Salomon-Ferrer:2013cr, Glaser:2015ys, Abraham:2015aa}.
+
