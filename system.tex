@@ -39,6 +39,7 @@ Table~\ref{tab:version} lists the tools and libraries that were required for our
 We therefore had to compile them, which in some cases required substantial effort due to non-standard building and installation procedures or lack of good documentation.
 Because this is a common problem that hinders reproducibility we provide detailed version information, notes on the installation process, as well as comments on the ease of installation and the quality of the documentation in Table~\ref{tab:version}.
 For the MPI implementation we used Open MPI release 1.10.7  (\url{https://www.open-mpi.org/}) consistently everywhere.
+We used the \package{h5py} package for HDF5, which, when provided with the HDF5 library itself and \package{mpi4py} both built against Open MPI, enables parallel HDF5 from Python.
 Detailed instructions to create the computing environments together with the benchmarking code can be found in the GitHub repository.
 Carefully setting up the same software stack on the three different supercomputers allowed us to clearly demonstrate the reproducibility of our results and showed that our findings were not dependent on machine specifics.
 
@@ -58,13 +59,13 @@ Carefully setting up the same software stack on the three different supercompute
    \midrule
    \bfseries Python & 2.7.13 & Python language & + & ++ & Conda Installation & --\\
    \midrule
-   \bfseries MPI4py & 3.0.0 & MPI for Python & + & ++ & Conda Installation &\makecell[l]{Python 2.7 or above, \\ MPI 1.x/2.x/3.x  \\ implementation like \\ Open MPI \\built with shared/dynamic \\libraries, Cython}\\
+   \bfseries mpi4py & 3.0.0 & MPI for Python & + & ++ & Conda Installation &\makecell[l]{Python 2.7 or above, \\ MPI 1.x/2.x/3.x  \\ implementation like \\ Open MPI \\built with shared/dynamic \\libraries, Cython}\\
    \midrule
-   \bfseries GA4py & 1.0 & Global Arrays for Python & 0 & 0 & Python setuptools &\makecell[l]{Global Arrays, Python 2 only,\\ MPI 1.x/2.x/3.x  \\implementation like \\ Open MPI \\ built with shared/dynamic \\libraries, Cython,  \\MPI4py, Numpy} \\
+   \bfseries GA4py & 1.0 & Global Arrays for Python & 0 & 0 & Python setuptools &\makecell[l]{Global Arrays, Python 2 only,\\ MPI 1.x/2.x/3.x  \\implementation like \\ Open MPI \\ built with shared/dynamic \\libraries, Cython,  \\mpi4py, Numpy} \\
    \midrule
    \bfseries PHDF5 & 1.10.1 & Parallel HDF5 & $-$ & ++ & \makecell[l]{via configuration files,\\ environment \\or command line options, \\ several optional configuration\\ settings available} &\makecell[l]{MPI 1.x/2.x/3.x  \\ implementation like \\ Open MPI  \\GNU, MPIF90,  \\MPICC, MPICXX}\\
    \midrule
-   \bfseries H5py &  2.7.1 & Pythonic wrapper around the HDF5 & + & ++ & Conda Installation & \makecell[l]{Python 2.7, or above,\\ PHDF5, Cython}\\    
+   \bfseries h5py &  2.7.1 & Pythonic wrapper around the HDF5 & + & ++ & Conda Installation & \makecell[l]{Python 2.7, or above,\\ PHDF5, Cython}\\    
    \midrule
    \bfseries MDAnalysis & 0.17.0 & \makecell[l]{Python library to analyze \\trajectories from MD simulations} & + & ++ & Conda Installation & \makecell[l]{Python $>=$2.7, Cython,\\ GNU, Numpy}\\
   \bottomrule
