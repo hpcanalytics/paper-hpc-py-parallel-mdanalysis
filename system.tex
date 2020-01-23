@@ -15,7 +15,10 @@ It was designed to flexibly support both traditional (medium scale calculations)
 The parallel file system on all three machines is Lustre (\url{http://lustre.org/}) and is shared between the nodes of each cluster.
 
 \begin{table}[ht!]
-	\centering
+        \centering
+  	\caption[Configuration of HPC resources]
+	{Configuration of the HPC resources that were benchmarked. Only a subset of the total available nodes were used. IB: InfiniBand; OPA: Omni-Path Architecture.}
+	\label{tab:sys-config}
 	\begin{adjustbox}{max width=\textwidth}
 		\begin{tabular}{c c c c c c c c c}
 			\toprule
@@ -27,9 +30,6 @@ The parallel file system on all three machines is Lustre (\url{http://lustre.org
 			\bottomrule
 		\end{tabular}
 	\end{adjustbox}
-	\caption[Configuration of HPC resources]
-	{Configuration of the HPC resources that were benchmarked. Only a subset of the total available nodes were used. IB: InfiniBand; OPA: Omni-Path Architecture.}
-	\label{tab:sys-config}
 \end{table}
 
 \subsection{Software}
@@ -46,6 +46,9 @@ Carefully setting up the same software stack on the three different supercompute
 
 \begin{table}[ht!]
 \centering
+\caption[Version of the packages used in the present study]%
+{Detailed comparison on the dependencies and installation of different software packages used in the present study. Software was built from source or obtained via a package manager and installed on the multi-user HPC systems in Table~\protect\ref{tab:sys-config}. Evaluation of ease of installation and documentation uses a subjective scale with ``++'' (excellent), ``+'' (good), ``0'' (average), and ``$-$'' (difficult/lacking) and reflects the experience of a typical domain scientist at the graduate/post-graduate level in a discipline such as computational biophysics or chemistry.}
+\label{tab:version}  
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{l c l c c l l}
   \toprule
@@ -71,9 +74,6 @@ Carefully setting up the same software stack on the three different supercompute
   \bottomrule
 \end{tabular}
 \end{adjustbox}
-\caption[Version of the packages used in the present study]%
-{Detailed comparison on the dependencies and installation of different software packages used in the present study. Software was built from source or obtained via a package manager and installed on the multi-user HPC systems in Table~\protect\ref{tab:sys-config}. Evaluation of ease of installation and documentation uses a subjective scale with ``++'' (excellent), ``+'' (good), ``0'' (average), and ``$-$'' (difficult/lacking) and reflects the experience of a typical domain scientist at the graduate/post-graduate level in a discipline such as computational biophysics or chemistry.}
-\label{tab:version}
 \end{table}
 
 

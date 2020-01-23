@@ -100,6 +100,11 @@ The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational wor
 
 \begin{table}[!htb]
 \centering
+\caption[Change in load-ratio with RMSD workload]{Change in $\RcompIO$ ratio with change in the RMSD workload $X$.
+  The RMSD workload was artificially increased in order to examine the effect of compute to I/O ratio on the performance.
+  The reported compute and I/O time were measured based on the serial version using one core.
+  The theoretical $\RcompIO$ (see text) is provided for comparison.}
+\label{tab:load-ratio}
 \begin{tabular}{rrrrr}
   \toprule
   \bfseries\thead{Workload $X$} &  \bfseries\thead{$\tcomp$ (s)} &  \bfseries\thead{$\tIO$ (s)}
@@ -112,11 +117,6 @@ The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational wor
     $100\times$ & 21639 & 791 & 27   & 29\\  
   \bottomrule
 \end{tabular}
-\caption[Change in load-ratio with RMSD workload]{Change in $\RcompIO$ ratio with change in the RMSD workload $X$.
-  The RMSD workload was artificially increased in order to examine the effect of compute to I/O ratio on the performance.
-  The reported compute and I/O time were measured based on the serial version using one core.
-  The theoretical $\RcompIO$ (see text) is provided for comparison.}
-\label{tab:load-ratio}
 \end{table}
 
 \begin{figure}[!htb]
@@ -268,6 +268,11 @@ Nevertheless, from an end user perspective, preprocessing of trajectories can be
 
 \begin{table}[!htb]
   \centering
+  \caption[Time necessary for writing the trajectory segments]
+  {The wall-clock time spent for writing $N_{\text{seg}}$ trajectory segments using $N_{\text{p}}$ processes using MPI on \emph{SDSC Comet}.
+    One set of runs was performed for the timings.
+    Scaling $S$ and efficiency $E$ are relative to the 1 node case (24 MPI processes).}
+  \label{tab:timing-splitting}  
   \begin{tabular}{rrrrrr}
     \toprule
     \thead{$N_{\text{seg}}$} & \thead{$N_{\text{p}}$} & \thead{nodes}
@@ -281,11 +286,6 @@ Nevertheless, from an end user perspective, preprocessing of trajectories can be
     192 & 192 & 8 & 13.5 & 6.7 & 0.83\\  
     \bottomrule
   \end{tabular}
-  \caption[Time necessary for writing the trajectory segments]
-  {The wall-clock time spent for writing $N_{\text{seg}}$ trajectory segments using $N_{\text{p}}$ processes using MPI on \emph{SDSC Comet}.
-    One set of runs was performed for the timings.
-    Scaling $S$ and efficiency $E$ are relative to the 1 node case (24 MPI processes).}
-  \label{tab:timing-splitting}
 \end{table}
 
 
