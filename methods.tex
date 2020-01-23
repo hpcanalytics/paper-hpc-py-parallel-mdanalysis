@@ -11,38 +11,43 @@ We evaluated MPI performance of the parallel RMSD time series algorithm~\ref{alg
 
 
 \begin{table}[!htb]
-\centering
-\begin{tabular}{c c}
-  \toprule
-           \bfseries\thead{Quantity} & \bfseries\thead{Definition}\\
-  \midrule
-    $N_{\text{b}}$ & $N_{\text{frames}}^{\text{total}}/N$\\  
-    $t_{\text{end\_loop}}$ & $t_{\text{L6}} $\\
-    $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ \\
-    $\tcomp$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$\\
-    $\tIO$ & $\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$\\
-    $t_{\text{all\_frame}}$ & $t_{\text{L4}}+t_{\text{L5}}+t_{\text{L6}}$  \\
-    $t_{\text{RMSD}}$ &  $t_{\text{L1}} + ...+ t_{\text{L8}}$ \\
-    $t_{\text{comm/MPI}}$ &  $t_{\text{L16}}$  \\
-    $t_{\text{comm/GA}}$ &  $t_{\text{L5}}+t_{\text{L6}}+t_{\text{L7}}+t_{\text{L8}}$  (in Alg.~\ref{alg:GA}) \\
-    $\tcomm$  & $t_{\text{comm/MPI}}$ (Alg.~\ref{alg:RMSD}) or $t_{\text{comm/GA}}$ (Alg.~\ref{alg:GA})\\
-    $t_{\text{Overhead1}}$ & $t_{\text{all\_frame}}-t_{\text{I/O}}-t_{\text{comp}}-t_{\text{end\_loop}}$  \\
-    $t_{\text{Overhead2}}$ & $t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$  \\
-    $t_{N}$ & $t_{\text{RMSD}}+\tcomm$ \\
-   \midrule  
-    $\overline{\tcomp}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomp$ \\
-    $\overline{\tIO}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tIO$\\
-    $\overline{\tcomm}$ & $\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomm$ \\
-    $t_{\text{total}}$ & $\max t_{N}$ \\
-  \bottomrule
-\end{tabular}
-\caption[Summary of measured timing quantities.]
-{Summary of measured timing quantities.
-Timings are collected for the specified line numbers in the code, labeled as $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in the corresponding algorithm (Algorithm~\protect\ref{alg:RMSD} unless noted). 
-$t_{\text{comm/MPI}}$ (in Algorithm~\protect\ref{alg:RMSD}) and $t_{\text{comm/GA}}$ (in Algorithm~\protect\ref{alg:GA}) are both referred to as $\tcomm$ in the text.
-Variables in the top half of the table refer to measurements of an individual MPI rank.
-Variables in the bottom half are aggregates such as averages over all ranks or the total time to solution.}
-\label{tab:notation}
+  \centering
+  \caption[Summary of measured timing quantities.]  {Summary of measured timing quantities.  Timings are collected for the specified line numbers in the code, labeled as $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in the corresponding algorithm (columns Alg.~\ref{alg:RMSD}--\ref{alg:RMSDhdf5}), or are calculated in the same way for all three algorithms from the specific quantities.  Variables in the top half of the table refer to measurements of an individual MPI rank.  Variables in the bottom half are aggregates such as averages over all ranks or the total time to solution.}
+  \label{tab:notation}
+\begin{threeparttable}
+  \begin{tabular}{cccc}
+    \toprule
+    \bfseries\thead{Quantity} & \multicolumn{3}{c}{\bfseries\thead{Definition}}\\
+                              & Alg.~\ref{alg:RMSD} & Alg.~\ref{alg:GA} & Alg.~\ref{alg:RMSDhdf5}\\
+    \midrule  
+    $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ & same as Alg.~\ref{alg:RMSD} & ---\textsuperscript{a}\\
+    $\tIO^{\text{frame}}$   & $t_{\text{L4}}$ & same as Alg.~\ref{alg:RMSD} & $t_{\text{L2}}$\\  
+    $\tcomp^{\text{frame}}$ & $t_{\text{L5}}$ & same as Alg.~\ref{alg:RMSD} & $t_{\text{L3}}$ \\  
+    $t_{\text{all\_frame}}$ & $t_{\text{L4}}+t_{\text{L5}}+t_{\text{L6}}$ & same as Alg.~\ref{alg:RMSD} & $t_{\text{L2}}+t_{\text{L3}}+t_{\text{L4}}$  \\
+    $t_{\text{RMSD}}$ &  $t_{\text{L1}} + ...+ t_{\text{L8}}$ & same as Alg.~\ref{alg:RMSD} & $t_{\text{L1}} + ...+ t_{\text{L6}}$\\
+    $t_{\text{end\_loop}}$ & $t_{\text{L6}} $ & same as Alg.~\ref{alg:RMSD}  & $t_{\text{L4}} $\\
+    % $t_{\text{comm/MPI}}$ & $t_{\text{L16}}$ \\
+    % $t_{\text{comm/GA}}$ & $t_{\text{L5}}+t_{\text{L6}}+t_{\text{L7}}+t_{\text{L8}}$ (in Alg.~\ref{alg:GA}) \\
+    % $\tcomm$ & $t_{\text{comm/MPI}}$ (Alg.~\ref{alg:RMSD}) or $t_{\text{comm/GA}}$ (Alg.~\ref{alg:GA})\\
+    $\tcomm$  & $t_{\text{L16}}$ & $t_{\text{L5}}+t_{\text{L6}}+t_{\text{L7}}+t_{\text{L8}}$ & $t_{\text{L15}}$\\
+    \cmidrule(l){2-4}
+    $N_{\text{b}}$ & \multicolumn{3}{c}{$N_{\text{frames}}^{\text{total}}/N$}\\
+    $\tcomp$ & \multicolumn{3}{c}{$\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$}\\
+    $\tIO$ & \multicolumn{3}{c}{$\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$}\\  
+    $t_{\text{Overhead1}}$ & \multicolumn{3}{c}{$t_{\text{all\_frame}}-t_{\text{I/O}}-t_{\text{comp}}-t_{\text{end\_loop}}$}  \\
+    $t_{\text{Overhead2}}$ & \multicolumn{3}{c}{$t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$}  \\
+    $t_{N}$ & \multicolumn{3}{c}{$t_{\text{RMSD}}+\tcomm$} \\
+    \toprule
+    $\overline{\tcomp}$ & \multicolumn{3}{c}{$\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomp$} \\
+    $\overline{\tIO}$ & \multicolumn{3}{c}{$\frac{1}{N}\sum_{\text{rank}=1}^{N} \tIO$}\\
+    $\overline{\tcomm}$ & \multicolumn{3}{c}{$\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomm$} \\
+    $t_{\text{total}}$ & \multicolumn{3}{c}{$\max t_{N}$} \\
+    \bottomrule
+  \end{tabular}
+    \begin{tablenotes}[para,flushleft]
+    \item [a] Algorithm~\ref{alg:RMSDhdf5} does not need to open a trajectory inside the \texttt{block\_rmsd()} function and hence $t_{\text{opening\_trajectory}}$ only measures time to allocate empty arrays, which is not explicitly shown in Algorithm~\ref{alg:RMSDhdf5}.
+      \end{tablenotes}
+\end{threeparttable}
 \end{table}
 
 
