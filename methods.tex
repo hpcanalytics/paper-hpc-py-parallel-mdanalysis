@@ -3,11 +3,9 @@
 \section{Methods}
 \label{sec:methods}
 
-Documentation and benchmark codes are made available in the code repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the GNU General Public License v3.0 (code) and the Creative Commons Attribution-ShareAlike (documentation) and are archived under DOI \href{https://doi.org/10.5281/zenodo.3351616}{10.5281/zenodo.3351616}.
-These materials should enable users to recreate the computational environment on the tested XSEDE HPC resources (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}), prepare data files, and run the computational experiments.
 
 In the following we define the quantities and approach used for our performance measurements, with a full summary of all definitions in Table~\ref{tab:notation}.
-We evaluated MPI performance of the parallel RMSD time series algorithm~\ref{alg:RMSD} by timing the total time to solution as well as the execution time for different parts of the code for individual MPI ranks with the help of the Python \texttt{time.time()} function.
+We evaluated MPI performance of the parallel RMSD time series algorithm~\ref{alg:RMSD} and its variations (algorithms \ref{alg:GA} and \ref{alg:RMSDhdf5}) by timing the total time to solution as well as the execution time for different parts of the code for individual MPI ranks with the help of the Python \texttt{time.time()} function.
 
 
 \begin{table}[!htb]
@@ -111,3 +109,11 @@ The ratio of compute to communication time was defined by the ratio of average t
   \Rcompcomm = \frac{\overline{\tcomp}}{\overline{\tcomm}}.
 \end{equation}
 Because \tcomm cannot be measured for a serial code, we estimated \Rcompcomm from the rank-averages (Eqs.~\ref{eq:avg-tcomp} and \ref{eq:avg-tcomm}) for a given number of MPI ranks.
+
+
+\subsection{Data sharing}
+\label{sec:sharing}
+
+Documentation and benchmark/trajectory conversion scripts are made available in the repository \url{https://github.com/hpcanalytics/supplement-hpc-py-parallel-mdanalysis} under the GNU General Public License v3.0 (code) and the Creative Commons Attribution-ShareAlike (documentation).
+All materials are archived under DOI \href{https://doi.org/10.5281/zenodo.3351616}{10.5281/zenodo.3351616}.
+These materials should enable users to recreate the computational environment on the tested XSEDE HPC resources (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}), prepare data files, and run the computational experiments.

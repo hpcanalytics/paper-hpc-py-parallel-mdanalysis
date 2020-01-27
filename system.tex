@@ -40,7 +40,10 @@ We therefore had to compile them, which in some cases required substantial effor
 Because this is a common problem that hinders reproducibility we provide detailed version information, notes on the installation process, as well as comments on the ease of installation and the quality of the documentation in Table~\ref{tab:version}.
 For the MPI implementation we used Open MPI release 1.10.7  (\url{https://www.open-mpi.org/}) consistently everywhere.
 We used the \package{h5py} package for HDF5, which enables parallel HDF5 from Python because its dependencies, the HDF5 library itself and \package{mpi4py}, were both built against Open MPI.
-Detailed instructions to create the computing environments together with the benchmarking code can be found in the GitHub repository.
+We used Python 2.7 because it provided maximum compatibility between packages at the time when the project was started.
+However, since January 2020, Python 2.7 is officially unsupported.
+In principle the complete Python-dependent software stack could also be set up with Python 3.5 or higher, except package \package{ga4py}, which is no longer maintained and remains only available under Python 2.7 (\url{https://github.com/GlobalArrays/ga4py/issues/2}).
+Detailed instructions to create the computing environments together with the benchmarking code can be found in the GitHub repository as described in Section~\ref{sec:sharing}.
 Carefully setting up the same software stack on the three different supercomputers allowed us to clearly demonstrate the reproducibility of our results and showed that our findings were not dependent on machine specifics.
 
 
@@ -88,7 +91,7 @@ Thus, the trajectory represents a small to medium system size in the number of a
 The XTC format is a format with lossy compression \cite{Lindahl01, Spangberg:2011zr}, which also contributed to the compact file size.
 XTC trades lower I/O demands for higher CPU demands during decompression and therefore performed well in our previous study~\cite{Khoshlessan:2017ab}.
 In order to assess the performance of reading from an HDF5 file in parallel (see Section~\ref{sec:methods-hdf5}) we generated a trajectory-like HDF5 file with the data required to perform the RMSD calculation.
-This HDF5 file was created from the XTC file by sub-selecting the atoms for which the RMSD was calculated as detailed in Section~\ref{sec:mda}.
+This HDF5 file was created from the XTC file by sub-selecting the atoms for which the RMSD was calculated as detailed in Section~\ref{sec:mda}; a Python script to perform the trajectory conversion can be found in the GitHub repository (see Section~\ref{sec:sharing}).
 The coordinates were stored as a two-dimensional $T \times 3N$ array where the first dimension contained $T=2,512,200$ frames and the second dimension the $3N = 438$ Cartesian coordinates.
 Although 2,512,200 frames represents a long simulation for current standards, such trajectories will become increasingly common due to the use of special hardware~\cite{Shaw:2009ly, Shaw:2014aa} and GPU-acceleration~\cite{Salomon-Ferrer:2013cr, Glaser:2015ys, Abraham:2015aa}.
 

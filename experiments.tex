@@ -302,7 +302,6 @@ We found some improvements in performance but discovered limitations in the desi
 In the HPC community, parallel I/O with MPI-IO is widely used in order to address I/O limitations.
 We investigated MPI-based Parallel HDF5 to improve I/O scaling. 
 We converted our XTC trajectory file into a simple custom HDF5 format so that we could test the performance of parallel I/O with the HDF5 file format.
-The code for this file format conversion can be found in the GitHub repository.
 The time it took to convert our XTC file with $2,512,200$ frames into HDF5 format was about 5,400~s on a local workstation with network file system (NFS).
 
 \begin{figure}[!htb]
