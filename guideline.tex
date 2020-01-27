@@ -15,7 +15,7 @@ Based on the lessons that we learned, we suggest the following guidelines to imp
 \item[\textbf{Heuristic 2}] For $\RcompIO \ge 1$, single-shared-file I/O can be used and will not decrease performance. One may consider the following cases: 
   \begin{description}
   \item[\textbf{Heuristic 2.1}] If $\Rcompcomm \gg 1$, the task is compute bound and will scale well as shown in Figure \ref{fig:tcomp_tIO_effect}. 
-  \item[\textbf{Heuristic 2.2}] If $\Rcompcomm \ll 1$, one might consider using \package{Global Arrays} to improve scaling by utilizing efficient distribution of data via the shared arrays (section \ref{Global-Array}).
+  \item[\textbf{Heuristic 2.2}] If $\Rcompcomm \ll 1$, one might consider using \package{Global Arrays} to improve scaling by utilizing efficient distribution of data via the shared arrays (section \ref{Global-Array}; but note that for this approach the \package{ga4py} package required, which is no longer maintained and does not support Python 3).
   \end{description}
 \item[\textbf{Heuristic 3}] For $\RcompIO \le 1$ the task is I/O bound and single-shared-file I/O should be avoided to remove unnecessary metadata operations.
   One might want to consider the following steps:  
