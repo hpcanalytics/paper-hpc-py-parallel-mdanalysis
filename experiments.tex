@@ -201,7 +201,7 @@ We discuss these two approaches and their performance improvements in detail in 
 \subsubsection{Splitting the Trajectories (``subfiling'')}
 \label{splitting-traj}
 Subfiling is a mechanism previously used for splitting a large multi-dimensional global array to a number of smaller subarrays in which each smaller array is saved in a separate file. Subfiling reduces the file system control overhead by decreasing the number of processes concurrently accessing a shared file~\cite{scalable-IO, scalable-IO1}.
-Because subfiling is known to improve programming flexibility and performance of parallel shared-file I/O, we investigated splitting our trajectory file into as many trajectory segments as the number of processes.
+Because subfiling is known to improve performance of parallel shared-file I/O, we investigated splitting our trajectory file into as many trajectory segments as the number of processes.
 The trajectory file was split into $N$ segments, one for each process, with each segment having $N_{b}$ frames. 
 This way, each process would access its own trajectory segment file without competing for file accesses. 
 
