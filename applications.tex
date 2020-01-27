@@ -27,8 +27,9 @@ At its core, it reads trajectory data in different formats and makes them availa
     \textbf{(a)} Each MPI process performs the same steps but reads trajectory frames from different blocks of the trajectory.
     The color scheme and labels in italics correspond to the colors and labels for measured timing quantities in the following graphs (e.g., Figs.~\protect\ref{fig:ScalingComputeIO} and \protect\ref{fig:MPIranks}).
     The names of the corresponding timing quantities from Table \protect\ref{tab:notation} are listed next to each step.
-    \textbf{(b)} Steps that access the shared Lustre file system with read I/O are included in the black bars; steps that communicate via the shared InfiniBand network are included in the gray bars.
-    The Lustre file system is accessed through the network and hence all I/O steps also use the network.
+    \textbf{(b)} Steps that access the shared Lustre file system with read I/O are included in the black bars; steps that communicate via the shared InfiniBand network are included in the gray ``network traffic'' bars.
+    The Lustre file system is accessed through the network and hence all I/O steps also use the network (gray ``Lustre network traffic'' bars).
+    Processes only communicate over the network (gray ``process network traffic'' bar) when results are communicated back to process rank 0 in the \emph{Communication} step.
   }
   \label{fig:flowchart}
 \end{figure}
