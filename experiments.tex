@@ -84,79 +84,17 @@ Therefore, the phenomenon of stragglers in the RMSD case was reproducible on dif
 \label{sec:bound}
 
 The results in section~\ref{sec:RMSD} indicated opening the trajectory, communication, and read I/O to be important factors that appeared to correlate with stragglers. 
-In order to better characterize the RMSD task, we computed the ratio between the time to complete the computation and the time spent on I/O per frame.
-The average values were $\overline{\tcomp^{\text{frame}}} = 0.09\ \text{ms}$, $\overline{t_{\text{IO}}^{\text{frame}}} = 0.3\ \text{ms}$, resulting in a compute-to-I/O ratio $\RcompIO \approx 0.3$ (Eq.~\ref{eq:Compute-IO}).
-Because $\RcompIO \ll 1$, the RMSD analysis task was characterized as I/O bound.
+In order to better characterize the RMSD task, we computed the ratio between the time to complete the computation and the time spent on I/O per frame, \RcompIO (Eq.~\ref{eq:Compute-IO}).
+The average values were $\overline{\tcomp^{\text{frame}}} = 0.09\ \text{ms}$, $\overline{t_{\text{IO}}^{\text{frame}}} = 0.3\ \text{ms}$, resulting in a compute-to-I/O ratio $\RcompIO \approx 0.3$.
+With $\RcompIO \ll 1$, the RMSD analysis task was characterized as I/O bound.
 
-As we were not able to achieve good scaling beyond a single node, we hypothesized that decreasing the I/O load relative to the compute load would interleave read I/O with longer periods of computation, thus reducing the impact of I/O contention and the impact of stragglers.
-We therefore set out to measure compute bound tasks, i.e.\ ones with $\RcompIO \gg 1$.
-To measure the effect of the $\RcompIO$ ratio on performance but leaving other parameters the same, we artificially increased the computational load by repeating the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop, resulting in forty-fold (``$40\times$''), seventy-fold (``$70\times$''), and one hundred-fold (``$100\times$'') load increases.
-
-\subsubsection{Effect of Increased Compute Workload}
-
-For an $X$-fold increase in workload, we expected the workload for the computation to scale with $X$ as $\tcomp(X) =  N_{\text{frames}}^{\text{total}} X \overline{\tcomp^{\text{frame}}}$ while the read I/O workload $\tIO(X) = N_{\text{frames}}^{\text{total}} \overline{\tIO^{\text{frame}}}$ (number of frames times the average time to read a frame) should remain independent of $X$.
-Therefore, the ratio for any $X$ should be $\RcompIO(X) = \tcomp(X)/\tIO(X) = X \RcompIO(X=1)$, i.e.,  $\RcompIO$ should just linearly scale with the workload factor $X$.
-The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational workloads agreed with this theoretical analysis, as shown in Table \ref{tab:load-ratio}.
-
-\begin{table}[!htb]
-\centering
-\caption[Change in load-ratio with RMSD workload]{Change in $\RcompIO$ ratio with change in the RMSD workload $X$.
-  The RMSD workload was artificially increased in order to examine the effect of compute to I/O ratio on the performance.
-  The reported compute and I/O time were measured based on the serial version using one core.
-  The theoretical $\RcompIO$ (see text) is provided for comparison.}
-\label{tab:load-ratio}
-\begin{tabular}{rrrrr}
-  \toprule
-  \bfseries\thead{Workload $X$} &  \bfseries\thead{$\tcomp$ (s)} &  \bfseries\thead{$\tIO$ (s)}
-  & \multicolumn{2}{c}{\bfseries\thead{$\RcompIO$}}\\
-  & & & \thead{measured} & \thead{theoretical}\\
-  \midrule
-    $1\times$   &   226 & 791 &  0.29 &   \\  
-    $40\times$  &  8655 & 791 & 11   & 11\\    
-    $70\times$  & 15148 & 791 & 19   & 20\\  
-    $100\times$ & 21639 & 791 & 27   & 29\\  
-  \bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure} {.3\textwidth}
-    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf}
-    \caption{Speed-Up}
-    \label{fig:S1_tcomp_tIO_effect}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.3\textwidth}
-    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pdf}
-    \caption{Speed-Up}
-    \label{fig:S2_tcomp_tIO_effect}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.3\textwidth}
-    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pdf}
-    \caption{Efficiency}
-    \label{fig:E_tcomp_tIO_effect}
-  \end{subfigure}
-  \caption{Effect of $\RcompIO$ ratio on performance of the RMSD task on \emph{SDSC Comet}. We tested performance for $\RcompIO$ ratios of 0.3, 11, 19, 27, which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively.
-    (a) Effect of $\RcompIO$ on the speed-up.
-    (b) Change in speed-up with respect to $\RcompIO$ for different processor counts.
-    (c) Change in the efficiency with respect to $\RcompIO$ for different processor counts.}
-  \label{fig:tcomp_tIO_effect}
-\end{figure}
-
-We performed the experiments with increased workload to measure the effect of the $\RcompIO$ ratio on performance (Figure~\ref{fig:tcomp_tIO_effect}).
-The strong scaling performance as measured by the speed-up $S(N)$ improved with increasing $\RcompIO$ ratio (Figure \ref{fig:S1_tcomp_tIO_effect}).
-The calculations consistently showed better scaling performance to larger numbers of cores for higher $\RcompIO$ ratios, e.g., $N=56$ cores for the $70\times$ RMSD task. 
-The speed-up and efficiency approached their ideal value for each processor count with increasing $\RcompIO$ ratio (Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect}).
-Even for moderately compute-bound workloads, such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contributed to large variations in timing across different ranks and thus irregular scaling.
-
-We also investigated the influence of the ratio of compute to communication costs ($\Rcompcomm$, Eq.~\ref{eq:Compute-comm}) on performance in \ref{sec:tcomm}.
-We found evidence to support the hypothesis that a larger ratio was beneficial, provided I/O costs could also be reduced.
-However, read I/O ultimately seemed to be the key determinant for performance, as discussed in the next sections.
-
-
-\subsubsection{Effect of Absence of Read I/O on Communication}
+In other studies, better scaling was observed for analysis tasks that were more compute-intensive than the RMSD calculation, such as a radial distribution function calculation \cite{Roe:2018aa, Fan:2019aa}, i.e., analysis tasks that could be characterized as compute-bound.
+Such behavior is expected, as the contribution from the parallel part of the program that requires neither I/O nor communication is increased.
+From a practical point of view, it is of interest to understand the size of the effect of increasing the computational load on strong scaling, and in our case, we were interested in seeing if changes in the compute part (namely the RMSD calculation on coordinates held in memory) would have an effect on the execution time of other parts of the program.
+In Appendix~\ref{sec:shiftload} we set out to analyze compute bound tasks, i.e.\ ones with $\RcompIO \gg 1$.
+To assess the effect of the $\RcompIO$ ratio on performance while leaving other parameters the same, we artificially increased the computational load by repeating the RMSD calculation and measured strong scaling (Figure \ref{fig:tcomp_tIO_effect}).
+With increasing $\RcompIO$, the impact of stragglers appeared to lessen (although they did not disappear) and scaling performance improved, as expected (see Appendix \ref{sec:increasedworkload}).
+Better scaling also went together with a higher ratio of compute to communication ($\Rcompcomm$, Eq.~\ref{eq:Compute-comm}) as shown in Appendix \ref{sec:tcomm} but ultimately I/O seemed to be the key determinant for performance.
 
  \begin{figure}[!htb]
    \centering
@@ -181,11 +119,11 @@ However, read I/O ultimately seemed to be the key determinant for performance, a
    \label{fig:MPIwithoutIO}
 \end{figure}
 
-In order to study an extreme case of a compute-bound task, we eliminated all I/O from the RMSD task by randomly generating artificial trajectory data in memory; the data had the the same size as if they had been obtained from the trajectory file.
+In order to study an extreme case of a compute-bound task that would demonstrate the effect of ``ideal'' read I/O, we eliminated all I/O from the RMSD task by randomly generating artificial trajectory data in memory; the data had the same size as if they had been obtained from the trajectory file.
 The time for the data generation was excluded and no file access was necessary. 
 Without any I/O, performance improved markedly (Figure~\ref{fig:MPIwithoutIO}), with reasonable scaling up to 72 cores (3 nodes).
 No stragglers were observed because overall communication time decreased and showed less variability; nevertheless, an increase in communication time prevented ideal scaling performance.
-Although in practice I/O cannot be avoided, this experiment demonstrated that accessing the trajectory file on the Lustre file system is at least one cause for the observed stragglers.
+Although in practice I/O cannot be avoided, this experiment demonstrated that the way how the trajectory file was accessed on the Lustre file system was at least one cause for the observed stragglers.
 
 
 \subsection{Reducing I/O Cost}

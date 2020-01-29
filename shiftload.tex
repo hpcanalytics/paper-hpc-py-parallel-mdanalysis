@@ -1,0 +1,19 @@
+% -*- mode: latex; mode: visual-line; fill-column: 9999; coding: utf-8 -*-
+
+\section{Effect of Increasing the Computational Load on Scaling
+  Performance}
+\label{sec:shiftload}
+
+We quantified the effect of increasing the computational load of the analysis task on scaling performance in order to obtain practical insights into the question under which circumstances the simple single-trajectory split-apply-combine MPI-based parallelization approach might be feasible without any other considerations such as optimization of the file read I/O.
+To this end, we quantified strong scaling performance as a function of the compute-to-I/O ratio \RcompIO (Eq.~\ref{eq:Compute-IO}) and the compute-to-communication ratio \Rcompcomm (Eq.~\ref{eq:Compute-comm}).
+
+To measure the effect of an increased compute load on performance while leaving other parameters the same, we artificially increased the computational load by repeating the same RMSD calculation (line 10, algorithm \ref{alg:RMSD}) 40, 70 and 100 times in a loop, resulting in forty-fold (``$40\times$''), seventy-fold (``$70\times$''), and one hundred-fold (``$100\times$'') load increases.
+
+
+\input{xworkload}
+\input{tcomm}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

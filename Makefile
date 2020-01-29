@@ -2,7 +2,8 @@ PDF := main.pdf
 MAIN  := main.tex
 PARTS := preamble.tex commands.tex abstract.tex introduction.tex background.tex \
          applications.tex system.tex methods.tex experiments.tex clusters.tex \
-         guideline.tex conclusion.tex additional_data.tex chainreader.tex tcomm.tex \
+         guideline.tex conclusion.tex additional_data.tex chainreader.tex \
+         shiftload.tex xworkload.tex tcomm.tex \
          main.bib
 AUX   := WileyNJD-v2.cls NJDnatbib.sty WileyNJD-CCPE.bst 
 

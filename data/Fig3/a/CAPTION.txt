@@ -1,0 +1,1 @@
+(a) Speed up comparison

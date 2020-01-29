@@ -1,0 +1,68 @@
+% -*- mode: latex; mode: visual-line; fill-column: 9999; coding: utf-8 -*-
+
+\subsection{Effect of \RcompIO on Scaling Performance}
+\label{sec:increasedworkload}
+
+For an $X$-fold increase in workload, we expected the workload for the computation to scale with $X$ as $\tcomp(X) =  N_{\text{frames}}^{\text{total}} X \overline{\tcomp^{\text{frame}}}$ while the read I/O workload $\tIO(X) = N_{\text{frames}}^{\text{total}} \overline{\tIO^{\text{frame}}}$ (number of frames times the average time to read a frame) should remain independent of $X$.
+Therefore, the ratio for any $X$ should be $\RcompIO(X) = \tcomp(X)/\tIO(X) = X \RcompIO(X=1)$, i.e.,  $\RcompIO$ should just linearly scale with the workload factor $X$.
+The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational workloads agreed with this theoretical analysis, as shown in Table \ref{tab:load-ratio}.
+
+\begin{table}[!htb]
+\centering
+\caption[Change in load-ratio with RMSD workload]{Change in $\RcompIO$ ratio with change in the RMSD workload $X$.
+  The RMSD workload was artificially increased in order to examine the effect of compute to I/O ratio on the performance.
+  The reported compute and I/O time were measured based on the serial version using one core.
+  The theoretical $\RcompIO$ (see text) is provided for comparison.}
+\label{tab:load-ratio}
+\begin{tabular}{rrrrr}
+  \toprule
+  \bfseries\thead{Workload $X$} &  \bfseries\thead{$\tcomp$ (s)} &  \bfseries\thead{$\tIO$ (s)}
+  & \multicolumn{2}{c}{\bfseries\thead{$\RcompIO$}}\\
+  & & & \thead{measured} & \thead{theoretical}\\
+  \midrule
+    $1\times$   &   226 & 791 &  0.29 &   \\  
+    $40\times$  &  8655 & 791 & 11   & 11\\    
+    $70\times$  & 15148 & 791 & 19   & 20\\  
+    $100\times$ & 21639 & 791 & 27   & 29\\  
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure} {.3\textwidth}
+    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_v17.pdf}
+    \caption{Speed-Up}
+    \label{fig:S1_tcomp_tIO_effect}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_2_v17.pdf}
+    \caption{Speed-Up}
+    \label{fig:S2_tcomp_tIO_effect}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{.3\textwidth}
+    \includegraphics[width=\linewidth]{figures/Compute_to_IO_ratio_on_performance_2d_3_v17.pdf}
+    \caption{Efficiency}
+    \label{fig:E_tcomp_tIO_effect}
+  \end{subfigure}
+  \caption{Effect of $\RcompIO$ ratio on performance of the RMSD task on \emph{SDSC Comet}. We tested performance for $\RcompIO$ ratios of 0.3, 11, 19, 27, which correspond to $1\times$ RMSD, $40\times$ RMSD, $70\times$ RMSD, and $100\times$ RMSD respectively.
+    (a) Effect of $\RcompIO$ on the speed-up.
+    (b) Change in speed-up with respect to $\RcompIO$ for different processor counts.
+    (c) Change in the efficiency with respect to $\RcompIO$ for different processor counts.}
+  \label{fig:tcomp_tIO_effect}
+\end{figure}
+
+We performed the experiments with increased workload to measure the effect of the $\RcompIO$ ratio (Eq.~\ref{eq:Compute-IO}) on performance (Figure~\ref{fig:tcomp_tIO_effect}).
+The strong scaling performance as measured by the speed-up $S(N)$ improved with increasing $\RcompIO$ ratio (Figure \ref{fig:S1_tcomp_tIO_effect}).
+The calculations consistently showed better scaling performance to larger numbers of cores for higher $\RcompIO$ ratios, e.g., $N=56$ cores for the $70\times$ RMSD task. 
+The speed-up and efficiency approached their ideal value for each processor count with increasing $\RcompIO$ ratio (Figures \ref{fig:S2_tcomp_tIO_effect} and \ref{fig:E_tcomp_tIO_effect}).
+Even for moderately compute-bound workloads, such as the $40\times$ and $70\times$ RMSD tasks, increasing the computational workload over I/O reduced the impact of stragglers even though they still contributed to large variations in timing across different ranks and thus irregular scaling.
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
