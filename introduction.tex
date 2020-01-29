@@ -27,7 +27,8 @@ With SPMD, each process executes essentially the same operations on different pa
 The three clusters differed in their architecture but all used Lustre as their parallel file system.
 We used Python (\url{https://www.python.org/}), a machine-independent, byte-code interpreted, object-oriented programming language, which is well-established in the biomolecular simulation community with good support for parallel programming for HPC~\cite{Dalcin:2011aa, GAiN}. 
 We found that communication and reading I/O were the two main scalability bottlenecks, with some indication that read I/O might have been interfering with the communications.
-We therefore focused on two different approaches to mitigate I/O bottlenecks: MPI parallel I/O (MPI-IO) with the HDF5 file format and subfiling (trajectory file splitting).
+Stragglers and therefore poor scaling were a consequence of inefficient use of the parallel Lustre file system.
+We therefore focused on two different approaches to better leverage Lustre and mitigate I/O bottlenecks: MPI parallel I/O (MPI-IO) with the HDF5 file format and subfiling (trajectory file splitting).
 For subfiling, we obtained good results with the \package{Global Arrays} package~\cite{GA, GAiN}, which provides a convenient layer to access and manage arrays over multiple MPI ranks.
 Both MPI-IO and subfiling eliminated stragglers and improved the performance with near ideal scaling, $S(N) = N$, i.e., the speed-up $S$ scaled linearly with the number $N$ of CPU cores while exhibiting a slope of one.
 

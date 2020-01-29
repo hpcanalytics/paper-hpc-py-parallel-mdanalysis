@@ -8,11 +8,11 @@ The task was parallelized with MPI following the \emph{split-apply-combine} appr
 This approach did not scale beyond a single node because straggler MPI processes exhibited large upward variations in runtime.
 Stragglers were primarily caused by either increased MPI communication costs or increased time to open the single shared trajectory file whereas both the computation and the ingestion of data exhibited close to ideal strong scaling behavior.
 Stragglers were less prevalent for compute-bound workloads (i.e., $\RcompIO \gg 1$), suggesting that file read I/O was responsible for poor MPI communication.
-In particular, artificially removing all I/O substantially improved performance of the communication step and thus brought overall performance close to ideal (i.e., linear increase in speed-up with processor count with slope one).
+In particular, artificially removing all I/O substantially improved performance of the communication step and thus brought overall performance close to ideal (i.e., linear increase in speed-up with processor count with slope one), despite the fact that the amount of data to be communicated did not depend on I/O.
 By performing benchmarks on three different XSEDE supercomputers we showed that our results were independent from the specifics of the hardware and local environment.
 Our results hinted at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013} and theoretical predictions by \citet{Brown:2018ab}, but further work would be needed to validate this specific hypothesis.
 One possible interpretation of our results was that for a sufficiently large per-frame compute workload, read I/O interfered much less with communication than for an I/O bound task that almost continuously accesses the file system.
-This interpretation suggested that we needed to improve read I/O to reduce interference.
+This interpretation suggested that the poor scaling performance was the result of inefficient use of the Lustre file system and that we needed to improve read I/O to reduce interference.
 
 We investigated subfiling (splitting of the trajectories into separate files, one for each MPI rank) and MPI-based parallel I/O.
 Subfiling improved scaling, especially when combined with the \package{Global Arrays} toolkit.
@@ -31,6 +31,24 @@ Alternatively, enabling MPI-IO for trajectory readers in libraries such as \pack
 
 We summarized our findings in a number of guidelines for improving the scaling of parallel analysis of MD trajectory data.
 We showed that it is feasible to run an I/O bound analysis task on HPC resources with a Lustre parallel file system and achieve good scaling behavior up to 384 CPU cores with an almost 300-fold speed-up compared to serial execution.
+
+\paragraph{Future Directions}
+
+Future work might look into testing different MPI implementations, especially in combination with parallel HDF5.
+Choosing the best performing MPI implementation for a specific system and optimizing the parallel file system parameters might also lead to further improvements.
+Although our results showed qualitatively similar behavior on three different HPC resources, unexplained differences in performances remained.
+Deeper insights into the system-level network traffic and parallel file system access would be necessary to approach performance tuning for different HPC systems in a rational manner.
+
+Our HDF5 results are encouraging but lack a convenient and widely available implementation.
+Therefore, a HDF5-based trajectory reader needs to be implemented in MDAnalysis and benchmarked for an existing HDF5 trajectory format.
+The algorithm for the analysis task could be optimized by reducing file access to the shared system topology file (and any other data common to all ranks, such as the reference coordinates in the RMSD analysis) by using \texttt{MPI\_Scatter} and \texttt{MPI\_Gather} to efficiently communicate the static data.
+In this case, only rank 0 would read these data from the file system and then scatter them to all other ranks.
+Each rank would then build their own MDAnalysis \texttt{Universe} from those data (made possible by the fact that MDAnalysis can transparently use Python \texttt{StringIO} to read text buffers instead of files) and their own parallel file access to an HDF5 trajectory (with the \texttt{Universe.load\_new()} method to attach a trajectory).
+
+In summary, the encouraging finding of this work is that by using parallel file reading (here tested with HDF5), the simple split-apply-combine single trajectory parallelization approach can work on current HPC systems up to a few hundred cores.
+The major advantage of the approach is its simplicity as users can directly use their serial code and apply it to blocks of a trajectory, without having to rewrite their algorithms or having to consider hybrid parallelization schemes. 
 Although we focused on the \package{MDAnalysis} library, similar strategies are likely to be more generally applicable and useful to the wider biomolecular simulation community.
+
+
 
 
