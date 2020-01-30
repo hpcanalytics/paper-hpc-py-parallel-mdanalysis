@@ -129,7 +129,9 @@ Although in practice I/O cannot be avoided, this experiment demonstrated that th
 \subsection{Reducing I/O Cost}
 \label{sec:I/O}
 In order to improve performance we needed to employ strategies to avoid the competition over file access across different ranks when the $\RcompIO$ ratio was small.
-To this end, we experimented with two different ways for reducing the I/O cost:
+One obvious approach when using the Lustre parallel file system is to increase the number of stripes, i.e., the number of copies of a file that are stored on different storage targets (OSTs).
+But because in our previous work we did not see performance improvement with varying the stripe count \cite{Khoshlessan:2017ab} we decided to just use the system default.
+Instead we experimented with two different ways for reducing the I/O cost:
 \begin{inparaenum}[1)]
 	\item splitting the trajectory file into as many segments as the number of processes, thus using file-per-process access, and
 	\item using the HDF5 file format together with MPI-IO parallel reads instead of the XTC trajectory format.
