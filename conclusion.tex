@@ -10,13 +10,13 @@ Stragglers were primarily caused by either increased MPI communication costs or 
 Stragglers were less prevalent for compute-bound workloads (i.e., $\RcompIO \gg 1$), suggesting that file read I/O was responsible for poor MPI communication.
 In particular, artificially removing all I/O substantially improved performance of the communication step and thus brought overall performance close to ideal (i.e., linear increase in speed-up with processor count with slope one), despite the fact that the amount of data to be communicated did not depend on I/O.
 By performing benchmarks on three different XSEDE supercomputers we showed that our results were independent from the specifics of the hardware and local environment.
-Our results hinted at the possibility that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013} and theoretical predictions by \citet{Brown:2018ab}, but further work would be needed to validate this specific hypothesis.
+Our results suggested that stragglers might be due to the competition between MPI messages and the Lustre file system on the shared InfiniBand interconnect, which would be consistent with other similar observations \cite{VMD2013} and theoretical predictions by \citet{Brown:2018ab}, but further work would be needed to validate this specific hypothesis.
 One possible interpretation of our results was that for a sufficiently large per-frame compute workload, read I/O interfered much less with communication than for an I/O bound task that almost continuously accesses the file system.
 This interpretation suggested that the poor scaling performance was the result of inefficient use of the Lustre file system and that we needed to improve read I/O to reduce interference.
 
 We investigated subfiling (splitting of the trajectories into separate files, one for each MPI rank) and MPI-based parallel I/O.
 Subfiling improved scaling, especially when combined with the \package{Global Arrays} toolkit.
-\package{Global Arrays} reduced the communication cost compared to MPI collective communications even though it only acts as programming layer to access data across multiple nodes in a convenient array form and also uses MPI for its inter-node data exchange.
+\package{Global Arrays} reduced the communication cost compared to MPI collective communications, which was somewhat surprising because it only acts as programming layer to access data across multiple nodes in a convenient array form and just uses MPI for its inter-node data exchange.
 Subfiling with \package{Global Arrays} achieved nearly ideal scaling up to 192 cores (8 nodes on \emph{SDSC Comet}).
 However, subfiling, at least in the form described here, is not an ideal solution because creating and accessing many small files on a parallel file system such as Lustre can negatively impact the overall performance of the file system.
 Furthermore, managing a large number of files can become cumbersome and inflexible, given that the number of files determines the number of processes.
