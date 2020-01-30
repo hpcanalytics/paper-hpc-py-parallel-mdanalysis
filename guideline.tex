@@ -8,22 +8,22 @@ Based on the lessons that we learned, we suggest the following guidelines to imp
 \begin{description}
 \item[\textbf{Heuristic 1}] Calculate compute to I/O ratio ($\RcompIO$, Eq.~\ref{eq:Compute-IO}) and compute to communication ratio ($\Rcompcomm$, Eq.~\ref{eq:Compute-comm}).
   $\RcompIO$ determines whether the task is compute bound ($\RcompIO \gg 1$) or IO bound ($\RcompIO \ll 1$).
-  $\Rcompcomm$ determines whether the task is communication bound ($\frac{\overline{\tcomp}}{\overline{\tcomm}} \ll 1$) or compute bound ($\RcompIO \gg 1$).
+  $\Rcompcomm$ determines whether the task is communication bound ($\Rcompcomm \ll 1$) or compute bound.
 
   As discussed in Section \ref{sec:bound}, for I/O bound problems the interference between MPI communication and I/O traffic can be problematic \cite{VMD2013, Brown:2018ab} and the performance of the task will be affected by the straggler tasks that delay job completion time.
   
-\item[\textbf{Heuristic 2}] For $\RcompIO \ge 1$, single-shared-file I/O can be used and will not decrease performance. One may consider the following cases: 
+\item[\textbf{Heuristic 2}] For $\RcompIO > 1$, single-shared-file I/O can be used and will not decrease performance. One may consider the following cases: 
   \begin{description}
   \item[\textbf{Heuristic 2.1}] If $\Rcompcomm \gg 1$, the task is compute bound and will scale well as shown in Figure \ref{fig:tcomp_tIO_effect}. 
-  \item[\textbf{Heuristic 2.2}] If $\Rcompcomm \ll 1$, one might consider using \package{Global Arrays} to improve scaling by utilizing efficient distribution of data via the shared arrays (section \ref{Global-Array}; but note that for this approach the \package{ga4py} package required, which is no longer maintained and does not support Python 3).
+  \item[\textbf{Heuristic 2.2}] If $\Rcompcomm \ll 1$, one might consider using \package{Global Arrays} (section \ref{Global-Array}; but note that for this approach the \package{ga4py} package is required, which is no loanger maintained and does not support Python 3).
   \end{description}
 \item[\textbf{Heuristic 3}] For $\RcompIO \le 1$ the task is I/O bound and single-shared-file I/O should be avoided to remove unnecessary metadata operations.
   One might want to consider the following steps:  
   \begin{description}
-    \item[\textbf{Heuristic 3.1}] If there is access to HDF5 format, use MPI-based Parallel HDF5 (Section \ref{HDF5}). 
+    \item[\textbf{Heuristic 3.1}] If there is access to HDF5 format, use MPI-based Parallel HDF5 (Section \ref{sec:HDF5}). 
     \item[\textbf{Heuristic 3.2}] If the trajectory file is not in HDF5 format then one can consider subfiling and split the single trajectory file into as many trajectory segments as the number of processes.
       Splitting the trajectories can be easily performed in parallel and trajectory conversion may be integrated into the beginning of standard workflows for MD simulations.
       Alternatively, trajectories may be kept in smaller chunks if they are already produced in batches; for instance, when running simulations with \package{Gromacs} \cite{Abraham:2015aa}, the \texttt{gmx mdrun -noappend} option produces individual trajectory segments instead of extending an existing trajectory file.
-    \item[\textbf{Heuristic 3.3}] In case of $\Rcompcomm \ll 1$, use of \package{Global Arrays} may be considered to potentially improve scaling (Section \ref{splitting-traj}).
+    \item[\textbf{Heuristic 3.3}] In case of $\Rcompcomm \ll 1$, use of \package{Global Arrays} may be considered to potentially improve scaling (Section \ref{sec:splitting-traj}).
   \end{description}
 \end{description}
