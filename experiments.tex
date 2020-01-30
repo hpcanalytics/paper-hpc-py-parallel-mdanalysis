@@ -247,13 +247,13 @@ The time it took to convert our XTC file with $2,512,200$ frames into HDF5 forma
 \begin{figure}[!htb]
   \centering
   \begin{subfigure}{.49\textwidth}
-    \includegraphics[width=\linewidth]{figures/hdf5-t_total.pdf}
+    \includegraphics[width=\linewidth]{figures/hdf5-t_total-combined.pdf}
     \caption{Scaling total}
     \label{fig:MPIscaling-hdf5}
   \end{subfigure}
   \hfill
   \begin{subfigure}{.49\textwidth}
-    \includegraphics[width=\linewidth]{figures/hdf5-speed_up.pdf}
+    \includegraphics[width=\linewidth]{figures/hdf5-speed_up-combined.pdf}
     \caption{Speed-up}
     \label{fig:MPIspeedup-hdf5}
   \end{subfigure}
@@ -261,7 +261,7 @@ The time it took to convert our XTC file with $2,512,200$ frames into HDF5 forma
 
   \begin{subfigure}{.49\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/hdf5-time_comp_IO_comparison.pdf}
+    \includegraphics[width=\linewidth]{figures/hdf5-time_comp_IO_comparison-combined.pdf}
     \captionsetup{format=hang}
     \caption{Scaling for different components}
     \label{fig:ScalingComputeIO-hdf5}
@@ -275,7 +275,7 @@ The time it took to convert our XTC file with $2,512,200$ frames into HDF5 forma
   \end{subfigure}
   \caption{Performance of the RMSD task with MPI-based parallel HDF5 (MPI-IO) on \emph{SDSC Comet}.
     Data are read from the file system from a shared HDF5 file format instead of XTC format (independent I/O) and results are communicated back to rank 0. 
-    Five repeats were performed to collect statistics.
+    Five repeats were performed to collect statistics; one repeat for 288 processes had abnormally high \tIO and was treated as an outlier and excluded from the averages but is shown as ``x'' in the graphs.
     (a-c) The error bars show standard deviation with respect to the mean.
     In serial, there is no communication and no data points are shown for $N=1$ in (c).
     (d) Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,
@@ -288,7 +288,7 @@ The time it took to convert our XTC file with $2,512,200$ frames into HDF5 forma
 
 We ran our benchmark on up to 16 nodes (384 cores) on \emph{SDSC Comet} and we observed near ideal scaling behavior Figures~\ref{fig:MPIscaling-hdf5} and~\ref{fig:MPIspeedup-hdf5}) with parallel efficiencies above 0.8 on up to 8 nodes (Figure~\ref{fig:comparison_efficiency}) with no straggler tasks (Figure~\ref{fig:MPIranks-hdf5}).
 The trajectory reading I/O (\tIO) was the dominant contribution, followed by compute (\tcomp), but because both contributions scaled well, overall scaling performance remained good, even for 384 cores.
-We observed a low-performing outlier for 12 nodes (288 cores) with slower I/O than typical but did not further investigate.
+Amongst the five repeats for 12 nodes (288 cores) we observed one run with much slower I/O than typical (Figure~\ref{fig:ScalingComputeIO-hdf5}) but we did not further investigate this spurious case and classified it as an outlier that was excluded from the statistics.
 Importantly, the trajectory opening cost remained negligible (in the millisecond range) and the cost for MPI communication also remained small (below 0.1 s, even for 16 nodes).
 Overall, parallel MPI with HDF5 appeared to be a robust approach to obtain good scaling, even for I/O-bound tasks.
 
