@@ -92,50 +92,6 @@ MPI for Python (\package{mpi4py}) is a Python wrapper for the Message Passing In
 Performance degradation due to using \package{mpi4py} is not prohibitive \cite{Dalcin:2011aa, Dalcin:2005aa} and the overhead is far smaller than the overhead associated with the use of interpreted versus compiled languages \cite{GAiN}.
 Overheads in \package{mpi4py} are small compared to C code if efficient raw memory buffers are used for communication \cite{Dalcin:2011aa}, as used in the present study.
 
-\subsection{Global Arrays Toolkit}
-\label{sec:methods-ga}
-
-The \package{Global Arrays} (GA) toolkit provides users with a language interface that allows them to distribute data while maintaining the type of global index space and programming syntax similar to what is available when programming on a single processor \cite{GA}.
-\emph{Global Arrays} is implemented with Fortran-77 and C bindings and provides C++ and Python interfaces.
-It allows manipulating physically distributed dense multi-dimensional arrays without explicitly defining communication and synchronization between processes.
-The underlying communication is determined by a runtime environment, which defaults to the \emph{Communication runtime for Extreme Scale} (ComEx) \cite{Daily:2014aa}.
-ComEx uses shared memory for intra-node communication and inter-node communication employs ComEx with MPI.
-\emph{Global Arrays in NumPy} (GAiN) extends GA to Python through NumPy \cite{GAiN} and uses \package{mpi4py} (Section \ref{sec:methods-mpi4py}) for its MPI functionality.
-The \package{Global Arrays} toolkit provides functions to create global arrays (\texttt{ga\_create()}) and to copy data to (\texttt{ga\_put()}) and from (\texttt{ga\_get()}) such a global array,  as well as additional functions for copying between arrays and freeing them \cite{GAiN}.
-When a global array is created (\texttt{ga\_create()}) each process will create an array of the same shape and size, physically located in the local memory space of that process \cite{GA}. 
-The GA library maintains a list of all these memory locations, which can be queried with the \texttt{ga\_access()} function.
-Using a pointer returned by \texttt{ga\_access()}, one can directly modify the data that is local to each process.
-When a process tries to access a block of data the request is first decomposed into individual blocks representing the contribution to the total request from the data held locally on each process (\textit{B. J. Palmer and J. Daily, personal communication}).
-The requesting process then makes individual requests to each of the remote processes. 
-
-GA allows independent, asynchronous, and efficient access to logical blocks of physically distributed arrays, with no need for explicit cooperation by other processes; in particular, it allows data locality to be explicitly specified and used \cite{GA-NUMA}.
-We investigated if communication cost could be reduced by using \package{Global Arrays}.
-Algorithm \ref{alg:GA} describes the RMSD algorithm with \package{Global Arrays} instead of MPI.
-
-
-\begin{algorithm}[ht!]
-	\scriptsize
-	\caption{MPI-parallel Multi-frame RMSD using Global Arrays}
-	\label{alg:GA}
-	\hspace*{\algorithmicindent} \textbf{Input:}\emph{size}: total number of frames assigned to each rank $N_{b}$\\
-	\hspace*{\algorithmicindent} \emph{g\_a}: initialized Global Arrays \\
-        \hspace*{\algorithmicindent} \emph{u}: Universe data structure, which holds the system\\
-	\hspace*{\algorithmicindent} \emph{xref0}: reference AtomGroup positions \\
-        \hspace*{\algorithmicindent} \emph{index}: indices of the mobile AtomGroup\\
-	\hspace*{\algorithmicindent} \emph{start \& stop}: frame indices for the block \\
-	\hspace*{\algorithmicindent} \emph{topology \& trajectory}: files to read the data structure from \\
-	\hspace*{\algorithmicindent}\textbf{Include:} \texttt{block\_rmsd()} from Algorithm \protect\ref{alg:RMSD}
-	\begin{algorithmic}[1]		
-		\State $bsize \gets \Call{ceil}{u.trajectory.n\_frames / size}$
-		\State $g\_a \gets \Call{ga.create}{\text{ga.C\_DBL}, [bsize*size,2], "\text{RMSD}"}$
-		\State $buf \gets \Call{np.zeros}{[bsize*size,2], dtype=\text{float}}$
-		\State $out \gets \Call{block\_rmsd}{topology, trajectory, xref0, index, start, stop}$
-		\State $\Call{ga.put}{g\_a, out, (start,0), (stop,2)}$
-		\If{$rank == 0$}
-		\State $buf \gets \Call{ga.get}{g\_a, lo=\text{None}, hi=\text{None}}$
-		\EndIf
-	\end{algorithmic}
-\end{algorithm}
 
 \subsection{MPI and Parallel HDF5}
 \label{sec:methods-hdf5}
