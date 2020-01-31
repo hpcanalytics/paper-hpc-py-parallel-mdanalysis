@@ -129,8 +129,8 @@ Although in practice I/O cannot be avoided, this experiment demonstrated that th
 \subsection{Reducing I/O Cost}
 \label{sec:I/O}
 In order to improve performance we needed to employ strategies to avoid the competition over file access across different ranks when the $\RcompIO$ ratio was small.
-One obvious approach when using the Lustre parallel file system is to increase the number of stripes, i.e., the number of copies of a file that are stored on different storage targets (OSTs).
-But because in our previous work we did not see performance improvement with varying the stripe count \cite{Khoshlessan:2017ab} we decided to just use the system default.
+One obvious approach when using the Lustre parallel file system is to increase the number of stripes, i.e., the number of copies of a file that are stored on different object storage targets (OSTs).
+But because in our previous work we did not see scaling performance improvement with varying the stripe count \cite{Khoshlessan:2017ab} we decided to just use the system default, i.e., one stripe per file.
 Instead we experimented with two different ways for reducing the I/O cost:
 \begin{inparaenum}[1)]
 	\item splitting the trajectory file into as many segments as the number of processes, thus using file-per-process access, and
@@ -376,7 +376,7 @@ The test trajectory (file size 30 GB) had $2,512,200$ frames in total so each fr
 With $\tIO \approx 0.3~\text{ms}$ per frame, the data were ingested at a rate of about $40$~MB/s for a single process.
 For 24 MPI ranks (one \emph{SDSC Comet} node), the aggregated reading rate would have been about 1 GB/s, well within the available bandwidth of 56 Gb/s of the InfiniBand network interface that served the Lustre file system, but nevertheless sufficient to produce substantial constant network traffic.
 
-Furthermore, in our study the default Lustre stripe size value was 1~MB, i.e., the amount of contiguous data stored on a single Lustre object storage target (OST).
+Furthermore, in our study the default Lustre stripe size value was 1~MB, i.e., the amount of contiguous data stored on a single Lustre OST.
 Each I/O request read a single Lustre stripe but because the I/O size (0.011~MB) was smaller than the stripe size, many of these I/O requests were likely just accessing the same stripe on the same OST but nevertheless had to acquire a new reading lock for each request.
 The reason for this behavior is related to ensuring POSIX consistency that relates to POSIX I/O API and POSIX I/O semantics, which can have adverse effects on scalability and performance.
 Parallel file systems like Lustre implement sophisticated distributed locking mechanisms to ensure consistency.
@@ -387,8 +387,8 @@ Mache \textit{et al.} observed that contention for the interconnect between OSTs
 Conversely, our data suggest that single-shared-file I/O on Lustre can negatively affect MPI communication as well, even at moderate numbers (tens to hundreds) of concurrent requests, similar to the results from recent network simulations that predicted interference between MPI and I/O traffic~\cite{Brown:2018ab}.
 Brown \textit{et al.}'s  work \cite{Brown:2018ab} indicated that MPI traffic (inter-process communication) could be affected by increasing I/O.
 In particular, a few MPI processes were always delayed by one to two orders of magnitude more than the median time, which we would classify as stragglers.
-In summary, these observations in the context of the work by \citet{Brown:2018ab} suggest that our observed stragglers with large variance in the communication step could be due to interference of MPI communications with the I/O requests on the same network.
+In summary, our observations, seen in the context of the work by \citet{Brown:2018ab}, suggest that our observed stragglers with large variance in the communication step could be due to interference of MPI communications with the I/O requests on the same network.
 Further detailed work will be needed to test this hypothesis.
 
-Nevertheless, our results clearly showed that reading a single shared file is an inefficient way to use the Lustre parallel file system; instead, parallel I/O via MPI-IO and HDF5 emerged as the most promising approach to avoid stragglers and obtain good strong scaling behavior on hundreds of cores, even for I/O bound analysis tasks.
+Our results clearly showed that reading a single shared file is an inefficient way to use the Lustre parallel file system; instead, parallel I/O via MPI-IO and HDF5 emerged as the most promising approach to avoid stragglers and obtain good strong scaling behavior on hundreds of cores, even for I/O bound analysis tasks.
 
