@@ -1,6 +1,0 @@
-(a) Speed-Up S(N)
-(b) Compute to communication
-Rcomp/comm
-ratio
-(c) Communication time
-tcomm

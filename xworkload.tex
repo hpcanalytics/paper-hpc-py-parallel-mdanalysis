@@ -7,7 +7,7 @@ For an $X$-fold increase in workload, we expected the workload for the computati
 Therefore, the ratio for any $X$ should be $\RcompIO(X) = \tcomp(X)/\tIO(X) = X \RcompIO(X=1)$, i.e.,  $\RcompIO$ should just linearly scale with the workload factor $X$.
 The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational workloads agreed with this theoretical analysis, as shown in Table \ref{tab:load-ratio}.
 
-\begin{table}[!htb]
+\begin{SCtable}[1.0][!htb]
 \centering
 \caption[Change in load-ratio with RMSD workload]{Change in $\RcompIO$ ratio with change in the RMSD workload $X$.
   The RMSD workload was artificially increased in order to examine the effect of compute to I/O ratio on the performance.
@@ -26,7 +26,7 @@ The measured $\RcompIO$ ratios of 11, 19, 27 for the increased computational wor
     $100\times$ & 21639 & 791 & 27   & 29\\  
   \bottomrule
 \end{tabular}
-\end{table}
+\end{SCtable}
 
 \begin{figure}[!htb]
   \centering

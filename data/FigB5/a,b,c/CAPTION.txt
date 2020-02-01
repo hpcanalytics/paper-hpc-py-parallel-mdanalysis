@@ -1,0 +1,5 @@
+(a) Compute to communication
+Rcomp/comm
+ratio
+(b) Communication time
+tcomm

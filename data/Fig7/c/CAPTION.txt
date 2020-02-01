@@ -1,1 +1,1 @@
-(c) Scaling of tcomp and tI/O.
+(c) Scaling of tcomp and tI/O

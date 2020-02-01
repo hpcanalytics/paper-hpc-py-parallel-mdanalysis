@@ -1,4 +1,0 @@
-(a) Scaling total
-(b) Speed-up
-(c) Scaling for different components
-(d) Time comparison on different parts of the calculations per MPI rank

@@ -1,0 +1,3 @@
+(a) Scaling total
+(b) Speed-up
+

@@ -20,7 +20,7 @@ Figure \ref{fig:MPIwithIO-Bridges} shows performance of the RMSD task on \emph{P
   \end{subfigure}
   \bigskip
 
-  \begin{subfigure}{.4\textwidth}
+  \begin{subfigure}{.45\textwidth}
     \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison-Bridges.pdf}
     \captionsetup{format=hang}
     \caption{Scaling for different components}
@@ -64,7 +64,7 @@ Figure \ref{fig:MPIwithIO-SuperMIC} shows performance of the RMSD task on \emph{
   \end{subfigure}
   \bigskip
 
-  \begin{subfigure}{.4\textwidth}
+  \begin{subfigure}{.45\textwidth}
     \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison-SuperMIC.pdf}
     \captionsetup{format=hang}
     \caption{Scaling for different components}
@@ -89,7 +89,7 @@ Figure \ref{fig:MPIwithIO-SuperMIC} shows performance of the RMSD task on \emph{
 \end{figure} 
 
 
-Figure \ref{fig:comparison_efficiency_clusters} shows comparison of the parallel efficiency of the RMSD task between different test cases on \emph{SDSC Comet}, \emph{PSC Bridges}, and \emph{LSU SuperMIC}.  
+Figure \ref{fig:comparison_efficiency_clusters} shows comparison of the parallel efficiency of the RMSD task between different test cases on \emph{SDSC Comet}, \emph{PSC Bridges}, and \emph{LSU SuperMIC} when reading from a HDF5 file.
 
 \begin{figure}[!htb]
   \centering
@@ -114,37 +114,4 @@ Figure \ref{fig:comparison_efficiency_clusters} shows comparison of the parallel
     Five repeats were performed to collect statistics and error bars show standard deviation with respect to mean.}
   \label{fig:comparison_efficiency_clusters}
 \end{figure} 
-
-Figure \ref{fig:MPIwithIO-split-SuperMIC} shows how RMSD task scales with the increase in the number of cores when the trajectories are split using \emph{Global Arrays} for communication compared to using MPI for communications on \emph{LSU SuperMIC}.  
- 
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{.3\textwidth}
-    \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting-SuperMIC_edited.pdf}
-    \captionsetup{format=hang}
-    \caption{Scaling for different components}
-    \label{fig:MPIscaling-SuperMIC}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.3\textwidth}
-    \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting-SuperMIC_edited.pdf}
-    \caption{Scaling total}
-    \label{fig:MPItottime-SuperMIC}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}{.3\textwidth}
-    \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting-SuperMIC_edited.pdf}
-    \caption{Speed-up}
-    \label{fig:MPIspeedup-SuperMIC}
-  \end{subfigure}
-
-  \caption{\emph{LSU SuperMIC}: Comparison of the performance of the RMSD task with subfiling and using either MPI (``MPI'') or \package{Global Arrays} (``ga'') for communication.
-    For \emph{Global Arrays}, all ranks update the global array (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
-    Five repeats were performed to collect statistics.
-    (a) Compute and I/O scaling versus number of processes.
-    (b) Total time scaling versus number of processes.
-    (c) Speed-up.
-    (a-c) The error bars show standard deviation with respect to mean.}
-  \label{fig:MPIwithIO-split-SuperMIC}
-\end{figure}
 

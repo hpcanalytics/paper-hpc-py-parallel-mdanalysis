@@ -29,8 +29,7 @@ We used Python (\url{https://www.python.org/}), a machine-independent, byte-code
 We found that communication and reading I/O were the two main scalability bottlenecks, with some indication that read I/O might have been interfering with the communications.
 Stragglers and therefore poor scaling were a consequence of inefficient use of the parallel Lustre file system.
 We therefore focused on two different approaches to better leverage Lustre and mitigate I/O bottlenecks: MPI parallel I/O (MPI-IO) with the HDF5 file format and subfiling (trajectory file splitting).
-For subfiling, we obtained good results with the \package{Global Arrays} package~\cite{GA, GAiN}, which provides a convenient layer to access and manage arrays over multiple MPI ranks.
-Both MPI-IO and subfiling eliminated stragglers and improved the performance with near ideal scaling, $S(N) = N$, i.e., the speed-up $S$ scaled linearly with the number $N$ of CPU cores while exhibiting a slope of one.
+MPI-IO eliminated stragglers and improved the performance with near ideal scaling, $S(N) = N$, i.e., the speed-up $S$ scaled linearly with the number $N$ of CPU cores while exhibiting a slope of one.
 
 The paper is organized as follows:
 We first review stragglers and existing approaches to parallelizing MD trajectory analysis in section \ref{sec:background}.

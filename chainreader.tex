@@ -3,61 +3,50 @@
 \section{Performance of the ChainReader for Split Trajectories}
 \label{sec:chainreader}
 
-In section \ref{sec:splitting-traj} we showed how subfiling (splitting the trajectories) would help to overcome I/O limitations and improve scaling. 
+In section \ref{sec:splitting-traj} we showed how subfiling (splitting the trajectories) could help overcome I/O limitations and improve scaling. 
 However, the number of trajectories may not necessarily be equal to the number of processes.
 For example, trajectories from MD simulations on supercomputers are often kept in small segments in individual files that need to be concatenated later to form a trajectory that can be analyzed with common tools.
 Such segments might be useful for subfiling but making sure that the number of processes is equal to the number of trajectory files will not always be feasible. 
 \package{MDAnalysis} can transparently represent multiple trajectories as one virtual trajectory using the \emph{ChainReader}.
-This feature is  convenient for serial analysis when trajectories are maintained as segments.
+This feature is convenient for serial analysis when trajectories are maintained as segments.
 In the current implementation of ChainReader, each process opens all the trajectory segment files but I/O will only happen from a specific block of the trajectory specific to that process only.
 
 We wanted to test if the ChainReader would benefit from the gains measured for the subfiling approach.
 Specifically, we measured if the MPI-parallelized RMSD task (with $N_{\text{p}}$ ranks) would benefit if the trajectory was split into $N_{\text{seg}} = N_{\text{p}}$ trajectory segments, corresponding to an ideal scenario.
  
- \begin{figure}[!htb]
+\begin{figure}[!htb]
 \centering
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_IO_compute_scaling_traj_splitting-chain-reader_edited.pdf}
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting_chain-reader.pdf}
+  \caption{Scaling total}
+  \label{fig:MPItottime-chain-reader}
+\end{subfigure}
+\hfill
+\begin{subfigure}{.4\textwidth}
+  \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting_chain-reader.pdf}
+  \caption{Speed-up}
+  \label{fig:MPIspeedup-chain-reader}
+\end{subfigure}
+\bigskip
+\begin{subfigure}{.45\textwidth}
+  \includegraphics[width=\linewidth]{figures/IO_compute_scaling_traj_splitting-chain-reader.pdf}
   \captionsetup{format=hang}
   \caption{Scaling for different components}
   \label{fig:MPIscaling-chain-reader}
 \end{subfigure}
 \hfill
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting-chain-reader_edited.pdf}
-  \caption{Scaling total}
-  \label{fig:MPItottime-chain-reader}
-\end{subfigure}
-\hfill
-\begin{subfigure}{.3\textwidth}
-  \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting-chain-reader_edited.pdf}
-  \caption{Speed-up}
-  \label{fig:MPIspeedup-chain-reader}
-\end{subfigure}
-\bigskip
-
-\begin{subfigure}{.45\textwidth}
+\begin{subfigure}{.5\textwidth}
   \includegraphics[width=\linewidth]{figures/chain-reader-no-ga-BarPlot-rank-comparison_192_5.pdf}
   \captionsetup{format=hang}
-   \caption{Time comparison of different parts of the calculations per MPI rank using ChainReader with MPI collective communications}
+  \caption{Time comparison of different parts of the calculations per MPI rank}
   \label{fig:MPIranks-split-chain-reader}
 \end{subfigure}
-\hfill
-\begin{subfigure}{.45\textwidth}
-  \includegraphics[width=\linewidth]{figures/chain-reader-ga-BarPlot-rank-comparison_192_3.pdf}
-  \captionsetup{format=hang}
-  \caption{Time comparison on different parts of the calculations per MPI rank using ChainReader using \package{Global Arrays}}
-  \label{fig:MPIranks-split-ga-chain-reader}
-\end{subfigure}
 
-\caption{Comparison on the performance of the MDAnalysis ChainReader for the RMSD task on \emph{SDSC Comet} when the trajectories are split; for the communication step either collective MPI (``MPI'') or \package{Global Arrays} (``ga'') was used.
-In case of \package{Global Arrays}, all ranks update the global array (\texttt{ga\_put()}) and rank 0 accesses the whole RMSD array through the global memory address (\texttt{ga\_get()}).
+\caption{Subfiling with the MDAnalysis \emph{ChainReader} for the RMSD task on \emph{SDSC Comet}.
 Five repeats were performed to collect statistics.
-(a) Compute and I/O scaling versus number of processes.
-(b) Total time scaling versus number of processes.
-(c) Speed-up.
+The data for subfiling with one file per process (from Figure~\protect{\ref{fig:MPIwithIO-split}}) are shown for comparison as dotted lines in (a) and (b).  
 (a-c) The error bars show standard deviation with respect to the mean.
-(d-e) Compute \tcomp, read I/O \tIO, communication \tcomm, access to the whole global array by rank 0 $t_{\text{Access\_Global\_Array}}$, ending the for loop $t_{\text{end\_loop}}$,  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank. (See Table \ref{tab:notation} for the definitions.)}
+(d) Compute \tcomp, read I/O \tIO, communication \tcomm, opening the trajectory $t_{\text{opening\_trajectory}}$, ending the for loop $t_{\text{end\_loop}}$ (includes closing the trajectory file),  and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank. (See Table \ref{tab:notation} for the definitions.)}
 \label{fig:MPIwithIO-split-chain-reader}
 \end{figure}
 
@@ -75,18 +64,20 @@ If an invalid offset file is detected (perhaps because of wrong file modificatio
 In order to avoid the race condition, we removed this check from MDAnalysis for the purpose of the measurements presented here, but this comes at the price of not checking the validity of the offset files at all; future versions of MDAnalysis may lift this limitation.  
 We obtained the results for the ChainReader with this modified version of \package{MDAnalysis} that eliminates the race condition by assuming that XTC index files are always valid.
 
-Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance of the ChainReader for the RMSD task using either collective MPI or Global Arrays (GA) for the communication step.
-With GA good strong scaling performance was observable up to 144 cores (Figure \ref{fig:MPIspeedup-chain-reader}); without GA, strong scaling plateaued for more than 92 cores.
-In both cases, strong scaling performance was worse than what was achieved when each MPI process was assigned its own trajectory segment as described in Section \ref{sec:splitting-traj}. 
+Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance of the ChainReader for the RMSD task.
+Strong scaling plateaued for more than 92 cores and performance was worse than what was achieved when each MPI process was assigned its own trajectory segment as described in Section \ref{sec:splitting-traj} and shown for comparison as dotted lines in Figures~\ref{fig:MPItottime-chain-reader} and \ref{fig:MPIspeedup-chain-reader}.
 The strong scaling performance did not suffer because of the computation and the read I/O because both \tcomp and \tIO showed excellent strong scaling up to 196 cores (Figure \ref{fig:MPIscaling-chain-reader}).
 Instead the time for ending the \texttt{for} loop $t_{\text{end\_loop}}$, which includes the time for closing the trajectory file, and opening the trajectory $t_{\text{opening\_trajectory}}$ appeared to be the scaling bottleneck.
-These results differed from the subfiling results (section \ref{sec:splitting-traj}) where neither $t_{\text{end\_loop}}$ nor $t_{\text{opening\_trajectory}}$ limited scaling (Figures \ref{fig:MPIranks-split} and \ref{fig:MPIranks-split-ga}). 
+These results differed from the subfiling results (section \ref{sec:splitting-traj}) where neither $t_{\text{end\_loop}}$ nor $t_{\text{opening\_trajectory}}$ limited scaling (Figure \ref{fig:MPIranks-split}). 
 
 Although we did not further investigate the deeper cause for the reduced scaling performance of the ChainReader, we speculate that the primary problem is related to each MPI rank having to open all trajectory files in their ChainReader instance even though they will only read from a small subset.
 For $N_{\text{p}}$ ranks and $N_{\text{seg}}$ file segments, in total, $N_{p } N_{\text{seg}}$ file opening/closing operations have to be performed. 
 Each server that is part of a Lustre file system can only handle a limited number of I/O requests (read, write, stat, open, close, etc.) per second.
 A large number of such requests, from one or more users and one or more jobs, can lead to contention for storage resources. 
-For $N_{\text{p}} = N_{\text{seg}} = 100$, the Lustre file system has to perform 10,000 of these operations almost simultaneously, which might degrade performance. 
+For $N_{\text{p}} = N_{\text{seg}} = 100$, the Lustre file system has to perform 10,000 of these operations almost simultaneously, which might degrade performance.
+
+These considerations indicate that the ChainReader in its current implementation limits scaling performance to less than 100 processes due to the large number of file opening operations.
+For better performance, the ChainReader would need to be rewritten for MPI such that the layout of the trajectory files is initially obtained by MPI rank 0 (which has to sequentially open all trajectory segments once) and then communicated to all other ranks; each rank then only opens the trajectories it needs to access, thus reducing file access to a minimum.
 
 
 %%% Local Variables:
