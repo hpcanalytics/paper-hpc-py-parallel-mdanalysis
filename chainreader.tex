@@ -33,11 +33,6 @@ Specifically, we measured if the MPI-parallelized RMSD task (with $N_{\text{p}}$
   \captionsetup{format=hang}
   \caption{Scaling for different components}
   \label{fig:MPIscaling-chain-reader}
-  %%% FIXME %%%
-  % These "ChainReader" subfiling data look exactly like the subfiling data in Fig 4c.
-  % This was also the case in the submitted manuscript.
-  %
-  % 
 \end{subfigure}
 \hfill
 \begin{subfigure}{.5\textwidth}
@@ -47,10 +42,10 @@ Specifically, we measured if the MPI-parallelized RMSD task (with $N_{\text{p}}$
   \label{fig:MPIranks-split-chain-reader}
 \end{subfigure}
 
-\caption{Comparison on the performance of the MDAnalysis ChainReader for the RMSD task on \emph{SDSC Comet} when the trajectories are split.
+\caption{Subfiling with the MDAnalysis \emph{ChainReader} for the RMSD task on \emph{SDSC Comet}.
 Five repeats were performed to collect statistics.
 (a-c) The error bars show standard deviation with respect to the mean.
-(d) Compute \tcomp, read I/O \tIO, communication \tcomm, ending the for loop $t_{\text{end\_loop}}$,  opening the trajectory $t_{\text{opening\_trajectory}}$, and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank. (See Table \ref{tab:notation} for the definitions.)}
+(d) Compute \tcomp, read I/O \tIO, communication \tcomm, opening the trajectory $t_{\text{opening\_trajectory}}$, ending the for loop $t_{\text{end\_loop}}$ (includes closing the trajectory file),  and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank. (See Table \ref{tab:notation} for the definitions.)}
 \label{fig:MPIwithIO-split-chain-reader}
 \end{figure}
 
