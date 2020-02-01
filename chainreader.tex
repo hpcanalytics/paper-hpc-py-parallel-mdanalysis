@@ -17,13 +17,13 @@ Specifically, we measured if the MPI-parallelized RMSD task (with $N_{\text{p}}$
 \begin{figure}[!htb]
 \centering
 \begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/tot_time_traj_splitting_chain-reader.pdf}
+  \includegraphics[width=\linewidth]{figures/Comparison_tot_time_traj_splitting_chain-reader.pdf}
   \caption{Scaling total}
   \label{fig:MPItottime-chain-reader}
 \end{subfigure}
 \hfill
 \begin{subfigure}{.4\textwidth}
-  \includegraphics[width=\linewidth]{figures/Speed_UP_traj_splitting_chain-reader.pdf}
+  \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_traj_splitting_chain-reader.pdf}
   \caption{Speed-up}
   \label{fig:MPIspeedup-chain-reader}
 \end{subfigure}
@@ -44,6 +44,7 @@ Specifically, we measured if the MPI-parallelized RMSD task (with $N_{\text{p}}$
 
 \caption{Subfiling with the MDAnalysis \emph{ChainReader} for the RMSD task on \emph{SDSC Comet}.
 Five repeats were performed to collect statistics.
+The data for subfiling with one file per process (from Figure~\protect{\ref{fig:MPIwithIO-split}}) are shown for comparison as dotted lines in (a) and (b).  
 (a-c) The error bars show standard deviation with respect to the mean.
 (d) Compute \tcomp, read I/O \tIO, communication \tcomm, opening the trajectory $t_{\text{opening\_trajectory}}$, ending the for loop $t_{\text{end\_loop}}$ (includes closing the trajectory file),  and overheads $t_{\text{overhead1}}$, $t_{\text{overhead2}}$ per MPI rank. (See Table \ref{tab:notation} for the definitions.)}
 \label{fig:MPIwithIO-split-chain-reader}
@@ -64,7 +65,7 @@ In order to avoid the race condition, we removed this check from MDAnalysis for 
 We obtained the results for the ChainReader with this modified version of \package{MDAnalysis} that eliminates the race condition by assuming that XTC index files are always valid.
 
 Figure \ref{fig:MPIwithIO-split-chain-reader} shows the results for performance of the ChainReader for the RMSD task.
-Strong scaling plateaued for more than 92 cores and performance was worse than what was achieved when each MPI process was assigned its own trajectory segment as described in Section \ref{sec:splitting-traj}. 
+Strong scaling plateaued for more than 92 cores and performance was worse than what was achieved when each MPI process was assigned its own trajectory segment as described in Section \ref{sec:splitting-traj} and shown for comparison as dotted lines in Figures~\ref{fig:MPItottime-chain-reader} and \ref{fig:MPIspeedup-chain-reader}.
 The strong scaling performance did not suffer because of the computation and the read I/O because both \tcomp and \tIO showed excellent strong scaling up to 196 cores (Figure \ref{fig:MPIscaling-chain-reader}).
 Instead the time for ending the \texttt{for} loop $t_{\text{end\_loop}}$, which includes the time for closing the trajectory file, and opening the trajectory $t_{\text{opening\_trajectory}}$ appeared to be the scaling bottleneck.
 These results differed from the subfiling results (section \ref{sec:splitting-traj}) where neither $t_{\text{end\_loop}}$ nor $t_{\text{opening\_trajectory}}$ limited scaling (Figure \ref{fig:MPIranks-split}). 
@@ -73,7 +74,10 @@ Although we did not further investigate the deeper cause for the reduced scaling
 For $N_{\text{p}}$ ranks and $N_{\text{seg}}$ file segments, in total, $N_{p } N_{\text{seg}}$ file opening/closing operations have to be performed. 
 Each server that is part of a Lustre file system can only handle a limited number of I/O requests (read, write, stat, open, close, etc.) per second.
 A large number of such requests, from one or more users and one or more jobs, can lead to contention for storage resources. 
-For $N_{\text{p}} = N_{\text{seg}} = 100$, the Lustre file system has to perform 10,000 of these operations almost simultaneously, which might degrade performance. 
+For $N_{\text{p}} = N_{\text{seg}} = 100$, the Lustre file system has to perform 10,000 of these operations almost simultaneously, which might degrade performance.
+
+These considerations indicate that the ChainReader in its current implementation limits scaling performance to less than 100 processes due to the large number of file opening operations.
+For better performance, the ChainReader would need to be rewritten for MPI such that the layout of the trajectory files is initially obtained by MPI rank 0 (which has to sequentially open all trajectory segments once) and then communicated to all other ranks; each rank then only opens the trajectories it needs to access, thus reducing file access to a minimum.
 
 
 %%% Local Variables:
