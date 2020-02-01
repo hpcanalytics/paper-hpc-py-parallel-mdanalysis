@@ -1,1 +1,1 @@
-(c) Speed-up
+(a) Scaling for different components
