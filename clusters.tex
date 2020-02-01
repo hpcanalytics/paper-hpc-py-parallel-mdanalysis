@@ -76,11 +76,10 @@ However, on \emph{PSC Bridges} the I/O time was on average about two and a half 
   \end{subfigure}
   \caption{Comparison of the performance of the RMSD task across different clusters (\emph{SDSC Comet}, \emph{PSC Bridges}, \emph{LSU SuperMIC}) with MPI-IO.
     Data were read from a shared HDF5 file instead of an XTC file, using MPI independent I/O in the PHDF5 library.
-    Results were communicated back to rank 0.
     $N_{\text{P}}/N_{\text{nodes}}$ indicates that number of processes used for the task were equally distributed over all compute nodes.
     Five repeats were performed to collect statistics (except for \emph{SDSC Comet} at 288 cores, where only four repeats were included, as described in Figure~\protect\ref{fig:MPIwithIO-hdf5}).
     The error bars show standard deviation with respect to mean.
-    In (b) only results up to 100 cores are shown to simplify the comparison; see Fig.~\protect\ref{fig:MPIspeedup-hdf5} for \emph{SDSC Comet} and Fig.~\protect\ref{fig:comparison_efficiency_SuperMIC} for \emph{LSU SuperMic} data.
+    In (b) only results up to 100 cores are shown to simplify the comparison; see Figure~\protect\ref{fig:MPIspeedup-hdf5} for \emph{SDSC Comet} and Figure~\protect\ref{fig:comparison_efficiency_SuperMIC} for \emph{LSU SuperMic} all data.
   }
 \label{fig:MPIwithIO-clusters}
 \end{figure} 
