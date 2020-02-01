@@ -10,10 +10,10 @@ In Appendix~\ref{sec:supplement} we demonstrated that stragglers occured on \emp
 We performed additional comparisons for several cases discussed previously, namely (1) splitting the trajectories with blocking collective communications in MPI and (2) MPI-based parallel HDF5.
 
 \subsection{Splitting the Trajectories}
-Figure \ref{fig:MPI-splitting-clusters} shows the strong scaling of the RMSD task on different HPC resources.  
-Splitting the trajectories with Global Arrays for communication resulted in very good scaling performance on \emph{LSU SuperMIC}, similar to the results obtained on \emph{SDSC Comet}.
-The results with MPI blocking collective communication were also comparable between the two clusters, with scaling far from ideal due to the communication cost (see section \ref{sec:splitting-traj} and Figures \ref{fig:MPIranks-split} and \ref{fig:MPIwithIO-split-SuperMIC}). 
-Overall, the scaling of the RMSD task is better on \emph{LSU SuperMIC} than on \emph{SDSC Comet} and the performance gap increased with increasing core number.
+Figure \ref{fig:MPI-splitting-clusters} shows the strong scaling of the RMSD task on \emph{LSU SuperMIC} and \emph{SDSC Comet} with subfiling.
+The results were comparable between the two clusters, with scaling far from ideal due to the communication cost (see section \ref{sec:splitting-traj} and Figure \ref{fig:compute-IO-scaling-clusters-splitting}).
+On \emph{SuperMIC}, scaling was excellent on up to two nodes (40 cores) but beyond two nodes the communication cost increased markedly for unknown reasons and thus leading to reduced scaling behavior.
+Overall, the scaling of the RMSD task was slighly better on \emph{LSU SuperMIC} than on \emph{SDSC Comet} but qualitatively similar.
 
 \begin{figure}[!htb]
   \centering
@@ -36,7 +36,7 @@ Overall, the scaling of the RMSD task is better on \emph{LSU SuperMIC} than on \
     \caption{Scaling of \tcomp and \tIO.}
     \label{fig:compute-IO-scaling-clusters-splitting}
   \end{subfigure}
-  \caption{Comparison of the performance of the RMSD task across different clusters (\emph{SDSC Comet}, \emph{LSU SuperMIC}) when the trajectories are split (\emph{subfiling}).
+  \caption{Comparison of the performance of the RMSD task across different clusters [\emph{SDSC Comet} (24 cores per node), \emph{LSU SuperMIC} (20 cores per node)] when the trajectories are split (\emph{subfiling}).
     Five repeats were performed to collect statistics.
     The error bars show the standard deviation with respect to the mean.}
 \label{fig:MPI-splitting-clusters}
