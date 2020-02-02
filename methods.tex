@@ -8,42 +8,44 @@ In the following we define the quantities and approach used for our performance 
 We evaluated MPI performance of the parallel RMSD time series algorithm~\ref{alg:RMSD} and its variation (algorithm \ref{alg:RMSDhdf5}) by timing the total time to solution as well as the execution time for different parts of the code for individual MPI ranks with the help of the Python \texttt{time.time()} function.
 
 
-\begin{SCtable}[1.0][!htb]
+\begin{table}[!htb]
   \centering
   \caption[Summary of measured timing quantities.]  {Summary of measured timing quantities.  Timings are collected for the specified line numbers in the code, labeled as $t_{\text{L$n$}}$ where $\text{L$n$}$ refers to the line number in the corresponding algorithm (columns Algorithm~\ref{alg:RMSD} and \ref{alg:RMSDhdf5}), or are calculated in the same way for both algorithms from the specific quantities.  Variables in the top part of the table refer to measurements of an individual MPI rank.  Variables in the bottom part are aggregates such as averages over all ranks or the total time to solution.}
   \label{tab:notation}
 \begin{threeparttable}
-  \begin{tabular}{ccc}
+  \begin{tabular}{cccp{0.35\textwidth}}
     \toprule
-    \bfseries\thead{Quantity} & \multicolumn{2}{c}{\bfseries\thead{Definition}}\\
-                              & Algorithm~\ref{alg:RMSD} & Algorithm~\ref{alg:RMSDhdf5}\\
+    \bfseries\thead{Quantity} & \multicolumn{2}{c}{\bfseries\thead{Definition}} & \bfseries\thead{Description}\\
+                              & Algorithm~\ref{alg:RMSD} & Algorithm~\ref{alg:RMSDhdf5} & \\
     \midrule  
-    $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ & ---\textsuperscript{a}\\
-    $\tIO^{\text{frame}}$   & $t_{\text{L4}}$ & $t_{\text{L2}}$\\  
-    $\tcomp^{\text{frame}}$ & $t_{\text{L5}}$ & $t_{\text{L3}}$ \\  
-    $t_{\text{all\_frame}}$ & $t_{\text{L4}}+t_{\text{L5}}+t_{\text{L6}}$ & $t_{\text{L2}}+t_{\text{L3}}+t_{\text{L4}}$  \\
-    $t_{\text{RMSD}}$ &  $t_{\text{L1}} + ...+ t_{\text{L8}}$ & $t_{\text{L1}} + ...+ t_{\text{L6}}$\\
-    $t_{\text{end\_loop}}$ & $t_{\text{L6}} $  & $t_{\text{L4}} $\\
-    $\tcomm$  & $t_{\text{L16}}$ &  $t_{\text{L15}}$\\
+    $t_{\text{opening\_trajectory}}$ &  $t_{\text{L2}}+t_{\text{L3}}$ & ---\textsuperscript{a} & file opening and data structure initialization\\
+    $\tIO^{\text{frame}}$   & $t_{\text{L4}}$ & $t_{\text{L2}}$ & data reading per frame\\  
+    $\tcomp^{\text{frame}}$ & $t_{\text{L5}}$ & $t_{\text{L3}}$ & compute per frame\\  
+    $t_{\text{all\_frame}}$ & $t_{\text{L4}}+t_{\text{L5}}+t_{\text{L6}}$ & $t_{\text{L2}}+t_{\text{L3}}+t_{\text{L4}}$  & time to analyze one frame\\
+    $t_{\text{RMSD}}$ &  $t_{\text{L1}} + ...+ t_{\text{L8}}$ & $t_{\text{L1}} + ...+ t_{\text{L6}}$ & time to execute the body of the \texttt{block\_rmsd()} function\\
+    $t_{\text{end\_loop}}$ & $t_{\text{L6}} $  & $t_{\text{L4}} $ & closing of the trajectory at the end of the loop\\
+    $\tcomm$  & $t_{\text{L16}}$ &  $t_{\text{L15}}$ & data communication with \texttt{MPI\_Gather()}\\
     \cmidrule(l){2-3}
-    $N_{\text{b}}$ & \multicolumn{2}{c}{$N_{\text{frames}}^{\text{total}}/N$}\\
-    $\tcomp$ & \multicolumn{2}{c}{$\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$}\\
-    $\tIO$ & \multicolumn{2}{c}{$\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$}\\  
-    $t_{\text{Overhead1}}$ & \multicolumn{2}{c}{$t_{\text{all\_frame}}-t_{\text{I/O}}-t_{\text{comp}}-t_{\text{end\_loop}}$}  \\
-    $t_{\text{Overhead2}}$ & \multicolumn{2}{c}{$t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$}  \\
-    $t_{N}$ & \multicolumn{2}{c}{$t_{\text{RMSD}}+\tcomm$} \\
+    $N_{\text{frames}}^{\text{total}}$ & & & total number of trajectory frames\\
+    $N$ & & & total number of MPI ranks (processes), equals the number of trajectory blocks\\
+    $N_{\text{b}}$ & \multicolumn{2}{c}{$N_{\text{frames}}^{\text{total}}/N$} & number of frames per block\\
+    $\tcomp$ & \multicolumn{2}{c}{$\sum_{\text{frame}=1}^{N_{\text{b}}}\tcomp^{\text{frame}}$} & total compute time for a rank (process)\\
+    $\tIO$ & \multicolumn{2}{c}{$\sum_{\text{frame}=1}^{N_{\text{b}}}\tIO^{\text{frame}}$} & total read I/O time for a rank (process)\\  
+    $t_{\text{Overhead1}}$ & \multicolumn{2}{c}{$t_{\text{all\_frame}}-t_{\text{I/O}}-t_{\text{comp}}-t_{\text{end\_loop}}$}  & time inside \texttt{block\_rmsd()} that was not measured explicitly\\
+    $t_{\text{Overhead2}}$ & \multicolumn{2}{c}{$t_{\text{RMSD}}-t_{\text{all\_frame}}-t_{\text{opening\_trajectory}}$} & overhead for the \texttt{block\_rmsd()} function call\\
+    $t_{N}$ & \multicolumn{2}{c}{$t_{\text{RMSD}}+\tcomm$} & total time to completion for a rank (process)\\
     \toprule
-    $\overline{\tcomp}$ & \multicolumn{2}{c}{$\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomp$} \\
-    $\overline{\tIO}$ & \multicolumn{2}{c}{$\frac{1}{N}\sum_{\text{rank}=1}^{N} \tIO$}\\
-    $\overline{\tcomm}$ & \multicolumn{2}{c}{$\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomm$} \\
-    $t_{\text{total}}$ & \multicolumn{2}{c}{$\max t_{N}$} \\
+    $\overline{\tcomp}$ & \multicolumn{2}{c}{$\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomp$} & average compute time over all ranks\\
+    $\overline{\tIO}$ & \multicolumn{2}{c}{$\frac{1}{N}\sum_{\text{rank}=1}^{N} \tIO$} & average read I/O time over all ranks\\
+    $\overline{\tcomm}$ & \multicolumn{2}{c}{$\frac{1}{N}\sum_{\text{rank}=1}^{N} \tcomm$} & average communication time over all ranks\\
+    $t_{\text{total}}$ & \multicolumn{2}{c}{$\max t_{N}$} & total time to solution\\
     \bottomrule
   \end{tabular}
     \begin{tablenotes}[para,flushleft]
     \item [a] Algorithm~\ref{alg:RMSDhdf5} does not need to open a trajectory inside the \texttt{block\_rmsd()} function and hence $t_{\text{opening\_trajectory}}$ only measures time to allocate empty arrays, which is not explicitly shown in Algorithm~\ref{alg:RMSDhdf5}.
       \end{tablenotes}
 \end{threeparttable}
-\end{SCtable}
+\end{table}
 
 
 \subsection{Timing Observables}
