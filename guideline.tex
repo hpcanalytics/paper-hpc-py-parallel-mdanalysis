@@ -17,5 +17,5 @@ Calculate the compute to I/O ratio ($\RcompIO$, Eq.~\ref{eq:Compute-IO}). As dis
   \end{description}
 \end{description}
 
-The best solution is always the use of parallel I/O as it makes best use of the parallel file system and scales well to hundreds of cores, regardless of $\RcompIO$. 
+The better solution is the use of parallel I/O as it makes best use of the parallel file system and scales well to hundreds of cores, regardless of $\RcompIO$. 
 Splitting the trajectories will not scale as well as parallel I/O but it can be easily performed in parallel and trajectory conversion may be integrated into the beginning of standard workflows for MD simulations.  Alternatively, trajectories may already be kept in smaller chunks if they are already produced in batches; for instance, when running simulations with \package{Gromacs} \cite{Abraham:2015aa}, the \texttt{gmx mdrun -noappend} option produces individual trajectory segments instead of extending an existing trajectory file.

@@ -108,14 +108,14 @@ For MPI-based parallel HDF5, both the compute and I/O time on \emph{Bridges} wer
 For example, with one core the corresponding compute and I/O time were $\tcomp = 387~\text{s}$, $\tIO = 1318~\text{s}$ versus $225~\text{s}$, $423~\text{s}$ on \emph{SDSC Comet} and $273~\text{s}$, $503~\text{s}$ on \emph{LSU SuperMIC}.
 This performance difference became larger with increasing core number.
 
-Overall, the results from \emph{SDSC Comet} and \emph{LSU SuperMIC} are consistent with each other.
+Overall, the results from \emph{SDSC Comet} and \emph{LSU SuperMIC} were consistent with each other.
 Performance on \emph{PSC Bridges} seemed sensitive to the exact allocation of cores on each node but nevertheless the approaches that decreased the occurrence of stragglers on \emph{SDSC Comet} and \emph{LSU SuperMIC} also improved performance on \emph{PSC Bridges}.
-Thus, the findings described in the previous sections are valid for a range of different HPC clusters with Lustre file systems.
+Thus, the findings described in the previous sections were valid for a range of different HPC clusters with Lustre file systems.
 
 \begin{sidewaystable}[hp]
 \centering
 \caption
-{Comparison of the compute and I/O scaling for different test cases and number of processes.
+{Comparison of selected compute and I/O timings for different clusters, test cases, and number of processes.
   Five repeats were performed to collect statistics.
   The mean value and the standard deviation with respect to mean are reported for each case.}
 \label{tab:comp-IO-scaling}  
