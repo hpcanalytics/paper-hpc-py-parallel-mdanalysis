@@ -41,12 +41,13 @@ $(TARFILE): $(MAIN) $(PARTS) $(BBL) $(FIGURES) $(AUX)
 	tar -zcvf $@ $^
 
 # CCPE submission system workarounds
-# max 50 files per tar.gz file
+# - max 50 files per tar.gz file
+# - do not include bbl or sty
 
 CCPE_LATEX_SOURCES_TAR := latex_sources.tar.gz
 CCPE_FIGURES_TAR := figures_sources.tar.gz
 
-$(CCPE_LATEX_SOURCES_TAR): $(MAIN) $(PARTS) $(BBL) $(AUX)
+$(CCPE_LATEX_SOURCES_TAR): $(MAIN) $(PARTS)
 	tar -zcf $@ $^
 
 $(CCPE_FIGURES_TAR): $(FIGURES)
