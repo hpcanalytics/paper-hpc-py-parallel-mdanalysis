@@ -36,10 +36,11 @@ HiMach uses parallel I/O for file access during map tasks and \text{MPI\_Allgath
 HiMach, however, does not discuss parallel analysis of analysis types that cannot be implemented via MapReduce.
 Furthermore, HiMach is not available under an open source license, which makes it difficult to integrate community contributions and add new state-of-the-art methods.
 
-Wu et. al.~\cite{Wu_et.al} present a scalable parallel framework for distributed-memory post-simulation data analysis.
+Wu et. al.~\cite{Wu_et.al} present a scalable parallel framework for distributed-memory MD simulation data analysis.
 This work consists of an interface that allows a user to write analysis programs sequentially, and the machinery that ensures these programs execute in parallel automatically. 
-The main components of the proposed framework are (1) domain decomposition that splits computational domain into blocks with specified boundary conditions, (2) HDF5 based parallel I/O (3) data exchange that communicates ghost atoms between neighbor blocks, and (4) parallel analysis implementation of a real-world analysis application.
-This work does not discuss analysis methods which cannot be implemented using MapReduce and is limited to HDF5 file format.
+Parallelization is performed over domains in the simulation system via domain decomposition and the introduction of ghost atoms to include appropriate nearest neighbor interactions.
+The HDF5 file format is used for parallel reading and writing.
+This work focuses on applications in the materials science and does not consider parallelization over trajectory blocks.
 
 Zazen~\cite{Zazen} is a novel task-assignment protocol to overcome the I/O bottleneck for many I/O bound tasks. This protocol caches a copy of simulation output files on the local disks of the compute nodes of a cluster, and uses co-located data access with computation. 
 Zazen is implemented in a parallel disk cache system and avoids the overhead associated with querying metadata servers by reading data in parallel from local disks.
