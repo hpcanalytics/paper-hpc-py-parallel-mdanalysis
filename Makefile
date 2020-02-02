@@ -19,7 +19,7 @@ FIGURES := $(wildcard $(FIGDIR)/*.pdf)
 	pdflatex $<
 	pdflatex $<
 
-.phony: all see clean arxiv
+.phony: all see clean arxiv ccpe
 
 all: $(PDF)
 
@@ -39,3 +39,20 @@ clean:
 
 $(TARFILE): $(MAIN) $(PARTS) $(BBL) $(FIGURES) $(AUX)
 	tar -zcvf $@ $^
+
+# CCPE submission system workarounds
+# max 50 files per tar.gz file
+
+CCPE_LATEX_SOURCES_TAR := latex_sources.tar.gz
+CCPE_FIGURES_TAR := figures_sources.tar.gz
+
+$(CCPE_LATEX_SOURCES_TAR): $(MAIN) $(PARTS) $(BBL) $(AUX)
+	tar -zcf $@ $^
+
+$(CCPE_FIGURES_TAR): $(FIGURES)
+	tar -zcf $@ $^
+
+ccpe: $(CCPE_LATEX_SOURCES_TAR) $(CCPE_FIGURES_TAR)
+	@echo "CCPE Submission files are ready:"
+	@echo "- $(CCPE_LATEX_SOURCES_TAR)"
+	@echo "- $(CCPE_FIGURES_TAR)"
