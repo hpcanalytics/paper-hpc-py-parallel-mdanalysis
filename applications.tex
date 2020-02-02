@@ -47,12 +47,12 @@ where $\mathbf{x}_{i}(t)$ is the position of atom $i$ at time $t$, $\mathbf{x}_{
 The optimum rigid body superposition was calculated with the QCPROT algorithm~\cite{Liu:2010kx,Theobald:2005vn} (implemented in Cython and available through the \texttt{MDAnalysis.analysis.rms} module \cite{Gowers:2016aa}).
 
 The RMSD trajectory analysis was parallelized as outlined in the flow chart in Figure~\ref{fig:flowchart}, with further details available in Algorithm~\ref{alg:RMSD}.
-Each MPI process loads the core MDAnalysis structure (called the \texttt{Universe}), which includes loading a shared ``topology'' file with the simulation system information and opening the shared trajectory file.
+Each MPI process loads the core MDAnalysis data structure (called the \texttt{Universe}), which includes loading a shared ``topology'' file with the simulation system information and opening the shared trajectory file.
 Each process operates on a different block of frames and iterates through them by reading the coordinates of a single frame into memory and performing the RMSD computation with them.
 Once all frames in the block are processed, the trajectory file is closed and results are communicated to MPI rank 0 using \texttt{MPI\_Gather()}.
 
 The RMSD was determined for a subset of protein atoms, the $N=146$  C$_{\alpha}$ atoms in the so-called ``core'' domain of our test system, the protein adenylate kinase \cite{Seyler:2014il} (see section \ref{sec:data} for further details).
-The time complexity for the RMSD Algorithm~\ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$~\cite{Liu:2010kx} where $T$ is the number of frames in the trajectory and $N$ the number of particles included in the RMSD calculation.
+The time complexity for the RMSD Algorithm~\ref{alg:RMSD} is $\mathcal{O}(T \times N^{2})$ where $T$ is the number of frames in the trajectory and $N$ the number of particles included in the RMSD calculation \cite{Liu:2010kx}.
 
 \begin{algorithm}[ht]
 	\scriptsize
@@ -96,8 +96,8 @@ Overheads in \package{mpi4py} are small compared to C code if efficient raw memo
 \subsection{MPI and Parallel HDF5}
 \label{sec:methods-hdf5}
 
-HDF5 is a structured self-describing hierarchical data format which is the standard mechanism for storing large quantities of numerical data in Python (\url{http://www.hdfgroup.org/HDF5}, \cite{pythonhdf5}).
-Parallel HDF5 (\package{PHDF5}) typically sits on top of a MPI-IO layer and can use MPI-IO optimizations. 
+HDF5 is a structured self-describing hierarchical data format which is a common mechanism for storing large quantities of numerical data in Python (\url{http://www.hdfgroup.org/HDF5}, \cite{pythonhdf5}).
+Parallel HDF5 (\package{PHDF5}) typically sits on top of a MPI-IO layer (parallel I/O with MPI) and can use MPI-IO optimizations. 
 In \package{PHDF5}, all file access is coordinated by the MPI library; otherwise, multiple processes would compete over accessing the same file on disk. 
 MPI-based applications launch multiple parallel instances of the Python interpreter that communicate with each other via the MPI library. 
 Implementation is straightforward as long as the user supplies a MPI communicator and takes into account some constraints required for data consistency \cite{pythonhdf5}.
@@ -115,7 +115,7 @@ In the present study, we use independent operations.
 	\hspace*{\algorithmicindent} \textbf{Input:} \emph{size}: total number of frames \\
 	\hspace*{\algorithmicindent} \emph{ref}: mobile group in the initial frame which will be considered as reference \\
 	\hspace*{\algorithmicindent} \emph{start \& stop}: starting and stopping frame index\\
-	\hspace*{\algorithmicindent} \emph{dataset}: HDF5 Dataset of all coordinates in the trajectory \\
+	\hspace*{\algorithmicindent} \emph{dataset}: HDF5 Dataset of the coordinates in the trajectory \\
 	\hspace*{\algorithmicindent} \textbf{Output:} calculated RMSD arrays
 	\begin{algorithmic}[1]
 		\Function{$block\_rmsd$}{$dataset$, $ref$, $start$, $stop$}                       
@@ -128,7 +128,7 @@ In the present study, we use independent operations.
 		\State MPI Init
 		\State $rank \gets rank\_ID$
 		\State $xref0 \gets$ reference atom group position
-                \State $f \gets$ open HDF5 file with MPIO for reading
+                \State $f \gets$ open HDF5 file for parallel MPI-IO reading \Comment{use \emph{mpio} driver}
                 \State $dataset \gets$ get dataset 'pos' from $f$
 		\State $out \gets \Call{block\_rmsd}{dataset, xref0, start, stop}$
                 \\
@@ -138,5 +138,5 @@ In the present study, we use independent operations.
 \end{algorithm}
 
 MDAnalysis does not currently have a reader for HDF5 files or HDF5-based trajectories.
-In order to get a sense of the performance that is possible with a HDF5 trajectory we replaced the MDAnalysis trajectory reading in Algorithm~\ref{alg:RMSD} with directly accessing a HDF5 Dataset in a HDF5 file that was opened with the MPIO parallel driver, as shown in Algorithm~\ref{alg:RMSDhdf5}.
+In order to get a sense of the performance that is possible with a HDF5 trajectory we replaced the MDAnalysis trajectory reading in Algorithm~\ref{alg:RMSD} with directly accessing a HDF5 Dataset in a HDF5 file that was opened with the \emph{mpio} parallel driver, as shown in Algorithm~\ref{alg:RMSDhdf5}.
 The HDF5 file was generated from the original XTC trajectory file as described in Section~\ref{sec:data}.
