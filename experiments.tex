@@ -126,8 +126,8 @@ Better scaling also went together with a higher ratio of compute to communicatio
 In order to study an extreme case of a compute-bound task that would demonstrate the effect of ``ideal'' read I/O, we eliminated all I/O from the RMSD task by randomly generating artificial trajectory data in memory; the data had the same size as if they had been obtained from the trajectory file.
 The time for the data generation was excluded and no file access was necessary. 
 Without any I/O, performance improved markedly (Figure~\ref{fig:MPIwithoutIO}), with reasonable scaling up to 72 cores (3 nodes).
-No stragglers were observed because overall communication time decreased dramatically by more than a factor of ten and showed less variability (Figure~\ref{fig:MPIScalingCompute-Comm-no-IO}) compared to the same runs with I/O (Figure~\ref{fig:ScalingComputeIO}), even though exactly the same amount of data are communicated.
-The scaling performance suffered somewhat for more than 40 processes only because the cost of communication \tcomm became comparable to the compute time \tcomp and would not decrease below about 1~s.
+No stragglers were observed because overall communication time decreased dramatically by more than a factor of ten and showed less variability (Figure~\ref{fig:MPIScalingCompute-Comm-no-IO}) compared to the same runs with I/O (Figure~\ref{fig:ScalingComputeIO}), even though exactly the same amount of data were communicated.
+The scaling performance suffered somewhat for more than 40 processes only because the cost of communication \tcomm became comparable to the compute time \tcomp and would not decrease further.
 Although in practice I/O cannot be avoided, this experiment demonstrated that the way how the trajectory file was accessed on the Lustre file system was at least one cause for the observed stragglers.
 It also showed that the communication cost for the \emph{same amount of data transfer} can be dramatically higher in the presence of I/O. 
 
@@ -281,7 +281,7 @@ The time it took to convert our XTC file with $2,512,200$ frames into HDF5 forma
   %  I am reporting the slowest rank per timing, and that is averaged over all repeats.
 \end{figure}
 
-We ran our benchmark on up to 16 nodes (384 cores) on \emph{SDSC Comet} and we observed near ideal scaling behavior Figures~\ref{fig:MPIscaling-hdf5} and~\ref{fig:MPIspeedup-hdf5}) with parallel efficiencies above 0.8 on up to 8 nodes (Figure~\ref{fig:comparison_efficiency}) with no straggler tasks (Figure~\ref{fig:MPIranks-hdf5}).
+We ran our benchmark on up to 16 nodes (384 cores) on \emph{SDSC Comet} and we observed near ideal scaling behavior (Figures~\ref{fig:MPIscaling-hdf5} and~\ref{fig:MPIspeedup-hdf5}) with parallel efficiencies above 0.8 on up to 8 nodes (Figure~\ref{fig:comparison_efficiency}) with no straggler tasks (Figure~\ref{fig:MPIranks-hdf5}).
 The trajectory reading I/O (\tIO) was the dominant contribution, followed by compute (\tcomp), but because both contributions scaled well, overall scaling performance remained good, even for 384 cores.
 Amongst the five repeats for 12 nodes (288 cores) we observed one run with much slower I/O than typical (Figure~\ref{fig:ScalingComputeIO-hdf5}) but we did not further investigate this spurious case and classified it as an outlier that was excluded from the statistics.
 Importantly, the trajectory opening cost remained negligible (in the millisecond range) and the cost for MPI communication also remained small (below 0.1 s, even for 16 nodes).
