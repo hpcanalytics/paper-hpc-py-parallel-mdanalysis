@@ -98,7 +98,7 @@ Better scaling also went together with a higher ratio of compute to communicatio
  \begin{figure}[!htb]
    \centering
    \begin{subfigure}{.25\textwidth}
-     \includegraphics[width=\linewidth]{figures/speed_up-effect-of-IO.pdf}
+     \includegraphics[width=\linewidth]{figures/Comparison_Speed_UP_with_and_without_IO.pdf}
      \caption{Speed up comparison}
      \label{fig:MPIspeedup-no-IO}
    \end{subfigure}
@@ -117,8 +117,8 @@ Better scaling also went together with a higher ratio of compute to communicatio
      Five repeats were performed to collect statistics.
      (a-b) The error bars show standard deviation with respect to the mean.
      (b) Only compute \tcomp and communication \tcomm are included; there are no timings related to I/O (\tIO, $t_{\text{opening\_trajectory}}$) as in Figure~\protect{\ref{fig:ScalingComputeIO}}.
-     (c) Compute \tcomp, read I/O $\tIO=0$, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
-     opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank.
+     (c) Compute \tcomp, read I/O $\tIO=0$, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}=0$},
+     opening the trajectory \text{$t_{\text{opening\_trajectory}}=0$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank.
      (See Table \ref{tab:notation} for definitions.)}
    \label{fig:MPIwithoutIO}
 \end{figure}
@@ -129,7 +129,7 @@ Without any I/O, performance improved markedly (Figure~\ref{fig:MPIwithoutIO}), 
 No stragglers were observed because overall communication time decreased dramatically by more than a factor of ten and showed less variability (Figure~\ref{fig:MPIScalingCompute-Comm-no-IO}) compared to the same runs with I/O (Figure~\ref{fig:ScalingComputeIO}), even though exactly the same amount of data were communicated.
 The scaling performance suffered somewhat for more than 40 processes only because the cost of communication \tcomm became comparable to the compute time \tcomp and would not decrease further.
 Although in practice I/O cannot be avoided, this experiment demonstrated that the way how the trajectory file was accessed on the Lustre file system was at least one cause for the observed stragglers.
-It also showed that the communication cost for the \emph{same amount of data transfer} can be dramatically higher in the presence of I/O. 
+It also showed that the communication cost for the \emph{same amount of data transfer} could be dramatically higher in the presence of I/O than in its absence.
 
 
 \subsection{Reducing I/O Cost}
