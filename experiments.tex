@@ -13,7 +13,7 @@ We therefore performed more measurements with more detailed timing information (
 We measured strong scaling for the RMSD analysis task (Algorithm \ref{alg:RMSD}) with the 2,512,200 frame test trajectory (section \ref{sec:data}) on 1 to 72 cores (one to three nodes) of \emph{SDSC Comet} (Figures~\ref{fig:MPIscaling} and \ref{fig:MPIspeedup}). 
 We observed poor strong scaling performance beyond a single node (24 cores), comparable to our previous results \cite{Khoshlessan:2017ab}.
 A more detailed analysis showed that the RMSD computation, and to a lesser degree the read I/O, considered on their own, scaled well beyond 50 cores (yellow and blue lines in Figure~\ref{fig:ScalingComputeIO}). 
-But communication (sending results back to MPI rank 0 with \texttt{MPI\_Gather()}; red line in Figure~\ref{fig:ScalingComputeIO}) and the initial file opening (loading the system information into the \texttt{MDAnalysis.Universe} data structure from a shared ``topology'' file and opening the shared trajectory file; gray line in Figure~\ref{fig:ScalingComputeIO}) started to dominate beyond 50 cores.
+But communication (sending results back to MPI rank 0 with \texttt{MPI\_Gather()}; red line in Figure~\ref{fig:ScalingComputeIO}) and the initial file opening (loading the system information into the \texttt{MDAnalysis.Universe} data structure from a shared topology file and opening the shared trajectory file; gray line in Figure~\ref{fig:ScalingComputeIO}) started to dominate beyond 50 cores.
 Communication cost and initial time for opening the trajectory were distributed unevenly across MPI ranks, as shown in Figure~\ref{fig:MPIranks}. 
 The ranks that took much longer to complete than the typical execution time of the other ranks were the stragglers that hurt performance.
 
@@ -33,7 +33,6 @@ The ranks that took much longer to complete than the typical execution time of t
     \label{fig:MPIspeedup}
   \end{subfigure}
   \bigskip
-
   \begin{subfigure}{.45\textwidth}
     \includegraphics[width=\linewidth]{figures/main-RMSD-time_comp_IO_comparison.pdf}
     \captionsetup{format=hang}
@@ -61,7 +60,7 @@ The ranks that took much longer to complete than the typical execution time of t
 
 We qualitatively denoted by \emph{straggler} any MPI rank that took at least about twice as long as the group of ranks that finished fastest, roughly following the original description of a straggler as a task that took an ``unusually long time to complete'' \cite{Dean2008}.
 The fast-finishing ranks were generally clearly distinguishable in the per-rank timings such as in Figures~\ref{fig:MPIranks} and \ref{fig:MPIranks-Bridges}.
-Such a qualitative definition of stragglers was sufficient for our purpose to identify scalability bottlenecks, as shown in the following discussion.
+Such a qualitative definition of stragglers was sufficient for our purpose of identifying scalability bottlenecks, as shown in the following discussion.
 
 \subsubsection*{Identification of Scalability Bottlenecks}
 
@@ -98,13 +97,17 @@ Better scaling also went together with a higher ratio of compute to communicatio
 
  \begin{figure}[!htb]
    \centering
-   \begin{subfigure}{.35\textwidth}
+   \begin{subfigure}{.25\textwidth}
      \includegraphics[width=\linewidth]{figures/speed_up-effect-of-IO.pdf}
      \caption{Speed up comparison}
      \label{fig:MPIspeedup-no-IO}
    \end{subfigure}
-   \hfill
-   \begin{subfigure}{.45\textwidth}
+   \begin{subfigure}{0.3\textwidth}
+     \includegraphics[width=\linewidth]{figures/time_comp_IO_comparison_no-IO.pdf}
+     \caption{Scaling for different components}
+     \label{fig:MPIScalingCompute-Comm-no-IO}     
+   \end{subfigure}
+   \begin{subfigure}{.4\textwidth}
      \includegraphics[width=\linewidth]{figures/BarPlot-rank-comparison-no-IO.pdf}
      \captionsetup{format=hang}
      \caption{Time comparison on different parts of the calculations per MPI rank when I/O is removed}
@@ -112,8 +115,9 @@ Better scaling also went together with a higher ratio of compute to communicatio
    \end{subfigure}
    \caption{Comparison of the performance of the RMSD task with I/O ($\RcompIO \approx 0.3$) and without I/O ($\RcompIO = +\infty$) on \emph{SDSC Comet}.
      Five repeats were performed to collect statistics.
-     (a) Speed-up. The error bars show standard deviation with respect to the mean.
-     (b) Compute \tcomp, read I/O $\tIO=0$, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
+     (a-b) The error bars show standard deviation with respect to the mean.
+     (b) Only compute \tcomp and communication \tcomm are included; there are no timings related to I/O (\tIO, $t_{\text{opening\_trajectory}}$) as in Figure~\protect{\ref{fig:ScalingComputeIO}}.
+     (c) Compute \tcomp, read I/O $\tIO=0$, communication \tcomm, ending the for loop \text{$t_{\text{end\_loop}}$},
      opening the trajectory \text{$t_{\text{opening\_trajectory}}$}, and overheads \text{$t_{\text{overhead1}}$}, \text{$t_{\text{overhead2}}$} per MPI rank.
      (See Table \ref{tab:notation} for definitions.)}
    \label{fig:MPIwithoutIO}
@@ -122,8 +126,10 @@ Better scaling also went together with a higher ratio of compute to communicatio
 In order to study an extreme case of a compute-bound task that would demonstrate the effect of ``ideal'' read I/O, we eliminated all I/O from the RMSD task by randomly generating artificial trajectory data in memory; the data had the same size as if they had been obtained from the trajectory file.
 The time for the data generation was excluded and no file access was necessary. 
 Without any I/O, performance improved markedly (Figure~\ref{fig:MPIwithoutIO}), with reasonable scaling up to 72 cores (3 nodes).
-No stragglers were observed because overall communication time decreased and showed less variability; nevertheless, an increase in communication time prevented ideal scaling performance.
+No stragglers were observed because overall communication time decreased dramatically by more than a factor of ten and showed less variability (Figure~\ref{fig:MPIScalingCompute-Comm-no-IO}) compared to the same runs with I/O (Figure~\ref{fig:ScalingComputeIO}), even though exactly the same amount of data are communicated.
+The scaling performance suffered somewhat for more than 40 processes only because the cost of communication \tcomm became comparable to the compute time \tcomp and would not decrease below about 1~s.
 Although in practice I/O cannot be avoided, this experiment demonstrated that the way how the trajectory file was accessed on the Lustre file system was at least one cause for the observed stragglers.
+It also showed that the communication cost for the \emph{same amount of data transfer} can be dramatically higher in the presence of I/O. 
 
 
 \subsection{Reducing I/O Cost}
