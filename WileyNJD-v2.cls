@@ -1814,7 +1814,9 @@ Volume\ \@jvol, Article ID\ \@artid, \thepage~pages\par%
 %  \ifx\@pubdate\@empty\@dummy@pubdate\else\@pubdate\fi%
 }}%
 %
-\def\doiheadtext#1{\gdef\@DOI@text{#1}}\doiheadtext{DOI: xxx/xxxx\nobreakspace{}}%
+%\def\doiheadtext#1{\gdef\@DOI@text{#1}}\doiheadtext{DOI: xxx/xxxx\nobreakspace{}}%
+%% assigned DOI 10.1002/CPE.5789 (article accepted)
+\def\doiheadtext#1{\gdef\@DOI@text{#1}}\doiheadtext{DOI: 10.1002/CPE.5789\nobreakspace{}}%
 \def\head@titlepage@def#1#2{\vbox{%
   \hbox to \textwidth{#1\dummyalphabet}\par\vspace*{2.5\p@}%
   \@headfootrule\par\vspace*{9\p@}%
